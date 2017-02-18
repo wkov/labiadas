@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+
+{% block headers %}
+
+    <script src="{% static 'js/comanda.js' %}"></script>
+{% endblock %}
+
+{% block modals %}
+
+    {% include "comanda_modal.html" %}
+
+
+{% endblock %}
+
+
+
+{%  block content %}
+<h2>{% trans "Historial" %}</h2>
+{% if contractes %}
+
+
+                {% for contracte in contractes %}
+
+    <div class="col-md-6 col-xs-12 col-sm-12 col-lg-4">
+        <div class="thumbnail">
+            <div class="caption">
+
+
+
+             {% if contracte.producte.adjunt %}
+                    <a href="{{ MEDIA_URL }}{{ contracte.producte.adjunt.url }}" style="float: right" >
+                        <div class="g-item" style="background-image:url('{{ contracte.producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
+                        </div>
+                    </a>
+             {% endif %}
+
+                <div class="prodxx" style="    font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF;  display: inline-block" >
+                    <label for="x_prod" style="font-size: medium; font-weight: 500">Producte: </label><a href="{% url 'producte'  contracte.producte.pk  %}" title="Visualitzar en detall el producte">
+                        <b id="x_prod" name="x_prod"> {{ contracte.producte }} </b> </a>
+                </div> <br/><br/>
+
+             <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
+                <p>Autor: &nbsp;
+                <a href="{% url 'productor'  contracte.producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                        {{ contracte.producte.productor.nom }}</a>
+                  <a href="{% url 'messages_compose_to' contracte.producte.productor.responsable %}" title="Enviar missatge al productor">
+                 <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+             </div>
+             <br/><br/>
+             <div class="xxent" style="background-color:#FFFFFF; width: auto">
+                Cant: <b>{{ contracte.cantitat }}</b> &nbsp;
+                Preu: <b>{{ contracte.preu }}€</b><br/>
+                Format: <b>{{ contracte.format.nom }}</b><br/>
+                Hora:   <b> {{ contracte.franja_horaria.inici }} - {{ contracte.franja_horaria.final }}</b><br/>
+                Freq: <b>{{contracte.freq_txt}}</b><br/>
+{#                Dia: {{ contracte.data_entrega_txt }} <br/>#}
+                Lloc:<a href="{% url 'node_detail' contracte.lloc_entrega.pk %}"> <b> {{ contracte.lloc_entrega.nom }} </b></a><br/>
+                </div>
+                <div style="width:100%; display: inline-block">
+                    Inici:   <b> {{ contracte.data_comanda.date }} </b> <br/>
+                </div><br/>
+                <div style="width:100%; display: inline-block">
+                    Fi: <b> {{ contracte.data_fi.date }} </b> <br/>
+                </div><br/>
+
+{#                    {% if not contracte.data_fi %}#}
+
+
+                    <form method="post"  class="comanda_form">{% csrf_token %}
+                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ contracte.producte.pk }}" />
+                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ contracte.producte.nom }}" />
+                        <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
+                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}" />
+                        <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}"/>
+                        <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ contracte.preu }}" />
+                        <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id"  value="{{ contracte.cantitat }}" style="width: 29px"/>
+                        <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ contracte.format.pk }}"/>
+                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" "></button>
+                     </form>
+
+{#                    {% endif %}#}
+
+{#                <td>{% if not comanda.entregat %}#}
+{#                    <a class="glyphicon glyphicon-pencil" href="{% url 'comandaUpdate' comanda.pk  %}">#}
+{#                            </a>#}
+{#                    {% endif %}#}
+{#                </td>#}
+{#                <td>#}
+{#                    {% if not contracte.entregat %}#}
+{#                    <a class="glyphicon glyphicon-trash" href="{% url 'contracteDelete' contracte.pk  %}">#}
+{#                            </a>#}
+{#                    {% endif %}#}
+{#                </td>#}
+    {#        </form>#}
+
+
+    </div>
+    </div>
+    </div>
+        {%  endfor %}
+{#        </table>#}
+        {% endif %}
+
+</br>
+
+{% if comandes %}
+        {% for comanda in comandes %}
+    <div class="col-md-6 col-xs-12 col-sm-12 col-lg-4 ">
+    <div class="thumbnail">
+    <div class="caption">
+{#        <table class="table table-striped">#}
+{#        <thead>#}
+{#                <tr>#}
+{#                    <th>Producte</th>#}
+{#                    <th>Cantitat</th>#}
+{#                    <th>Format</th>#}
+{#                    <th>Preu</th>#}
+{#                    <th>Data Comanda</th>#}
+{#                    <th>Entregat</th>#}
+{#                    <th>Data d'entrega</th>#}
+{#                    <th>Lloc d'entrega</th>#}
+{#                </tr>#}
+{#            </thead>#}
+
+             {% if comanda.producte.adjunt %}
+                <a href="{{ MEDIA_URL }}{{ comanda.producte.adjunt.url }}" style="float: right" >
+                   <div class="g-item" style="background-image:url('{{ comanda.producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
+                   </div>
+                </a>
+             {% endif %}
+              <div class="prodxx" style="    font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF; display: inline-block" >
+              <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte'  comanda.producte.pk  %}" title="Visualitzar en detall el producte">
+              <b id="l_prod" name="l_prod">{{ comanda.producte }}</b></a></div><br/><br/>
+
+             <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
+                <p>Autor: &nbsp;
+                <a href="{% url 'productor'  comanda.producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                        {{ comanda.producte.productor.nom }}</a>
+                  <a href="{% url 'messages_compose_to' comanda.producte.productor.responsable %}" title="Enviar missatge al productor">
+                 <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+              </div>
+
+
+
+                <br/><br/>
+                <div class="xxent" style="background-color:#FFFFFF;  width: auto">
+
+
+
+             Cantitat:   <b>{{ comanda.cantitat }}</b><br/>
+
+             Format:   <b>{{ comanda.format.nom }}</b><br/>
+
+             Preu:   <b>{{ comanda.preu }}</b><br/>
+
+{#                <td>{% if comanda.cancelat %}#}
+{#                        <span class="glyphicon glyphicon-ok"></span>#}
+{#                     {% else %}#}
+{#                        <span class="glyphicon glyphicon-remove"></span>#}
+{#                     {% endif %}#}
+{#                </td>#}
+             Lloc: <a href="{% url 'node_detail' comanda.lloc_entrega.pk %}"> <b> {{ comanda.lloc_entrega.nom }}</b></a>
+                    </div>
+                    <br/>
+              <div style="width:100%; display: inline-block">
+                Comanda:  <b> {{ comanda.data_comanda.date }}</b><br/>
+              </div><br/>
+              <div style="width:100%; display: inline-block">
+                Entrega:  <b> {{ comanda.data_entrega.date }}</b><br/>
+              </div>
+
+
+
+                    <form method="post"  class="comanda_form">{% csrf_token %}
+                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ comanda.producte.pk }}" />
+                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ comanda.producte.nom }}" />
+                        <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
+                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}" />
+                        <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}"/>
+                        <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ comanda.preu }}" />
+                        <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id"  value="{{ comanda.cantitat }}" style="width: 29px"/>
+                        <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ comanda.format.pk }}"/>
+                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" "></button>
+                     </form>
+
+{#                <td>{% if not comanda.entregat %}#}
+{#                    <a class="glyphicon glyphicon-pencil" href="{% url 'comandaUpdate' comanda.pk  %}">#}
+{#                            </a>#}
+{#                    {% endif %}#}
+{#                </td>#}
+{#                <td>{% if not comanda.entregat %}#}
+{#                    <a class="glyphicon glyphicon-trash" href="{% url 'comandaDelete' comanda.pk  %}">#}
+{#                            </a>#}
+{#                    {% endif %}#}
+{#                </td>#}
+    {#        </form>#}
+
+        </div>
+        </div>
+        </div>
+
+        {%  endfor %}
+{#        </table>#}
+        {% endif %}
+
+
+        {% if not comandes %}
+
+            {% if not contractes %}
+                No hi ha comandes passades encara
+            {% endif %}
+
+        {% endif %}
+
+
+{#    </div>#}
+{#        <div class="table-responsive" >#}
+{#        <table class="table table-striped">#}
+{#            <tr>#}
+{#                <td>#}
+{#        <div class="thumbnail" >#}
+{#            <a  href="{% url 'coope'  %}"> Tornar a la botiga</a>#}
+{#        </div>#}
+{#                </td>#}
+{#                <td>#}
+{#        <div class="thumbnail" >#}
+{#            <a  href="{% url 'comandes'  %} "> Tornar a comandes</a>#}
+{#        </div>#}
+{#                </td>#}
+{##}
+{#            </tr>#}
+{#        </table>#}
+{#        </div>#}
+
+
+{% endblock %}
+

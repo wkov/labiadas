@@ -1,0 +1,56 @@
+
+
+{% extends "base.html" %}
+
+{% block headers %}
+<style>
+#page-content-wrapper {
+    background-color: rgba(250,250,200,0.6);
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+    <div>
+        {% if message %}
+
+                <div class="thumbnail" >
+            <span class="glyphicon glyphicon-info-sign"> {{ message }} </span>
+            </div>
+        {% endif %}
+    </div>
+    Benvingut a la secció d'ajuda de la xarxa.
+<br/>
+<br/>
+   <a href="{% url 'coope' %}"> 1) Com comprar ? </a>
+<br/>
+    A la pantalla principal trobaràs tots els productes. Allà mateix pots triar el format i la quantitat i començar la compra.
+    <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>
+<br/></br>
+    <a href="{% url 'comandes' %}">2) Com gestiono els encàrrecs ?</a> <br/>
+    A la gestió de comandes pots accedir sempre des del menu de l'esquerra a traves del boto <a href="{% url 'comandes' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a><br/>
+    Permet borrar les comandes que ja no desitjis(minim 2 dies abans de l'entrega).
+    També pots consultar les entregues rebudes en el passat. Aixi com consultar els detalls de cada una d'elles
+<br/></br>
+    <a href=""> 3) A on arriba la comanda ? </a><br/>
+                Al punt de trobada que escullis entre els espais que han creat les Cooperatives de consum, els grups, les families, els consumidors i els productors.<br/> Actualment:
+                <br/>
+
+
+{% for n in nodes %}
+    {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+{% endfor %}
+
+
+                <br/><br/>
+
+    <a href=""> 4) Com es fa el pagament ?</a><br/>
+    En el punt de trobada quan es fa l'intercanvi
+            <br/> <br/>
+
+    <a href="{% url 'convidar' %}"> 5) Com puc convidar nous usuaris a la xarxa ?</a><br/>
+    Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-globe collapsed-element'></span></a>
+    que sempre trobaràs en el menú esquerra
+
+{% endblock %}

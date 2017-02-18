@@ -1,0 +1,420 @@
+{% load notifications_tags %}
+<style>
+
+nav.sidebar-menu-collapsed {
+    width: 44px;
+    position: fixed;
+    z-index: 100000000000;
+    opacity: 0.95;
+
+}
+nav.sidebar-menu-expanded {
+    width: auto;
+    font-family: 'Special Elite', cursive;
+    opacity: 0.9;
+{#    overflow: scroll;#}
+
+}
+nav.sidebar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    background: none repeat scroll 0 0 #508a4c;
+    color: white;
+    padding: 20px 10px;
+    z-index: 1000;
+}
+nav.sidebar a#justify-icon {
+    outline: 0;
+    color: white;
+    font-size: 24px;
+    font-style: normal;
+}
+nav.sidebar a#logout-icon {
+    outline: 0;
+    color: white;
+    font-size: 24px;
+    font-style: normal;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+nav.sidebar ul.level1 {
+    margin: 0;
+    padding: 0;
+    margin-top: 60px;
+}
+nav.sidebar ul.level1 li {
+    margin: 0;
+    padding: 0;
+    margin-top: 20px;
+    list-style-type: none;
+}
+nav.sidebar ul.level1 li a.expandable {
+    outline: 0;
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 30px;
+    color: white;
+    text-decoration: none;
+    text-align: left;
+    padding: 10px 4px 4px 0px;
+    font-size: 20px;
+}
+nav.sidebar ul.level1 li a.expandable:hover {
+    color: #bbbbbb;
+}
+nav.sidebar ul.level1 li a.expandable span.expanded-element {
+    display: none;
+    font-size: 20px;
+    position: relative;
+    bottom: 5px;
+}
+nav.sidebar ul.level1 li.active {
+    margin-left: -4px;
+}
+nav.sidebar ul.level1 li.active a.expandable {
+    background: none repeat scroll 0 0 #5db757;
+    border-radius: 4px;
+    color: white !important;
+    width: 30px;
+    padding: 4px;
+}
+nav.sidebar ul.level1 li.active a.expandable:hover {
+    color: white !important;
+}
+nav.sidebar ul.level1 ul.level2 {
+    margin: 10px 10px 10px 40px;
+    padding: 0;
+    display: none;
+}
+nav.sidebar ul.level1 ul.level2 li {
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    list-style-type: none;
+    border-bottom: solid white 1px;
+}
+nav.sidebar ul.level1 ul.level2 li:last-child {
+    border-bottom: none;
+}
+nav.sidebar ul.level1 ul.level2 li a {
+    text-decoration: none;
+    outline: 0;
+    color: white;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+</style>
+
+<script>
+(function () {
+    $(function () {
+        var SideBAR;
+        SideBAR = (function () {
+            function SideBAR() {}
+
+            SideBAR.prototype.expandMyMenu = function () {
+                return $("nav.sidebar").removeClass("sidebar-menu-collapsed").addClass("sidebar-menu-expanded");
+            };
+
+            SideBAR.prototype.collapseMyMenu = function () {
+                return $("nav.sidebar").removeClass("sidebar-menu-expanded").addClass("sidebar-menu-collapsed");
+            };
+
+            SideBAR.prototype.showMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").show();
+            };
+
+            SideBAR.prototype.hideMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").hide();
+            };
+
+            SideBAR.prototype.showActiveSubMenu = function () {
+                $("li.active ul.level2").show();
+                return $("li.active a.expandable").css({
+                    width: "100%"
+                });
+            };
+
+            SideBAR.prototype.hideActiveSubMenu = function () {
+                return $("li.active ul.level2").hide();
+            };
+
+            SideBAR.prototype.adjustPaddingOnExpand = function () {
+                $("ul.level1 li a.expandable").css({
+                    padding: "1px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "1px 4px 4px 4px"
+                });
+            };
+
+            SideBAR.prototype.resetOriginalPaddingOnCollapse = function () {
+                $("ul.nbs-level1 li a.expandable").css({
+                    padding: "4px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "4px"
+                });
+            };
+
+            SideBAR.prototype.ignite = function () {
+                return (function (instance) {
+                    return $("#justify-icon").click(function (e) {
+                        if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-collapsed")) {
+                            instance.adjustPaddingOnExpand();
+                            instance.expandMyMenu();
+                            instance.showMenuTexts();
+                            instance.showActiveSubMenu();
+                            $(this).css({
+                                color: "#000"
+                            });
+                        } else if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-expanded")) {
+                            instance.resetOriginalPaddingOnCollapse();
+                            instance.collapseMyMenu();
+                            instance.hideMenuTexts();
+                            instance.hideActiveSubMenu();
+                            $(this).css({
+                                color: "#FFF"
+                            });
+                        }
+                        return false;
+                    });
+                })(this);
+            };
+
+            return SideBAR;
+
+        })();
+        return (new SideBAR).ignite();
+    });
+
+}).call(this);
+</script>
+
+{% if user.is_authenticated %}
+
+ <nav class='sidebar sidebar-menu-collapsed' >
+     <a href='#' id='justify-icon' title="veure menú">
+        <span class='glyphicon glyphicon-align-justify'></span>
+     </a>
+
+{#     <ul class='level1'>#}
+{##}
+{#        <li class='active'>#}
+{#           <a class='expandable active' >#}
+{#               <span class='glyphicon glyphicon-search collapsed-element'></span>#}
+{#               <span class='expanded-element'>#}
+{#                    <form action="/busk/" method="post">#}
+{#                        {% csrf_token %}#}
+{#                        <div class="input-group">#}
+{#                            <input type="text" class="form-control"  name="searchString" width="40px" />#}
+{#                          <span class="input-group-btn">#}
+{#                              <button type="submit" class="btn btn-default">Busk</button>#}
+{#                          </span>#}
+{#                        </div>#}
+{#                    </form>#}
+{#               </span>#}
+{#               <br />#}
+{#               <br />#}
+{#           </a>#}
+{#     </ul>#}
+
+
+     <ul class='level1'>
+            <li class=''>
+              <a class='expandable' href="{% url 'busk' %}" title='Cercar'>
+                <span id="cercar" name="cercar" class='glyphicon glyphicon-search collapsed-element'></span>
+                <span class='expanded-element'>Cercar</span>
+              </a>
+            </li>
+
+
+        </ul>
+
+
+        <ul class='level1'>
+            <li class=''>
+              <a class='expandable' href="{% url 'coope' %}" title='Veure tots els productes'>
+                <span class='glyphicon glyphicon-home collapsed-element'></span>
+                <span class='expanded-element'>Botiga</span>
+              </a>
+            </li>
+
+
+
+{#            <li class='active'>#}
+{#               <a class='expandable active' href="{% url 'productes'  %}"  title='Dashboard'>#}
+{#                   <span class='glyphicon glyphicon-eye-open collapsed-element'></span>#}
+{#                   <span class='expanded-element'>Visualitzacions</span>#}
+{#               </a>#}
+{##}
+{#            </li>#}
+
+
+
+        </ul>
+
+
+
+{% notifications_unread as unread_count %}
+
+
+         <ul class='level1'>
+            <li class=''>
+              <a class='expandable' href="{% url 'comandes' %}" title='Veure historial de comandes'>
+{#                <span id="notification_count">#}
+{#                    {{ unread_count }}#}
+{#                </span>#}
+                <span class='glyphicon glyphicon-shopping-cart collapsed-element'>
+
+                </span>
+                <span class='expanded-element'>Comandes</span>
+              </a>
+            </li>
+
+
+
+
+{#            <li class=''>#}
+{#              <a class='expandable' href="{% url 'faq' %}" title='FAQ'>#}
+{#                <span class='glyphicon glyphicon-pushpin collapsed-element'></span>#}
+{#                <span class='expanded-element'>FAQ</span>#}
+{#              </a>#}
+{#            </li>#}
+
+{#            <li class='active'>#}
+{#               <a class='expandable active' href="{% url 'productes'  %}"  title='Dashboard'>#}
+{#                   <span class='glyphicon glyphicon-eye-open collapsed-element'></span>#}
+{#                   <span class='expanded-element'>Visualitzacions</span>#}
+{#               </a>#}
+{##}
+{#            </li>#}
+
+
+
+        </ul>
+
+
+
+
+
+
+
+{#     <ul class='level1'>#}
+{##}
+{#        <li class='active'>#}
+{#           <a class='expandable active' >#}
+{#               <span class='glyphicon glyphicon-thumbs-up collapsed-element'></span>#}
+{#               <span class='expanded-element'>#}
+{#                    <form id="convidar" >#}
+{#                        {% csrf_token %}#}
+{#                        <div class="input-group">#}
+{#                            <input type="text" class="form-control"  name="email" width="40px" />#}
+{#                          <span class="input-group-btn">#}
+{#                              <button type="submit" class="btn btn-default">Convida</button>#}
+{#                          </span>#}
+{#                        </div>#}
+{#                    </form>#}
+{#               </span>#}
+{#               <br />#}
+{#               <br />#}
+{#           </a>#}
+{#     </ul>#}
+
+ <ul class='level1'>
+            <li class=''>
+              <a class='expandable' href="{% url 'convidar' %}" title='Convidar nous usuaris a la xarxa'>
+                <span id="convidar" name="convidar" class='glyphicon glyphicon-globe collapsed-element'></span>
+                <span class='expanded-element'>Convidar</span>
+              </a>
+            </li>
+
+
+        </ul>
+
+
+{#        <ul class='level1'>#}
+{#            <li class=''>#}
+{#              <a class='expandable' href="{% url 'coope' %}" title='HOME'>#}
+{#                <span id="convidar" name="convidar" class='glyphicon glyphicon-thumbs-up collapsed-element'></span>#}
+{#                <span class='expanded-element'>Ajuda</span>#}
+{#              </a>#}
+{#            </li>#}
+{##}
+{##}
+{#        </ul>#}
+
+
+
+
+
+
+
+
+
+
+             <ul class='level1'>
+            <li class=''>
+              <a class='expandable' href="{% url 'ajuda' %}" title='Ajuda'>
+                <span id="ajuda" name="ajuda" class='glyphicon glyphicon-question-sign collapsed-element'></span>
+                <span class='expanded-element'>Ajuda</span>
+              </a>
+            </li>
+
+
+        </ul>
+
+
+
+
+
+{#             <ul class='level1'>#}
+{#            <li class=''>#}
+{#              <a class='expandable' title='Convidar'>#}
+{#                <span class='glyphicon glyphicon-usd collapsed-element'></span>#}
+{#                <span id="convidar" name="convidar" class='expanded-element'>Convidar a la xarxa</span>#}
+{#              </a>#}
+{#            </li>#}
+{##}
+{#                         <button id="convidar" name="convidar" class="convidar">Convidar amics a la xarxa#}
+{#            </button>#}
+{##}
+{##}
+{##}
+{##}
+{#        </ul>#}
+
+
+
+
+
+
+{#              <ul class='level1'>#}
+{#            <li class=''>#}
+{#              <a class='expandable' href="" title='Comandes per entregar'>#}
+{##}
+{#                <span class='expanded-element'>Comandes per entregar</span>#}
+{#              </a>#}
+{#            </li>#}
+{#                   <li class=''>#}
+{#              <a class='expandable' href="" title='Comandes del passat'>#}
+{##}
+{#                </span>#}
+{#                <span class='expanded-element'>Comandes del passat</span>#}
+{#              </a>#}
+{#            </li>#}
+{#                  </ul>#}
+
+{#        {% if user.is_authenticated %}#}
+{#            <a href="{% url 'auth_logout' %}?next=/rusc/" id='logout-icon' title='Logout'>#}
+{#            <span class='glyphicon glyphicon-off'></span>#}
+{#            </a>#}
+{#        {% endif %}#}
+ </nav>
+{% endif %}

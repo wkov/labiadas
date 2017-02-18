@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+
+{% block headers %}
+
+    <script src="{% static 'js/comanda.js' %}"></script>
+{% endblock %}
+
+{% block modals %}
+
+    {% include "comanda_modal.html" %}
+
+
+{#    {% include "node_detail.html" %}#}
+
+
+{% endblock %}
+
+
+{%  block content %}
+
+  {% if contractes %}
+{#<div class="thumbnail" style="float: left; width: 100%">#}
+
+{#<h3>Comandes Periòdiques:</h3>#}
+{#<div class="table-responsive">#}
+
+{#        <table class="table table-striped">#}
+{#        <thead>#}
+{#                <tr>#}
+{#                    <th>Producte</th>#}
+{#                    <th title="Freqüència">Freq</th>#}
+{#                    <th title="Cantitat">Cant</th>#}
+{#                    <th>Format</th>#}
+{#                    <th>Preu</th>#}
+{#                    <th>Dia</th>#}
+{#                    <th>Pròxima entrega</th>#}
+{#                    <th>Franja Horària</th>#}
+{#                    <th>Lloc d'entrega</th>#}
+{#                    <th>Entregat</th>#}
+{##}
+{#                </tr>#}
+{#            </thead>#}
+
+
+                {% for contracte in contractes %}
+                          <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
+                            <div class="thumbnail" >
+                              <div class="caption">
+
+                 {% if contracte.producte.adjunt %}
+                    <a href="{{ MEDIA_URL }}{{ contracte.producte.adjunt.url }}" >
+                    <div class="g-item" style="background-image:url('{{ contracte.producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
+                        </div>
+                    </a>
+                  {% endif %}
+
+                <div class="prodxx" style=" font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF; display: inline-block" >
+                    <label for="x_prod" style="font-size: medium; font-weight: 500">Producte: </label><a href="{% url 'producte'  contracte.producte.pk  %}" title="Visualitzar en detall el producte">
+                        <b id="x_prod" name="x_prod"> {{ contracte.producte }} </b> </a> </div> <br/><br/>
+
+              <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
+                <p>Autor: &nbsp;
+                <a href="{% url 'productor'  contracte.producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                        {{ contracte.producte.productor.nom }}</a>
+                  <a href="{% url 'messages_compose_to' contracte.producte.productor.responsable %}" title="Enviar missatge al productor">
+                 <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+              </div>
+                <br/><br/>
+             <div class="xxent" style="background-color:#FFFFFF; width: auto">
+                <label for="x_cant" style="font-size: medium; font-weight: 500"> Cantitat: </label> <b id="x_cant" name="x_cant"> {{ contracte.cantitat }}</b><br/>
+                <label for="x_form" style="font-size: medium; font-weight: 500"> Format: </label> <b id="x_form" name="x_form"> {{ contracte.format.nom }}</b><br/>
+                <label for="x_preu" style="font-size: medium; font-weight: 500"> Preu: </label> <b id="x_preu" name="x_preu"> {{ contracte.preu }} €</b><br/>
+                <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>
+                    <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' contracte.lloc_entrega.pk %}" title="Visualitzar punt de trobada">{{ contracte.lloc_entrega.nom  }} <span class="glyphicon glyphicon-map-marker" >
+                    </span> </a> <br/>
+                <label for="x_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="x_hora" name="x_hora"> {{ contracte.franja_horaria.inici }} - {{ contracte.franja_horaria.final }} </b><br/>
+{#                <label for="x_entr" style="font-size: medium; font-weight: 500"> Dia: </label><b id="x_entr" name="x_entr"></b><br/>#}
+             </div>
+
+                 <div style="width:100%; display: inline-block">
+
+                <label for="x_prox" style="font-size: medium; font-weight: 500"> Dia: </label> <b id="x_prox" name="x_prox">
+                     {{ contracte.data_entrega_txt }}, {{ contracte.prox_entrega.date }} </b>
+                     {% if not contracte.prox_no == True %}
+                        <a href="{% url 'aquesta_no' contracte.pk %}"><span class="glyphicon glyphicon-refresh" title="Aquesta entrega NO, passeu a la seguent"></span></a>
+                    {% endif %}
+                 </div><br/>
+
+{#                <form method="post" class="get_map">{% csrf_token %}#}
+
+
+                 <div style="width:100%; display: inline-block">
+                <label for="x_freq" style="font-size: medium; font-weight: 500"> Freqüència: </label> <b id="x_freq" name="x_freq"> {{contracte.freq_txt}}</b>
+                 </div><br/>
+
+
+{#                    {% if not contracte.data_fi %}#}
+
+
+                    <form method="post"  class="comanda_form">{% csrf_token %}
+                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ contracte.producte.pk }}" />
+                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ contracte.producte.nom }}" />
+                        <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
+                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ contracte.lloc_entrega.pk }}" />
+                        <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id"/>
+                        <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ contracte.preu }}" />
+                        <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id"  value="{{ contracte.cantitat }}" style="width: 29px"/>
+                        <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ contracte.format.pk }}"/>
+
+
+{#                        <button id="xb_lloc" name="xb_lloc" onclick="get_map()"></button>#}
+                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>
+                       <a type="button" class="glyphicon glyphicon-trash" href="{% url 'contracteDelete' contracte.pk  %}"
+                       title="Borrar comanda"
+                       onclick="return confirm('Segur que vols borrar aquesta comanda?')">
+                            </a>
+                     </form>
+
+
+                    </div>
+                    </div>
+                    </div>
+
+
+
+        {%  endfor %}
+{#                   </div>#}
+        {% endif %}
+
+
+{#<br/>#}
+{% if comandes %}
+
+{#<div class="thumbnail" style="float: left; width: 100%">#}
+{#    <h3>Comandes:</h3>#}
+{#<div class="table-responsive">#}
+{##}
+{#        <table class="table table-striped">#}
+{#        <thead>#}
+{#                <tr>#}
+{#                    <th>Producte</th>#}
+{#                    <th title="Cantitat">Cant</th>#}
+{#                    <th>Format</th>#}
+{#                    <th>Preu</th>#}
+{#                    <th>Cancelat</th>#}
+{##}
+{#                    <th>Entregat</th>#}
+{#                    <th>Data entrega</th>#}
+{#                    <th>Franja Horaria</th>#}
+{#                    <th title="Lloc d'entrega">Lloc</th>#}
+{#                    <th>Data Comanda</th>#}
+{#                </tr>#}
+{#            </thead>#}
+
+
+
+
+
+
+        {% for comanda in comandes %}
+
+          <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
+            <div class="thumbnail" >
+              <div class="caption">
+
+                  {% if comanda.producte.adjunt %}
+                    <a href="{{ MEDIA_URL }}{{ comanda.producte.adjunt.url }}" title="veure imatge">
+                    <div class="g-item" style="background-image:url('{{ comanda.producte.adjunt.url }}');background-position: center;
+        background-size: cover; " >
+                        </div>
+                    </a>
+                  {% endif %}
+                    <div class="prodxx" style="    font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF;   display: inline-block" >
+                    <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte'  comanda.producte.pk  %}" title="Visualitzar en detall el producte">
+                        <b id="l_prod" name="l_prod">{{ comanda.producte }}</b></a></div><br/><br/>
+
+
+             <div class="prodxx" style="background-color:#FFFFFF;  display: inline-block; ">
+                <p>Autor: &nbsp;
+                <a href="{% url 'productor'  comanda.producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                        {{ comanda.producte.productor.nom }}</a>
+                  <a href="{% url 'messages_compose_to' comanda.producte.productor.responsable %}" title="Enviar missatge al productor">
+                 <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+              </div>
+                    <br/><br/>
+                <div class="xxent" style="background-color:#FFFFFF; width: auto">
+
+                    <label for="l_cant" style="font-size: medium; font-weight: 500"> Cant:  </label><b id="l_cant" name="l_cant">{{ comanda.cantitat }}</b><br/>
+                    <label for="l_form" style="font-size: medium; font-weight: 500"> Format:</label> <b id="l_form" name="l_form">{{ comanda.format.nom }}</b><br/>
+                    <label for="l_preu" style="font-size: medium; font-weight: 500"> Preu: </label> <b id="l_preu" name="l_preu">{{ comanda.preu }}€</b> <br/>
+                    <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>
+                    <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' comanda.lloc_entrega.pk %}" title="Visualitzar punt de trobada">{{ comanda.lloc_entrega.nom  }} <span class="glyphicon glyphicon-map-marker" >
+                    </span> </a><br/>
+                    <label for="l_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="l_hora" name="l_hora">  {{ comanda.franja_horaria.inici }} - {{ comanda.franja_horaria.final }}</b><br/>
+
+                </div>
+                 <div style="width:100%; display: inline-block">
+                    <label for="l_entr" style="font-size: medium; font-weight: 500"> Entrega: </label> <b id="l_entr" name="l_entr">{{ comanda.data_entrega_txt }}, {{ comanda.data_entrega.date }}</b>
+                 </div><br/>
+              <div style="width:100%; display: inline-block">
+                <label for="l_com" style="font-size: medium; font-weight: 500"> Comanda: </label> <b id="l_com" name="l_com">{{ comanda.data_comanda.date }}</b>
+              </div>
+
+
+                    <form method="post"  class="comanda_form">{% csrf_token %}
+                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ comanda.producte.pk }}" />
+                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ comanda.producte.nom }}" />
+                        <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
+                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ comanda.lloc_entrega.pk }}" />
+                        <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id"/>
+                        <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ comanda.preu }}" />
+                        <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id" value="{{ comanda.cantitat }}" style="width: 29px"/>
+                        <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ comanda.format.pk }}"/>
+                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>
+
+                    {% if not comanda.entregat %}
+                        <a class="glyphicon glyphicon-trash" type="button" href="{% url 'comandaDelete' comanda.pk  %}"
+                           title="Borrar comanda"
+                           onclick="return confirm('Segur que vols borrar la comanda?')">
+                                </a>
+                    {% endif %}
+
+                     </form>
+
+
+{#                </td>#}
+{#                <td>#}
+
+
+
+{#             </td>#}
+    {#        </form>#}
+
+            </div>
+            </div>
+    </div>
+
+        {%  endfor %}
+{#        </table>#}
+{#    </div>#}
+        {% endif %}
+        {% if not comandes %}
+            {% if not contractes %}
+                No hi ha comandes encara
+                </br></br>
+            {% endif %}
+
+        {% endif %}
+{#        <div class="table-responsive" >#}
+{#        <table class="table table-striped">#}
+{#            <tr>#}
+{#                <td>#}
+{##}
+{#                </td>#}
+{#            </tr>#}
+{#        </table>#}
+{#        </div>#}
+
+
+
+
+
+
+
+
+
+{#    <div class="table-responsive" >#}
+{#        <table class="table table-striped">#}
+{#            <tr>#}
+{#                <td>#}
+{#        <div class="thumbnail" style="float: bottom; position: relative" >#}
+{#            <a type="button"  href="{% url 'coope'  %}"> Tornar a la botiga</a>#}
+{#        </div>#}
+{#                </td>#}
+{#                <td>#}
+{#        <div class="btn" style="float: bottom; position: relative">#}
+{#    <div class="col-lg-5" >#}
+    <div class="caption" >
+            <a type="button" href="{% url 'entregas'  %} " style="border: 3px; margin: 0" title="Visitar historial d'entregues"> Historial d'entregues</a>
+        </div>
+{#    </div>#}
+{#                </td>#}
+{##}
+{#            </tr>#}
+{#        </table>#}
+{#        </div>#}
+
+
+
+
+
+
+
+
+{% endblock %}
+

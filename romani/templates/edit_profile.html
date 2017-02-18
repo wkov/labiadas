@@ -1,0 +1,710 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block headers %}
+
+    <script src="{% static 'js/comanda.js' %}"></script>
+
+      <script>
+  $( function() {
+    $( "#tabs" ).tabs();
+  } );
+
+
+
+
+
+           </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUirWAP7iFxFp7W1jmhoTrOYzZ-Z2sYZ8&callback=initMap"
+    async defer></script>
+
+<script>
+
+
+
+      var map;
+{#      var polygons = [];#}
+      var marker_d;
+      function initMap() {
+        var loc;
+{#        var mollet = new google.maps.LatLng(41.539064, 2.2130028);#}
+{#        var left_menu = document.getElementById('sidebar-wrapper');#}
+{##}
+{#        left_menu.hide();#}
+
+
+{#        $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function(data) {#}
+{##}
+{#            var Lat = data["Lat"];#}
+{#            var Lng = data["Lng"];#}
+{#            LatLng = Lat + "," + Lng#}
+{#            if ((Lat == "")&&(Lng == "")){var loc = new google.maps.LatLng(41.539064, 2.2130028);}#}
+{#            else{#}
+{#            var loc = new google.maps.LatLng(Lat, Lng);#}
+{#            }#}
+{##}
+{##}
+{##}
+{##}
+{#            map.setCenter(location);#}
+{#            map.setZoom(15);#}
+{##}
+{#        });#}
+          loc = new google.maps.LatLng(41.539064, 2.2130028);
+          map = new google.maps.Map(document.getElementById('map'), {
+          center: loc,
+          zoom: 12,
+{#          mapTypeId: 'satellite'#}
+        });
+
+
+
+
+
+
+{#             var punt_lat = document.getElementById("punt_lat");#}
+{#             var punt_lng = document.getElementById("punt_lng");#}
+{#             var lugar = new google.maps.LatLng(punt_lat.value, punt_lng.value);#}
+{##}
+{#             if (marker_d == null)#}
+{#             {#}
+{#               marker_d = new google.maps.Marker({#}
+{#                  position: lugar,#}
+{#                  map: map#}
+{#              }); } else {   marker_d.setPosition(lugar); }#}
+
+
+
+
+
+
+          $.post("/allcoordenades/", function(data) {
+              var i = 0;
+              var marker = [];
+              var image = '/static/img/u-pick_stand.png'
+              var img_domicili = '/static/img/vespa.png'
+              data.forEach( function(arrayItem)
+				{
+                    var contentString = '<div id="content">'+
+                          '<div id="siteNotice">'+
+                          '</div>'+
+                          '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+                          '<div id="bodyContent">'+
+                          '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+                          'sandstone rock formation in the southern part of the '+
+                          'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
+                          'south west of the nearest large town, Alice Springs; 450&#160;km '+
+                          '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
+                          'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+                          'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+                          'Aboriginal people of the area. It has many springs, waterholes, '+
+                          'rock caves and ancient paintings. Uluru is listed as a World '+
+                          'Heritage Site.</p>'+
+                          '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+                          'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
+                          '(last visited June 22, 2009).</p>'+
+                          '</div>'+
+                          '</div>';
+
+                      var infowindow = new google.maps.InfoWindow({
+                        content: contentString
+                      });
+
+
+
+
+
+                    var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
+                    if (arrayItem.a_domicili == "True"){
+                        marker[i] = new google.maps.Marker({
+                          position: place,
+                          title: "A Domicili",
+{#                          style: {float: left},#}
+{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
+                          map: map,
+                          icon: img_domicili
+                    });
+                    }else{
+					    marker[i] = new google.maps.Marker({
+                          position: place,
+                          title: arrayItem.nom,
+{#                          style: {float: left},#}
+{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
+                          map: map,
+                          icon: image
+                    });
+                        }
+                      marker[i].addListener('click', function() {
+                        infowindow.open(map, marker[i]);
+                      });
+
+					i++;
+				});
+
+          });
+
+
+          $.post("/horari/", function(data) {
+            var acc = document.getElementById('accordion');
+            var j;
+            var h;
+            var b;
+            var t = "";
+            var g;
+            data.forEach( function (arrayItemx){
+
+                h = "<a>" + arrayItemx.dia + "</a>";
+                g = "<div>"
+
+                arrayItemx.franjes.forEach( function (arrayItem)
+                {
+                    g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
+                });
+                t = t + h + g + "</div>";
+
+            })
+
+            t = t + "</div>";
+
+            acc.innerHTML = t;
+
+
+			$( "#accordion" ).accordion( "refresh" );
+
+          })
+
+          // Define the LatLng coordinates for the polygon's path.
+{#        var triangleCoords = [#}
+{#          {lat: 41.545431, lng: 2.195419},#}
+{#          {lat: 41.552119, lng: 2.221884},#}
+{#          {lat: 41.536294, lng: 2.227637},#}
+{#          {lat: 41.526672, lng: 2.200995}#}
+{#        ];#}
+{##}
+{#        var triangleCoords2 = [#}
+{#          {lat: 41.520636, lng: 2.248667},#}
+{#          {lat: 41.522171, lng: 2.259459},#}
+{#          {lat: 41.517448, lng: 2.261884},#}
+{#          {lat: 41.513495, lng: 2.257088}#}
+{#        ];#}
+{##}
+{#        // Construct the polygon.#}
+{#          polygons.push(new google.maps.Polygon({#}
+{#          paths: triangleCoords,#}
+{#          strokeColor: '#FF0000',#}
+{#          strokeOpacity: 0,#}
+{#          strokeWeight: 2,#}
+{#          fillColor: '#FF0000',#}
+{#          fillOpacity: 0.15#}
+{#        }));#}
+{#          polygons[polygons.length-1].setMap(map);#}
+{##}
+{#          polygons.push(new google.maps.Polygon({#}
+{#          paths: triangleCoords2,#}
+{#          strokeColor: '#FF0000',#}
+{#          strokeOpacity: 0,#}
+{#          strokeWeight: 2,#}
+{#          fillColor: '#FF0000',#}
+{#          fillOpacity: 0.15#}
+{#        }));#}
+{##}
+{##}
+{##}
+{#        polygons[polygons.length-1].setMap(map);#}
+
+
+map.addListener('click', function(e) {
+        placeMarker(e.latLng, map);
+});
+
+     var punt_lat = document.getElementById("punt_lat");
+     var punt_lng = document.getElementById("punt_lng");
+
+     if (marker_d == null)
+     {
+       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);
+       marker_d = new google.maps.Marker({
+          position: loqation,
+          map: map
+      }); } else {   marker_d.setPosition(loqation); }
+
+
+ }
+
+
+    function coord() {
+
+
+		$.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function(data) {
+
+            var Lat = data["Lat"];
+            var Lng = data["Lng"];
+{#            LatLng = Lat + "," + Lng#}
+            var location = new google.maps.LatLng(Lat, Lng);
+
+            map.setCenter(location);
+            map.setZoom(15);
+
+        });
+    }
+
+
+function placeMarker(location) {
+
+ var punt_lat = document.getElementById("punt_lat");
+ var punt_lng = document.getElementById("punt_lng");
+{# var geodiv = document.getElementById("geodiv");#}
+{# var geopuntx = document.getElementById("geo_punt")#}
+
+
+ if (marker_d == null)
+ {
+   marker_d = new google.maps.Marker({
+      position: location,
+      map: map
+  }); } else {   marker_d.setPosition(location); }
+
+
+ punt_lat.value = location.lat();
+ punt_lng.value = location.lng();
+{# geodiv.style.display = "block";#}
+{# lat = location.lat();#}
+{# lng = location.lng();#}
+{# geopuntx.value = "Lat:" + lat + "/Lng:" + lng#}
+}
+
+
+
+
+
+
+  </script>
+{% endblock %}
+
+
+{% block content %}
+
+  <script>
+
+  $( function() {
+    $( "#accordion" ).accordion();
+  } );
+
+  </script>
+
+
+<p style="background-color: #508a4c; color: white; font-family: 'Satisfy', cursive; font-size: xx-large"> &nbsp; {{ object.user.get_full_name }}</p>
+
+
+
+<div id="tabs">
+
+
+  <ul id="tabx" name="tabx" style="background-color: #389c41">
+    <li style="background-color: #389c41"><a href="#tabs-2">Punt de trobada</a></li>
+    <li style="background-color: #389c41"><a href="#tabs-1">Configuració</a></li>
+{#    <li style="background-color: #389c41"><a href="#tabs-3">Xarxa</a></li>#}
+  </ul>
+
+</br>
+
+
+{#<div style="display: block" class="ui-widget-content ui-corner-all">#}
+<form method="post" enctype="multipart/form-data" action="">{% csrf_token %}
+            <div id="tabs-1">
+
+                {% if object.avatar  %}
+                            <img src="{{ object.avatar.url }}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200"/>
+                        {% else %}
+                            <img src="{% static "images/pulpo.gif" %}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200">
+                {% endif %}
+            <br/><br/>
+                <span class="glyphicon glyphicon-picture"></span>
+            <label for="avatar">Nova foto de perfil: </label>
+                {% if object.avatar  %}
+                    <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
+                {% else %}
+                    <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "images/pulpo.gif" %}"/> </br>
+                {% endif %}
+
+          <label>Email: </label>  {{ form.email }} <br/>
+          <label>Nom d'usuari: </label>    {{ form.username }} <br/>
+          <label>Nom: </label>    {{ form.first_name }} <br/>
+          <label>Cognoms: </label>    {{ form.last_name }} <br/>
+
+        <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
+            </div>
+            <div id="tabs-2">
+        <span class="glyphicon glyphicon-flag"></span>
+        <label for="lloc_entrega_perfil">Lloc d'entrega:</label> </br>
+                        <select id="lloc_entrega_perfil" name="lloc_entrega_perfil" class="lloc_entrega_perfil form-control" onchange="coord()">
+                       {% for lloc in nodes %}
+                        {%  if lloc.pk == object.lloc_entrega_perfil.pk %}
+                                <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
+                            {% else %}
+                                <option value="{{ lloc.pk }}">{{ lloc.nom }} / {{ lloc.poblacio }} </option>
+                            {% endif %}
+
+                       {% endfor %}
+                   </select> </br>
+
+ <b>Horari:</b><div id="freq" name="freq">({{ object.lloc_entrega_perfil.get_frequencia.nom }})</div>
+<div id="accordion" name="accordion" style="font-family: 'Special Elite', cursive; font-size: medium; ">
+{#{% for i in object.lloc_entrega_perfil.dies_entrega.all  %}#}
+{#<a  href="{% url 'coope' %}"> {{ i.dia }} </a>#}
+{#<div style="">#}
+{##}
+{##}
+{##}
+{#                    <table class="table" border = 1>#}
+{#                    <tr>#}
+{#                        {% for f in i.franjes_horaries.all %}#}
+{#                            <td>#}
+{#                             {{ f.inici }} - {{ f.final }} <br/>#}
+{#                            </td>#}
+{#                        {% endfor %}#}
+{#                    </tr>#}
+{#                    <br/>#}
+{#                    </table>#}
+{#    </div>#}
+{#                {% endfor %}#}
+</div>
+
+{#<div class="form-group">#}
+                    {% if object.lloc_entrega_perfil.a_domicili == True %}
+
+{#                            <div class="form-group">#}
+                                {% if object.punt_lat %}
+                                    <div id="geodiv" style="float: right; position: relative" name="geodiv">
+
+                <div id="map"></div><br/>
+{#                                        <span class="glyphicon glyphicon-map-marker" style="float: right;" >#}
+
+    {#                                    <input type="text"  id="geo_punt" name="geo_punt" value="Lat:{{ object.punt_lat }}/Lng:{{ object.punt_lng }}" disabled/>#}
+                                    <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lat" name="punt_lat"
+                                                   value="{{ object.punt_lat }}"  placeholder="clica en el mapa" />
+
+
+
+                                      <input type="text" style="max-width: 185px; float: right; position: relative" id="punt_lng" name="punt_lng"  value="{{ object.punt_lng }}" class="form-control" placeholder="(opcional)" />
+{#                                            </span>#}
+                                    </div>
+                                {% else %}
+                                    <div id="geodiv" style="float: right; position: relative " name="geodiv">
+
+                <div id="map"></div><br/>
+                                        <span class="glyphicon glyphicon-map-marker" style="float:right;">
+
+    {#                                    <input type="text"  id="geo_punt" name="geo_punt" value="Lat:{{ object.punt_lat }}/Lng:{{ object.punt_lng }}" disabled/>#}
+                                       <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />
+
+
+                                     <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lng" name="punt_lng"  placeholder="(opcional)" /></span>
+                                    </div>
+                                {% endif %}
+{#                            </div> #}
+                                <br/><br/><br/><br/>
+                                <div >
+                                <label style="float: left" for="carrer">Carrer: </label>
+                                <input type="text" class="form-control" id="carrer" name="carrer" style="padding-right: 1px; max-width: 300px" value="{{ object.carrer }}"/></div>
+                                <div class="form-group">
+                                <label style="float: left" for="numero">Número:</label>
+                                <input type="text" class="form-control"  id="numero" name="numero" style="max-width: 300px; padding-right: 1px" value="{{ object.numero }}"/></div>
+                                <div class="form-group">
+                                <label style="float: left" for="pis">Pis:</label>
+                                <input type="text" class="form-control" style="max-width: 300px"  id="pis" name="pis" value="{{ object.pis }}" /></div>
+                                <div class="form-group">
+                                <label style="float: left" for="poblacio">Població:</label>
+                                <input id="poblacio" class="form-control" style="max-width: 300px"  name="poblacio" value="{{ object.poblacio }}"  readonly/></div>
+
+                    {% else %}
+
+
+                                <div id="geodiv" name="geodiv" position="relative" style="float: right; ">
+
+                <div id="map"></div><br/>
+
+
+                                    <span class="glyphicon glyphicon-map-marker" style="float:right;">
+                                    
+                                <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>
+
+                                <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>
+                                    </span>
+                                </div><br/><br/><br/><br/><br/>
+                                                        <div>
+                                <label style="float: left" for="carrer">Carrer: </label>
+                                <input type="text"  id="carrer" style="max-width: 300px" class="form-control"  name="carrer" value="{{ object.lloc_entrega_perfil.carrer }}" readonly/></div>
+                                <div class="form-group">
+                                <label style="float: left" for="numero">Número:</label>
+                                <input type="text"  id="numero" style="max-width: 300px" class="form-control" name="numero" value="{{ object.lloc_entrega_perfil.numero }}" readonly/></div>
+                                <div class="form-group">
+                                <label style="float: left" for="pis">Pis:</label>
+                                <input type="text"  id="pis" style="max-width: 300px" class="form-control" name="pis" value="{{ object.lloc_entrega_perfil.pis }}" readonly/></div>
+                                <div class="form-group">
+                                <label style="float: left" for="poblacio">Població:</label>
+                                <input id="poblacio"  name="poblacio" style="max-width: 300px" class="form-control" value="{{ object.lloc_entrega_perfil.poblacio }}" readonly/></div>
+                    {% endif %}
+
+
+ <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button> <br/><br/><br/>
+{#</div>#}
+
+{#</div>#}
+
+
+
+</div>
+</form>
+{#</div>#}
+
+{#<div  id="tabs-2">#}
+{##}
+{#        {% if contractes %}#}
+{#<h3>Comandes Periòdiques:#}
+{#              <a class="glyphicon glyphicon-zoom-in" href="{% url 'comandes'  %}" title="Gestionar comandes">              </a></h3>#}
+{##}
+{#        <table class="table table-striped">#}
+{#        <thead>#}
+{#                <tr>#}
+{#                    <th>Producte</th>#}
+{#                    <th>Cantitat</th>#}
+{#                    <th>Format</th>#}
+{#                    <th>Preu</th>#}
+{#                    <th>Dia</th>#}
+{#                    <th>Prox entrega</th>#}
+{#                    <th>Franja Horària</th>#}
+{#                    <th>Lloc d'entrega</th>#}
+{#                    <th>Freqüència</th>#}
+{##}
+{#                </tr>#}
+{#            </thead>#}
+{##}
+{##}
+{#                {% for contracte in contractes %}#}
+{#                        <div class="col-md-4 col-xs-12" >#}
+{#                            <div class="thumbnail" >#}
+{#                              <div class="caption">#}
+{#                              <table>#}
+{##}
+{##}
+{##}
+{#             <tr>#}
+{##}
+    {#        <form method="post" action="{% url '' %}" class="vote_form">#}
+{#                <td>                {% if contracte.producte.adjunt %}#}
+{#                    <a href="{{ MEDIA_URL }}{{ contracte.producte.adjunt.url }}" style="float: right">#}
+{#                    <img id="img_producte" name="img_producte" class="img-responsive" src="{{ contracte.producte.adjunt.url }}" style="float: right; width: auto; height: auto;  max-width: 300px; max-height: 400px"  ></a>#}
+{#                  {% endif %}#}
+{#                    <label for="x_prod" style="font-size: medium; font-weight: 500">Producte: </label> <b id="x_prod" name="x_prod"> {{ contracte.producte }} </b> <br/>#}
+{##}
+{#                <label for="x_freq" style="font-size: medium; font-weight: 500"> Freqüència: </label> <b id="x_freq" name="x_freq"> {{contracte.freq_txt}}</b><br/>#}
+{##}
+{#                <label for="x_cant" style="font-size: medium; font-weight: 500"> Cantitat: </label> <b id="x_cant" name="x_cant"> {{ contracte.cantitat }}</b><br/>#}
+{#                <label for="x_form" style="font-size: medium; font-weight: 500"> Format: </label> <b id="x_form" name="x_form"> {{ contracte.format.nom }}</b><br/>#}
+{#                <label for="x_preu" style="font-size: medium; font-weight: 500"> Preu: </label> <b id="x_preu" name="x_preu"> {{ contracte.preu }} €</b><br/>#}
+{#                <label for="x_entr" style="font-size: medium; font-weight: 500"> Dia: </label><b id="x_entr" name="x_entr">{{ contracte.data_entrega_txt }}</b><br/>#}
+{#                    {% if not contracte.prox_no == True %}#}
+{#                        <a href="{% url 'aquesta_no' contracte.pk %}"><span class="glyphicon glyphicon-refresh" title="Aquesta entrega NO, passeu a la seguent"></span></a>#}
+{#                    {% endif %}#}
+{#                <label for="x_prox" style="font-size: medium; font-weight: 500"> Prox: </label> <b id="x_prox" name="x_prox"> {{ contracte.prox_entrega.date }} </b><br/>#}
+{##}
+{#                <label for="x_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="x_hora" name="x_hora"> {{ contracte.franja_horaria }} </b><br/>#}
+{#                <form method="post" class="get_map">{% csrf_token %}#}
+{#                    <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>#}
+{#                    <input type="hidden" id="nodemap_lat" name="nodemap_lat" value="{{ contracte.lloc_entrega.position.latitude }}"> {{ contracte.lloc_entrega.nom }}#}
+{#                    <input type="hidden" id="nodemap_lng" name="nodemap_lng" value="{{ contracte.lloc_entrega.position.longitude }}">#}
+{#                    <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' contracte.lloc_entrega.pk %}">{{ contracte.lloc_entrega.nom  }} <span class="glyphicon glyphicon-map-marker" ></span> </a> <br/>#}
+{#                </form>#}
+{##}
+{##}
+{##}
+{#                    {% if not contracte.data_fi %}#}
+{##}
+{##}
+{#                    <form method="post"  class="comanda_form">{% csrf_token %}#}
+{#                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ contracte.producte.pk }}" />#}
+{#                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ contracte.producte.nom }}" />#}
+{#                        <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />#}
+{#                        <input type="hidden" id="lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ contracte.lloc_entrega.pk }}" />#}
+{#                        <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}"/>#}
+{#                        <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ contracte.producte.tipusproducte.preu }}" />#}
+{#                        <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 29px"/>#}
+{#                        <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ contracte.format.pk }}"/>#}
+{##}
+{##}
+{#                        <button id="xb_lloc" name="xb_lloc" onclick="get_map()"></button>#}
+{#                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>#}
+{#                       <a type="button" class="glyphicon glyphicon-trash" href="{% url 'contracteDelete' contracte.pk  %}"#}
+{#                       title="Borrar comanda"#}
+{#                       onclick="return confirm('Segur que vols borrar aquesta comanda?')">#}
+{#                            </a>#}
+{#                     </form>#}
+{##}
+{#                </td>#}
+{#                  <td>#}
+{##}
+{#                  </td>#}
+{##}
+{##}
+{#            </tr>#}
+{#            </table>#}
+{#                    </div>#}
+{#                    </div>#}
+{#                    </div>#}
+{##}
+{#        {%  endfor %}#}
+{##}
+{##}
+{##}
+{#{% endif %}#}
+{#</br>#}
+{#{% if comandes %}#}
+{##}
+{#    <h3>Comandes:<a class="glyphicon glyphicon-zoom-in" href="{% url 'comandes'  %}" title="Gestionar comandes">#}
+{#                            </a></h3>#}
+{##}
+{##}
+{#        <table class="table table-striped">#}
+{#        <thead>#}
+{#                <tr>#}
+{#                    <th>Producte</th>#}
+{#                    <th>Cantitat</th>#}
+{#                    <th>Format</th>#}
+{#                    <th>Preu</th>#}
+{#                    <th>Cancelat</th>#}
+{##}
+{#                    <th>Entregat</th>#}
+{#                    <th>Data d'entrega</th>#}
+{#                    <th>Franja Horària</th>#}
+{#                    <th>Lloc d'entrega</th>#}
+{#                    <th>Data Comanda</th>#}
+{#                </tr>#}
+{#            </thead>#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#        {% for comanda in comandes %}#}
+{#            <div class="col-md-4 col-xs-12" >#}
+{#            <div class="thumbnail" >#}
+{#              <div class="caption">#}
+{#              <table>#}
+{#             <tr>#}
+{##}
+    {#        <form method="post" action="{% url '' %}" class="vote_form">#}
+{#                <td>                  {% if comanda.producte.adjunt %}#}
+{#                    <a href="{{ MEDIA_URL }}{{ comanda.producte.adjunt.url }}" style="float: right" >#}
+{#                    <img id="img_producte" name="img_producte" class="img-responsive" src="{{ comanda.producte.adjunt.url }}" style="float: right; width: auto; height:auto; max-width: 300px; max-height: 400px"  ></a>#}
+{#                  {% endif %}#}
+{#                    <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><b id="l_prod" name="l_prod">{{ comanda.producte }}</b><br/>#}
+{##}
+{##}
+{##}
+{#                <label for="l_cant" style="font-size: medium; font-weight: 500"> Cant:  </label><b id="l_cant" name="l_cant">{{ comanda.cantitat }}</b><br/>#}
+{#                <label for="l_form" style="font-size: medium; font-weight: 500"> Format:</label> <b id="l_form" name="l_form">{{ comanda.format.nom }}</b><br/>#}
+{#                <label for="l_preu" style="font-size: medium; font-weight: 500"> Preu: </label> <b id="l_preu" name="l_preu">{{ comanda.preu }}€</b> <br/>#}
+{#                <label for="l_entr" style="font-size: medium; font-weight: 500"> Entrega: </label> <b id="l_entr" name="l_entr">{{ comanda.data_entrega.date }}</b><br/>#}
+{##}
+{#                <label for="l_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="l_hora" name="l_hora">  {{ comanda.franja_horaria }}</b><br/>#}
+{#                <label for="l_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label> <b id="l_lloc" name="l_lloc">{{ comanda.lloc_entrega.nom }}</b><br/>#}
+{#                <label for="l_com" style="font-size: medium; font-weight: 500"> Comanda: </label> <b id="l_com" name="l_com">{{ comanda.data_comanda.date }}</b><br/>#}
+{#                <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>#}
+{#                    <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' comanda.lloc_entrega.pk %}">{{ comanda.lloc_entrega.nom  }} <span class="glyphicon glyphicon-map-marker" ></span> </a>#}
+{##}
+{#                    <form method="post"  class="comanda_form">{% csrf_token %}#}
+{#                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ comanda.producte.pk }}" />#}
+{#                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ comanda.producte.nom }}" />#}
+{#                        <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />#}
+{#                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}" />#}
+{#                        <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}"/>#}
+{#                        <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ comanda.producte.tipusproducte.preu }}" />#}
+{#                        <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 29px"/>#}
+{#                        <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ comanda.format.pk }}"/>#}
+{#                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>#}
+{##}
+{#                    {% if not comanda.entregat %}#}
+{#                        <a class="glyphicon glyphicon-trash" type="button" href="{% url 'comandaDelete' comanda.pk  %}"#}
+{#                           title="Borrar comanda"#}
+{#                           onclick="return confirm('Segur que vols borrar la comanda?')">#}
+{#                                </a>#}
+{#                    {% endif %}#}
+{##}
+{#                     </form>#}
+{##}
+{##}
+{#                </td>#}
+{#                <td>#}
+{##}
+{##}
+{##}
+{#             </td>#}
+    {#        </form>#}
+{#            </tr>#}
+{#            </table>#}
+{#            </div>#}
+{#            </div>#}
+{#    </div>#}
+{##}
+{#        {%  endfor %}#}
+{##}
+{#        {% endif %}#}
+{#        {% if not comandes %}#}
+{#            {% if not contractes %}#}
+{#                No hi ha comandes encara#}
+{#                </br></br>#}
+{#                <a  href="{% url 'coope' %}" title='Veure tots els productes'> Anar a la botiga#}
+{#                <span class='glyphicon glyphicon-home collapsed-element'></span>#}
+{##}
+{#              </a>#}
+{#            {% endif %}#}
+{##}
+{#        {% endif %}#}
+{##}
+{##}
+{#    </div>#}
+
+
+
+
+{#<div id="tabs-3">#}
+{#<div style="display: block" class="ui-widget-content ui-corner-all">#}
+{#    <div class="table-responsive">#}
+{#        <table class="table table-stripped">#}
+{#            <thead>#}
+{#            <tr>#}
+{#    <td>#}
+{#            <th>Emails convidats per tu</th>#}
+{#        </td>#}
+{#            </tr>#}
+{#            </thead>#}
+{#            <tbody>#}
+{#            {% for i in object.convidats.all %}#}
+{#                <tr><td>{{ i.mail }}</td></tr>#}
+{#            {%  endfor  %}#}
+{#            <tr><td><a type="button" href="{% url 'convidar' %}"><span class='glyphicon glyphicon-globe'></span>Convidar a la xarxa</a></td></tr>#}
+{#            </tbody>#}
+{#        </table>#}
+{##}
+{#    </div>#}
+{##}
+{#</div>#}
+{##}
+{##}
+{##}
+{##}
+</div>
+{#    </div>#}
+{#            <div class="thumbnail" >#}
+{#            <a  href="{% url 'coope'  %}"> Tornar a la botiga</a>#}
+{#        </div>#}
+{##}
+{#            <div class="thumbnail" >#}
+{#            <a  href="{% url 'entregas'  %} "> Veure les entregues</a>#}
+{#        </div>#}
+
+
+
+{% endblock %}

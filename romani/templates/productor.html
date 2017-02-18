@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% csrf_token %}
+{% block content %}
+
+    <div id="recurs_wraper" style="display: inline-block; margin:0px; width: 100%" >
+
+        <div id="div_recurs"  style=" ">
+            <div  class="thumbnail">
+            <h2>{{ productor.nom }} </h2>
+
+            <a href="{% url 'messages_compose_to' productor.responsable %}" title="Enviar missatge al productor">
+                 Enviar missatge al productor <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828"></span>
+                </a>
+            <br />
+            {{ productor.descripcio }}<br />
+            {{ productor.cuerpo }}<br />
+            {% if productor.adjunt %}
+                <br />
+
+
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                    <li data-target="#myCarousel" data-slide-to="3"></li>
+                    <li data-target="#myCarousel" data-slide-to="4"></li>
+                    <li data-target="#myCarousel" data-slide-to="5"></li>
+                </ol>
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner" role="listbox">
+                    {% for p in productor.adjunt.all %}
+                            {% if forloop.counter == 1 %}
+                                <div class="item active">
+                            {% else %}
+                                <div class="item">
+                            {% endif %}
+                            <img src="{{ p.arxiu.url }}"  style="margin-left:auto;
+                                margin-right:auto; max-width: 460px; max-height: 345px;">
+                                </div>
+                    {% endfor %}
+                </div>
+<!-- Left and right controls -->
+                <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+                </div>
+            {% endif %}
+        </div>
+        </div>
+    </div>
+
+
+
+
+
+      {% for producte in productes %}
+      <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <div class="thumbnail" >
+          <div class="caption">
+                  {% if producte.adjunt %}
+                    <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
+                        <div class="g-item" style="background-image:url('{{ producte.adjunt.url }}'); "></div>
+{#                        <img src="{{ producte.adjunt.url }}" style="float: right; width: auto; height:auto; max-width: 200px; max-height: 300px"  >#}
+                    </a>
+                  {% endif %}
+          <div class="prodxx" style="    font-family: 'Satisfy';font-size: 1.1em;
+                    color: #baae30; background-color:#FFFFFF; display: inline-block;" >
+                <h3><a href="{% url 'producte'  producte.pk  %}" title="Visualitzar en detall el producte"> {{ producte.nom }}
+{#                <span class="glyphicon glyphicon-info-sign" style="float: bottom"></span>#}
+                </a></h3></div><br/><br/><br/>
+          <div class="xxent" style="background-color:#FFFFFF; display: block;">
+                <p id="entradilla" name="entradilla">{{ producte.entradilla }}</p>
+            </div>
+          <form style="width:100%; display: inline-block; position: relative">
+<button class="glyphicon glyphicon-duplicate" id="id_carro"  style="visibility: hidden" title="Copiar comanda"></button>
+{#<button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>#}
+        </form>
+          </div>
+        </div>
+      </div>
+     {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% csrf_token %}
+{% block content %}
+<h2>Inicia sessió</h2>
+</br>
+{% if form.errors %}
+<p>El teu nom d'usuari i contrasenya no lliguen. Si us plau torna-ho a intentar.</p>
+{% endif %}
+
+<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <td> <p><b>Email o Nom d'usuari: &nbsp; </b></p>
+{#          {{ form.username.label_tag }}#}
+      </td>
+      <td>{{ form.username }}</td>
+    </tr>
+    <tr>
+      <td>{{ form.password.label_tag }}</td>
+      <td>{{ form.password }}</td>
+    </tr>
+  </table>
+  </br>
+  <input type="submit" value="Entrar" />
+  <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+{% endblock %}

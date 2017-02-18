@@ -1,0 +1,159 @@
+{% load notifications_tags %}
+{% load inbox %}
+{% load static %}
+
+{% if user.is_authenticated %}
+    <script type="text/javascript" >
+        $(document).ready(function()
+        {
+            $("#notificationLink").click(function() {
+                $("#notificationContainer").toggle();
+                $("#notification_count").fadeOut("slow");
+                return false;
+            });
+
+
+            //Document Click
+            $(document).click(function() {
+                $("#notificationContainer").hide();
+            });/*
+            //Popup Click
+            $("#notificationContainer").click(function() {
+                return false
+            });
+            */
+
+
+
+
+        });
+    </script>
+<div style="float: left">
+{#        <span id="span_imageprofile" name="span_imageprofile">#}
+{##} <a href="{% url 'edit_profile' %}" title="Perfil d'usuari">
+        {% if user.userprofile.avatar  %}
+            <img class="img-circle" src="{{ user.userprofile.avatar.url }}">
+{#            <img src="{{ object.userprofile.avatar.url }}" id="avatar" name="avatar" alt="avatar" height="120" width="120"/>#}
+        {% else %}
+            <img class="img-circle" src="{% static "img/fusta.jpg" %}">
+{#            <img src="{% static "images/pulpo.gif" %}" id="avatar" name="avatar" alt="avatar" height="120" width="120">#}
+        {% endif %}
+{##}
+    </a>
+{#        </span>#}
+</div>
+    &nbsp; &nbsp;
+<div style="float: right">
+         <a href="{% url 'edit_profile' %}" title="Perfil d'usuari"><span class='glyphicon glyphicon-user'></span> &nbsp;{{ user.username }}</a>
+         <a href="{% url 'logout' %}" title="Tancar sessio"><span class="glyphicon glyphicon-log-out"></span></a><br />
+        {% inbox_count as unread_mes_count %}
+        {% if unread_mes_count > 0 %}
+            <span id="unread_mes_count">{{ unread_mes_count }}</span>
+        {% endif %}
+         <a href="{% url 'messages_inbox' %}" title="Missatgeria">
+             <span class="glyphicon glyphicon-envelope"></span>
+        </a>
+
+        &nbsp;&nbsp;
+
+        {% notifications_unread as unread_count %}
+
+
+        <span id="notification_count">
+{#            <label id="id_notifnum">#}
+                {{ unread_count }}
+{#            </label>#}
+        </span>
+        <a href="#" id="notificationLink" title="Notificacions"> <span class="glyphicon glyphicon-inbox"></span></a>
+        <div id="notificationContainer">
+            <div id="notificationTitle">
+                Notificacions
+
+
+{#                <form method="post" href="{% url 'notifications:mark_all_as_read' %}" >{% csrf_token %}#}
+{##}
+{#                    <input type='hidden' name='next' value='coope' />#}
+
+{#                    <input method="post" type="hidden" id="next" name="next" class="next"  value="coope" />#}
+{##}
+{#                    <input type="button"  style="float: right" >Marcar com a llegides</input>#}
+{#                </form>#}
+
+                <a href="/inbox/notifications/mark-all-as-read/?next=/coope/" style="float: right" >Marcar com a llegides</a>
+            </div>
+            <div id="notificationsBody" class="notifications  table table-hover">
+                {% for notif in notifications_user %}
+                     <div class="div_notifications" >
+                     <table class="table table-hover">
+                        {% if notif.unread %}
+                            <tr class="active">
+                        {% else %}
+                            <tr>
+                        {% endif %}
+                          <td>
+                            <div class="div_notification_image inline">
+
+                                    {% if notif.actor.adjunt %}
+                                        <a href="{% url 'producte' notif.actor.pk %}">
+                                        <img src="{{ notif.actor.adjunt.url }}" alt="avatar" height="42" width="42">
+                                    {% elif notif.actor.avatar %}
+                                        <a href="{% url 'edit_profile' %}">
+                                        <img src="{{ notif.actor.avatar.url }}" alt="avatar" height="42" width="42">
+                                    {% else %}
+                                        <img src="{% static "img/fusta.jpg" %}" alt="avatar" height="42" width="42">
+                                    {% endif %}
+                                </a>
+                            </div>
+                          </td>
+                          <td>
+{#                            <input type="button" title="Marca com llegit" class="btn btn-default btn-es  pull-right" value="X" />#}
+                                    {% if notif.actor.adjunt %}
+                                            <a href="{% url 'comandes' %}">
+                                    {% else %}
+                                        {% if notif.actor.avatar %}
+                                            <a href="{% url 'edit_profile' %}">
+                                        {% else %}
+                                            <a href="{% url 'comandes' %}">
+                                        {% endif %}
+                                    {% endif %}
+
+                                <div class="div_notification_text inline">
+                                 {{ notif.verb }}
+{#                                    {{ notif.action_object_content_type }} de &nbsp;#}
+                                    {{ notif.actor }}
+{#                                    (pk: {{ notif.actor_object_id  }})#}
+
+{#                                    el: {{ notif.action_object_content_type }}#}
+{#                                    (pk:{{ notif.action_object_object_id }})#}
+                                    {{ notif.description|slice:":40" }}
+                                    </br>Hace {{ notif.timesince }}
+
+
+
+                                </div>
+                            </a>
+
+                          </td>
+                        </tr>
+                     </table>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+
+{#            <div id="notificationFooter">#}
+{#                <a href="{% url 'comandes' %}"> Veure totes</a>#}
+{#            </div>#}
+        </div>
+</div>
+
+
+{% else %}
+    <a href="{% url 'login' %}" title="login"><span class="glyphicon glyphicon-log-in"></span></a>
+
+{# /   <a href="{% url 'registration_register' %}">Registrar</a>#}
+{% endif %}
+
+

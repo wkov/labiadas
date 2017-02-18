@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+{% block headers %}
+
+    <script src="{% static 'js/comanda.js' %}"></script>
+{% endblock %}
+{% block modals %}
+    {% include "comanda_modal.html" %}
+{% endblock %}
+{% block content %}
+    <form action="/busk/" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control"  name="searchString" width="40px" />
+                          <span class="input-group-btn">
+                              <button type="submit" class="btn btn-default">Cercar</button>
+                          </span>
+                        </div>
+    </form>
+    <br>
+    <div style="margin: 0 auto; text-align:center;">
+{#    <table class="table">#}
+{#    <tr>#}
+                    {% for etq in etiquetes %}
+{#                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">#}
+{#                        <td>#}
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'etiqueta' etq.pk %} " class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="{{ etq.nom }}" >
+                                    <span  style="background-image: url({{ etq.img.url }}); margin-left: 5px; margin-top: 5px; width:32px; height:32px;  position: absolute">
+                                    </span>
+                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                    <b id="pato" name="pato" class="pato"> {{ etq.nom }}</b>
+                                 </a>
+                        </div>
+{#                        </td>#}
+{#                        </div>#}
+                    {% endfor %}
+{#    </tr>#}
+{#    </table>#}
+    </div>
+    {% for producte in posts %}
+      <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
+        <div class="thumbnail" >
+          <div class="caption">
+                 {% if producte.adjunt %}
+                    <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
+                    <div class="g-item" style="background-image:url('{{ producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
+                        </div>
+                    </a>
+                  {% endif %}
+                <div class="prodxx" style="    font-family: 'Satisfy';
+    font-size: 1.8em;
+    color: #baae30; background-color:#FFFFFF; display: inline-block" >
+                <p><a href="{% url 'producte'  producte.pk  %}" title="Visualitzar en detall el producte" > {{ producte.nom }}
+                </a></p></div></br></br>
+                    <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
+                <p>Autor: &nbsp;
+                <a href="{% url 'productor'  producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                        {{ producte.productor.nom }}</a>
+                  <a href="{% url 'messages_compose_to' producte.productor.responsable %}" title="Enviar missatge al productor">
+                 <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+                </div>
+                <br/><br/>
+                <div class="xxent" style="background-color:#FFFFFF; width: 40%; display: block">
+                <p id="entradilla" name="entradilla" >{{ producte.entradilla }}</p>
+                </div>
+                 <br />
+                 <form method="post"  class="comanda_form">{% csrf_token %}
+                         <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ producte.pk }}" />
+                         <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ producte.nom }}" />
+                         <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
+                         <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega.pk }}" />
+                         <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id"/>
+                         <input type="hidden" id="id_preu" name="preu" class="hidden_id" />
+
+
+                        <div style="width:100%; display: inline-block">
+                             Cant:
+                             <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 37px"/>
+                             de <br/>
+                             <select id="id_format" name="format" class="hidden_id" style="width: 100% float:right" >
+
+                                 {% for tipusproducte in producte.formats.all %}
+                                    {% if tipusproducte.stock > 0 %}
+                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.nom }}{{ tipusproducte.preu }}€</option>
+                                    {% endif %}
+                                 {% endfor %}
+                            </select>
+                            {% if not user.is_authenticated %}
+                                 <button class="glyphicon glyphicon-shopping-cart" id="id_carro" style=" ">
+                                </button>
+                            {% else %}
+                                 <button class="glyphicon glyphicon-shopping-cart" id="id_carro" style=" ">
+                                 </button>
+                            {% endif %}
+                        </div>
+                 </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+{% endblock %}
