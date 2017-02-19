@@ -176,21 +176,6 @@ def productorView(request,pk):
     productes = Producte.objects.filter(productor=productor)
     return render(request, "productor.html",{'productor': productor, 'productes': productes})
 
-def aquestaNoView(request, pk):
-
-    contracte = Contracte.objects.get(pk=pk)
-    contracte.prox_no = True
-    contracte.save()
-
-    now = datetime.datetime.now()
-    comandes = Comanda.objects.filter(client=request.user).filter(Q(data_entrega__gte=now)|Q(data_entrega__isnull=True)).order_by('-data_comanda')
-    contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
-
-    nodes = Node.objects.all()
-    user_p = UserProfile.objects.filter(user=request.user).first()
-
-    return render(request, "comandes.html",{'comandes': comandes,'contractes':contractes, 'nodes': nodes, 'up': user_p})
-
 def comandesView(request):
 
     now = datetime.datetime.now()
@@ -706,7 +691,8 @@ def AllCoordenadesView(request):
                 Lat = str(node.position.latitude),
                 Lng = str(node.position.longitude),
                 nom = node.nom,
-                a_domicili = str(node.a_domicili))
+                a_domicili = str(node.a_domicili),
+                text = node.text)
                 json_res.append(json_obj)
 
         return HttpResponse(json.dumps(json_res), content_type='application/json')
@@ -918,6 +904,9 @@ class UserProfileEditView(UpdateView):
         contractes = Contracte.objects.filter(client=self.request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
         context['comandes'] = comandes
         context['contractes']  = contractes
+        u = UserProfile.objects.get(user=self.request.user)
+        s = u.lloc_entrega_perfil.get_frequencia()
+        context['frequencia'] = s.nom
         return context
 
     # def form_valid(self, form):

@@ -10,15 +10,6 @@ from django.utils import timezone
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 
-#per a loguejarse amb el email
-class EmailModelBackend(ModelBackend):
-    def authenticate(self, username=None, password=None):
-        try:
-            user = User.objects.get(email__iexact=username)
-            if user.check_password(password):
-                return user
-        except User.DoesNotExist:
-            return None
 
 class Adjunt(models.Model):
 
@@ -53,16 +44,10 @@ class FranjaHoraria(models.Model):
     def __str__(self):
         return "%s-%s" % (self.inici, self.final)
 
-# from django.utils.dateformat import format
-
-
 class DiaEntrega(models.Model):
 
-    # dia = models.CharField(max_length=10)
-    # dia_num = models.IntegerField()
     franjes_horaries = models.ManyToManyField(FranjaHoraria,  related_name="dia")
     date = models.DateTimeField()
-
 
     def __str__(self):
         return " %s %s" % (self.node.all(), self.date)
@@ -180,45 +165,6 @@ class Producte(models.Model):
         return self.nom
 
 
-class Comanda(models.Model):
-
-    producte = models.ForeignKey(Producte)
-    format = models.ForeignKey(TipusProducte)
-    cantitat = models.PositiveIntegerField(blank=False)
-    data_comanda = models.DateTimeField(auto_now_add=True)
-    client = models.ForeignKey(User)
-    data_entrega = models.DateTimeField(null=True, blank=True)
-    data_entrega_txt = models.CharField(max_length=10)
-    franja_horaria = models.ForeignKey(FranjaHoraria)
-    lloc_entrega = models.ForeignKey(Node)
-    entregat = models.BooleanField(blank=True)
-    cancelat = models.BooleanField(blank=True)
-    preu = models.FloatField(default=0.0)
-
-    def __str__(self):
-        return self.producte.nom
-
-    def get_absolute_url(self):
-        return reverse('comandes')
-
-
-class Convidat(models.Model):
-
-    mail = models.EmailField()
-
-    def __str__(self):
-        return self.mail
-
-
-
-class Key(models.Model):
-    key = models.CharField(max_length=6)
-    usuari = models.ForeignKey(User)
-    nou_usuari = models.ForeignKey(User, related_name='key_nou_usuari', null=True, blank=True)
-
-    def __str__(self):
-        return "%s %s" % (self.key, self.usuari.username)
-
 class Contracte(models.Model):
 
 
@@ -252,65 +198,116 @@ class Contracte(models.Model):
     def get_absolute_url(self):
         return reverse('comandes')
 
-    # Calculem segons la frequencia la data de la proxima entrega
-    def prox_entrega(self):
-        d = self.primera_entrega
-        if d < timezone.now():
-            d = self.next_weekday(self.primera_entrega, int(self.data_entrega))
-            if self.frequencia == 2:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
+    # # Calculem segons la frequencia la data de la proxima entrega
+    # def prox_entrega(self):
+    #     d = self.primera_entrega
+    #     if d < timezone.now():
+    #         d = self.next_weekday(self.primera_entrega, int(self.data_entrega))
+    #         if self.frequencia == 2:
+    #             while d < timezone.now():
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #
+    #             if self.prox_no == True:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #
+    #         if self.frequencia == 3:
+    #             while d < timezone.now():
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #             if self.prox_no == True:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #
+    #         if self.frequencia == 4:
+    #             while d < timezone.now():
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #             if self.prox_no == True:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #
+    #         if self.frequencia == 5:
+    #             while d < timezone.now():
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #             if self.prox_no == True:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #     else:
+    #         if self.prox_no == True:
+    #             if self.frequencia == 2:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #             if self.frequencia == 3:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #             if self.frequencia == 4:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #             if self.frequencia == 5:
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #                 d = self.next_weekday(d, int(self.data_entrega))
+    #     return d
 
-                if self.prox_no == True:
-                    d = self.next_weekday(d, int(self.data_entrega))
 
-            if self.frequencia == 3:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                if self.prox_no == True:
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
 
-            if self.frequencia == 4:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                if self.prox_no == True:
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
+class Comanda(models.Model):
 
-            if self.frequencia == 5:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                if self.prox_no == True:
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-        else:
-            if self.prox_no == True:
-                if self.frequencia == 2:
-                    d = self.next_weekday(d, int(self.data_entrega))
-                if self.frequencia == 3:
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                if self.frequencia == 4:
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                if self.frequencia == 5:
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-        return d
+    producte = models.ForeignKey(Producte)
+    format = models.ForeignKey(TipusProducte)
+    cantitat = models.PositiveIntegerField(blank=False)
+    data_comanda = models.DateTimeField(auto_now_add=True)
+    client = models.ForeignKey(User)
+    data_entrega = models.DateTimeField(null=True, blank=True)
+    data_entrega_txt = models.CharField(max_length=10)
+    franja_horaria = models.ForeignKey(FranjaHoraria)
+    lloc_entrega = models.ForeignKey(Node)
+    entregat = models.BooleanField(blank=True)
+    cancelat = models.BooleanField(blank=True)
+    preu = models.FloatField(default=0.0)
 
+    def __str__(self):
+        return self.producte.nom
+
+    def get_absolute_url(self):
+        return reverse('comandes')
+
+
+#per a loguejarse amb el email
+class EmailModelBackend(ModelBackend):
+    def authenticate(self, username=None, password=None):
+        try:
+            user = User.objects.get(email__iexact=username)
+            if user.check_password(password):
+                return user
+        except User.DoesNotExist:
+            return None
+
+
+
+class Convidat(models.Model):
+
+    mail = models.EmailField()
+
+    def __str__(self):
+        return self.mail
+
+
+class Key(models.Model):
+    key = models.CharField(max_length=6)
+    usuari = models.ForeignKey(User)
+    nou_usuari = models.ForeignKey(User, related_name='key_nou_usuari', null=True, blank=True)
+
+    def __str__(self):
+        return "%s %s" % (self.key, self.usuari.username)
 
 
 class UserProfile(models.Model):
@@ -348,10 +345,12 @@ from django.core.mail import send_mail
 
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        # node = Node.objects.get(pk=1)
+        node = Node.objects.get(pk=1)
+        # u_key = Key.objects.get(nou_usuari=instance)
+        # u = UserProfile.objects.get(user=u_key.usuari)
         text = "El registre s'ha completat amb èxit. Benvingut a la xarxa de productes de proximitat.  http://127.0.0.1:8000/coope   Gràcies!"
         send_mail("Benvingut a la xarxa d'autogestio", text, 'RUSC@example.com', [instance.email] ,fail_silently=True )
-        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="" )
+        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", lloc_entrega_perfil=node, numero="", poblacio="", pis="" )
 
 
 

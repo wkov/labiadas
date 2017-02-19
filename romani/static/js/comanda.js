@@ -208,6 +208,77 @@ jQuery(document).ready(function($)
 				})
 	});
 
+	    $(".register_user_form").submit(function(e){
+        e.preventDefault();
+        $.post("/nodesave/", $(this).serializeArray(), function(data) {
+        });
+    });
+
+	    $(".lloc_entrega_reg").change(function(e){
+
+        var carrer = document.getElementById('carrerx');
+        var numero = document.getElementById('numerox');
+        var pis = document.getElementById('pisx');
+        var poblacio = document.getElementById('poblaciox');
+        var punt_lat = document.getElementById('punt_latx');
+        var punt_lng = document.getElementById('punt_lngx');
+        var freq = document.getElementById('freq');
+        $.post("/domicili/", $(this).serializeArray(),
+            function (data) {
+                if ( data["a_domicili"] == true){
+                    carrer.readOnly = false;
+                    numero.readOnly = false;
+                    pis.readOnly = false;
+                    poblacio.readOnly = true;
+                    punt_lat.readOnly = false;
+                    punt_lng.readOnly = false;
+                    poblacio.value = data["poblacio"];
+                    carrer.value = "";
+                    numero.value = "";
+                    pis.value = "";
+                    punt_lat.value = "";
+                    punt_lng.value = "";
+                }else{
+                    carrer.value = data["carrer"];
+                    numero.value = data["numero"];
+                    pis.value = data["pis"];
+                    poblacio.value = data["poblacio"];
+                    lat = data["geopuntx_lat"];
+                    lng = data["geopuntx_lng"];
+                    punt_lat.value = lat;
+                    punt_lng.value = lng;
+                    carrer.readOnly = true;
+                    numero.readOnly = true;
+                    pis.readOnly = true;
+                    poblacio.readOnly = true;
+                    punt_lat.readOnly = true;
+                    punt_lng.readOnly = true;
+                }
+                freq.innerHTML = "(" + data["frequencia"] + ")";
+            });
+        var acc = document.getElementById('accordionx');
+        $.post("/horari/", $(this).serializeArray(),
+                function (data) {
+                    var j;
+                    var h;
+                    var b;
+                    var t = "";
+                    var g;
+                    data.forEach( function (arrayItemx){
+                        h = arrayItemx.dia;
+                        g = "<div>"
+                        arrayItemx.franjes.forEach( function (arrayItem)
+                        {
+                            g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
+                        });
+                        t = t + h + g + "</div>";
+                    })
+                    t = t + "</div>";
+                    acc.innerHTML = t;
+					$( "#accordion" ).accordion( "refresh" );
+            })
+    });
+
 
     $('.lloc_entrega').change(function (e) {
 

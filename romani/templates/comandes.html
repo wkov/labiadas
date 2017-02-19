@@ -78,28 +78,16 @@
                     <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' contracte.lloc_entrega.pk %}" title="Visualitzar punt de trobada">{{ contracte.lloc_entrega.nom  }} <span class="glyphicon glyphicon-map-marker" >
                     </span> </a> <br/>
                 <label for="x_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="x_hora" name="x_hora"> {{ contracte.franja_horaria.inici }} - {{ contracte.franja_horaria.final }} </b><br/>
-{#                <label for="x_entr" style="font-size: medium; font-weight: 500"> Dia: </label><b id="x_entr" name="x_entr"></b><br/>#}
              </div>
-
                  <div style="width:100%; display: inline-block">
-
-                <label for="x_prox" style="font-size: medium; font-weight: 500"> Dia: </label> <b id="x_prox" name="x_prox">
-                     {{ contracte.data_entrega_txt }}, {{ contracte.prox_entrega.date }} </b>
-                     {% if not contracte.prox_no == True %}
-                        <a href="{% url 'aquesta_no' contracte.pk %}"><span class="glyphicon glyphicon-refresh" title="Aquesta entrega NO, passeu a la seguent"></span></a>
-                    {% endif %}
+                <label for="x_prox" style="font-size: medium; font-weight: 500"> Dia: </label>
+                     <b id="x_prox" name="x_prox">
+                        {{ contracte.data_entrega_txt }}
+                     </b>
                  </div><br/>
-
-{#                <form method="post" class="get_map">{% csrf_token %}#}
-
-
                  <div style="width:100%; display: inline-block">
                 <label for="x_freq" style="font-size: medium; font-weight: 500"> Freqüència: </label> <b id="x_freq" name="x_freq"> {{contracte.freq_txt}}</b>
                  </div><br/>
-
-
-{#                    {% if not contracte.data_fi %}#}
-
 
                     <form method="post"  class="comanda_form">{% csrf_token %}
                         <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ contracte.producte.pk }}" />

@@ -10,7 +10,7 @@ from romani.models import EmailModelBackend
 
 from django.contrib.auth.decorators import login_required as auth
 
-from romani.views import nouUsuariView, DomiciliView, aquestaNoView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
+from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte
 from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
 
@@ -51,7 +51,6 @@ urlpatterns = [
     url(r'^info/$', auth(InfoFormView.as_view()), name="info"), #genera el modal en que es confirma una comanda
     url(r'^comanda/$', auth(ComandaFormView.as_view()), name="comanda"), #confirma la comanda
     url(r'^convidar/$', auth(ConvidarView), name="convidar"),
-    url(r'^aquesta_no/(?P<pk>\d+)/$', auth(views.aquestaNoView), name='aquesta_no'), #anula la seguent entrega en un contracte i passa a la seguent
     url(r'^messages/', include('django_messages.urls')),
     url('^inbox/notifications/', include('notifications.urls', namespace="notifications")),
     url(r"edit_profile/$", auth(UserProfileEditView.as_view()), name="edit_profile"),
