@@ -3,9 +3,6 @@ jQuery(document).ready(function($)
     {
 
 
-
-
-
 	$(".comanda_form").submit(function(e)
 		{
 		    e.preventDefault();
@@ -95,24 +92,6 @@ jQuery(document).ready(function($)
 	$(".comanda2_form").submit(function(e)
 			{
 				e.preventDefault();
-				//$.ajax({
-				//	type:"POST",
-				//	url:'/comanda/',
-				//	data:{
-				//		data:  {
-				//			preu: $("#preu").val(),
-				//			lloc_entrega: $("#lloc_entrega").val(),
-				//			format:$("#format").val(),
-				//			producte:$("#producte").val(),
-				//			cantitat:$("#cantitat").val(),
-				//			dataentrega:$("#dataentrega").val(),
-				//			csrfmiddlewaretoken: '{{ csrf_token }}'
-				//		}
-				//	},
-				//	success:function(){alert('succes');},
-				//	error:function(){alert('Failure');}
-				//});
-
 				var modal = document.getElementById('myModal');
 				$.post("/comanda/", $(this).serializeArray(),
 				  function(data) {
@@ -365,31 +344,12 @@ jQuery(document).ready(function($)
 
 
 		});
-		//$.post("/datacalc/", $(this).serializeArray(), function(data) {
-        //
-		//	var data_info = document.getElementById("primera_entrega");
-		//		var txt = data["next_day"];
-		//		data_info.style.display = "block";
-		//		data_info.value = txt;
-        //
-        //
-		//});
-
 
 	});
-
-
-
-
-//var cancelar_convidar = document.getElementById('cancelar_convidar');
-//cancelar_convidar.onclick = function(event) {
-//		convidarmodal.style.display = "none";
-//	}
 
 	$('#avatar').change(function(e){
 		var fotoavatar = document.getElementById('fotoavatar');
 		fotoavatar.src = this.value;
-		//this.src = this.value;
 	})
 
 	$('#cancelar').click(function(e){
@@ -398,8 +358,6 @@ jQuery(document).ready(function($)
 	})
 
 });
-
-
 
 
 //CSRF TOKEN FOR JS

@@ -88,15 +88,15 @@ class Node(models.Model):
     nom = models.CharField(max_length=20)
     position = GeopositionField()
     carrer = models.CharField(max_length=50)
-    numero = models.IntegerField()
-    pis = models.CharField(max_length=15)
+    numero = models.IntegerField(blank=True)
+    pis = models.CharField(max_length=15, blank=True)
     poblacio = models.CharField(max_length=40)
-    codi_postal = models.IntegerField()
+    codi_postal = models.IntegerField(blank=True)
     responsable = models.CharField(max_length=20)
     dies_entrega = models.ManyToManyField(DiaEntrega, related_name="node")
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
-    frequencies = models.ManyToManyField(Frequencia, related_name="node", null=True, blank=True)
+    frequencies = models.ManyToManyField(Frequencia, related_name="node")
 
     def __str__(self):
         return "%s %s" % (self.nom, self.poblacio)
@@ -152,13 +152,13 @@ class Producte(models.Model):
     adjunt = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
     productor = models.ForeignKey(Productor)
     etiqueta = models.ForeignKey(Etiqueta)
-    nodes = models.ManyToManyField(Node, blank=True, null=True)
+    nodes = models.ManyToManyField(Node, blank=True)
     entradilla = models.TextField(blank=False, max_length=75)
     cuerpo = models.TextField(blank=True)
     esgotat = models.BooleanField(default=False)
     keywords = models.TextField(blank=True)
-    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, null=True)
-    frequencies = models.ManyToManyField(Frequencia, blank=True, null=True)
+    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True)
+    frequencies = models.ManyToManyField(Frequencia, blank=True)
 
 
     def __str__(self):
@@ -327,7 +327,7 @@ class UserProfile(models.Model):
     pis = models.CharField(max_length=10, blank=True, null=True)
     poblacio = models.CharField(max_length=30, blank=True, null=True)
     avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
-    convidats = models.ManyToManyField(Convidat)
+    convidats = models.ManyToManyField(Convidat, blank=True)
     punt_lat = models.CharField(max_length=25, null=True, blank=True)
     punt_lng = models.CharField(max_length=25, null=True, blank=True)
 

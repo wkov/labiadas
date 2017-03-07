@@ -5,29 +5,13 @@
 {% block headers %}
     <script src="{% static 'js/comanda.js' %}"></script>
 {% endblock %}
-
-
-
 {% block content %}
-
-
-
-
     <div id="recurs_wraper" style="display: inline-block; margin:0px; ">
-
         <div id="div_recurs"  style="display: block ">
             <div class="thumbnail">
-
-
-
-
                     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUirWAP7iFxFp7W1jmhoTrOYzZ-Z2sYZ8&callback=initMap"
-    async defer></script>
-
-<script>
-
-
-
+                                    async defer></script>
+    <script>
       var map;
       var polygons = [];
       function initMap() {
@@ -36,13 +20,11 @@
         var bb = '{{ node.position.longitude }}';
         var bbb =  bb.replace(",",".");
         var mollet = new google.maps.LatLng(aaa, bbb);
-
         map = new google.maps.Map(document.getElementById('map'), {
           center: mollet,
           zoom: 15,
 {#          mapTypeId: 'satellite'#}
         });
-
           $.post("/allcoordenades/", function(data) {
               var i = 0;
               var marker = [];
@@ -53,39 +35,25 @@
                     var contentString = '<div id="content">'+
                           '<div id="siteNotice">'+
                           '</div>'+
-                          '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+                          '<h1 id="firstHeading" class="firstHeading">' +
+                          arrayItem.nom +
+                          '</h1>'+
                           '<div id="bodyContent">'+
-                          '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-                          'sandstone rock formation in the southern part of the '+
-                          'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-                          'south west of the nearest large town, Alice Springs; 450&#160;km '+
-                          '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-                          'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-                          'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-                          'Aboriginal people of the area. It has many springs, waterholes, '+
-                          'rock caves and ancient paintings. Uluru is listed as a World '+
-                          'Heritage Site.</p>'+
-                          '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-                          'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-                          '(last visited June 22, 2009).</p>'+
+                          '<p><b>' +
+                          arrayItem.nom +
+                          '</b>,' +
+                          arrayItem.text +
+                          '</p>' +
                           '</div>'+
                           '</div>';
-
                       var infowindow = new google.maps.InfoWindow({
                         content: contentString
                       });
-
-
-
-
-
                     var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
                     if (arrayItem.a_domicili == "True"){
                         marker[i] = new google.maps.Marker({
                           position: place,
                           title: "A Domicili",
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
                           map: map,
                           icon: img_domicili
                     });
@@ -93,8 +61,6 @@
 					    marker[i] = new google.maps.Marker({
                           position: place,
                           title: arrayItem.nom,
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
                           map: map,
                           icon: image
                     });
@@ -102,59 +68,10 @@
                       marker[i].addListener('click', function() {
                         infowindow.open(map, marker[i]);
                       });
-
 					i++;
 				});
-
           });
-
-          // Define the LatLng coordinates for the polygon's path.
-        var triangleCoords = [
-          {lat: 41.545431, lng: 2.195419},
-          {lat: 41.552119, lng: 2.221884},
-          {lat: 41.536294, lng: 2.227637},
-          {lat: 41.526672, lng: 2.200995}
-        ];
-
-        var triangleCoords2 = [
-          {lat: 41.520636, lng: 2.248667},
-          {lat: 41.522171, lng: 2.259459},
-          {lat: 41.517448, lng: 2.261884},
-          {lat: 41.513495, lng: 2.257088}
-        ];
-
-        // Construct the polygon.
-          polygons.push(new google.maps.Polygon({
-          paths: triangleCoords,
-          strokeColor: '#FF0000',
-          strokeOpacity: 0,
-          strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.15
-        }));
-          polygons[polygons.length-1].setMap(map);
-
-          polygons.push(new google.maps.Polygon({
-          paths: triangleCoords2,
-          strokeColor: '#FF0000',
-          strokeOpacity: 0,
-          strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.15
-        }));
-
-
-
-        polygons[polygons.length-1].setMap(map);
-
-
-
-
-
-
  }
-
-
 
 //CSRF TOKEN FOR JS
 
@@ -188,24 +105,13 @@ $.ajaxSetup({
         }
     }
 });
-
-
-
 </script>
-
-
         <b>Lloc d'entrega:</b> <h2>{{ node.nom }}</h2>
                 <h3>{{ node.poblacio }}</h3>
-
-
             <div id="map" name="map" ></div>
-
-
-
                 <p>{{ node.text }}</p>
-
-         <b> Frequencia: </b>  {{ node.get_frequencia.nom }}<br/><br/>
-<b>Proxims dies d'entrega:</b> <br/>
+        <b> Frequencia: </b>  {{ node.get_frequencia.nom }}<br/><br/>
+        <b>Proxims dies d'entrega:</b> <br/>
                 {% for i in node.prox_dias  %}
                     <table border = 1>
                     <tr>
@@ -221,28 +127,13 @@ $.ajaxSetup({
                     <br/>
                     </table>
                 {% endfor %}
-<br/>
-
-
-
-
-
-            <br />
-
-            <a  href="{% url 'comandes' %}"> Tornar a les comandes </a>
-            </div>
-
+        <br/><br />
+        <a  href="{% url 'comandes' %}"> Tornar a les comandes </a>
+        </div>
          <br />
          <br />
         </div>
-
-
-    </div>
-
-     <br />
-     <br />
-
-
+    </div><br /><br />
 
 {% endblock %}
 

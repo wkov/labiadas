@@ -12,7 +12,6 @@
 
 <body>
 <div id="back_img">
-{#    <header id="header" class="headroom headroom--unpinned headroom--pinned">#}
     <header class="nav-down">
     <div id="div_header">
         <div id="div_menu1">
@@ -25,7 +24,6 @@
         </div>
     </div>
     </header>
-{#    </header>#}
     <div id="sidebar-wrapper">
 			{% include "leftmenurusc.html" %}
 	</div>
@@ -40,7 +38,6 @@
 
                 <div class="col-lg-12">
 
-    {#                Seguent block nomes per fer funcionar el paket django_messages correctament#}
                     {% block sidebar %}{% endblock %}
 
 
@@ -56,6 +53,8 @@
     {% block modals %}  {% endblock %}
 
 <script>
+
+    {#                Seguent block nomes per fer funcionar el paket django_messages correctament#}
     {% if messages %}
 
         {% for message in messages %}

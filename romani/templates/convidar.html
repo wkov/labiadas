@@ -24,19 +24,12 @@
 
  });
 </script>
-
-{#<b>#}
     Tens encara <b>{{ invitacions }}</b> invitacions a la xarxa.<br/>
-
     Pots convidar introduïnt el email de la persona: <br/>
-
-{#</b>#}
-
     <form action="/convidar/" method="post">
                         {% csrf_token %}
                             <input type="text" class="form-control"  name="email" width="40px" placeholder="Introdueix email si vols"/>
                               <button type="submit" class="btn btn-default"  style="font-size: medium"><b>Convidar per email</b></button>
-
     </form>
 
     <br/>
@@ -44,13 +37,9 @@
 
         <div class="thumbnail" >
         <span class="glyphicon glyphicon-info-sign"></span>
-{#        Per convidar copia el següent link:   &nbsp;#}
-
         <label> {{ message_email }} </label>
 
-{#        <button class="js-textareacopybtn"><span class="glyphicon glyphicon-duplicate"> Copiar</span></button>#}
-
-    </div>
+        </div>
     {% endif %}
     </br>
 
@@ -61,7 +50,6 @@
     <form action="/convidar/" method="post">
                         {% csrf_token %}
                         <div class="input-group">
-{#                            <input type="text" class="form-control"  name="email" width="40px" />#}
                           <span class="input-group-btn">
                               <button type="submit" class="btn btn-default" style="font-size: large"><b>Generar invitació</b></button>
                           </span>
@@ -86,17 +74,5 @@
     </div>
 {% endif %}
 </div>
-
-{#    {% for post in posts %}#}
-{#        <li>#}
-{#            <a href="{% url 'producte' post.pk  %}">  Producte:<b>{{ post.nom }}</b></a>#}
-{#        </li>#}
-{#        </br></br>#}
-{#    {% endfor %}#}
-
-
-
-
-
 
 {% endblock %}

@@ -1,7 +1,6 @@
 from django.conf.urls import include, url
 from django.contrib import admin
 from romani import views
-
 from django.conf.urls.static import static
 
 from django.conf import settings
@@ -14,14 +13,16 @@ from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsua
 from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte
 from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
 
+from django.contrib.auth.views import login, logout_then_login
+
 from django.views.generic import RedirectView, TemplateView
 
 admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls), name="admin"),
-    url(r"^login/$", "django.contrib.auth.views.login",{"template_name": "login.html"}, name="login"),
-    url(r"^logout/$", "django.contrib.auth.views.logout_then_login",name="logout"),
+    url(r"^login/$", login,{"template_name": "login.html"}, name="login"),
+    url(r"^logout/$", logout_then_login,name="logout"),
     url(r"^accounts/", include("registration.backends.simple.urls")),
     url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),

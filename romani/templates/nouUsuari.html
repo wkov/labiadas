@@ -6,23 +6,6 @@
     <script>
  jQuery(document).ready(function($) {
 
-
-
-
-
-        // When the user clicks anywhere outside of the modal, close it
-
-
-{#        window.onclick = function (event) {#}
-{#            var modal = document.getElementById('myModal');#}
-{#            if (event.target == modal) {#}
-{#                modal.style.display = "none";#}
-{#            }#}
-{#        }#}
-{#var accordion = document.getElementById('accordion');#}
-{#     accordion.style.display = "none";#}
-{#var registerModal = document.getElementById('registerModal');#}
-{#     registerModal.style.display = "block";#}
 	$(".register_user_form").submit(function(e){
         e.preventDefault();
         $.post("/nodesave/", $(this).serializeArray(), function(data) {
@@ -41,7 +24,6 @@
 
     });
     </script>
-{#    <script src="{% static 'js/comanda.js' %}"></script>#}
 {% endblock %}
 {% load staticfiles %}
 
@@ -67,13 +49,6 @@
     $( "#accordion" ).accordion();
   } );
 
-{#  $(".domicili_form").submit(function(){#}
-{#      $.post("/domiciliar/", $(this).serializeArray(),function(data){#}
-{##}
-{#          CallNotification(data)#}
-{##}
-{#        });#}
-{#  })#}
   </script>
 
     <div>

@@ -25,8 +25,10 @@ SECRET_KEY = '+*w1wm^xq*3u8pybmcd*+w!vnk+wt%_y^m64os@i3a(i74#yp#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
+
+STATIC_ROOT = os.path.join(BASE_DIR, "romani/static/")
 
 # Application definition
 
@@ -37,16 +39,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'geoposition',
     'captcha',
-    'registration',
     'notifications',
     'django_messages',
     'romani',
-
 )
 
-
+SITE_ID = 1
 
 
 MIDDLEWARE_CLASSES = (
@@ -73,7 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                "django.core.context_processors.i18n",
+                'django.core.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
                 'django_messages.context_processors.inbox',
                 'labiadas.context_processors.notifications_user',
@@ -83,6 +84,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'labiadas.wsgi.application'
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'romani/templates'),
+)
 
 
 # Database
@@ -129,9 +134,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, 'static').replace('\\','/'),]
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'romani/templates'),
-)
+
 
 SEND_EMAIL = True
 ACCOUNT_ACTIVATION_DAYS = 30
@@ -146,7 +149,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 from django.core.urlresolvers import reverse_lazy
-
 LOGIN_URL=reverse_lazy("login")
 LOGIN_REDIRECT_URL=reverse_lazy("coope")
 LOGOUT_URL=reverse_lazy("coope")
@@ -154,8 +156,6 @@ LOGOUT_URL=reverse_lazy("coope")
 
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ' AIzaSyA6f7rjDkdoQZFH3uy9UTOF7r8xxyOTAcE '
-
-
 
 AUTHENTICATION_BACKENDS = (
     'romani.models.EmailModelBackend',

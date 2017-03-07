@@ -1,19 +1,16 @@
 {% load notifications_tags %}
-<style>
 
+<style>
 nav.sidebar-menu-collapsed {
     width: 44px;
     position: fixed;
     z-index: 100000000000;
     opacity: 0.95;
-
 }
 nav.sidebar-menu-expanded {
     width: auto;
     font-family: 'Special Elite', cursive;
     opacity: 0.9;
-{#    overflow: scroll;#}
-
 }
 nav.sidebar {
     position: fixed;
@@ -108,7 +105,6 @@ nav.sidebar ul.level1 ul.level2 li a {
     text-decoration: none;
     font-size: 11px;
 }
-
 </style>
 
 <script>
@@ -117,34 +113,27 @@ nav.sidebar ul.level1 ul.level2 li a {
         var SideBAR;
         SideBAR = (function () {
             function SideBAR() {}
-
             SideBAR.prototype.expandMyMenu = function () {
                 return $("nav.sidebar").removeClass("sidebar-menu-collapsed").addClass("sidebar-menu-expanded");
             };
-
             SideBAR.prototype.collapseMyMenu = function () {
                 return $("nav.sidebar").removeClass("sidebar-menu-expanded").addClass("sidebar-menu-collapsed");
             };
-
             SideBAR.prototype.showMenuTexts = function () {
                 return $("nav.sidebar ul a span.expanded-element").show();
             };
-
             SideBAR.prototype.hideMenuTexts = function () {
                 return $("nav.sidebar ul a span.expanded-element").hide();
             };
-
             SideBAR.prototype.showActiveSubMenu = function () {
                 $("li.active ul.level2").show();
                 return $("li.active a.expandable").css({
                     width: "100%"
                 });
             };
-
             SideBAR.prototype.hideActiveSubMenu = function () {
                 return $("li.active ul.level2").hide();
             };
-
             SideBAR.prototype.adjustPaddingOnExpand = function () {
                 $("ul.level1 li a.expandable").css({
                     padding: "1px 4px 4px 0px"
@@ -153,7 +142,6 @@ nav.sidebar ul.level1 ul.level2 li a {
                     padding: "1px 4px 4px 4px"
                 });
             };
-
             SideBAR.prototype.resetOriginalPaddingOnCollapse = function () {
                 $("ul.nbs-level1 li a.expandable").css({
                     padding: "4px 4px 4px 0px"
@@ -162,7 +150,6 @@ nav.sidebar ul.level1 ul.level2 li a {
                     padding: "4px"
                 });
             };
-
             SideBAR.prototype.ignite = function () {
                 return (function (instance) {
                     return $("#justify-icon").click(function (e) {
@@ -187,45 +174,18 @@ nav.sidebar ul.level1 ul.level2 li a {
                     });
                 })(this);
             };
-
             return SideBAR;
-
         })();
         return (new SideBAR).ignite();
     });
-
 }).call(this);
 </script>
 
 {% if user.is_authenticated %}
-
  <nav class='sidebar sidebar-menu-collapsed' >
      <a href='#' id='justify-icon' title="veure menú">
         <span class='glyphicon glyphicon-align-justify'></span>
      </a>
-
-{#     <ul class='level1'>#}
-{##}
-{#        <li class='active'>#}
-{#           <a class='expandable active' >#}
-{#               <span class='glyphicon glyphicon-search collapsed-element'></span>#}
-{#               <span class='expanded-element'>#}
-{#                    <form action="/busk/" method="post">#}
-{#                        {% csrf_token %}#}
-{#                        <div class="input-group">#}
-{#                            <input type="text" class="form-control"  name="searchString" width="40px" />#}
-{#                          <span class="input-group-btn">#}
-{#                              <button type="submit" class="btn btn-default">Busk</button>#}
-{#                          </span>#}
-{#                        </div>#}
-{#                    </form>#}
-{#               </span>#}
-{#               <br />#}
-{#               <br />#}
-{#           </a>#}
-{#     </ul>#}
-
-
      <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'busk' %}" title='Cercar'>
@@ -233,11 +193,7 @@ nav.sidebar ul.level1 ul.level2 li a {
                 <span class='expanded-element'>Cercar</span>
               </a>
             </li>
-
-
         </ul>
-
-
         <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'coope' %}" title='Veure tots els productes'>
@@ -245,176 +201,31 @@ nav.sidebar ul.level1 ul.level2 li a {
                 <span class='expanded-element'>Botiga</span>
               </a>
             </li>
-
-
-
-{#            <li class='active'>#}
-{#               <a class='expandable active' href="{% url 'productes'  %}"  title='Dashboard'>#}
-{#                   <span class='glyphicon glyphicon-eye-open collapsed-element'></span>#}
-{#                   <span class='expanded-element'>Visualitzacions</span>#}
-{#               </a>#}
-{##}
-{#            </li>#}
-
-
-
         </ul>
-
-
-
-{% notifications_unread as unread_count %}
-
-
          <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'comandes' %}" title='Veure historial de comandes'>
-{#                <span id="notification_count">#}
-{#                    {{ unread_count }}#}
-{#                </span>#}
                 <span class='glyphicon glyphicon-shopping-cart collapsed-element'>
-
                 </span>
                 <span class='expanded-element'>Comandes</span>
               </a>
             </li>
-
-
-
-
-{#            <li class=''>#}
-{#              <a class='expandable' href="{% url 'faq' %}" title='FAQ'>#}
-{#                <span class='glyphicon glyphicon-pushpin collapsed-element'></span>#}
-{#                <span class='expanded-element'>FAQ</span>#}
-{#              </a>#}
-{#            </li>#}
-
-{#            <li class='active'>#}
-{#               <a class='expandable active' href="{% url 'productes'  %}"  title='Dashboard'>#}
-{#                   <span class='glyphicon glyphicon-eye-open collapsed-element'></span>#}
-{#                   <span class='expanded-element'>Visualitzacions</span>#}
-{#               </a>#}
-{##}
-{#            </li>#}
-
-
-
         </ul>
-
-
-
-
-
-
-
-{#     <ul class='level1'>#}
-{##}
-{#        <li class='active'>#}
-{#           <a class='expandable active' >#}
-{#               <span class='glyphicon glyphicon-thumbs-up collapsed-element'></span>#}
-{#               <span class='expanded-element'>#}
-{#                    <form id="convidar" >#}
-{#                        {% csrf_token %}#}
-{#                        <div class="input-group">#}
-{#                            <input type="text" class="form-control"  name="email" width="40px" />#}
-{#                          <span class="input-group-btn">#}
-{#                              <button type="submit" class="btn btn-default">Convida</button>#}
-{#                          </span>#}
-{#                        </div>#}
-{#                    </form>#}
-{#               </span>#}
-{#               <br />#}
-{#               <br />#}
-{#           </a>#}
-{#     </ul>#}
-
- <ul class='level1'>
+        <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'convidar' %}" title='Convidar nous usuaris a la xarxa'>
                 <span id="convidar" name="convidar" class='glyphicon glyphicon-globe collapsed-element'></span>
                 <span class='expanded-element'>Convidar</span>
               </a>
             </li>
-
-
         </ul>
-
-
-{#        <ul class='level1'>#}
-{#            <li class=''>#}
-{#              <a class='expandable' href="{% url 'coope' %}" title='HOME'>#}
-{#                <span id="convidar" name="convidar" class='glyphicon glyphicon-thumbs-up collapsed-element'></span>#}
-{#                <span class='expanded-element'>Ajuda</span>#}
-{#              </a>#}
-{#            </li>#}
-{##}
-{##}
-{#        </ul>#}
-
-
-
-
-
-
-
-
-
-
-             <ul class='level1'>
+        <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'ajuda' %}" title='Ajuda'>
                 <span id="ajuda" name="ajuda" class='glyphicon glyphicon-question-sign collapsed-element'></span>
                 <span class='expanded-element'>Ajuda</span>
               </a>
             </li>
-
-
         </ul>
-
-
-
-
-
-{#             <ul class='level1'>#}
-{#            <li class=''>#}
-{#              <a class='expandable' title='Convidar'>#}
-{#                <span class='glyphicon glyphicon-usd collapsed-element'></span>#}
-{#                <span id="convidar" name="convidar" class='expanded-element'>Convidar a la xarxa</span>#}
-{#              </a>#}
-{#            </li>#}
-{##}
-{#                         <button id="convidar" name="convidar" class="convidar">Convidar amics a la xarxa#}
-{#            </button>#}
-{##}
-{##}
-{##}
-{##}
-{#        </ul>#}
-
-
-
-
-
-
-{#              <ul class='level1'>#}
-{#            <li class=''>#}
-{#              <a class='expandable' href="" title='Comandes per entregar'>#}
-{##}
-{#                <span class='expanded-element'>Comandes per entregar</span>#}
-{#              </a>#}
-{#            </li>#}
-{#                   <li class=''>#}
-{#              <a class='expandable' href="" title='Comandes del passat'>#}
-{##}
-{#                </span>#}
-{#                <span class='expanded-element'>Comandes del passat</span>#}
-{#              </a>#}
-{#            </li>#}
-{#                  </ul>#}
-
-{#        {% if user.is_authenticated %}#}
-{#            <a href="{% url 'auth_logout' %}?next=/rusc/" id='logout-icon' title='Logout'>#}
-{#            <span class='glyphicon glyphicon-off'></span>#}
-{#            </a>#}
-{#        {% endif %}#}
  </nav>
 {% endif %}

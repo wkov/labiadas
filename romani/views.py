@@ -199,14 +199,6 @@ def entregasView(request):
 
     return render(request, "entregas.html",{'comandes': entregas, 'contractes': contractes, 'nodes': nodes, 'up': user_p})
 
-def comandaCreate(request, pk):
-
-    producte = Producte.objects.filter(pk=pk).first()
-    comanda = Comanda.objects.create(producte=producte, client=request.user)
-    productes = Producte.objects.all()
-    return render(request, "productes.html", {'productes':productes})
-
-
 def comandaDelete(request, pk):
 
     comandaDel = Comanda.objects.filter(pk=pk).first()
@@ -771,22 +763,6 @@ def FreqCalcView(request):
                     json_res.append(json_obj)
 
             return HttpResponse(json.dumps(json_res), content_type='application/json')
-# def DataCalcView(request):
-#     if request.POST:
-#         if 'dataentrega' in request.POST:
-#             l = request.POST.get('dataentrega')
-#             if l:
-#                 try:
-#                     dia = get_object_or_404(DiaEntrega, pk=l)
-#                     dataentrega = next_weekday(timezone.now(), dia.dia_num())
-#                     s = str(dataentrega.date())
-#                     x = datetime.datetime.strptime(s, '%Y-%m-%d').strftime('%d/%m/%Y')
-#                     json_obj = dict(next_day = str(x))
-#                 except '404':
-#                     json_obj = dict(next_day = " ")
-#                 return HttpResponse(json.dumps(json_obj), content_type='application/json')
-#     json_obj = dict(next_day = " ")
-#     return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
 def FranjaCalcView(request):
     if request.POST:
@@ -825,7 +801,6 @@ class InfoFormBaseView(FormView):
         cantitat = form.data["cantitat"]
         preu_aux = format.preu
         preu = preu_aux * float(cantitat)
-        dataentrega = next_weekday(datetime.date.today(), 2)
         ret = {"success": 1}
         ret["format"] = format.nom
         ret["format_pk"]= format.pk
@@ -866,13 +841,6 @@ class InfoFormBaseView(FormView):
         ret["nodes"] = json_res
         ret["freqs"] = jfreq
 
-
-        # notify.send(producte, recipient= user, verb="Has afegit",
-        #          description="al carro", url=producte.adjunt.url)
-
-
-
-
         return self.create_response(ret, True)
 
 
@@ -908,24 +876,6 @@ class UserProfileEditView(UpdateView):
         s = u.lloc_entrega_perfil.get_frequencia()
         context['frequencia'] = s.nom
         return context
-
-    # def form_valid(self, form):
-    #     # self.instance = form.save(commit=False)
-    #     # self.instance.user = self.request.user
-    #     lat = form.data['punt_lat']
-    #     lng = form.data['punt_lng']
-    #     self.object.geo_punt = lat + "," + lng;
-    #     super(UserProfileEditView, self).form_valid(form)
-    #     # lat = form.data['punt_lat']
-    #     # lng = form.data['punt_lng']
-    #     # self.object.geo_punt = lat + "," + lng
-    # def form_valid(self, form):
-    #
-    #     lat = form.data['punt_lat']
-    #     lng = form.data['punt_lng']
-    #     form.data['geo_punt'] = lat + " , " + lng
-    #     return super(UserProfileEditView, self).form_valid(form)
-
 
 
     def get_success_url(self):
