@@ -345,7 +345,7 @@ from django.core.mail import send_mail
 
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        node = Node.objects.get(pk=1)
+        #node = Node.objects.get(pk=1)
         # u_key = Key.objects.get(nou_usuari=instance)
         # u = UserProfile.objects.get(user=u_key.usuari)
         text = "El registre s'ha completat amb èxit. Benvingut a la xarxa de productes de proximitat.  http://127.0.0.1:8000/coope   Gràcies!"
