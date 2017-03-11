@@ -350,7 +350,7 @@ def create_profile(sender, instance, created, **kwargs):
         # u = UserProfile.objects.get(user=u_key.usuari)
         text = "El registre s'ha completat amb èxit. Benvingut a la xarxa de productes de proximitat.  http://127.0.0.1:8000/coope   Gràcies!"
         send_mail("Benvingut a la xarxa d'autogestio", text, 'RUSC@example.com', [instance.email] ,fail_silently=True )
-        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", lloc_entrega_perfil=node, numero="", poblacio="", pis="" )
+        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="" )
 
 
 
