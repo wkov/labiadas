@@ -874,7 +874,11 @@ class UserProfileEditView(UpdateView):
         context['contractes']  = contractes
         u = UserProfile.objects.get(user=self.request.user)
         s = u.lloc_entrega_perfil.get_frequencia()
-        context['frequencia'] = s.nom
+        if s:
+            context['frequencia'] = s.nom
+        else:
+            f = Frequencia.objects.get(num=0)
+            context['frequencia'] = f.nom
         return context
 
 
