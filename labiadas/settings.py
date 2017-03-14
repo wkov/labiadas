@@ -90,7 +90,7 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'romani/templates'),
 )
 
-
+APPEND_SLASH = False
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
