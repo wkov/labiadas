@@ -183,7 +183,7 @@ class Contracte(models.Model):
     primera_entrega = models.DateTimeField(null=True, blank=True)
     data_entrega = models.IntegerField(null=True, blank=True)
     data_entrega_txt = models.CharField(max_length=10)
-    prox_no = models.NullBooleanField(blank=True)
+    # prox_no = models.NullBooleanField(blank=True)
     franja_horaria = models.ForeignKey(FranjaHoraria)
     lloc_entrega = models.ForeignKey(Node)
     entregat = models.BooleanField(blank=True)

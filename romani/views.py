@@ -318,7 +318,7 @@ class ComandaFormBaseView(FormView):
 
 
 
-        if frequencia=='0':
+        if frequencia == '0':
             v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, data_entrega= data_entrega.date , data_entrega_txt=data_entrega_txt, franja_horaria=franja,
                                        lloc_entrega=user_profile.lloc_entrega_perfil, entregat=' ', cancelat=' ', preu=preu)
         else:
