@@ -84,7 +84,7 @@ class MyRegistrationView(RegistrationView):
         key = Key.objects.get(key=self.kwargs['pk'])
         key.nou_usuari = user
         key.save()
-        return "/nou_usuari/"
+        return '/nou_usuari/'
 
 
 
