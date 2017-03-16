@@ -319,9 +319,9 @@ class ComandaFormBaseView(FormView):
 
 
         if frequencia == '0':
-            v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, data_entrega= data_entrega.date , data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=user_profile.lloc_entrega_perfil, entregat=' ', cancelat=' ', preu=preu)
+            v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, data_entrega= data_entrega.date , data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=user_profile.lloc_entrega_perfil, entregat='False', cancelat='False', preu=preu)
         else:
-            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, primera_entrega=data_entrega.date ,data_entrega=data_entrega_num, data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=user_profile.lloc_entrega_perfil, entregat=' ', cancelat=' ', preu=preu, freq_txt=freq_txt, frequencia=frequencia)
+            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, primera_entrega=data_entrega.date ,data_entrega=data_entrega_num, data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=user_profile.lloc_entrega_perfil, entregat='False', cancelat='False', preu=preu, freq_txt=freq_txt, frequencia=frequencia)
 
 
         ret = {"success": 1}
