@@ -80,9 +80,9 @@ class MyRegistrationView(RegistrationView):
     #                                  request=request)
     #     return new_user
 
-    def get_success_url(self, request):
+    def get_success_url(self, user):
         key = Key.objects.get(key=self.kwargs['pk'])
-        key.nou_usuari = request.user
+        key.nou_usuari = user
         key.save()
         return "/nou_usuari/"
 
