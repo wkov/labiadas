@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls), name="admin"),
     url(r"^login/$", login,{"template_name": "login.html"}, name="login"),
     url(r"^logout/$", logout_then_login,name="logout"),
-    url(r"^accounts/", include("registration.backends.simple.urls")),
+    url(r"^register/", include("registration.backends.simple.urls")),
     url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
     url(r'^nou_usuari/', auth(views.nouUsuariView), name="nou_usuari"),
