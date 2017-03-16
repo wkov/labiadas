@@ -186,8 +186,8 @@ class Contracte(models.Model):
     # prox_no = models.NullBooleanField(blank=True)
     franja_horaria = models.ForeignKey(FranjaHoraria)
     lloc_entrega = models.ForeignKey(Node)
-    entregat = models.BooleanField(blank=True)
-    cancelat = models.BooleanField(blank=True)
+    entregat = models.NullBooleanField(blank=True)
+    cancelat = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
     frequencia = models.IntegerField(null=True, blank=True)
     freq_txt = models.CharField(max_length=30)
@@ -270,8 +270,8 @@ class Comanda(models.Model):
     data_entrega_txt = models.CharField(max_length=10)
     franja_horaria = models.ForeignKey(FranjaHoraria)
     lloc_entrega = models.ForeignKey(Node)
-    entregat = models.BooleanField(blank=True)
-    cancelat = models.BooleanField(blank=True)
+    entregat = models.NullBooleanField(blank=True)
+    cancelat = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
 
     def __str__(self):
