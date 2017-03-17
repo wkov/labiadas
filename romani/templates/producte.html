@@ -27,7 +27,8 @@
             {% if producte.adjunt %}
 
                 <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" style="float: right" >
-                <img src="{{ producte.adjunt.url }}"  style="max-width: 500px; max-height:500px; margin-right: auto; margin-left: auto" ></a>
+                <div class="foto_producte" style="background-image:url('{{ producte.adjunt.url }}');        " >
+                        </div></a>
             {% endif %}
             <h2 >{{ producte.nom }} </h2>
 

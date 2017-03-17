@@ -80,6 +80,16 @@ header {
 
 
 @media only screen and (max-width: 400px) {
+
+    .foto_producte{
+        width: 175px;
+        height: 180px;
+        /*float: right;*/
+        margin: 0 auto;
+        background-position: center;
+        background-size: cover;
+    }
+
     .g-item {
         width: 175px;
         height: 180px;
@@ -143,6 +153,16 @@ header {
 @media only screen and (min-width: 330px) and (max-width: 585px) {
   /*#img_producte{*/
       /*display: none;*/
+    .foto_producte{
+        width: 220px;
+        height: 220px;
+        /*background-position: center;*/
+        /*background-size: cover;*/
+        float: right;
+        background-position: center;
+        background-size: cover;
+    }
+
     .g-item{
         width: 220px;
         height: 220px;
@@ -220,7 +240,14 @@ header {
     }
       #pato{
     display: none;
+
 }
+    .foto_producte{
+        max-width: 500px;
+        max-height:500px;
+        margin-right: auto;
+        margin-left: auto
+    }
 
     .g-item{
         width: 250px;
