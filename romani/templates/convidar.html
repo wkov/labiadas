@@ -24,6 +24,35 @@
 
  });
 </script>
+
+    <div>
+    {% if message %}
+
+            <div class="thumbnail" >
+            <span class="glyphicon glyphicon-info-sign"></span>
+            <b>Les invitacions són personals. Per convidar copia el següent link: </b>  &nbsp; </br>
+
+        <textarea rows="6" class="js-copytextarea">Et convido a entrar a la xarxa de productes de proximitat: {{ message }} </textarea>
+
+            <button class="js-textareacopybtn"><span class="glyphicon glyphicon-duplicate"> Copiar</span></button>
+
+            </br>
+                <b>Si vols convidar a alguna persona més, recorda generar una nova invitació clicant de nou "Generar invitació".</b>
+        </div>
+    {% endif %}
+    </div>
+
+    {% if message_email %}
+
+        <div class="thumbnail" >
+        <span class="glyphicon glyphicon-info-sign"></span>
+        <label> {{ message_email }} </label>
+
+        </div>
+    {% endif %}
+
+    <br/>
+
     Tens encara <b>{{ invitacions }}</b> invitacions a la xarxa.<br/>
     Pots convidar introduïnt el email de la persona: <br/>
     <form action="/convidar/" method="post">
@@ -33,15 +62,8 @@
     </form>
 
     <br/>
-    {% if message_email %}
 
-        <div class="thumbnail" >
-        <span class="glyphicon glyphicon-info-sign"></span>
-        <label> {{ message_email }} </label>
 
-        </div>
-    {% endif %}
-    </br>
 
     <p>
     <b>També pots convidar a traves de watsapp, messenger o qualsevol plataforma enviant la url que pots generar clicant el seguent botó:</b>
@@ -58,21 +80,6 @@
     <br/>
 
 
-    <div>
-{% if message %}
 
-        <div class="thumbnail" >
-        <span class="glyphicon glyphicon-info-sign"></span>
-        <b>Les invitacions són personals. Per convidar copia el següent link: </b>  &nbsp; </br>
-
-    <textarea rows="6" class="js-copytextarea">Et convido a entrar a la xarxa de productes de proximitat: {{ message }} </textarea>
-
-        <button class="js-textareacopybtn"><span class="glyphicon glyphicon-duplicate"> Copiar</span></button>
-
-        </br>
-            <b>Si vols convidar a alguna persona més, recorda generar una nova invitació clicant de nou "Generar invitació".</b>
-    </div>
-{% endif %}
-</div>
 
 {% endblock %}

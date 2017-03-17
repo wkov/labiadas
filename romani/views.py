@@ -472,7 +472,7 @@ def ConvidarView(request):
             k = generate_key(request)
             up.invitacions = up.invitacions - 1
             up.save()
-            s = "http://127.0.0.1:8000/register/" + str(k)
+            s = "http://http://79.137.39.201:8001/register/" + str(k)
             message = s
             # return HttpResponse(json.dumps(ret))
     # response = HttpResponse(json.dumps(ret), content_type='application/json')
