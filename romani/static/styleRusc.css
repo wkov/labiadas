@@ -243,17 +243,17 @@ header {
 
 }
     .foto-producte{
-        max-width: 500px;
-        max-height:500px;
+        width: 500px;
+        height:500px;
         float: right;
         background-position: center;
         background-size: cover;
-        z-index: 10;
     }
 
     .g-item{
         width: 250px;
         height: 250px;
+        position: relative;
         /*background-position: center;*/
         /*background-size: cover;*/
         float: right;
