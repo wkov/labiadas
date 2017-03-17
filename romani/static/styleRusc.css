@@ -81,7 +81,7 @@ header {
 
 @media only screen and (max-width: 400px) {
 
-    .foto_producte{
+    .foto_producte {
         width: 175px;
         height: 180px;
         /*float: right;*/
@@ -245,8 +245,9 @@ header {
     .foto_producte{
         max-width: 500px;
         max-height:500px;
-        margin-right: auto;
-        margin-left: auto
+        float: right;
+        background-position: center;
+        background-size: cover;
     }
 
     .g-item{
