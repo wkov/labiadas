@@ -430,6 +430,8 @@ def ConvidarView(request):
     up = UserProfile.objects.get(user = request.user)
     message_email = ""
     message = ""
+    nodes = Node.objects.all()
+
     if request.POST:
 
         # a = request
@@ -480,7 +482,7 @@ def ConvidarView(request):
     # return response
     # return JsonResponse(ret)
 
-    return render(request, "convidar.html", {'invitacions':up.invitacions, 'message':message, 'message_email': message_email})
+    return render(request, "convidar.html", {'invitacions':up.invitacions, 'message':message, 'message_email': message_email, 'nodes': nodes})
 
 
 

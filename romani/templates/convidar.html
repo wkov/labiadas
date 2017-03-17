@@ -50,10 +50,16 @@
 
         </div>
     {% endif %}
+<br/>
+Actualment som desenes de persones al voltant dels diferents punts:
+    {% for n in nodes %}
+    {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+{% endfor %}
+
 
     <br/>
 
-    Tens encara <b>{{ invitacions }}</b> invitacions a la xarxa.<br/>
+    Encara disposes de <b>{{ invitacions }}</b> invitacions a la xarxa.<br/>
     Pots convidar introduïnt el email de la persona: <br/>
     <form action="/convidar/" method="post">
                         {% csrf_token %}
