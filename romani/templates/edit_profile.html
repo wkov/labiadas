@@ -197,29 +197,9 @@ function placeMarker(location) {
   </br>
 
 <form method="post" enctype="multipart/form-data" action="">{% csrf_token %}
-            <div id="tabs-1">
-                {% if object.avatar  %}
-                            <img src="{{ object.avatar.url }}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200"/>
-                        {% else %}
-                            <img src="{% static "images/pulpo.gif" %}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200">
-                {% endif %}
-            <br/><br/>
-                <span class="glyphicon glyphicon-picture"></span>
-            <label for="avatar">Nova foto de perfil: </label>
-                {% if object.avatar  %}
-                    <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
-                {% else %}
-                    <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "images/pulpo.gif" %}"/> </br>
-                {% endif %}
-          <label>Email: </label>  {{ form.email }} <br/>
-          <label>Nom d'usuari: </label>    {{ form.username }} <br/>
-          <label>Nom: </label>    {{ form.first_name }} <br/>
-          <label>Cognoms: </label>    {{ form.last_name }} <br/>
-        <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
-            </div>
             <div id="tabs-2">
-        <span class="glyphicon glyphicon-flag"></span>
-        <label for="lloc_entrega_perfil">Lloc d'entrega:</label> </br>
+                <span class="glyphicon glyphicon-flag"></span>
+                <label for="lloc_entrega_perfil">Lloc d'entrega:</label> </br>
                         <select id="lloc_entrega_perfil" name="lloc_entrega_perfil" class="lloc_entrega_perfil form-control" onchange="coord()">
                        {% for lloc in nodes %}
                         {%  if lloc.pk == object.lloc_entrega_perfil.pk %}
@@ -286,7 +266,28 @@ function placeMarker(location) {
                                 <input id="poblacio"  name="poblacio" style="max-width: 300px" class="form-control" value="{{ object.lloc_entrega_perfil.poblacio }}" readonly/></div>
                     {% endif %}
                     <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button> <br/><br/><br/>
-</div>
+            </div>
+            <div id="tabs-1">
+                {% if object.avatar  %}
+                            <img src="{{ object.avatar.url }}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200"/>
+                        {% else %}
+                            <img src="{% static "images/pulpo.gif" %}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200">
+                {% endif %}
+            <br/><br/>
+                <span class="glyphicon glyphicon-picture"></span>
+            <label for="avatar">Nova foto de perfil: </label>
+                {% if object.avatar  %}
+                    <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
+                {% else %}
+                    <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "images/pulpo.gif" %}"/> </br>
+                {% endif %}
+          <label>Email: </label>  {{ form.email }} <br/>
+          <label>Nom d'usuari: </label>    {{ form.username }} <br/>
+          <label>Nom: </label>    {{ form.first_name }} <br/>
+          <label>Cognoms: </label>    {{ form.last_name }} <br/>
+        <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
+            </div>
+
 </form>
 
 </div>
