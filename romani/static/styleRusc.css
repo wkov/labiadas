@@ -248,6 +248,7 @@ header {
         float: right;
         background-position: center;
         background-size: cover;
+        z-index: 10;
     }
 
     .g-item{
