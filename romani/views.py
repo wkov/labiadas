@@ -396,7 +396,7 @@ from django.core.mail import send_mail
 #funció exclusivament per a enviar invitacio a cela a un usuari que se li passa a la funció
 def enviarInvitacio(email, nom, k):
 
-    text = nom + " t'ha convidat a la xarxa de productes de proximitat del Baix Vallès "+ "lamassa.org/register/" + str(k)
+    text = nom + " t'ha convidat a la xarxa de productes de proximitat"+ "lamassa.org/register/" + str(k)
     send_mail("Convidat a la xarxa d'autogestio", text, 'lamassaxarxa@gmail.com', [email] ,fail_silently=True )
 
 #en cas de que si estigui, enviar invitació al usuari
