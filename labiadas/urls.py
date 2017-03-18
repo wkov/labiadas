@@ -21,10 +21,10 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls), name="admin"),
-    url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r"^login/$", login,{"template_name": "login.html"}, name="login"),
     url(r"^logout/$", logout_then_login,name="logout"),
     url(r"^accounts/", include("registration.backends.simple.urls")),
+    url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
     url(r'^nou_usuari/', auth(views.nouUsuariView), name="nou_usuari"),
     url(r'^nodes_nou_usuari/', auth(views.nodesNouUsuariView), name="nodes_nou_usuari"), #ajax: retorna nodes pel select de nou_usuari amb la opcio inicial marcada segons l'usuari que ha convidat
@@ -55,5 +55,5 @@ urlpatterns = [
     url(r'^messages/', include('django_messages.urls')),
     url('^inbox/notifications/', include('notifications.urls', namespace="notifications")),
     url(r"edit_profile/$", auth(UserProfileEditView.as_view()), name="edit_profile"),
-    url(r'^$', auth(views.coopeView), name="coope"),
+    # url(r'^$', views.coopeView, name="coope"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
