@@ -397,7 +397,7 @@ from django.core.mail import send_mail
 def enviarInvitacio(email, nom, k):
 
     text = nom + " t'ha convidat a la xarxa de productes de proximitat del Baix Vallès "+ "lamassa.org/register/" + str(k)
-    send_mail("Convidat a la xarxa d'autogestio", text, 'RUSC@example.com', [email] ,fail_silently=True )
+    send_mail("Convidat a la xarxa d'autogestio", text, 'lamassaxarxa@gmail.com', [email] ,fail_silently=True )
 
 #en cas de que si estigui, enviar invitació al usuari
 def validateEmail( email ):
