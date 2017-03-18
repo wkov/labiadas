@@ -108,15 +108,13 @@ user_registered.connect(user_created)
 
 def buskadorProducte(request):
 
-    searchString = request.POST.get('searchString', 0)
+    searchString = request.POST.get('searchString',' ')
     #ToDo Afegir Cela al Buscador, Django no permet Ands i Ors, Construir query manualment
 
     etiquetes = Etiqueta.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
-    posts = []
 
-    if not searchString == 0:
-        posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
+    posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
 
     return render(request, "buscador.html", {
         'posts': posts,
