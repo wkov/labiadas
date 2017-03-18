@@ -114,7 +114,7 @@ def buskadorProducte(request):
     etiquetes = Etiqueta.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    if searchString:
+    if not searchString == 'None':
         posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
 
         return render(request, "buscador.html", {
