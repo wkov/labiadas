@@ -142,8 +142,8 @@ ACCOUNT_ACTIVATION_DAYS = 30
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'scaladeirsvc@gmail.com'
-EMAIL_HOST_PASSWORD = 'ppcefdwfayrhrwrb'
+EMAIL_HOST_USER = 'lamassaxarxa@gmail.com'
+EMAIL_HOST_PASSWORD = 'Pl4nes40'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
