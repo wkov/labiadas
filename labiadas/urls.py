@@ -45,7 +45,6 @@ urlpatterns = [
     url(r'^coordenades/$', auth(CoordenadesView), name="coordenades"), #ajax: portar coordenades al mapa
     url(r'^nodesave/$', auth(NodeSaveView), name="nodesave"), #ajax; guardar elecció de nou usuari al entrar per 1a vegada
     url(r'^nodecalc/$', auth(NodeCalcView), name="nodecalc"), #ajax: en comanda calcula els posibles dies de la setmana segons el node seleccionat
-
     url(r'^freqcalc/$', auth(FreqCalcView), name="freqcalc"), #ajax: en comanda calcula els posibles dies de la setmana segons el node seleccionat
     url(r'^franjacalc/$', auth(FranjaCalcView), name="franjacalc"),#ajax: en comanda calcula les franjes horaries segons el lloc i el dia seleccionats
     # url(r'^datacalc/$', auth(DataCalcView), name="datacalc"),  #ajax: calcula el dia concret (dd/mm/yyyy) segons el dia de la setmana (dilluns, dimarts,)  seleccionat
