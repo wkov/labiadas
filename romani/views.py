@@ -475,7 +475,7 @@ def ConvidarView(request):
             up.invitacions = up.invitacions - 1
             up.save()
 
-            s = "http://79.137.39.201:8001/register/" + str(k)
+            s = "http://www.lamassa.org/register/" + str(k)
             message = s
             # return HttpResponse(json.dumps(ret))
     # response = HttpResponse(json.dumps(ret), content_type='application/json')
