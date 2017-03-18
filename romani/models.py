@@ -345,12 +345,12 @@ from django.core.mail import send_mail
 
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        # node = Node.objects.get(pk=1)
-        u_key = Key.objects.get(nou_usuari=instance)
-        u = UserProfile.objects.get(user=u_key.usuari)
-        text = "El registre s'ha completat amb èxit. Benvingut a la xarxa de productes de proximitat.  http://127.0.0.1:8000/coope   Gràcies!"
-        send_mail("Benvingut a la xarxa d'autogestio", text, 'RUSC@example.com', [instance.email] ,fail_silently=True )
-        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="", node=u.lloc_entrega_perfil )
+        node = Node.objects.get(pk=1)
+        # Aqui encara no podem mirar el key per esbrinar el lloc_entrega de l'usuari que l'ha convidat,de moment assignem node 1 i a MyRegistrationView succes_url modifiquem la taula Key,
+        # despres al procesar nou_usuari en nodes_nou_usuari ja es calcula el node de l'usuari que convida i se li proposa en pantalla
+        text = "El registre s'ha completat amb èxit. Benvingut a la xarxa de productes de proximitat.  http://www.lamassa.org/   Gràcies!"
+        send_mail("Benvingut a la xarxa d'autogestio", text, 'lamassaxarxa@gmail.com', [instance.email] ,fail_silently=True )
+        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="", lloc_entrega_perfil=node )
 
 
 
