@@ -113,13 +113,15 @@ def buskadorProducte(request):
 
     etiquetes = Etiqueta.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
-    # if searchString:
-    posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
+    if searchString != 0:
+        posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
 
-    return render(request, "buscador.html", {
-        'posts': posts,
-        'etiquetes': etiquetes, 'up': user_p})
-
+        return render(request, "buscador.html", {
+            'posts': posts,
+            'etiquetes': etiquetes, 'up': user_p})
+    else:
+        return render(request, "buscador.html", {
+            'etiquetes': etiquetes, 'up': user_p})
 
 
 
