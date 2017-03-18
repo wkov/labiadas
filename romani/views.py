@@ -115,7 +115,7 @@ def buskadorProducte(request):
     user_p = UserProfile.objects.filter(user=request.user).first()
     posts = []
 
-    if searchString != "0":
+    if not searchString == 0:
         posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
 
     return render(request, "buscador.html", {
