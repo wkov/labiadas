@@ -348,8 +348,8 @@ def create_profile(sender, instance, created, **kwargs):
         node = Node.objects.get(pk=1)
         # Aqui encara no podem mirar el key per esbrinar el lloc_entrega de l'usuari que l'ha convidat,de moment assignem node 1 i a MyRegistrationView succes_url modifiquem la taula Key,
         # despres al procesar nou_usuari en nodes_nou_usuari ja es calcula el node de l'usuari que convida i se li proposa en pantalla
-        text = "El registre s'ha completat amb èxit. Benvingut a la xarxa de productes de proximitat.  http://www.lamassa.org/   Gràcies!"
-        send_mail("Benvingut a la xarxa d'autogestio", text, 'lamassaxarxa@gmail.com', [instance.email] ,fail_silently=True )
+        text = "El registre s'ha completat amb èxit. Benvingut a La Massa. Visita la web i descobreix tots els productes que tens al teu abast:  http://www.lamassa.org/   Gràcies!"
+        send_mail("Benvingut a La Massa", text, 'lamassaxarxa@gmail.com', [instance.email] ,fail_silently=True )
         profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="", lloc_entrega_perfil=node )
 
 

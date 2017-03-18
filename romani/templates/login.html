@@ -9,16 +9,20 @@
 
 <form method="post" action="">
   {% csrf_token %}
-  <table class="table-responsive">
+  <table class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
     <tr>
-      <td> <p><b>Email o Nom d'usuari: &nbsp; </b></p>
+      <td> <p><b>Email <br/> o Nom d'usuari: &nbsp; <br/> </b></p>
 {#          {{ form.username.label_tag }}#}
       </td>
+        </tr>
+      <tr>
       <td>{{ form.username }}</td>
     </tr>
     <tr>
       <td>{{ form.password.label_tag }}</td>
-      <td>{{ form.password }}</td>
+      </tr>
+      <tr>
+        <td>{{ form.password }}</td>
     </tr>
   </table>
   </br>
