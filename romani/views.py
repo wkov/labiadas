@@ -108,7 +108,7 @@ user_registered.connect(user_created)
 
 def buskadorProducte(request):
 
-    searchString = request.POST.get('searchString',' ')
+    searchString = request.POST.get('searchString')
     #ToDo Afegir Cela al Buscador, Django no permet Ands i Ors, Construir query manualment
 
     etiquetes = Etiqueta.objects.all()
