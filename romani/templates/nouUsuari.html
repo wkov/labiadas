@@ -66,8 +66,8 @@
 
     <br/>
 
-        <p> "La Massa" és el punt de trobada online de petits productors i consumidors. <br/><br/>
-            Tots els productes que podràs trobar aquí són productes artesans de proximitat, saludables i respectuosos amb el medi ambient. Elaborats en un entorn radicalment cooperatiu.
+        <p> "La Massa" és el punt de trobada online de productors i consumidors locals. <br/><br/>
+          Trobaras productes artesans de proximitat, saludables i respectuosos amb el medi ambient. Elaborats en un entorn radicalment cooperatiu.</p>
             <div class="img-responsive">
              <a href="{% url 'coope' %}">
         <img src="{% static "img/benvinguda.png" %}" width="550px" height="300px" ></a>
@@ -121,7 +121,11 @@
 
 
 {% for n in nodes %}
-    {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+    {% if forloop.last %}
+     i &nbsp; {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}. &nbsp;
+    {% else %}
+        {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+    {% endif %}
 {% endfor %}
 
                 <br/><br/>
@@ -152,6 +156,7 @@
     <p>
         Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-globe collapsed-element'></span></a>
     que sempre trobaràs en el menú esquerra
+
     </p> </br>
             <div class="img-responsive">
              <a href="{% url 'convidar' %}">

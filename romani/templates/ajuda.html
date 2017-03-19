@@ -39,7 +39,11 @@
 
 
 {% for n in nodes %}
-    {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+    {% if forloop.last %}
+     i &nbsp; {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}. &nbsp;
+    {% else %}
+        {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+    {% endif %}
 {% endfor %}
 
 

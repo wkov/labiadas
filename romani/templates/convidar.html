@@ -52,8 +52,12 @@
     {% endif %}
 <br/>
 Actualment som desenes de persones al voltant dels diferents punts:
-    {% for n in nodes %}
-    {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+{% for n in nodes %}
+    {% if forloop.last %}
+     i &nbsp; {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}. &nbsp;
+    {% else %}
+        {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
+    {% endif %}
 {% endfor %}
 
 
