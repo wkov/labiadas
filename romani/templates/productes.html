@@ -79,7 +79,7 @@
                             Cant:
                             <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 50px"/>
                             de <br/>
-                            <select id="id_format" name="format" class="hidden_id" style="width: 100% float:right" >
+                            <select id="id_format" name="format" class="hidden_id form-control" style="width: 100% float:right" >
                                 {% for tipusproducte in producte.formats.all %}
                                     {% if tipusproducte.stock > 0 %}
                                         <option value= {{ tipusproducte.pk }} > {{ tipusproducte.nom }}{{ tipusproducte.preu }}€</option>
