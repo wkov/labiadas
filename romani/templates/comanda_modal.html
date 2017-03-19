@@ -20,10 +20,11 @@ window.onclick = function(event) {
        <form method="post" class="comanda2_form">{% csrf_token %}
 {#           <img id="imatge" name="imatge" class="img-responsive" style="float: right; max-height: 300px "  >#}
            <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
-                <div class="g-item" id="imatge">
+                <div class="g-item" id="imatge" style="float: right">
                     </div>
             </a>
-            <div>
+            <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
+
            <label for="producte">Producte:</label>  <input type="text" style="max-width: 200px; float: right" class="form-control"  id="producte" name="producte" readonly/>
            <input type="hidden" id="producte_pk" name="producte_pk" class="form-control"  /><br/><br/>
            <label for="format">Format:</label>   <input type="text" class="form-control"  id="format" style="max-width: 200px; float: right" name="format" readonly/>
@@ -67,20 +68,20 @@ window.onclick = function(event) {
             {% endif %}
             </br>
            <label for="dataentrega">Data d'entrega:</label>
-            <select id="dataentrega" name="dataentrega" class="dataentrega">
+            <select id="dataentrega" name="dataentrega" class="dataentrega form-control">
                  <option selected></option>
             </select> &nbsp; &nbsp;&nbsp;
             </br>
            <label for="franjes">Franja Horària:</label>
-           <select id="franjes" name="franjes" class="franjes">
+           <select id="franjes" name="franjes" class="franjes form-control">
                 <option selected></option>
            </select>
         </div>
            <label for="frequencia">Freqüència:</label>
-           <select id="frequencia" name="frequencia">
+           <select id="frequencia" name="frequencia" class="form-control">
                <option selected></option>
            </select>
-          </br>
+          <br/><br/>
           <button id="aceptar" type="submit">Confirmar</button>
           <button id="cancelar" type="button">Cancel·lar</button>
            </form>
