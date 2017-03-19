@@ -29,7 +29,7 @@ jQuery(document).ready(function($)
 			producte.value = data["producte"];
 			producte_pk.value = data["producte_pk"];
 			cantitat.value = data["cantitat"];
-			imatge.src = data["imatge"];
+			imatge.style.backgroundImage = 'url("' + data["imatge"] + '")';
 			var j = 0;
 			llocentrega.options.length=0;
 

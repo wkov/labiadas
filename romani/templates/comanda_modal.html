@@ -18,7 +18,11 @@ window.onclick = function(event) {
     <span class="close">&times;</span>
         <h5><b>NOVA COMANDA:</b></h5>
        <form method="post" class="comanda2_form">{% csrf_token %}
-           <img id="imatge" name="imatge" class="img-responsive" style="float: right; max-height: 300px "  >
+{#           <img id="imatge" name="imatge" class="img-responsive" style="float: right; max-height: 300px "  >#}
+           <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
+                <div class="g-item" id="imatge">
+                    </div>
+            </a>
             <div>
            <label for="producte">Producte:</label>  <input type="text" style="max-width: 200px; float: right" class="form-control"  id="producte" name="producte" readonly/>
            <input type="hidden" id="producte_pk" name="producte_pk" class="form-control"  /><br/><br/>
