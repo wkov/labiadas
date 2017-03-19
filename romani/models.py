@@ -343,6 +343,10 @@ class UserProfile(models.Model):
         now = datetime.datetime.now()
         return Comanda.objects.filter(client=self.user).filter(data_entrega__gte=now)
 
+    def contractes_cistella(self):
+        now = datetime.datetime.now()
+        return Contracte.objects.filter(client=self.user).filter(data_fi__isnull=True)
+
 
 from django.core.mail import send_mail
 

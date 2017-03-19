@@ -13,7 +13,9 @@ def comandes_unread(context):
     if not user:
         return ''
     up = UserProfile.objects.get(user=user)
-    return up.comandes_cistella().count()
+    uno = up.comandes_cistella().count()
+    dos = up.contractes_cistella().count()
+    return uno + dos
 
 def user_context(context):
     if 'user' not in context:

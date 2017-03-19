@@ -67,7 +67,7 @@
                                             <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ contracte.preu }}" />
                                             <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id"  value="{{ contracte.cantitat }}" style="width: 29px"/>
                                             <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ contracte.format.pk }}"/>
-                                            <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>
+{#                                            <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>#}
                                            <a type="button" class="glyphicon glyphicon-trash" href="{% url 'contracteDelete' contracte.pk  %}"
                                            title="Borrar comanda"
                                            onclick="return confirm('Segur que vols borrar aquesta comanda?')">
@@ -125,7 +125,7 @@
                         <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ comanda.preu }}" />
                         <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id" value="{{ comanda.cantitat }}" style="width: 29px"/>
                         <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ comanda.format.pk }}"/>
-                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>
+{#                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>#}
                     {% if not comanda.entregat %}
                         <a class="glyphicon glyphicon-trash" type="button" href="{% url 'comandaDelete' comanda.pk  %}"
                            title="Borrar comanda"
