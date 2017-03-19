@@ -399,8 +399,8 @@ from django.core.mail import send_mail
 #funció exclusivament per a enviar invitacio a cela a un usuari que se li passa a la funció
 def enviarInvitacio(email, nom, k):
 
-    text = nom + " t'ha convidat a -La Massa- xarxa de productes de proximitat"+ "lamassa.org/register/" + str(k)
-    send_mail("Convidat a La Massa", text, 'lamassaxarxa@gmail.com', [email] ,fail_silently=True )
+    text = nom + " t'ha convidat a 'La Massa' xarxa de productes de proximitat: "+ "lamassa.org/register/" + str(k)
+    send_mail("Convidat a 'La Massa'", text, 'lamassaxarxa@gmail.com', [email] ,fail_silently=True )
 
 #en cas de que si estigui, enviar invitació al usuari
 def validateEmail( email ):
@@ -449,7 +449,7 @@ def ConvidarView(request):
                 if validateEmail(email):
                     try:
                         k = generate_key(request)
-                        enviarInvitacio(email, up.user.username, k)
+                        enviarInvitacio(email, up.user.get_full_name(), k)
                         up.invitacions = up.invitacions - 1
 
                         conv = Convidat.objects.create(mail = email)

@@ -339,6 +339,10 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.first_name
 
+    def comandes_cistella(self):
+        now = datetime.datetime.now()
+        return Comanda.objects.filter(client=self.user).filter(data_entrega__gte=now)
+
 
 from django.core.mail import send_mail
 

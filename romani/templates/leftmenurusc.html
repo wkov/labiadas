@@ -1,5 +1,5 @@
 {% load notifications_tags %}
-
+{% load romani_tags %}
 <style>
 nav.sidebar-menu-collapsed {
     width: 60px;
@@ -206,7 +206,17 @@ nav.sidebar ul.level1 ul.level2 li a {
          <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'comandes' %}" title='Veure historial de comandes'>
-                <span class='glyphicon glyphicon-shopping-cart collapsed-element'>
+                {% comandes_unread as unread_com %}
+
+
+        <span id="notification_count">
+{#            <label id="id_notifnum">#}
+                {{ unread_com }}
+{#            </label>#}
+        </span>
+
+                  <span class='glyphicon glyphicon-shopping-cart collapsed-element'>
+
                 </span>
                 <span class='expanded-element'>Comandes</span>
               </a>
