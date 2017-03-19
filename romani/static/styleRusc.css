@@ -642,7 +642,8 @@ h5{
 /* Modal Content/Box */
 .reg-modal-content {
     background-color: #fefefe;
-    margin: 10% auto; /* 15% from the top and centered */
+    margin: 20% auto; /* 15% from the top and centered */
+    margin-left: 60px;
     padding: 20px;
     max-width: 1000px;
     border: 1px solid #888;
@@ -651,7 +652,8 @@ h5{
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    margin: 10% auto; /* 15% from the top and centered */
+    margin: 20% auto; /* 15% from the top and centered */
+    margin-left: 60px;
     padding: 10px;
     max-width: 600px;
     border: 1px solid #888;
