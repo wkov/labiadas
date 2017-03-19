@@ -35,7 +35,7 @@ class UserProfileRegistrationForm(RegistrationForm):
     last_name = forms.CharField(max_length=15, label='Cognom')
     date_of_birth = forms.DateField(label='Data de naixement',
                                     widget=SelectDateWidget(
-                                        years=[y for y in range(1900,
+                                        years=[y for y in range(1939,
                                                                                     datetime.datetime.now().year-17)],
                                                             attrs=({'style': 'width: 33%; display: inline-block;'})
                                     ),
