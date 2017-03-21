@@ -71,7 +71,7 @@
 {#            <div class="img-responsive">#}
 {#             <a href="{% url 'coope' %}">#}
 {#                <div class="foto-producte" style="background-image:url('{% static 'img/benvinguda.png' %}');"></div>#}
-{#        <img src="{% static "img/benvinguda.png" %}" width="550px" height="300px" >#}</a>
+{#        <img src="{% static "img/benvinguda.png" %}" width="550px" height="300px" ></a>    #}
 {#      </div>#}
 
             <br/><br/>
@@ -148,10 +148,11 @@
 
     El pagament es fa quan s'entrega el producte en el punt de trobada, directament als productors.
     </p> </br>
-            <div class="img-responsive">
-             <a href="{% url 'convidar' %}">
-        <img src="{% static "img/convida.png" %}" width="550px" height="300px"  ></a>
-      </div> </br>
+{#            <div class="img-responsive">#}
+{#             <a href="{% url 'convidar' %}">#}
+{#        <img src="{% static "img/convida.png" %}" width="550px" height="300px"  ></a>#}
+{#      </div> #}
+      </br>
           <form action="{% url 'coope' %}">
           <button><span class="glyphicon glyphicon-grain"><input type="submit" value="Entrar a la xarxa"></span></button>
           </form>
