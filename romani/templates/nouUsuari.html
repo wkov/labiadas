@@ -68,11 +68,11 @@
 
         <p> "La Massa" és el punt de trobada online de productors i consumidors locals. <br/><br/>
           Trobaras productes artesans de proximitat, saludables i respectuosos amb el medi ambient. Elaborats en un entorn radicalment cooperatiu.</p>
-            <div class="img-responsive">
-             <a href="{% url 'coope' %}">
-                <div class="foto-producte" style="background-image:url('{% static 'img/benvinguda.png' %}');"></div>
+{#            <div class="img-responsive">#}
+{#             <a href="{% url 'coope' %}">#}
+{#                <div class="foto-producte" style="background-image:url('{% static 'img/benvinguda.png' %}');"></div>#}
 {#        <img src="{% static "img/benvinguda.png" %}" width="550px" height="300px" >#}</a>
-      </div>
+{#      </div>#}
 
             <br/><br/>
     </p><form action="{% url 'coope' %}">
@@ -89,12 +89,12 @@
       Per cada producte hi pot haver diferents formats. Pica el desplegable i descobreix-ho. Recorda fer la comanda almenys 2 dies abans del dia que vulguis rebre-ho.
         <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>
         </br>
-        <div class="img-responsive">
-             <a href="{% url 'coope' %}">
-                 <div class="foto-producte" style="background-image:url('{% static 'img/comcomprar.png' %}');"></div>
+{#        <div class="img-responsive">#}
+{#             <a href="{% url 'coope' %}">#}
+{#                 <div class="foto-producte" style="background-image:url('{% static 'img/comcomprar.png' %}');"></div>#}
 {#        <img src="{% static "img/comcomprar.png" %}" width="550px" height="300px" >#}
-             </a>
-      </div>
+{#             </a>#}
+{#      </div>#}
 
 
       <form action="{% url 'coope' %}">
@@ -108,10 +108,11 @@
         A la visualitzacio de comandes i entregues pots borrar les comandes que ja no desitjis (minim 2 dies abans de l'entrega). També
     pots consultar les entregues rebudes en el passat. Així com consultar tots els detalls de cada una d'elles  <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a>
     </p>
-      <div class="img-responsive" >
-             <a href="{% url 'comandes' %}">
-        <img src="{% static "img/comandes.png" %}" width="550px" height="300px"  ></a>
-      </div> </br>
+{#      <div class="img-responsive" >#}
+{#             <a href="{% url 'comandes' %}">#}
+{#        <img src="{% static "img/comandes.png" %}" width="550px" height="300px"  ></a>#}
+{#      </div> #}
+      </br>
             <form action="{% url 'coope' %}">
           <button><span class="glyphicon glyphicon-grain"><input type="submit" value="Entrar a la xarxa"></span></button>
           </form>
@@ -132,10 +133,11 @@
 {% endfor %}
 
                 <br/><br/>
-  <div class="img-responsive">
-             <a href="{% url 'convidar' %}">
-        <img src="{% static "img/aonarriba.png" %}" width="550px" height="300px"  ></a>
-      </div> </br>
+{#  <div class="img-responsive">#}
+{#             <a href="{% url 'convidar' %}">#}
+{#        <img src="{% static "img/aonarriba.png" %}" width="550px" height="300px"  ></a>#}
+{#      </div> #}
+      </br>
             <form action="{% url 'coope' %}">
           <button><span class="glyphicon glyphicon-grain"><input type="submit" value="Entrar a la xarxa"></span></button>
           </form>
@@ -161,10 +163,11 @@
     que sempre trobaràs en el menú esquerra
 
     </p> </br>
-            <div class="img-responsive">
-             <a href="{% url 'convidar' %}">
-        <img src="{% static "img/convida.png" %}" width="550px" height="300px"  ></a>
-      </div> </br>
+{#            <div class="img-responsive">#}
+{#             <a href="{% url 'convidar' %}">#}
+{#        <img src="{% static "img/convida.png" %}" width="550px" height="300px"  ></a>#}
+{#      </div> #}
+      </br>
           <form action="{% url 'coope' %}">
           <button><span class="glyphicon glyphicon-grain"><input type="submit" value="Entrar a la xarxa"></span></button>
           </form>
