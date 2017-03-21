@@ -34,7 +34,7 @@ window.onclick = function(event) {
             </div>
         <div class="thumbnail" >
            <label for="lloc_entrega">Lloc d'entrega:</label>
-            <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control" >
+            <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control" style="float: right; max-width: 300px" >
                  {% for lloc in nodes %}
                 {%  if lloc.pk == up.lloc_entrega_perfil.pk %}
                         <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
