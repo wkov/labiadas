@@ -18,7 +18,7 @@ from django.http import JsonResponse
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import messages
-
+from django.forms.util import ErrorList
 from registration.backends.simple.views import RegistrationView
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
@@ -278,6 +278,9 @@ def next_weekday(d, weekday):
         days_ahead += 7
     return d + datetime.timedelta(days_ahead)
 
+
+
+
 class ComandaFormBaseView(FormView):
     form_class = ComandaForm
 
@@ -286,6 +289,7 @@ class ComandaFormBaseView(FormView):
         response = HttpResponse(json.dumps(vdict))
         response.status = 200 if valid_form else 500
         return response
+
 
     def form_valid(self, form):
         producte = get_object_or_404(Producte, pk=form.data["producte_pk"])
@@ -296,6 +300,8 @@ class ComandaFormBaseView(FormView):
         preu_aux = format.preu
         preu = preu_aux * float(cantitat)
         data = form.data["dataentrega"]
+        if not data:
+            messages.error(self.request, (u"Informa el camp data d'entrega"))
         frequencia = form.data["frequencia"]
         freq_txt = Frequencia.objects.filter(num=frequencia).first().nom
         data_entrega = DiaEntrega.objects.get(pk=data)

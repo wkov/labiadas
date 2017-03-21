@@ -81,7 +81,13 @@ window.onclick = function(event) {
            <select id="frequencia" name="frequencia" class="form-control">
                <option selected></option>
            </select>
-          <br/><br/>
+          <br/>
+            {% if messages %}
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            {% endif %}
+           <br/>
           <button id="aceptar" type="submit">Confirmar <span class="glyphicon glyphicon-ok"></span></button>
           <button id="cancelar" type="button">Cancel·lar <span class="glyphicon glyphicon-remove"></span></button>
            </form>

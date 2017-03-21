@@ -9,6 +9,7 @@ class ComandaForm(forms.ModelForm):
         exclude = ("entregat","cancelat","data_comanda","data_entrega", "lloc_entrega", "franja_horaria", "client", "preu", "format", "producte", "cantitat", "primera_entrega", "data_entrega_txt")
 
 
+
 class InfoForm(forms.ModelForm):
    class Meta:
         model = Comanda
