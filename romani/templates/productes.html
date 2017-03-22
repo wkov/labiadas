@@ -101,12 +101,21 @@
       </div>
     {% endfor %}
 
+
+
+{% endblock %}
+
+
+
+{% block footer %}
+
     <div class="pagination" style="
         text-align: center;
         margin: 0 auto;">
+{#    <div style=" position: relative; display: inline-block; ">#}
         <span class="step-links">
             {% if productes.has_previous %}
-                <a href="?page={{ productes.previous_page_number }}">anterior</a>
+                <a href="?page={{ productes.previous_page_number }}"><div>anterior</div></a>
             {% endif %}
 
             <span class="current">
@@ -117,6 +126,7 @@
                 <a href="?page={{ productes.next_page_number }}">següent</a>
             {% endif %}
         </span>
+{#    </div>#}
     </div>
 
 {% endblock %}
