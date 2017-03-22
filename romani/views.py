@@ -186,7 +186,20 @@ def etiquetaView(request,pk):
 
     productes = Producte.objects.filter(etiqueta=etiqueta, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
 
-    return render(request, "productes.html",{'productes': productes, 'etiquetes': etiquetes, 'nodes': nodes, 'up': user_p})
+    paginator = Paginator(productes, 24) # Show 24 productes per page
+
+    page = request.GET.get('page')
+
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        products = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        products = paginator.page(paginator.num_pages)
+
+    return render(request, "productes.html",{'productes': products, 'etiquetes': etiquetes, 'nodes': nodes, 'up': user_p})
 
 
 def productorView(request,pk):
