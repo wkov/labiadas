@@ -133,7 +133,7 @@ jQuery(document).ready(function($)
 						punt_lat.disabled = true;
 						punt_lng.disabled = true;
 					}
-                	freq.innerHTML = "(" + data["frequencia"] + ")";
+                	freq.innerHTML = data["frequencia"];
 					carrer.value = data["carrer"];
 					numero.value = data["numero"];
 					pis.value = data["pis"];
