@@ -100,4 +100,21 @@
         </div>
       </div>
     {% endfor %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if productes.has_previous %}
+                <a href="?page={{ productes.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ productes.number }} of {{ productes.paginator.num_pages }}.
+            </span>
+
+            {% if productes.has_next %}
+                <a href="?page={{ productes.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
 {% endblock %}

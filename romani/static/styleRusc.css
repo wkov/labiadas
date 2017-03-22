@@ -260,11 +260,19 @@ header {
     width: 80%; /* Could be more or less, depending on screen size */
 }
 /*}*/
-
+    .lloc_entrega_lbl{
+        margin-top: 10px;
+        position: relative
+}
 
 }
 
 @media only screen and (min-width: 585px) {
+
+        .lloc_entrega_lbl{
+        margin-top: 255px;
+        position: relative
+}
 
     .reg-modal-content {
     background-color: #fefefe;

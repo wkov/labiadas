@@ -138,6 +138,8 @@ def nouUsuariView(request):
     return render(request, "nouUsuari.html", {'up': user_p, 'nodes': nodes, 'frequencia': s.nom})
 
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 def coopeView(request):
 
     etiquetes = Etiqueta.objects.all()
@@ -147,11 +149,24 @@ def coopeView(request):
 
     productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
 
+    paginator = Paginator(productes, 5) # Show 5 productes per page
+
+    page = request.GET.get('page')
+
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        products = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        products = paginator.page(paginator.num_pages)
+
     notif=[]
     if request.user.is_authenticated():
         notif = request.user.notifications.unread()
 
-    return render(request, "productes.html", {'productes':productes,'notifications': notif, 'etiquetes': etiquetes, 'up': user_p, 'nodes': nodes})
+    return render(request, "productes.html", {'productes':products,'notifications': notif, 'etiquetes': etiquetes, 'up': user_p, 'nodes': nodes})
 
 
 def producteView(request,pk):

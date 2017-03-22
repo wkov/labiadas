@@ -30,11 +30,11 @@ window.onclick = function(event) {
            <label for="format">Format:</label>   <input type="text" class="form-control"  id="format" style="max-width: 200px; float: right" name="format" readonly/>
            <input type="hidden" id="format_pk" name="format_pk" style="max-width: 200px; float: right" class="form-control" /><br/><br/>
            <label for="cantitat_t">Cantitat: </label>  <input type="number" style="max-width: 200px; float: right" class="form-control"  id="cantitat_t" name="cantitat_t" readonly/><br/><br/>
-           <label for="preu">Preu(€):</label> <input type="number" style="max-width: 200px; float: right" class="form-control"  id="preu" name="preu" readonly/><br/><br/><br/>
+           <label for="preu">Preu(€):</label> <input type="number" style="max-width: 200px; float: right;" class="form-control"  id="preu" name="preu" readonly/><br/><br/><br/>
             </div>
-        <div class="thumbnail" >
-           <label for="lloc_entrega">Lloc d'entrega:</label>
-            <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control" style="float: right; max-width: 300px" >
+{#        <div class="thumbnail" ><br/><br/>#}
+           <label for="lloc_entrega" class="lloc_entrega_lbl"  >Lloc d'entrega:</label>
+            <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control" >
                  {% for lloc in nodes %}
                 {%  if lloc.pk == up.lloc_entrega_perfil.pk %}
                         <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
@@ -42,7 +42,7 @@ window.onclick = function(event) {
                         <option value="{{ lloc.pk }}">{{ lloc.nom }} / {{ lloc.poblacio }} </option>
                     {% endif %}
                {% endfor %}
-           </select> </br>
+           </select>
             {% if up.lloc_entrega_perfil.a_domicili == True %}
                     <div id="effect" style="display: block" class="ui-widget-content ui-corner-all">
                     <label style="float: left; position: absolute" for="carrer">Carrer: </label>
@@ -66,17 +66,18 @@ window.onclick = function(event) {
                             <input id="poblacio" class="form-control" style="float: right; max-width: 300px" name="poblacio" value="{{ up.lloc_entrega_perfil.poblacio }}" readonly/><br/><br/>
                         </div>
             {% endif %}
-            </br>
+            <br/><br/>
            <label for="dataentrega">Data d'entrega:</label>
             <select id="dataentrega" name="dataentrega" class="dataentrega form-control">
                  <option selected></option>
-            </select> &nbsp; &nbsp;&nbsp;
-            </br>
+            </select>
+{#           &nbsp; &nbsp;&nbsp;#}
+
            <label for="franjes">Franja Horària:</label>
            <select id="franjes" name="franjes" class="franjes form-control">
                 <option selected></option>
            </select>
-        </div>
+{#        </div>#}
            <label for="frequencia">Freqüència:</label>
            <select id="frequencia" name="frequencia" class="form-control">
                <option selected></option>
