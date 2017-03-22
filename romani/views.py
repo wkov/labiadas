@@ -149,7 +149,7 @@ def coopeView(request):
 
     productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
 
-    paginator = Paginator(productes, 5) # Show 5 productes per page
+    paginator = Paginator(productes, 24) # Show 24 productes per page
 
     page = request.GET.get('page')
 
