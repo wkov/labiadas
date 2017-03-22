@@ -101,7 +101,10 @@
       </div>
     {% endfor %}
 
-    <div class="pagination">
+    <div class="pagination" style="
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;">
         <span class="step-links">
             {% if productes.has_previous %}
                 <a href="?page={{ productes.previous_page_number }}">anterior</a>
