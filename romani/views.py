@@ -149,7 +149,9 @@ def coopeView(request):
 
     # productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False).order_by(karma descending)
 
-    productes = sorted(Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False), key=lambda a: a.karma)
+    p = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
+
+    productes = sorted(p, key=lambda a: a.karma())
 
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
@@ -511,6 +513,9 @@ def ConvidarView(request):
             k = generate_key(request)
             up.invitacions = up.invitacions - 1
             up.save()
+
+            notify.send(up, recipient= up.user, verb="Has generat una nova invitació ", action_object=up,
+                            description="a la xarxa" , timestamp=timezone.now())
 
             s = "http://lamassa.org/register/" + str(k)
             message = s
