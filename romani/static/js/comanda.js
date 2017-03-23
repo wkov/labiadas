@@ -95,9 +95,17 @@ jQuery(document).ready(function($)
 				var dataentrega = document.getElementById("dataentrega");
 				var franjes = document.getElementById("franjes");
 				var modal = document.getElementById('myModal');
+				var check1 = document.getElementById('check1');
+				var check2 = document.getElementById('check2');
 				if ((dataentrega.value == "")||(franjes.value == "")){
-					call = "Completa els camps 'data d'entrega' i 'franja horària' si us plau";
-				    CallNotification(call ,"warning");
+					if (dataentrega.value == ""){
+					check1.style.display = "block"}else{
+					check1.style.display = "none"
+					if (franjes.value == ""){
+						check2.style.display = "block"}else{
+					check2.style.display = "none"}}
+                    //call = "Completa els camps 'Data d'entrega' i 'Franja Horària' si us plau";
+				    //CallNotification(call ,"warning");
 				}
 				else{
                     $.post("/comanda/", $(this).serializeArray(),

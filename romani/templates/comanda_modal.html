@@ -67,16 +67,33 @@ window.onclick = function(event) {
                         </div>
             {% endif %}
             <br/><br/>
+
            <label for="dataentrega">Data d'entrega:</label>
             <select id="dataentrega" name="dataentrega" class="dataentrega form-control">
                  <option selected></option>
             </select>
+           <div id="check1"  style="display: none">
+
+                <div class="thumbnail" >
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                    <b> Completa el camp 'Data d'entrega' si us plau </b>  &nbsp; </br>
+                </div>
+
+           </div>
 {#           &nbsp; &nbsp;&nbsp;#}
 
            <label for="franjes">Franja Horària:</label>
            <select id="franjes" name="franjes" class="franjes form-control">
                 <option selected></option>
            </select>
+           <div id="check2"  style="display: none">
+
+                <div class="thumbnail" >
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                    <b> Completa el camp 'Franja Horària' si us plau </b>  &nbsp; </br>
+                </div>
+
+           </div>
 {#        </div>#}
            <label for="frequencia">Freqüència:</label>
            <select id="frequencia" name="frequencia" class="form-control">
