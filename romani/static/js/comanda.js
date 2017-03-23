@@ -92,7 +92,10 @@ jQuery(document).ready(function($)
 	$(".comanda2_form").submit(function(e)
 			{
 				e.preventDefault();
+				var dataentrega = document.getElementById("dataentrega");
+				var franjes = document.getElementById("franjes");
 				var modal = document.getElementById('myModal');
+				if (dataentrega && franjes){
 				$.post("/comanda/", $(this).serializeArray(),
 				  function(data) {
 
@@ -100,7 +103,10 @@ jQuery(document).ready(function($)
 					  //call = "Has fet la comanda correctament"
 					  //CallNotification(call,"success")
 					  location.reload()
-				});
+				});}else{
+                    call = "Completa els camps data d'entrega i franja horaria si us plau";
+				    CallNotification(call ,"error");
+			}
 	});
 
 	$('.lloc_entrega_perfil').change(function (e) {
