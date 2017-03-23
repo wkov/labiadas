@@ -165,6 +165,14 @@ class Producte(models.Model):
         return self.nom
 
 
+    def karma(self):
+
+        com = self.comanda_set.all().count()
+        con = self.contracte_set.all().count()
+        t = com + con
+        return t
+
+
 class Contracte(models.Model):
 
 
@@ -199,7 +207,7 @@ class Contracte(models.Model):
     def get_absolute_url(self):
         return reverse('comandes')
 
-    # Calculem segons la frequencia la data de la proxima entrega
+   # Calculem segons la frequencia la data de la proxima entrega
     def prox_entrega(self):
         d = self.darrera_entrega
         if d < timezone.now():
@@ -258,6 +266,7 @@ class Contracte(models.Model):
     #                 d = self.next_weekday(d, int(self.data_entrega))
             self.darrera_entrega = d
         return d
+
 
 
 
