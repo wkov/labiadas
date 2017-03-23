@@ -72,7 +72,7 @@ window.onclick = function(event) {
             <select id="dataentrega" name="dataentrega" class="dataentrega form-control">
                  <option selected></option>
             </select>
-           <div id="check1"  style="display: none">
+           <div id="check1"  style="display: none; color: #f5b335">
 
                 <div class="thumbnail" >
                     <span class="glyphicon glyphicon-info-sign"></span>
@@ -86,7 +86,7 @@ window.onclick = function(event) {
            <select id="franjes" name="franjes" class="franjes form-control">
                 <option selected></option>
            </select>
-           <div id="check2"  style="display: none">
+           <div id="check2"  style="display: none; color: #f5b335">
 
                 <div class="thumbnail" >
                     <span class="glyphicon glyphicon-info-sign"></span>
@@ -100,11 +100,11 @@ window.onclick = function(event) {
                <option selected></option>
            </select>
           <br/>
-            {% if messages %}
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            {% endif %}
+{#            {% if messages %}#}
+{#                {% for message in messages %}#}
+{#                    {{ message }}#}
+{#                {% endfor %}#}
+{#            {% endif %}#}
            <br/>
           <button id="aceptar" type="submit">Confirmar <span class="glyphicon glyphicon-ok"></span></button>
           <button id="cancelar" type="button">Cancel·lar <span class="glyphicon glyphicon-remove"></span></button>
