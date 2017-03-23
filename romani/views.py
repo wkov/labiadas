@@ -151,8 +151,7 @@ def coopeView(request):
 
     p = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
 
-    productes = sorted(p, key=lambda a: a.karma())
-
+    productes = sorted(p, key=lambda a: a.karma(), reverse=True)
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
 
@@ -189,7 +188,9 @@ def etiquetaView(request,pk):
     nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    productes = Producte.objects.filter(etiqueta=etiqueta, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
+    p = Producte.objects.filter(etiqueta=etiqueta, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
+
+    productes = sorted(p, key=lambda a: a.karma(), reverse=True)
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
 
