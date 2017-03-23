@@ -95,18 +95,20 @@ jQuery(document).ready(function($)
 				var dataentrega = document.getElementById("dataentrega");
 				var franjes = document.getElementById("franjes");
 				var modal = document.getElementById('myModal');
-				if (dataentrega && franjes){
-				$.post("/comanda/", $(this).serializeArray(),
-				  function(data) {
+				if ((dataentrega.value == "")||(franjes.value == "")){
+					call = "Completa els camps 'data d'entrega' i 'franja horària' si us plau";
+				    CallNotification(call ,"warning");
+				}
+				else{
+                    $.post("/comanda/", $(this).serializeArray(),
+					  function(data) {
 
-					  modal.style.display = "none";
-					  //call = "Has fet la comanda correctament"
-					  //CallNotification(call,"success")
-					  location.reload()
-				});}else{
-                    call = "Completa els camps data d'entrega i franja horaria si us plau";
-				    CallNotification(call ,"error");
-			}
+						  modal.style.display = "none";
+						  //call = "Has fet la comanda correctament"
+						  //CallNotification(call,"success")
+						  location.reload()
+					});
+				}
 	});
 
 	$('.lloc_entrega_perfil').change(function (e) {
