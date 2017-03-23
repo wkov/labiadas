@@ -428,11 +428,13 @@ header {
 }
 
 #div_footer {
-    background-color: #12A9C7;
-	height:100px;
+    background-color: #bce0b9;
+	height:30px;
 	bottom:0;
     float: left;
-    display: None;
+    text-align: center;
+    margin: 0 auto;
+    /*display: None;*/
 }
 
 .div_coment {
