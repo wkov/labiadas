@@ -113,11 +113,11 @@
 {#    <div style=" position: relative; display: inline-block; ">#}
         <span class="step-links">
             {% if productes.has_previous %}
-                <a href="?page={{ productes.previous_page_number }}"><div>anterior</div></a>
+                <a href="?page={{ productes.previous_page_number }}">anterior</a>
             {% endif %}
 
             <span class="current">
-                Pàgina {{ productes.number }} de {{ productes.paginator.num_pages }}.
+                Pàgina {{ productes.number }} de {{ productes.paginator.num_pages }}
             </span>
 
             {% if productes.has_next %}
