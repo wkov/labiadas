@@ -497,7 +497,7 @@ def ConvidarView(request):
 
                         up.save()
 
-                        notify.send(up, recipient=up, verb="",
+                        notify.send(up, recipient=up.user, verb="",
                             description=", has convidat un nou usuari. " , timestamp=timezone.now())
                         message_email = "S'ha enviat la sol·licitud al correu electrònic correctament"
                     # up = UserProfile.objects.get(user = request.user)
@@ -516,7 +516,7 @@ def ConvidarView(request):
             up.invitacions = up.invitacions - 1
             up.save()
 
-            notify.send(up, recipient=up, verb="",
+            notify.send(up, recipient=up.user, verb="",
                             description=", has generat una nova invitació " , timestamp=timezone.now())
 
             s = "http://lamassa.org/register/" + str(k)
