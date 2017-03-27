@@ -56,5 +56,13 @@
     <a href="{% url 'convidar' %}"> 5) Com puc convidar nous usuaris a la xarxa ?</a><br/>
     Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-globe collapsed-element'></span></a>
     que sempre trobaràs en el menú esquerra
+            <br/> <br/>
+
+    <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge"> 6) Tens algun altre dubte ?</a><br/>
+    Escriu-nos un missatge <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge">
+                    <span class="glyphicon glyphicon-comment" style="color: #f6a828">  </span></a>
+    i et contestarem l'abans possible.
+
+    Gràcies!
 
 {% endblock %}

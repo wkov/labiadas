@@ -286,10 +286,11 @@ def contracteDelete(request, pk):
 
 def AjudaView(request):
 
+    webmaster = User.objects.filter(pk="1").first()
     user_p = UserProfile.objects.filter(user=request.user).first()
     nodes = Node.objects.all()
 
-    return render(request, "ajuda.html",{'up': user_p, 'nodes': nodes})
+    return render(request, "ajuda.html",{'up': user_p, 'nodes': nodes, 'webmaster': webmaster})
 
 
 
