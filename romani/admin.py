@@ -56,8 +56,8 @@ class nodeAdmin(admin.ModelAdmin):
     list_filter = ['nom','carrer','poblacio','codi_postal','responsable','dies_entrega', 'a_domicili']
 
 class keyAdmin(admin.ModelAdmin):
-    search_fields = ['key','usuari','nou_usuari']
-    list_filter = ['key','usuari','nou_usuari']
+    search_fields = ['key','usuari','nou_usuari', 'data']
+    list_filter = ['key','usuari','nou_usuari', 'data']
 
 class frequenciaAdmin(admin.ModelAdmin):
     list_display = ['nom','num']
