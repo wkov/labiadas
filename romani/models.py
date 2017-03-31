@@ -320,6 +320,7 @@ class Key(models.Model):
     key = models.CharField(max_length=6)
     usuari = models.ForeignKey(User)
     nou_usuari = models.ForeignKey(User, related_name='key_nou_usuari', null=True, blank=True)
+    data = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "%s %s" % (self.key, self.usuari.username)
