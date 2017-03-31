@@ -229,8 +229,8 @@ def comandesView(request):
 def entregasView(request):
 
     now = datetime.datetime.now()
-    entregas = Comanda.objects.filter(client=request.user).filter(Q(data_entrega__lte=now)).order_by('-data_comanda')
-    contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__lte=now) & Q(data_fi__isnull=False)).order_by('-data_fi')
+    entregas = Comanda.objects.filter(client=request.user).filter(Q(data_entrega__lte=now)).order_by('data_entrega')
+    contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__lte=now) & Q(data_fi__isnull=False)).order_by('data_fi')
 
     nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
