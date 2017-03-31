@@ -264,8 +264,12 @@ class Contracte(models.Model):
     #                 d = self.next_weekday(d, int(self.data_entrega))
     #                 d = self.next_weekday(d, int(self.data_entrega))
     #                 d = self.next_weekday(d, int(self.data_entrega))
-            self.darrera_entrega = d
-        return d
+            if d in self.producte.dies_entrega.all():
+                self.darrera_entrega = d
+            else:
+                self.darrera_entrega = ''
+
+        return self.darrera_entrega
 
 
 
