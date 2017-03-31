@@ -323,7 +323,7 @@ class Key(models.Model):
     data = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "%s %s" % (self.key, self.usuari.username)
+        return "%s %s %s" % (self.key, self.usuari.username, data)
 
 
 class UserProfile(models.Model):
