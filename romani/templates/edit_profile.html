@@ -245,13 +245,13 @@ function placeMarker(location) {
                                 <input id="poblacio" class="form-control" style="max-width: 300px"  name="poblacio" value="{{ object.poblacio }}"  readonly/></div>
                     {% else %}
 
-                                <div id="geodiv" name="geodiv" position="relative" style="float: right; ">
+{#                                <div id="geodiv" name="geodiv" position="relative" style="float: right; ">#}
                                     <div id="map"></div><br/>
                                     <span class="glyphicon glyphicon-map-marker" style="float:right;">
                                         <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>
                                         <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>
                                     </span>
-                                </div><br/><br/><br/><br/><br/>
+{#                                </div><br/><br/><br/><br/><br/>#}
                                                         <div>
                                 <label style="float: left" for="carrer">Carrer: </label>
                                 <input type="text"  id="carrer" style="max-width: 300px" class="form-control"  name="carrer" value="{{ object.lloc_entrega_perfil.carrer }}" readonly/></div>
