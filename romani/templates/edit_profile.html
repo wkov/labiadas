@@ -215,14 +215,14 @@ function placeMarker(location) {
 
                     {% if object.lloc_entrega_perfil.a_domicili == True %}
                                 {% if object.punt_lat %}
-                                    <div id="geodiv" style="float: right; position: relative" name="geodiv">
+                                    <div id="geodiv" name="geodiv">
                                         <div id="map"></div><br/>
                                         <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lat" name="punt_lat"
                                                    value="{{ object.punt_lat }}"  placeholder="clica en el mapa" />
                                         <input type="text" style="max-width: 185px; float: right; position: relative" id="punt_lng" name="punt_lng"  value="{{ object.punt_lng }}" class="form-control" placeholder="(opcional)" />
                                     </div>
                                 {% else %}
-                                    <div id="geodiv" style="float: right; position: relative " name="geodiv">
+                                    <div id="geodiv" name="geodiv">
                                         <div id="map"></div><br/>
                                         <span class="glyphicon glyphicon-map-marker" style="float:right;">
                                             <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />
