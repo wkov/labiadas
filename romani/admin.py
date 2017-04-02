@@ -8,7 +8,7 @@ class producteAdmin(admin.ModelAdmin):
 
 
 class productorAdmin(admin.ModelAdmin):
-    list_display = ('nom','descripcio')
+    list_display = ('nom','cuerpo')
     search_fields = ['nom']
     list_filter = ['nom']
 
