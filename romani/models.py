@@ -50,7 +50,7 @@ class DiaEntrega(models.Model):
     date = models.DateTimeField()
 
     def __str__(self):
-        return " %s %s" % (self.node.all(), self.date)
+        return " %s %s %s" % (self.node.all(), self.date, self.franjes_horaries.all())
 
     def dia_num(self):
         return self.date.weekday()
