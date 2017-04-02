@@ -87,7 +87,7 @@ class Node(models.Model):
 
     nom = models.CharField(max_length=20)
     position = GeopositionField()
-    carrer = models.CharField(max_length=50)
+    carrer = models.CharField(max_length=50, blank=True, null=True)
     numero = models.IntegerField(blank=True, null=True)
     pis = models.CharField(max_length=15, blank=True, null=True)
     poblacio = models.CharField(max_length=40)

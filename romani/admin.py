@@ -42,7 +42,7 @@ class etiquetaAdmin(admin.ModelAdmin):
 
 
 class diaentregaAdmin(admin.ModelAdmin):
-    list_display = ('franjes_horaries', 'date', 'node')
+    # list_display = ('franjes_horaries', 'date', 'node')
     search_fields = ['franjes_horaries', 'date', 'node']
     list_filter =  ['franjes_horaries', 'date' , 'node']
 
