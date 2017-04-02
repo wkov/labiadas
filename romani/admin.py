@@ -2,13 +2,13 @@ from django.contrib import admin
 from .models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia
 
 class producteAdmin(admin.ModelAdmin):
-    list_display = ('nom','descripcio','cuerpo')
+    list_display = ('nom','descripcio')
     search_fields = ['nom']
     list_filter = ['nom']
 
 
 class productorAdmin(admin.ModelAdmin):
-    list_display = ('nom','entradilla')
+    list_display = ('nom','descripcio')
     search_fields = ['nom']
     list_filter = ['nom']
 

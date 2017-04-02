@@ -71,6 +71,7 @@
 					i++;
 				});
           });
+          google.maps.event.trigger(map, 'resize');
  }
 
 //CSRF TOKEN FOR JS
@@ -108,7 +109,9 @@ $.ajaxSetup({
 </script>
         <b>Lloc d'entrega:</b> <h2>{{ node.nom }}</h2>
                 <h3>{{ node.poblacio }}</h3>
+            <div id="geodiv" name="geodiv">
             <div id="map" name="map" ></div>
+            </div>
                 <p>{{ node.text }}</p>
         <b> Frequencia: </b>  {{ node.get_frequencia.nom }}<br/><br/>
         <b>Proxims dies d'entrega:</b> <br/>

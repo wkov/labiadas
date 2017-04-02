@@ -127,9 +127,7 @@ class Productor(models.Model):
 
     nom = models.CharField(max_length=20)
     adjunt = models.ManyToManyField(Adjunt)
-    mail = models.EmailField()
     responsable = models.ForeignKey(User)
-    entradilla = models.TextField(blank=False, max_length=75)
     cuerpo = models.TextField(blank=True)
 
     def __str__(self):
@@ -154,7 +152,6 @@ class Producte(models.Model):
     etiqueta = models.ForeignKey(Etiqueta)
     nodes = models.ManyToManyField(Node, blank=True)
     entradilla = models.TextField(blank=False, max_length=75)
-    cuerpo = models.TextField(blank=True)
     esgotat = models.BooleanField(default=False)
     keywords = models.TextField(blank=True)
     dies_entrega = models.ManyToManyField(DiaEntrega, blank=True)
