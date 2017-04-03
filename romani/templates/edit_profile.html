@@ -146,14 +146,14 @@
             var Lng = data["Lng"];
             var location = new google.maps.LatLng(Lat, Lng);
 
-              map = new google.maps.Map(document.getElementById('map'), {
-              center: location,
-              zoom: 15,
+{#              map = new google.maps.Map(document.getElementById('map'), {#}
+{#              center: location,#}
+{#              zoom: 15,#}
         {#          mapTypeId: 'satellite'#}
-                });
+{#                });#}
 
-{#            map.setCenter(location);#}
-{#            map.setZoom(15);#}
+            map.setCenter(location);
+            map.setZoom(15);
 
 
         });
