@@ -42,8 +42,7 @@ class UserProfileRegistrationForm(RegistrationForm):
 
     class Meta:
         model = User
-        fields = ("username", "email", 'first_name', 'last_name',
-                  'date_of_birth')
+        fields = ("username", "email", 'first_name', 'last_name')
 
 
 
