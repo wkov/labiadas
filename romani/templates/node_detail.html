@@ -112,7 +112,7 @@ $.ajaxSetup({
             <div id="geodiv" name="geodiv">
             <div id="map" name="map" ></div>
             </div>
-                <p>{{ node.text }}</p>
+                <p>{{ node.text|linebreaks }}</p>
         <b> Frequencia: </b>  {{ node.get_frequencia.nom }}<br/><br/>
         <b>Proxims dies d'entrega:</b> <br/>
                 {% for i in node.prox_dias  %}
