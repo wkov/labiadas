@@ -247,34 +247,34 @@
         });
 
 
-{#          $.post("/horari/", function(data) {#}
-{#            var acc = document.getElementById('accordion');#}
-{#            var j;#}
-{#            var h;#}
-{#            var b;#}
-{#            var t = "";#}
-{#            var g;#}
-{#            data.forEach( function (arrayItemx){#}
-{##}
-{#                h = "<a>" + arrayItemx.dia + "</a>";#}
-{#                g = "<div>";#}
-{##}
-{#                arrayItemx.franjes.forEach( function (arrayItem)#}
-{#                {#}
-{#                    g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";#}
-{#                });#}
-{#                t = t + h + g + "</div>";#}
-{##}
-{#            })#}
-{##}
-{#            t = t + "</div>";#}
-{##}
-{#            acc.innerHTML = t;#}
-{##}
-{##}
-{#			$( "#accordion" ).accordion( "refresh" );#}
-{##}
-{#          })#}
+          $.post("/horari/", function(data) {
+            var acc = document.getElementById('accordion');
+            var j;
+            var h;
+            var b;
+            var t = "";
+            var g;
+            data.forEach( function (arrayItemx){
+
+                h = "<a>" + arrayItemx.dia + "</a>";
+                g = "<div>";
+
+                arrayItemx.franjes.forEach( function (arrayItem)
+                {
+                    g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
+                });
+                t = t + h + g + "</div>";
+
+            })
+
+            t = t + "</div>";
+
+            acc.innerHTML = t;
+
+
+			$( "#accordion" ).accordion( "refresh" );
+
+          })
     }
 
 
