@@ -9,8 +9,12 @@
   $( function() {
     $( "#tabs" ).tabs();
     $('#tabs-2').bind('click', function() {
-                initMap2();
+                coord();
             });
+    $('#id_tabs2').bind('click', function() {
+            initMap2();
+        });
+
   } );
 
 
@@ -290,12 +294,32 @@ function placeMarker(location) {
 
 <div id="tabs">
   <ul id="tabx" name="tabx" style="background-color: #389c41">
-    <li style="background-color: #389c41"><a href="#tabs-2">Punt de trobada</a></li>
-    <li style="background-color: #389c41"><a href="#tabs-1">Configuració</a></li>
+    <li style="background-color: #389c41"><a id="id_tabs1" href="#tabs-1">Configuració</a></li>
+    <li style="background-color: #389c41"><a id="id_tabs2" href="#tabs-2">Punt de trobada</a></li>
   </ul>
   </br>
 
 <form method="post" enctype="multipart/form-data" action="">{% csrf_token %}
+            <div id="tabs-1">
+                {% if object.avatar  %}
+                            <img src="{{ object.avatar.url }}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200"/>
+                        {% else %}
+                            <img src="{% static "img/fusta.jpg" %}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200">
+                {% endif %}
+                    <br/><br/>
+                        <span class="glyphicon glyphicon-picture"></span>
+                    <label for="avatar">Nova foto de perfil: </label>
+                        {% if object.avatar  %}
+                            <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
+                        {% else %}
+                            <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "img/fusta.jpg" %}"/> </br>
+                        {% endif %}
+                  <label>Email: </label>  {{ form.email }} <br/>
+                  <label>Nom d'usuari: </label>    {{ form.username }} <br/>
+                  <label>Nom: </label>    {{ form.first_name }} <br/>
+                  <label>Cognoms: </label>    {{ form.last_name }} <br/>
+                <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
+            </div>
             <div id="tabs-2">
                 <span class="glyphicon glyphicon-flag"></span>
                 <label for="lloc_entrega_perfil">Lloc d'entrega:</label> </br>
@@ -366,26 +390,7 @@ function placeMarker(location) {
                     {% endif %}
                     <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button> <br/><br/><br/>
             </div>
-            <div id="tabs-1">
-                {% if object.avatar  %}
-                            <img src="{{ object.avatar.url }}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200"/>
-                        {% else %}
-                            <img src="{% static "img/fusta.jpg" %}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200">
-                {% endif %}
-            <br/><br/>
-                <span class="glyphicon glyphicon-picture"></span>
-            <label for="avatar">Nova foto de perfil: </label>
-                {% if object.avatar  %}
-                    <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
-                {% else %}
-                    <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "img/fusta.jpg" %}"/> </br>
-                {% endif %}
-          <label>Email: </label>  {{ form.email }} <br/>
-          <label>Nom d'usuari: </label>    {{ form.username }} <br/>
-          <label>Nom: </label>    {{ form.first_name }} <br/>
-          <label>Cognoms: </label>    {{ form.last_name }} <br/>
-        <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
-            </div>
+
 
 </form>
 
