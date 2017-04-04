@@ -141,91 +141,91 @@
 
 
  }
-      function initMap2() {
-        var loc;
-          loc = new google.maps.LatLng(41.539064, 2.2130028);
-          map = new google.maps.Map(document.getElementById('map'), {
-          center: loc,
-          zoom: 12,
+{#      function initMap2() {#}
+{#        var loc;#}
+{#          loc = new google.maps.LatLng(41.539064, 2.2130028);#}
+{#          map = new google.maps.Map(document.getElementById('map'), {#}
+{#          center: loc,#}
+{#          zoom: 12,#}
 {#          mapTypeId: 'satellite'#}
-        });
-
-
-          $.post("/allcoordenades/", function(data) {
-              var i = 0;
-              var marker = [];
-              var image = '/static/img/u-pick_stand.png'
-              var img_domicili = '/static/img/vespa.png'
-              data.forEach( function(arrayItem)
-				{
-                    var contentString = '<div id="content">'+
-                          '<div id="siteNotice">'+
-                          '</div>'+
-                          '<h1 id="firstHeading" class="firstHeading">' +
-                          arrayItem.nom +
-                          '</h1>'+
-                          '<div id="bodyContent">'+
-                          '<p><b>' +
-                          arrayItem.nom +
-                          '</b>,' +
-                          arrayItem.text +
-                          '</p>' +
-                          '</div>'+
-                          '</div>';
-
-                      var infowindow = new google.maps.InfoWindow({
-                        content: contentString
-                      });
-
-                    var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
-                    if (arrayItem.a_domicili == "True"){
-                        marker[i] = new google.maps.Marker({
-                          position: place,
-                          title: "A Domicili",
+{#        });#}
+{##}
+{##}
+{#          $.post("/allcoordenades/", function(data) {#}
+{#              var i = 0;#}
+{#              var marker = [];#}
+{#              var image = '/static/img/u-pick_stand.png'#}
+{#              var img_domicili = '/static/img/vespa.png'#}
+{#              data.forEach( function(arrayItem)#}
+{#				{#}
+{#                    var contentString = '<div id="content">'+#}
+{#                          '<div id="siteNotice">'+#}
+{#                          '</div>'+#}
+{#                          '<h1 id="firstHeading" class="firstHeading">' +#}
+{#                          arrayItem.nom +#}
+{#                          '</h1>'+#}
+{#                          '<div id="bodyContent">'+#}
+{#                          '<p><b>' +#}
+{#                          arrayItem.nom +#}
+{#                          '</b>,' +#}
+{#                          arrayItem.text +#}
+{#                          '</p>' +#}
+{#                          '</div>'+#}
+{#                          '</div>';#}
+{##}
+{#                      var infowindow = new google.maps.InfoWindow({#}
+{#                        content: contentString#}
+{#                      });#}
+{##}
+{#                    var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);#}
+{#                    if (arrayItem.a_domicili == "True"){#}
+{#                        marker[i] = new google.maps.Marker({#}
+{#                          position: place,#}
+{#                          title: "A Domicili",#}
 {#                          style: {float: left},#}
 {#                          labelStyle: {opacity: 0.8, padding: 20px},#}
-                          map: map,
-                          icon: img_domicili
-                    });
-                    }else{
-					    marker[i] = new google.maps.Marker({
-                          position: place,
-                          title: arrayItem.nom,
+{#                          map: map,#}
+{#                          icon: img_domicili#}
+{#                    });#}
+{#                    }else{#}
+{#					    marker[i] = new google.maps.Marker({#}
+{#                          position: place,#}
+{#                          title: arrayItem.nom,#}
 {#                          style: {float: left},#}
 {#                          labelStyle: {opacity: 0.8, padding: 20px},#}
-                          map: map,
-                          icon: image
-                    });
-                        }
-                      marker[i].addListener('click', function() {
-                        infowindow.open(map, marker[i]);
-                      });
-
-					i++;
-				});
-
-          });
-
-
-
-
-        map.addListener('click', function(e) {
-                placeMarker(e.latLng, map);
-});
-
-     var punt_lat = document.getElementById("punt_lat");
-     var punt_lng = document.getElementById("punt_lng");
-
-     if (marker_d == null)
-     {
-       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);
-       marker_d = new google.maps.Marker({
-          position: loqation,
-          map: map
-      }); } else {   marker_d.setPosition(loqation); }
-
-
- }
+{#                          map: map,#}
+{#                          icon: image#}
+{#                    });#}
+{#                        }#}
+{#                      marker[i].addListener('click', function() {#}
+{#                        infowindow.open(map, marker[i]);#}
+{#                      });#}
+{##}
+{#					i++;#}
+{#				});#}
+{##}
+{#          });#}
+{##}
+{##}
+{##}
+{##}
+{#        map.addListener('click', function(e) {#}
+{#                placeMarker(e.latLng, map);#}
+{#{);#}
+{##}
+{#     var punt_lat = document.getElementById("punt_lat");#}
+{#     var punt_lng = document.getElementById("punt_lng");#}
+{##}
+{#     if (marker_d == null)#}
+{#     {#}
+{#       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);#}
+{#       marker_d = new google.maps.Marker({#}
+{#          position: loqation,#}
+{#          map: map#}
+{#      }); } else {   marker_d.setPosition(loqation); }#}
+{##}
+{##}
+{# }#}
     function coord() {
 
 		$.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function(data) {
@@ -247,34 +247,34 @@
         });
 
 
-          $.post("/horari/", function(data) {
-            var acc = document.getElementById('accordion');
-            var j;
-            var h;
-            var b;
-            var t = "";
-            var g;
-            data.forEach( function (arrayItemx){
-
-                h = "<a>" + arrayItemx.dia + "</a>";
-                g = "<div>";
-
-                arrayItemx.franjes.forEach( function (arrayItem)
-                {
-                    g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
-                });
-                t = t + h + g + "</div>";
-
-            })
-
-            t = t + "</div>";
-
-            acc.innerHTML = t;
-
-
-			$( "#accordion" ).accordion( "refresh" );
-
-          })
+{#          $.post("/horari/", function(data) {#}
+{#            var acc = document.getElementById('accordion');#}
+{#            var j;#}
+{#            var h;#}
+{#            var b;#}
+{#            var t = "";#}
+{#            var g;#}
+{#            data.forEach( function (arrayItemx){#}
+{##}
+{#                h = "<a>" + arrayItemx.dia + "</a>";#}
+{#                g = "<div>";#}
+{##}
+{#                arrayItemx.franjes.forEach( function (arrayItem)#}
+{#                {#}
+{#                    g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";#}
+{#                });#}
+{#                t = t + h + g + "</div>";#}
+{##}
+{#            })#}
+{##}
+{#            t = t + "</div>";#}
+{##}
+{#            acc.innerHTML = t;#}
+{##}
+{##}
+{#			$( "#accordion" ).accordion( "refresh" );#}
+{##}
+{#          })#}
     }
 
 
