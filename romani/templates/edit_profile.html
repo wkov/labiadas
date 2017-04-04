@@ -240,8 +240,11 @@
 {#                  mapTypeId: 'satellite'#}
 {#                });#}
 
-            map.setCenter(location);
+{#            map.setCenter(location);#}
             map.setZoom(15);
+
+            google.maps.event.trigger(map, 'resize');
+            map.setCenter(location);
 
 
         });
