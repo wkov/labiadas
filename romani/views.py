@@ -30,8 +30,9 @@ import datetime
 from django.forms.extras.widgets import SelectDateWidget
 
 class UserProfileRegistrationForm(RegistrationForm):
-    first_name = forms.CharField(max_length=15, label='Nom')
-    last_name = forms.CharField(max_length=15, label='Cognom')
+    first_name = forms.CharField(max_length=15, label='Nombre')
+    last_name = forms.CharField(max_length=15, label='Apellido')
+    email = forms.EmailField(help_text='', required=True, label='e-mail')
     # date_of_birth = forms.DateField(label='Data de naixement',
     #                                 widget=SelectDateWidget(
     #                                     years=[y for y in range(1939,
