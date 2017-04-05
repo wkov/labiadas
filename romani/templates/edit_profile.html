@@ -139,7 +139,8 @@
           map: map
       }); } else {   marker_d.setPosition(loqation); }
 
-
+            google.maps.event.trigger(map, 'resize');
+            map.setCenter(loc);
  }
 {#      function initMap2() {#}
 {#        var loc;#}
