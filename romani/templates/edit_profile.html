@@ -8,11 +8,11 @@
       <script>
   $( function() {
     $( "#tabs" ).tabs();
-    $('#tabs-2').bind('click', function() {
-                coord();
-            });
+{#    $('#tabs-2').bind('click', function() {#}
+{#                coord();#}
+{#            });#}
     $('#id_tabs2').bind('click', function() {
-            coord();
+            coord2();
         });
 
   } );
@@ -227,7 +227,33 @@
 {##}
 {##}
 {# }#}
-    function coord() {
+          function coord() {
+
+              $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function (data) {
+
+                  var Lat = data["Lat"];
+                  var Lng = data["Lng"];
+                  var location = new google.maps.LatLng(Lat, Lng);
+
+{#                  map = new google.maps.Map(document.getElementById('map'), {#}
+{#                      center: location,#}
+{#                      zoom: 15#}
+{#                      ,#}
+{#                      mapTypeId: 'satellite'#}
+{#                  });#}
+
+                  {#            map.setCenter(location);#}
+                              map.setZoom(15);
+
+                              google.maps.event.trigger(map, 'resize');
+                              map.setCenter(location);
+
+
+              });
+          }
+
+
+    function coord2() {
 
 		$.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function(data) {
 
