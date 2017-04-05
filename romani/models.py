@@ -133,7 +133,7 @@ class Productor(models.Model):
     def __str__(self):
         return self.nom
 
-
+import random
 
 class Producte(models.Model):
 
@@ -166,7 +166,8 @@ class Producte(models.Model):
 
         com = self.comanda_set.all().count()
         con = self.contracte_set.all().count()
-        t = com + con
+        rnd = random.randint(0, 5)
+        t = com + con + rnd
         return t
 
 
