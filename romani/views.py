@@ -590,12 +590,12 @@ def NodeHorariView(request):
                 l = request.POST.get('lloc_entrega_perfil')
                 node = get_object_or_404(Node, pk=l)
 
-                v = node.dies_entrega.filter(date__gt = datetime.datetime.today()).first()
+                v = node.dies_entrega.filter(date__gt = datetime.datetime.today()).order_by('date').first()
 
                 if v:
 
                     json_res = []
-                    d = v.date + timedelta(days=6)
+                    d = v.date + timedelta(days=7)
                     k = node.dies_entrega.filter(date__lt = d, date__gt = datetime.datetime.today()).order_by('date')
                     for dia in k:
                         json_res_aux = []
