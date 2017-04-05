@@ -333,6 +333,41 @@
 
           });
 
+        var acc = document.getElementById('accordion');
+			$.post("/horari/", $(this).serializeArray(),
+				function (data) {
+					var j;
+					var h;
+					var b;
+					var t = "";
+					var g;
+					data.forEach( function (arrayItemx){
+
+						h = "<a>" + arrayItemx.dia + "</a>";
+						g = "<div>"
+
+						arrayItemx.franjes.forEach( function (arrayItem)
+						{
+							g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
+						});
+						t = t + h + g + "</div>";
+
+					})
+
+					t = t + "</div>";
+
+
+                    //$('#accordion').innerHTML = t;
+    				//$('#accordion').accordion("refresh");
+
+					acc.innerHTML = t;
+
+					$( "#accordion" ).accordion( "refresh" );
+                    //
+					//acc.accordion("refresh");
+
+				});
+
 
 {#    map.addListener('click', function(e) {#}
 {#    placeMarker(e.latLng, map);#}
