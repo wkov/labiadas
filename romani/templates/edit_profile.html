@@ -121,7 +121,7 @@
 
 			$( "#accordion" ).accordion( "refresh" );
 
-          })
+          });
 
 
         map.addListener('click', function(e) {
@@ -139,8 +139,8 @@
           map: map
       }); } else {   marker_d.setPosition(loqation); }
 
-            google.maps.event.trigger(map, 'resize');
-            map.setCenter(loc);
+{#            google.maps.event.trigger(map, 'resize');#}
+{#            map.setCenter(loc);#}
  }
 {#      function initMap2() {#}
 {#        var loc;#}
@@ -235,20 +235,93 @@
             var Lng = data["Lng"];
             var location = new google.maps.LatLng(Lat, Lng);
 
-{#              map = new google.maps.Map(document.getElementById('map'), {#}
-{#              center: location,#}
-{#              zoom: 15,#}
-{#                  mapTypeId: 'satellite'#}
-{#                });#}
+              map = new google.maps.Map(document.getElementById('map'), {
+              center: location,
+              zoom: 15,
+                  mapTypeId: 'satellite'
+                });
 
 {#            map.setCenter(location);#}
-            map.setZoom(15);
+{#            map.setZoom(15);#}
 
-            google.maps.event.trigger(map, 'resize');
-            map.setCenter(location);
+{#            google.maps.event.trigger(map, 'resize');#}
+{#            map.setCenter(location);#}
 
 
         });
+
+
+
+        $.post("/allcoordenades/", function(data) {
+              var i = 0;
+              var marker = [];
+              var image = '/static/img/u-pick_stand.png'
+              var img_domicili = '/static/img/vespa.png'
+              data.forEach( function(arrayItem)
+				{
+                    var contentString = '<div id="content">'+
+                          '<div id="siteNotice">'+
+                          '</div>'+
+                          '<h1 id="firstHeading" class="firstHeading">' +
+                          arrayItem.nom +
+                          '</h1>'+
+                          '<div id="bodyContent">'+
+                          '<p><b>' +
+                          arrayItem.nom +
+                          '</b>,' +
+                          arrayItem.text +
+                          '</p>' +
+                          '</div>'+
+                          '</div>';
+
+                      var infowindow = new google.maps.InfoWindow({
+                        content: contentString
+                      });
+
+                    var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
+                    if (arrayItem.a_domicili == "True"){
+                        marker[i] = new google.maps.Marker({
+                          position: place,
+                          title: "A Domicili",
+{#                          style: {float: left},#}
+{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
+                          map: map,
+                          icon: img_domicili
+                    });
+                    }else{
+					    marker[i] = new google.maps.Marker({
+                          position: place,
+                          title: arrayItem.nom,
+{#                          style: {float: left},#}
+{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
+                          map: map,
+                          icon: image
+                    });
+                        }
+                      marker[i].addListener('click', function() {
+                        infowindow.open(map, marker[i]);
+                      });
+
+					i++;
+				});
+
+          });
+
+
+    map.addListener('click', function(e) {
+    placeMarker(e.latLng, map);
+    });
+
+     var punt_lat = document.getElementById("punt_lat");
+     var punt_lng = document.getElementById("punt_lng");
+
+     if (marker_d == null)
+     {
+       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);
+       marker_d = new google.maps.Marker({
+          position: loqation,
+          map: map
+      }); } else {   marker_d.setPosition(loqation); }
 
 
 {#          $.post("/horari/", function(data) {#}
