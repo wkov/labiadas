@@ -595,7 +595,7 @@ def NodeHorariView(request):
                 if v:
 
                     json_res = []
-                    d = v.date + timedelta(days=7)
+                    d = v.date + timedelta(days=6)
                     k = node.dies_entrega.filter(date__lt = d, date__gt = datetime.datetime.today()).order_by('date')
                     for dia in k:
                         json_res_aux = []
