@@ -480,7 +480,7 @@
                                 {% else %}
                                     <div id="geodiv" name="geodiv">
                                         <div id="map"></div><br/>
-                                        <span class="glyphicon glyphicon-map-marker" style="float:right;">
+                                        <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">
                                             <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />
                                             <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lng" name="punt_lng"  placeholder="(opcional)" />
                                         </span>
@@ -503,7 +503,7 @@
 
                                 <div id="geodiv" name="geodiv">
                                     <div id="map"></div><br/>
-                                    <span class="glyphicon glyphicon-map-marker" style="float:right;">
+                                    <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">
                                         <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative; visibility: hidden" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>
                                         <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative; visibility: hidden"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>
                                     </span>
