@@ -124,20 +124,20 @@
           });
 
 
-        map.addListener('click', function(e) {
-                placeMarker(e.latLng, map);
-});
-
-     var punt_lat = document.getElementById("punt_lat");
-     var punt_lng = document.getElementById("punt_lng");
-
-     if (marker_d == null)
-     {
-       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);
-       marker_d = new google.maps.Marker({
-          position: loqation,
-          map: map
-      }); } else {   marker_d.setPosition(loqation); }
+{#        map.addListener('click', function(e) {#}
+{#                placeMarker(e.latLng, map);#}
+{# });#}
+{##}
+{#     var punt_lat = document.getElementById("punt_lat");#}
+{#     var punt_lng = document.getElementById("punt_lng");#}
+{##}
+{#     if (marker_d == null)#}
+{#     {#}
+{#       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);#}
+{#       marker_d = new google.maps.Marker({#}
+{#          position: loqation,#}
+{#          map: map#}
+{#      }); } else {   marker_d.setPosition(loqation); }#}
 
 {#            google.maps.event.trigger(map, 'resize');#}
 {#            map.setCenter(loc);#}
@@ -334,20 +334,20 @@
           });
 
 
-    map.addListener('click', function(e) {
-    placeMarker(e.latLng, map);
-    });
+{#    map.addListener('click', function(e) {#}
+{#    placeMarker(e.latLng, map);#}
+{#    });#}
 
-     var punt_lat = document.getElementById("punt_lat");
-     var punt_lng = document.getElementById("punt_lng");
-
-     if (marker_d == null)
-     {
-       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);
-       marker_d = new google.maps.Marker({
-          position: loqation,
-          map: map
-      }); } else {   marker_d.setPosition(loqation); }
+{#     var punt_lat = document.getElementById("punt_lat");#}
+{#     var punt_lng = document.getElementById("punt_lng");#}
+{##}
+{#     if (marker_d == null)#}
+{#     {#}
+{#       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);#}
+{#       marker_d = new google.maps.Marker({#}
+{#          position: loqation,#}
+{#          map: map#}
+{#      }); } else {   marker_d.setPosition(loqation); }#}
 
 
 {#          $.post("/horari/", function(data) {#}
@@ -381,22 +381,22 @@
     }
 
 
-function placeMarker(location) {
-
- var punt_lat = document.getElementById("punt_lat");
- var punt_lng = document.getElementById("punt_lng");
-
- if (marker_d == null)
- {
-   marker_d = new google.maps.Marker({
-      position: location,
-      map: map
-  }); } else {   marker_d.setPosition(location); }
-
-
- punt_lat.value = location.lat();
- punt_lng.value = location.lng();
-}
+{#function placeMarker(location) {#}
+{##}
+{# var punt_lat = document.getElementById("punt_lat");#}
+{# var punt_lng = document.getElementById("punt_lng");#}
+{##}
+{# if (marker_d == null)#}
+{# {#}
+{#   marker_d = new google.maps.Marker({#}
+{#      position: location,#}
+{#      map: map#}
+{#  }); } else {   marker_d.setPosition(location); }#}
+{##}
+{##}
+{# punt_lat.value = location.lat();#}
+{# punt_lng.value = location.lng();#}
+{# }#}
 
 
 
@@ -473,16 +473,16 @@ function placeMarker(location) {
                                 {% if object.punt_lat %}
                                     <div id="geodiv" name="geodiv">
                                         <div id="map"></div><br/>
-                                        <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lat" name="punt_lat"
+                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"
                                                    value="{{ object.punt_lat }}"  placeholder="clica en el mapa" />
-                                        <input type="text" style="max-width: 185px; float: right; position: relative" id="punt_lng" name="punt_lng"  value="{{ object.punt_lng }}" class="form-control" placeholder="(opcional)" />
+                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" id="punt_lng" name="punt_lng"  value="{{ object.punt_lng }}" class="form-control" placeholder="(opcional)" />
                                     </div>
                                 {% else %}
                                     <div id="geodiv" name="geodiv">
                                         <div id="map"></div><br/>
                                         <span class="glyphicon glyphicon-map-marker" style="float:right;">
-                                            <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />
-                                            <input type="text" style="max-width: 185px; float: right; position: relative" class="form-control" id="punt_lng" name="punt_lng"  placeholder="(opcional)" />
+                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />
+                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lng" name="punt_lng"  placeholder="(opcional)" />
                                         </span>
                                     </div>
                                 {% endif %}
@@ -504,8 +504,8 @@ function placeMarker(location) {
                                 <div id="geodiv" name="geodiv">
                                     <div id="map"></div><br/>
                                     <span class="glyphicon glyphicon-map-marker" style="float:right;">
-                                        <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>
-                                        <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>
+                                        <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative; visibility: hidden" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>
+                                        <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative; visibility: hidden"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>
                                     </span>
                                 </div><br/><br/><br/><br/><br/>
                                                         <div>
