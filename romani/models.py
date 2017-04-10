@@ -156,7 +156,7 @@ class Producte(models.Model):
     keywords = models.TextField(blank=True)
     dies_entrega = models.ManyToManyField(DiaEntrega, blank=True)
     frequencies = models.ManyToManyField(Frequencia, blank=True)
-    karma_date = models.DateField(blank=True, null=True)
+    karma_date = models.DateTimeField(blank=True, null=True)
     karma_value = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
@@ -165,7 +165,7 @@ class Producte(models.Model):
 
     def karma(self):
         try:
-            if not self.karma_date.date() == datetime.date.today():
+            if not self.karma_date.date() == datetime.datetime.today().date():
                 com = self.comanda_set.all().count()
                 con = self.contracte_set.all().count()
                 rnd = random.randint(0, 5)
@@ -177,7 +177,7 @@ class Producte(models.Model):
             rnd = random.randint(0, 5)
             self.karma_value = com + con + rnd
             self.karma_date = datetime.datetime.today()
-
+        self.save()
         return self.karma_value
 
 
