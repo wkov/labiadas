@@ -153,7 +153,7 @@ def coopeView(request):
 
     p = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega )
 
-    productes = sorted(p, key=lambda a: a.karma(), reverse=True)
+    productes = sorted(p, key=lambda a: a.karma_value, reverse=True)
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
 
