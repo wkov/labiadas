@@ -32,10 +32,17 @@
 {#        <span id="span_imageprofile" name="span_imageprofile">#}
 {##} <a href="{% url 'edit_profile' %}" title="Perfil d'usuari">
         {% if user.userprofile.avatar  %}
-            <img class="img-circle" src="{{ user.userprofile.avatar.url }}">
-{#            <img src="{{ object.userprofile.avatar.url }}" id="avatar" name="avatar" alt="avatar" height="120" width="120"/>#}
+             <a href="{{ MEDIA_URL }}{{ user.userprofile.avatar.url }}" >
+                                <div class="img-circle" style="background-image:url('{{ user.userprofile.avatar.url }}'); position:relative; z-index: 10" >
+                                </div>
+                            </a>
+{#            <img class="img-circle" src="{{ user.userprofile.avatar.url }}">#}
         {% else %}
-            <img class="img-circle" src="{% static "img/fusta.jpg" %}">
+             <a href="{{ MEDIA_URL }}{{ user.userprofile.avatar.url }}" >
+                    <div class="img-circle" style="background-image:url('{% static "img/fusta.jpg" %}'); position:relative; z-index: 10" >
+                    </div>
+                </a>
+{#            <img class="img-circle" src="{% static "img/fusta.jpg" %}">#}
 {#            <img src="{% static "images/pulpo.gif" %}" id="avatar" name="avatar" alt="avatar" height="120" width="120">#}
         {% endif %}
 {##}
