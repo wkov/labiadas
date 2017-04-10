@@ -164,13 +164,20 @@ class Producte(models.Model):
 
 
     def karma(self):
-
-        if not self.karma_date._day == datetime.date.today():
+        try:
+            if not self.karma_date.date() == datetime.date.today():
+                com = self.comanda_set.all().count()
+                con = self.contracte_set.all().count()
+                rnd = random.randint(0, 5)
+                self.karma_value = com + con + rnd
+                self.karma_date = datetime.datetime.today()
+        except:
             com = self.comanda_set.all().count()
             con = self.contracte_set.all().count()
             rnd = random.randint(0, 5)
             self.karma_value = com + con + rnd
             self.karma_date = datetime.datetime.today()
+
         return self.karma_value
 
 
