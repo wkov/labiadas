@@ -165,7 +165,7 @@ class Producte(models.Model):
 
     def karma(self):
 
-        if not self.karma_date.date() == datetime.date.today():
+        if not self.karma_date._day == datetime.date.today():
             com = self.comanda_set.all().count()
             con = self.contracte_set.all().count()
             rnd = random.randint(0, 5)
