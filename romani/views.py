@@ -152,9 +152,11 @@ def coopeView(request):
 
     for e in etiquetes_pre:
         for p in e.producte_set.all():
-            if p.dies_entrega in dies_node_entrega:
-                etiquetes.append(e)
-                next()
+            for p2 in p.dies_entrega.all():
+                if p2 in dies_node_entrega:
+                    etiquetes.append(e)
+                    break
+            break
 
     nodes = Node.objects.all()
 
