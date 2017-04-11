@@ -15,7 +15,11 @@
 {%  block content %}
     <div style="margin: 0 auto; text-align:center;">
         <h2>La teva cistella</h2>
+        <div class="caption" >
+            <a type="button" href="{% url 'entregas'  %} " style="border: 3px; margin: 0" title="Visitar historial d'entregues"> Veure Historial d'entregues</a>
+        </div>
     </div>
+    <br/>
 {% if contractes %}
             {% for contracte in contractes %}
                       <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
@@ -144,8 +148,6 @@
                 </br></br>
             {% endif %}
         {% endif %}
-    <div class="caption" >
-            <a type="button" href="{% url 'entregas'  %} " style="border: 3px; margin: 0" title="Visitar historial d'entregues"> Historial d'entregues</a>
-        </div>
+
 {% endblock %}
 

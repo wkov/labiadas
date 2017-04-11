@@ -18,7 +18,13 @@
 
 
 {%  block content %}
-<h2>{% trans "Historial" %}</h2>
+    <div style="margin: 0 auto; text-align:center;">
+        <h2>{% trans "Historial d'entregues" %}</h2>
+        <div class="caption" >
+            <a type="button" href="{% url 'comandes'  %} " style="border: 3px; margin: 0" title="Visitar comandes actuals"> Veure cistella actual</a>
+        </div>
+    </div>
+    <br/>
 {% if contractes %}
 
 
