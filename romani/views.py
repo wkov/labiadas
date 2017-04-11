@@ -258,7 +258,17 @@ def etiquetaView(request,pk):
 def productorView(request,pk):
 
     productor = Productor.objects.filter(pk=pk).first()
-    productes = Producte.objects.filter(productor=productor)
+    # productes = Producte.objects.filter(productor=productor)
+
+    user_p = UserProfile.objects.filter(user=request.user).first()
+
+    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+
+    p = Producte.objects.filter(productor=productor, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+
+    productes = sorted(p, key=lambda a: a.karma(), reverse=True)
+
+
     return render(request, "productor.html",{'productor': productor, 'productes': productes})
 
 def comandesView(request):
