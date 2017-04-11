@@ -129,10 +129,13 @@ def buskadorProducte(request):
 
 
     if not searchString == 0:
-        posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
+        posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
+                                        nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+
+        productes = sorted(posts, key=lambda a: a.karma(), reverse=True)
 
         return render(request, "buscador.html", {
-            'posts': posts,
+            'posts': productes,
             'etiquetes': etiquetes, 'up': user_p})
     else:
         return render(request, "buscador.html", {
