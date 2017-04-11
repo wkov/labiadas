@@ -114,11 +114,19 @@ $.ajaxSetup({
             </div>
                 <p>{{ node.text|linebreaks }}</p>
         <b> Frequencia: </b>  {{ node.get_frequencia.nom }}<br/><br/>
-        <label style="float: left" for="carrer">Carrer: </label> &nbsp; {{ node.carrer }}<br/>
-        <label style="float: left" for="numero">Número:</label> &nbsp; {{ node.numero }}<br/>
-        <label style="float: left" for="pis">Pis:</label> &nbsp; {{ node.pis }} <br/>
-        <label style="float: left" for="poblacio">Població:</label> &nbsp; {{ node.poblacio }}
-        <br/><br/>
+        {% if node.carrer %}
+            <label style="float: left" for="carrer">Carrer: </label> &nbsp; {{ node.carrer }}<br/>
+        {% endif %}
+        {% if node.numero %}
+            <label style="float: left" for="numero">Número:</label> &nbsp; {{ node.numero }}<br/>
+        {% endif %}
+        {% if node.pis %}
+            <label style="float: left" for="pis">Pis:</label> &nbsp; {{ node.pis }} <br/>
+        {% endif %}
+        {% if node.poblacio %}
+        <label style="float: left" for="poblacio">Població:</label> &nbsp; {{ node.poblacio }}<br/>
+        {% endif %}
+        <br/>
         <b>Proxims dies d'entrega:</b> <br/>
                 {% for i in node.prox_dias  %}
                     <table border = 1>
