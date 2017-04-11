@@ -142,14 +142,25 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def coopeView(request):
 
-    etiquetes = Etiqueta.objects.all()
+    user_p = UserProfile.objects.filter(user=request.user).first()
+
+    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+
+    etiquetes_pre = Etiqueta.objects.all()
+
+    etiquetes = []
+
+    for e in etiquetes_pre:
+        for p in e.producte_set.all():
+            if p.dies_entrega in dies_node_entrega:
+                etiquetes.append(e)
+                next()
+
     nodes = Node.objects.all()
 
-    user_p = UserProfile.objects.filter(user=request.user).first()
 
     # productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False).order_by(karma descending)
 
-    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
 
     p = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
@@ -188,7 +199,10 @@ def etiquetaView(request,pk):
     nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    p = Producte.objects.filter(etiqueta=etiqueta, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False)
+
+    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+
+    p = Producte.objects.filter(etiqueta=etiqueta, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
     productes = sorted(p, key=lambda a: a.karma(), reverse=True)
 
