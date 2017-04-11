@@ -170,11 +170,7 @@ def coopeView(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    notif=[]
-    if request.user.is_authenticated():
-        notif = request.user.notifications.unread()
-
-    return render(request, "productes.html", {'productes':products,'notifications': notif, 'etiquetes': etiquetes, 'up': user_p, 'nodes': nodes})
+    return render(request, "productes.html", {'productes':products,'etiquetes': etiquetes, 'up': user_p, 'nodes': nodes})
 
 
 def producteView(request,pk):
@@ -209,7 +205,7 @@ def etiquetaView(request,pk):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    return render(request, "productes.html",{'productes': products, 'etiquetes': etiquetes, 'nodes': nodes, 'up': user_p})
+    return render(request, "etiqueta.html",{'productes': products, 'etiquetes': etiquetes, 'etiqueta': etiqueta, 'nodes': nodes, 'up': user_p})
 
 
 def productorView(request,pk):

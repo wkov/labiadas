@@ -559,6 +559,17 @@ h5{
     /*text-shadow: 1px 1px #000, 2px 2px #02a2fe, 3px 3px #02a2fe, 4px 4px #02a2fe, 5px 5px #02a2fe, 6px 6px #02a2fe;*/
 }
 
+#etq_selected {
+
+    background-color: white;
+    color: #508a4c;
+    font-family: 'Special Elite';
+    font-weight: lighter;
+    /*padding: 15px 0 0 0;*/
+    font-size: 15px;
+    /*text-shadow: 1px 1px #000, 2px 2px #02a2fe, 3px 3px #02a2fe, 4px 4px #02a2fe, 5px 5px #02a2fe, 6px 6px #02a2fe;*/
+}
+
 
 .table-striped{
     background-color: #b2dba1;

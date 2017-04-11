@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+{% block headers %}
+    <script src="{% static 'js/comanda.js' %}"></script>
+{% endblock %}
+{% block modals %}
+    {% include "comanda_modal.html" %}
+{% endblock %}
+{%  block content %}
+    {% if message %}
+        <div >
+            <div class="thumbnail" >
+            <span class="glyphicon glyphicon-info-sign"> {{ message }} </span>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div style="margin: 0 auto; text-align:center;">
+{#    <table class="table">#}
+{#    <tr>#}
+                    {% for etq in etiquetes %}
+
+                        {% if etq == etiqueta %}
+
+                                <div style=" position: relative; display: inline-block; ">
+                                        <a href="{% url 'etiqueta' etq.pk %} " class="btn btn-default btn-group-xs" style="width: auto; "  id="etq_selected" name="etq_selected" title="{{ etq.nom }}" >
+                                            <span  style="background-image: url({{ etq.img.url }}); margin-left: 5px; margin-top: 5px; width:32px; height:32px;  position: absolute">
+                                            </span>
+                                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                            <b id="pato" name="pato" class="pato"> {{ etq.nom }}</b>
+                                         </a>
+                                </div>
+
+
+                        {% else %}
+{#                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">#}
+{#                        <td>#}
+                                <div style=" position: relative; display: inline-block; ">
+                                        <a href="{% url 'etiqueta' etq.pk %} " class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="{{ etq.nom }}" >
+                                            <span  style="background-image: url({{ etq.img.url }}); margin-left: 5px; margin-top: 5px; width:32px; height:32px;  position: absolute">
+                                            </span>
+                                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                            <b id="pato" name="pato" class="pato"> {{ etq.nom }}</b>
+                                         </a>
+                                </div>
+                        {% endif %}
+{#                        </td>#}
+{#                        </div>#}
+                    {% endfor %}
+{#    </tr>#}
+{#    </table>#}
+    </div>
+    <br/>
+    {% for producte in productes %}
+      <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12" >
+        <div class="thumbnail" >
+          <div class="caption">
+                 {% if producte.adjunt %}
+                    <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
+                    <div class="g-item" style="background-image:url('{{ producte.adjunt.url }}');        " >
+                        </div>
+                    </a>
+                 {% endif %}
+                 <div class="prodxx" style="font-family: 'Satisfy';font-size: 1.8em;
+                    color: #baae30; background-color:#FFFFFF; display: inline-block" >
+                 <p><a href="{% url 'producte'  producte.pk  %}" title="Visualitzar en detall el producte" > {{ producte.nom }}
+                 </a></p></div></br></br>
+
+                 <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
+                    <p>
+                    <a href="{% url 'productor'  producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                            {{ producte.productor.nom }}</a>
+                    <a href="{% url 'messages_compose_to' producte.productor.responsable %}" title="Enviar missatge al productor">
+                    <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+                 </div><br/></br>
+
+                 <div class="xxent" style="background-color:#FFFFFF; display: block">
+                    <p id="entradilla" name="entradilla" >{{ producte.entradilla }}</p>
+                 </div><br />
+{#                 <div  style="background-color:#FFFFFF; display: block">#}
+                 <form method="post"  class="comanda_form">{% csrf_token %}
+
+                         <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ producte.pk }}" />
+                         <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ producte.nom }}" />
+                         <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
+                         <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega.pk }}" />
+                         <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id"/>
+                         <input type="hidden" id="id_preu" name="preu" class="hidden_id"/>
+                         <div  style="width:100%; display: inline-block; position: relative">
+                            Cant:
+                            <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 50px"/>
+                            de <br/>
+                            <select id="id_format" name="format" class="hidden_id form-control" style="width: 100% float:right" >
+                                {% for tipusproducte in producte.formats.all %}
+                                    {% if tipusproducte.stock > 0 %}
+                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div style="float: right; padding-top: 10px">
+                            {% if not user.is_authenticated %}
+                                 <button class="glyphicon glyphicon-shopping-cart" id="id_carro" title="Fer comanda">
+                                </button>
+                             {% else %}
+                                 <button class="glyphicon glyphicon-shopping-cart" id="id_carro" title="Fer comanda">
+                                 </button>
+                             {% endif %}
+                            </div>
+                         </div>
+                 </form>
+{#                 </div>#}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+
+
+{% endblock %}
+
+
+
+{% block footer %}
+
+    <div class="pagination" style="
+    background-color: #bce0b9;">
+{#    <div style=" position: relative; display: inline-block; ">#}
+        <span class="step-links">
+            {% if productes.has_previous %}
+                <a href="?page={{ productes.previous_page_number }}">anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Pàgina {{ productes.number }} de {{ productes.paginator.num_pages }}
+            </span>
+
+            {% if productes.has_next %}
+                <a href="?page={{ productes.next_page_number }}">següent</a>
+            {% endif %}
+        </span>
+{#    </div>#}
+    </div>
+
+{% endblock %}
