@@ -949,16 +949,21 @@ class InfoFormView(JSONFormMixin, InfoFormBaseView):
     pass
 
 
-class UserProfileEditView(UpdateView):
+class UserProfileEditBaseView(UpdateView):
     model = UserProfile
     form_class = UserProfileForm
     template_name = "edit_profile.html"
+
+    def create_response(self, vdict=dict(), valid_form=True):
+        response = HttpResponse(json.dumps(vdict))
+        response.status = 200 if valid_form else 500
+        return response
 
     def get_object(self, queryset=None):
         return UserProfile.objects.get_or_create(user=self.request.user)[0]
 
     def get_context_data(self, **kwargs):
-        context = super(UserProfileEditView, self).get_context_data(**kwargs)
+        context = super(UserProfileEditBaseView, self).get_context_data(**kwargs)
         nodes = Node.objects.all()
         context['nodes'] = nodes
         now = datetime.datetime.now()
@@ -975,6 +980,16 @@ class UserProfileEditView(UpdateView):
             context['frequencia'] = f.nom
         return context
 
+    def form_valid(self, form):
+        ret = {"success": 1}
+
+        return self.create_response(ret, True)
+
+
+    def form_invalid(self, form):
+        ret = {"success": 0, "form_errors": form.errors }
+        return self.create_response(ret, False)
+
 
     def get_success_url(self):
         notify.send(self.object, recipient= self.object.user, verb="Has modificat les teves dades ", action_object=self.object,
@@ -982,3 +997,6 @@ class UserProfileEditView(UpdateView):
 
         messages.success(self.request, (u"S'han desat les modificacions realitzades"))
         return reverse("coope")
+
+class UserProfileEditView(JSONFormMixin, UserProfileEditBaseView):
+    pass
