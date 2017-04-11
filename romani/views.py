@@ -522,56 +522,56 @@ def ConvidarView(request):
 
     if request.POST:
 
-        # a = request
-        #
-        email = request.POST.get('email')
+        if up.invitacions > 0:
+            # a = request
+            #
+            email = request.POST.get('email')
 
-        # ret = {}
-        if email:
-            #comprobem que els mails no estiguin donats de alta a la xarxa
-            alta = User.objects.filter(email = email).first()
-            if not alta:
-                if validateEmail(email):
-                    try:
-                        k = generate_key(request)
-                        enviarInvitacio(email, up.user.get_full_name(), k)
-                        up.invitacions = up.invitacions - 1
+            # ret = {}
+            if email:
+                #comprobem que els mails no estiguin donats de alta a la xarxa
+                alta = User.objects.filter(email = email).first()
+                if not alta:
+                    if validateEmail(email):
+                        try:
+                            k = generate_key(request)
+                            enviarInvitacio(email, up.user.get_full_name(), k)
+                            up.invitacions = up.invitacions - 1
 
-                        conv = Convidat.objects.create(mail = email)
-                        conv.save()
+                            conv = Convidat.objects.create(mail = email)
+                            conv.save()
 
-                        up.convidats.add(conv)
+                            up.convidats.add(conv)
 
-                        up.save()
+                            up.save()
 
-                        notify.send(up, recipient=up.user, verb="",
-                            description=", has convidat un nou usuari. " , timestamp=timezone.now())
-                        message_email = "S'ha enviat la sol·licitud al correu electrònic correctament"
-                    # up = UserProfile.objects.get(user = request.user)
-                    except:
-                       message_email = "No s'ha pogut enviar la sol·licitud al correu electrònic"
-                else:
+                            notify.send(up, recipient=up.user, verb="",
+                                description=", has convidat un nou usuari. " , timestamp=timezone.now())
+                            message_email = "S'ha enviat la sol·licitud al correu electrònic correctament"
+                        # up = UserProfile.objects.get(user = request.user)
+                        except:
+                           message_email = "No s'ha pogut enviar la sol·licitud al correu electrònic"
+                    else:
+                        # return HttpResponse(json.dumps(ret), content_type='application/json')
+                        message_email = "No s'ha pogut enviar la sol·licitud al correu electrònic"
                     # return HttpResponse(json.dumps(ret), content_type='application/json')
-                    message_email = "No s'ha pogut enviar la sol·licitud al correu electrònic"
-                # return HttpResponse(json.dumps(ret), content_type='application/json')
+                else:
+                    message_email = "La direcció de correu electrònic ja té usuari a la xarxa"
+            # cantitat = request.POST.get('cantitat')
+            # lloc_entrega = request.POST.get('lloc_entrega')
             else:
-                message_email = "La direcció de correu electrònic ja té usuari a la xarxa"
-        # cantitat = request.POST.get('cantitat')
-        # lloc_entrega = request.POST.get('lloc_entrega')
+                k = generate_key(request)
+                up.invitacions = up.invitacions - 1
+                up.save()
+
+                notify.send(up, recipient=up.user, verb="",
+                                description=", has generat una nova invitació " , timestamp=timezone.now())
+
+                s = "http://lamassa.org/register/" + str(k)
+                message = s
+
         else:
-            k = generate_key(request)
-            up.invitacions = up.invitacions - 1
-            up.save()
-
-            notify.send(up, recipient=up.user, verb="",
-                            description=", has generat una nova invitació " , timestamp=timezone.now())
-
-            s = "http://lamassa.org/register/" + str(k)
-            message = s
-            # return HttpResponse(json.dumps(ret))
-    # response = HttpResponse(json.dumps(ret), content_type='application/json')
-    # return response
-    # return JsonResponse(ret)
+            message_email = "Ja has utilitzat totes les invitacions. De moment no pots convidar més gent. Gràcies"
 
     return render(request, "convidar.html", {'invitacions':up.invitacions, 'message':message, 'message_email': message_email, 'nodes': nodes})
 
