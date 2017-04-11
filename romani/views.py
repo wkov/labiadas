@@ -959,7 +959,7 @@ class InfoFormView(JSONFormMixin, InfoFormBaseView):
     pass
 
 
-class UserProfileEditBaseView(UpdateView):
+class UserProfileEditView(UpdateView):
     model = UserProfile
     form_class = UserProfileForm
     template_name = "edit_profile.html"
@@ -973,7 +973,7 @@ class UserProfileEditBaseView(UpdateView):
         return UserProfile.objects.get_or_create(user=self.request.user)[0]
 
     def get_context_data(self, **kwargs):
-        context = super(UserProfileEditBaseView, self).get_context_data(**kwargs)
+        context = super(UserProfileEditView, self).get_context_data(**kwargs)
         nodes = Node.objects.all()
         context['nodes'] = nodes
         now = datetime.datetime.now()
@@ -991,14 +991,15 @@ class UserProfileEditBaseView(UpdateView):
         return context
 
     def form_valid(self, form):
-        ret = {"success": 1}
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        # form.send_email()
 
-        return self.create_response(ret, True)
+        # if form.email and User.objects.filter(email=form.email).exclude(username=form.username).count():
+        #     raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
 
 
-    def form_invalid(self, form):
-        ret = {"success": 0, "form_errors": form.errors }
-        return self.create_response(ret, False)
+        return super(UserProfileEditView, self).form_valid(form)
 
 
     def get_success_url(self):
@@ -1007,6 +1008,3 @@ class UserProfileEditBaseView(UpdateView):
 
         messages.success(self.request, (u"S'han desat les modificacions realitzades"))
         return reverse("coope")
-
-class UserProfileEditView(JSONFormMixin, UserProfileEditBaseView):
-    pass

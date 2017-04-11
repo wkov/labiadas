@@ -492,8 +492,8 @@
                             <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "img/fusta.jpg" %}"/> </br>
                         {% endif %}
             </div>
-                  <label>Email: </label> {{ form.email }}  <br/>
-                  <label>Nom d'usuari: </label>   {{ form.username }} <br/>
+                  <label>Email: </label> {{ object.user.email }}  <br/>
+                  <label>Nom d'usuari: </label>   {{ object.user.username }} <br/>
                   <label>Nom: </label>     {{ form.first_name }} <br/>
                   <label>Cognoms: </label>     {{ form.last_name }}  <br/>
                 <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
