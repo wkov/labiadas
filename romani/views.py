@@ -110,8 +110,23 @@ def buskadorProducte(request):
     searchString = request.POST.get('searchString', 0)
     #ToDo Afegir Cela al Buscador, Django no permet Ands i Ors, Construir query manualment
 
-    etiquetes = Etiqueta.objects.all()
+    # etiquetes = Etiqueta.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
+
+    etiquetes_pre = Etiqueta.objects.all()
+
+    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+
+    etiquetes = []
+
+    for e in etiquetes_pre:
+        for p in e.producte_set.all():
+            for p2 in p.dies_entrega.all():
+                if p2 in dies_node_entrega:
+                    etiquetes.append(e)
+                    break
+            break
+
 
     if not searchString == 0:
         posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)), nodes__id__exact=user_p.lloc_entrega_perfil.pk )
@@ -195,7 +210,7 @@ def producteView(request,pk):
 
 def etiquetaView(request,pk):
 
-    etiquetes = Etiqueta.objects.all()
+    # etiquetes = Etiqueta.objects.all()
     etiqueta = Etiqueta.objects.filter(pk=pk).first()
 
     nodes = Node.objects.all()
@@ -203,6 +218,19 @@ def etiquetaView(request,pk):
 
 
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+
+
+    etiquetes_pre = Etiqueta.objects.all()
+
+    etiquetes = []
+
+    for e in etiquetes_pre:
+        for p in e.producte_set.all():
+            for p2 in p.dies_entrega.all():
+                if p2 in dies_node_entrega:
+                    etiquetes.append(e)
+                    break
+            break
 
     p = Producte.objects.filter(etiqueta=etiqueta, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
