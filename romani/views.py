@@ -290,7 +290,7 @@ def contracteDelete(request, pk):
 
 def AjudaView(request):
 
-    webmaster = User.objects.filter(pk="1").first()
+    webmaster = User.objects.filter(pk="37").first()
     user_p = UserProfile.objects.filter(user=request.user).first()
     nodes = Node.objects.all()
 
