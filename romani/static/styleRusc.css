@@ -125,9 +125,9 @@ header {
         z-index: 10000000000000;
 
     }
-  #pato{
-    display: none;
-}
+  /*#pato{*/
+    /*display: none;*/
+/*}*/
       .img-circle{
    visibility: hidden;
 }
@@ -214,9 +214,9 @@ header {
       /*width: 100%;*/
       position: fixed;
         }
-  #pato{
-    display: none;
-}
+  /*#pato{*/
+    /*display: none;*/
+/*}*/
     /*#entradilla{*/
 
     /*max-width: 25%;*/
@@ -306,10 +306,10 @@ header {
     #geodiv{
         display: block;
     }
-      #pato{
-    display: none;
+      /*#pato{*/
+    /*display: none;*/
 
-}
+/*}*/
     .foto-producte{
         width: 500px;
         height:500px;
@@ -348,9 +348,9 @@ header {
 
 
 @media only screen and (min-width: 1200px) {
-      #pato{
-    display: block;
-}
+      /*#pato{*/
+    /*display: block;*/
+/*}*/
     .modal-content {
     background-color: #fefefe;
     margin: 5% auto; /* 15% from the top and centered */
