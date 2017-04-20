@@ -9,9 +9,9 @@ from romani.models import EmailModelBackend
 
 from django.contrib.auth.decorators import login_required as auth
 
-from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
+from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView, ComandesListView
 from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte
-from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
+from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView, vistaProductorView
 
 from django.contrib.auth.views import login, logout_then_login
 
@@ -26,6 +26,8 @@ urlpatterns = [
     url(r"^accounts/", include("registration.backends.simple.urls")),
     url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
+    url(r'^vista_productor/', auth(views.vistaProductorView), name="vista_productor"),
+    url(r'^vista_productor/comandes/', auth(ComandesListView.as_view()), name='vista_comandes'),
     url(r'^nou_usuari/', auth(views.nouUsuariView), name="nou_usuari"),
     url(r'^nodes_nou_usuari/', auth(views.nodesNouUsuariView), name="nodes_nou_usuari"), #ajax: retorna nodes pel select de nou_usuari amb la opcio inicial marcada segons l'usuari que ha convidat
     url(r'^busk/$', auth(views.buskadorProducte) , name='busk'),

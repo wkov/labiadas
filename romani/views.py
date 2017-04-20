@@ -158,6 +158,34 @@ def nouUsuariView(request):
 
     return render(request, "nouUsuari.html", {'up': user_p, 'nodes': nodes, 'frequencia': s.nom})
 
+def vistaProductorView(request):
+
+    productor = Productor.objects.filter(responsable=request.user)
+    productes = Producte.objects.filter(productor=productor)
+    user_p = UserProfile.objects.filter(user=request.user).first()
+
+    return render(request, "vistaProductor.html", {'up': user_p, 'productes': productes, 'productor': productor})
+
+from django.views.generic import ListView
+
+class ComandesListView(ListView):
+    model = Comanda
+    paginate_by = 10
+
+    def get_queryset(self):
+        productor = Productor.objects.filter(responsable=self.request.user)
+        return Comanda.objects.filter(productor=productor)
+
+    def get_context_data(self, **kwargs):
+        context = super(ComandesListView, self).get_context_data(**kwargs)
+        # trobades = Link.objects.exclude(where__isnull=True).exclude(where__exact='').order_by('date')
+        # context["trobades"] = trobades
+        # keAses = Link.objects.filter(title__endswith ='kaIdius?')
+        # context["keases"] = keAses
+        # subamolls = Subamoll.objects.all()
+        # context["subamolls"] = subamolls
+        return context
+
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
