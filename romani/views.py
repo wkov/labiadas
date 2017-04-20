@@ -682,7 +682,11 @@ def NodeHorariView(request):
                 l = request.POST.get('lloc_entrega_reg')
                 node = get_object_or_404(Node, pk=l)
 
-                v = node.dies_entrega.filter(date__gt = datetime.datetime.today()).first()
+                v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
+
+                v_query = v_query.order_by('date')
+
+                v = v_query.first()
 
                 if v:
 
@@ -719,7 +723,11 @@ def NodeHorariView(request):
             up2 = UserProfile.objects.filter(user = k.usuari).first()
             node = up2.lloc_entrega_perfil
 
-        v = node.dies_entrega.filter(date__gt = datetime.datetime.today()).first()
+        v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
+
+        v_query = v_query.order_by('date')
+
+        v = v_query.first()
 
         if v:
             json_res = []
