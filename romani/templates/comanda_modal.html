@@ -52,7 +52,7 @@ window.onclick = function(event) {
                     <label style="float: left; position: absolute" for="pis">Pis:</label>
                     <input type="text" id="pis" style="float: right; max-width: 300px" name="pis" class="form-control" value="{{ up.pis }}"/><br/><br/>
                     <label style="float: left; position: absolute" for="poblacio">Població:</label>
-                    <input id="poblacio" style="float: right; max-width: 300px" name="poblacio" class="form-control" value="{{ up.poblacio }}"/><br/><br/>
+                    <input id="poblacio" style="float: right; max-width: 300px" name="poblacio" class="form-control" value="{{ up.poblacio }}" readonly/><br/><br/>
             </div>
             {% else %}
                         <div id="effect" style="display: block" class="ui-widget-content ui-corner-all">
