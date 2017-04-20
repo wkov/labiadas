@@ -127,8 +127,8 @@ $.ajaxSetup({
         <label style="float: left" for="poblacio">Població:</label> &nbsp; {{ node.poblacio }}<br/>
         {% endif %}
         <br/>
-        <b>Proxims dies d'entrega:</b> <br/>
-                {% for i in node.prox_dias  %}
+        <b>Propers dies d'entrega:</b> <br/>
+                {% for i in node.prox_dias|slice:":5" %}
                     <table border = 1>
                     <tr>
                     <td>
