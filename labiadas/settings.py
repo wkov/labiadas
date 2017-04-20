@@ -162,6 +162,3 @@ AUTHENTICATION_BACKENDS = (
     'romani.models.EmailModelBackend',
     'django.contrib.auth.backends.ModelBackend'
 )
-
-
-SITE_URL = 'http://www.lamassa.com'
