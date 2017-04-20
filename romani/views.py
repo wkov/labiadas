@@ -647,7 +647,7 @@ def NodeHorariView(request):
                 l = request.POST.get('lloc_entrega_perfil')
                 node = get_object_or_404(Node, pk=l)
 
-                v_query = node.dies_entrega.order_by('-date').filter(date__gt = datetime.datetime.today())
+                v_query = node.dies_entrega.order_by('date').filter(date__gt = datetime.datetime.today())
 
                 v = v_query.first()
 
@@ -655,7 +655,7 @@ def NodeHorariView(request):
 
                     json_res = []
                     d = v.date + timedelta(days=7)
-                    k = node.dies_entrega.order_by('-date').filter(date__lt = d, date__gt = datetime.datetime.today())
+                    k = node.dies_entrega.order_by('date').filter(date__lt = d, date__gt = datetime.datetime.today())
                     for dia in k:
                         json_res_aux = []
                         for franja in dia.franjes_horaries.all():
