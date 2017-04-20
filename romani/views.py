@@ -174,7 +174,8 @@ class ComandesListView(ListView):
 
     def get_queryset(self):
         productor = Productor.objects.filter(responsable=self.request.user)
-        return Comanda.objects.filter(productor=productor)
+        productes = Producte.objects.filter(productor=productor)
+        return Comanda.objects.filter(producte__in=productes)
 
     def get_context_data(self, **kwargs):
         context = super(ComandesListView, self).get_context_data(**kwargs)

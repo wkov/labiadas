@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
     url(r'^vista_productor/', auth(views.vistaProductorView), name="vista_productor"),
-    url(r'^vista_productor/comandes/', auth(ComandesListView.as_view()), name='vista_comandes'),
+    url(r'^vista_comandes/', auth(ComandesListView.as_view()), name='vista_comandes'),
     url(r'^nou_usuari/', auth(views.nouUsuariView), name="nou_usuari"),
     url(r'^nodes_nou_usuari/', auth(views.nodesNouUsuariView), name="nodes_nou_usuari"), #ajax: retorna nodes pel select de nou_usuari amb la opcio inicial marcada segons l'usuari que ha convidat
     url(r'^busk/$', auth(views.buskadorProducte) , name='busk'),
