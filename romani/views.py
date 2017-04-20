@@ -153,6 +153,9 @@ def nouUsuariView(request):
     u = UserProfile.objects.get(user=u_key.usuari)
     s = u.lloc_entrega_perfil.get_frequencia()
 
+    user_p.lloc_entrega_perfil = u.lloc_entrega_perfil
+    user_p.save()
+
     return render(request, "nouUsuari.html", {'up': user_p, 'nodes': nodes, 'frequencia': s.nom})
 
 
