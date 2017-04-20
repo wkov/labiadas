@@ -641,81 +641,13 @@ def DomiciliView(request):
 def NodeHorariView(request):
 
     if request.POST:
-
         if 'lloc_entrega_perfil' in request.POST:
-
                 l = request.POST.get('lloc_entrega_perfil')
-                node = get_object_or_404(Node, pk=l)
-
-                v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
-
-                v_query = v_query.order_by('date')
-
-                v = v_query.first()
-
-                if v:
-
-                    json_res = []
-                    d = v.date + timedelta(days=7)
-                    k = node.dies_entrega.order_by('date').filter(date__lt = d, date__gt = datetime.datetime.today())
-                    for dia in k:
-                        json_res_aux = []
-                        for franja in dia.franjes_horaries.all():
-                            json_obj_aux = dict(
-                                inici = franja.inici,
-                                final = franja.final,
-                                pk = franja.pk
-                            )
-                            json_res_aux.append(json_obj_aux)
-
-
-                        json_obj = dict(
-                            dia = str(dia.dia()),
-                            pk = dia.pk,
-                            franjes = json_res_aux)
-                        json_res.append(json_obj)
-
-                    return HttpResponse(json.dumps(json_res), content_type='application/json')
-
-        if 'lloc_entrega_reg' in request.POST:
-
+        elif 'lloc_entrega_reg' in request.POST:
                 l = request.POST.get('lloc_entrega_reg')
-                node = get_object_or_404(Node, pk=l)
-
-                v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
-
-                v_query = v_query.order_by('date')
-
-                v = v_query.first()
-
-                if v:
-
-                    json_res = []
-                    d = v.date + timedelta(days=7)
-                    k = node.dies_entrega.filter(date__lt = d, date__gt = datetime.datetime.today()).order_by('date')
-                    for dia in k:
-                        json_res_aux = []
-                        for franja in dia.franjes_horaries.all():
-                            json_obj_aux = dict(
-                                inici = franja.inici,
-                                final = franja.final,
-                                pk = franja.pk
-                            )
-                            json_res_aux.append(json_obj_aux)
-
-
-                        json_obj = dict(
-                            dia = str(dia.dia()),
-                            pk = dia.pk,
-                            franjes = json_res_aux)
-                        json_res.append(json_obj)
-
-                    return HttpResponse(json.dumps(json_res), content_type='application/json')
-
-
+        node = get_object_or_404(Node, pk=l)
     else:
         up = UserProfile.objects.filter(user = request.user).first()
-
         if up.lloc_entrega_perfil:
             node = up.lloc_entrega_perfil
         else:
@@ -723,34 +655,35 @@ def NodeHorariView(request):
             up2 = UserProfile.objects.filter(user = k.usuari).first()
             node = up2.lloc_entrega_perfil
 
-        v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
+    v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
 
-        v_query = v_query.order_by('date')
+    v_query = v_query.order_by('date')
 
-        v = v_query.first()
+    v = v_query.first()
 
-        if v:
-            json_res = []
-            d = v.date + timedelta(days=7)
-            k = node.dies_entrega.filter(date__lt = d, date__gt = datetime.datetime.today()).order_by('date')
-            for dia in k:
-                json_res_aux = []
-                for franja in dia.franjes_horaries.all():
-                    json_obj_aux = dict(
-                        inici = franja.inici,
-                        final = franja.final,
-                        pk = franja.pk
-                    )
-                    json_res_aux.append(json_obj_aux)
+    if v:
+        json_res = []
+        d = v.date + timedelta(days=7)
+        k = node.dies_entrega.filter(date__lt = d, date__gt = datetime.datetime.today()).order_by('date')
+        for dia in k:
+            json_res_aux = []
+            for franja in dia.franjes_horaries.all():
+                json_obj_aux = dict(
+                    inici = franja.inici,
+                    final = franja.final,
+                    pk = franja.pk
+                )
+                json_res_aux.append(json_obj_aux)
 
 
-                json_obj = dict(
-                    dia = str(dia.dia()),
-                    pk = dia.pk,
-                    franjes = json_res_aux)
-                json_res.append(json_obj)
+            json_obj = dict(
+                dia = str(dia.dia()),
+                pk = dia.pk,
+                franjes = json_res_aux)
+            json_res.append(json_obj)
 
-            return HttpResponse(json.dumps(json_res), content_type='application/json')
+        return HttpResponse(json.dumps(json_res), content_type='application/json')
+
     return HttpResponse("Fail")
 
 
