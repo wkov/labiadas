@@ -647,7 +647,9 @@ def NodeHorariView(request):
                 l = request.POST.get('lloc_entrega_perfil')
                 node = get_object_or_404(Node, pk=l)
 
-                v_query = node.dies_entrega.order_by('date').filter(date__gt = datetime.datetime.today())
+                v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
+
+                v_query = v_query.order_by('date')
 
                 v = v_query.first()
 
