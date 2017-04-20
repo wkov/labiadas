@@ -404,7 +404,7 @@ class ComandaFormBaseView(FormView):
 
         lloc = form.data["lloc_entrega"]
         lloc_obj = get_object_or_404(Node, pk = lloc)
-        user_profile.lloc_entrega_perfil = lloc_obj
+        # user_profile.lloc_entrega_perfil = lloc_obj
         # Aqui esta hardcodejat els llocs que son "a domicili", s'ha d'introduir el pk en el if de qualsevol node nou "a domicili"
         if (lloc_obj.a_domicili == True):
 
@@ -417,9 +417,9 @@ class ComandaFormBaseView(FormView):
 
 
         if frequencia == '0':
-            v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, data_entrega= data_entrega.date , data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=user_profile.lloc_entrega_perfil, preu=preu)
+            v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, data_entrega= data_entrega.date , data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu)
         else:
-            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, primera_entrega=data_entrega.date, darrera_entrega=data_entrega.date ,data_entrega=data_entrega_num, data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=user_profile.lloc_entrega_perfil, preu=preu, freq_txt=freq_txt, frequencia=frequencia)
+            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, primera_entrega=data_entrega.date, darrera_entrega=data_entrega.date ,data_entrega=data_entrega_num, data_entrega_txt=data_entrega_txt, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, freq_txt=freq_txt, frequencia=frequencia)
 
 
         ret = {"success": 1}
