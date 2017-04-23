@@ -236,7 +236,7 @@ class DatesListView(ListView):
 class ProductorUpdateView(UpdateView):
     model = Productor
     form_class = ProductorForm
-    success_url="/vista_productor/"
+    success_url="/vista_productors/"
 
     # def get_context_data(self, **kwargs):
     #     context = super(ProductorUpdateView, self).get_context_data(**kwargs)
@@ -248,6 +248,7 @@ class ProductorUpdateView(UpdateView):
 class ProducteUpdateView(UpdateView):
     model = Producte
     form_class = ProducteForm
+    success_url="/vista_productes/"
 
     # def get_context_data(self, **kwargs):
     #     context = super(ProducteUpdateView, self).get_context_data(**kwargs)
