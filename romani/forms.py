@@ -1,7 +1,9 @@
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega
 from django.contrib.auth.models import  User
+from django.forms.widgets import CheckboxSelectMultiple
+import datetime
 
 class ComandaForm(forms.ModelForm):
     class Meta:
@@ -50,3 +52,35 @@ class UserProfileForm(forms.ModelForm):
       profile = super(UserProfileForm, self).save(*args,**kwargs)
       return profile
 
+
+
+class ProductorForm(forms.ModelForm):
+
+    class Meta:
+        model = Productor
+        fields = ("nom", "cuerpo", "adjunt")
+        # exclude = ("")
+
+
+class ProducteForm(forms.ModelForm):
+
+    class Meta:
+        model = Producte
+        # fields = ("nom", "cuerpo", "adjunt", "responsable")
+        exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega")
+
+
+
+class ProducteDatesForm(forms.ModelForm):
+
+    class Meta:
+        model = Producte
+        fields = ("nom", "dies_entrega", )
+        # exclude = ("productor", "karma_value", "datahora", "karma_date")
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProducteDatesForm, self).__init__(*args, **kwargs)
+
+        self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
+        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now())

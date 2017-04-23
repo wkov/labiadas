@@ -28,7 +28,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
+                                <a href="{% url 'productor_list' %}" id="etq_selected"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
                                     <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -45,5 +45,32 @@
                         </div>
     </div>
     <br/>
+        {% for link in object_list %}
+            <form method="post" action="" class="vote_form">
+              <li>
+                  <a href="{% url 'productor_update' link.pk %}">
+                  [{{ link.nom }}]
+                {% csrf_token %}
+{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
+{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
+{#                {% if not user.is_authenticated %}#}
+{#                <button disabled title="Si us plau, login per votar">+</button>#}
+{#                {% elif link.pk not in voted %}#}
+{#                <button>+</button>#}
+{#                {% else %}#}
+{#                <button>-</button>#}
+{#                {% endif %}#}
 
+
+{#                  <b>{{ link.etiqueta.nom }}</b>#}
+{#                  {% for aux in link.nodes.all %}#}
+{#                    {{ aux }} /#}
+{#                  {% endfor %}#}
+{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
+                </a>
+{#                  {{ link.responsable }}#}
+              </li>
+            </form>
+            <br/>
+        {% endfor %}
 {% endblock %}

@@ -9,10 +9,10 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import DetailView
 from .models import UserProfile, Etiqueta, Key
-from .forms import UserProfileForm, ComandaForm, InfoForm
+from .forms import UserProfileForm, ComandaForm, InfoForm, ProductorForm, ProducteForm, ProducteDatesForm
 import datetime
 from django.utils import timezone
-from notifications import notify
+# from notifications import notify
 from django.contrib.auth.models import  User
 from django.http import JsonResponse
 import json
@@ -22,6 +22,11 @@ from registration.backends.simple.views import RegistrationView
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from registration import signals
+
+
+from django.views.generic import ListView
+
+
 # Perque retorni a la pantalla principal despres de completar el registre sobreescribim la classe
 
 from django import forms
@@ -158,35 +163,109 @@ def nouUsuariView(request):
 
     return render(request, "nouUsuari.html", {'up': user_p, 'nodes': nodes, 'frequencia': s.nom})
 
-def vistaProductorView(request):
-
-    productor = Productor.objects.filter(responsable=request.user)
-    productes = Producte.objects.filter(productor=productor)
-    user_p = UserProfile.objects.filter(user=request.user).first()
-
-    return render(request, "vistaProductor.html", {'up': user_p, 'productes': productes, 'productor': productor})
-
-from django.views.generic import ListView
 
 class ComandesListView(ListView):
     model = Comanda
-    paginate_by = 10
 
     def get_queryset(self):
         productor = Productor.objects.filter(responsable=self.request.user)
         productes = Producte.objects.filter(productor=productor)
-        return Comanda.objects.filter(producte__in=productes)
+        return Comanda.objects.filter(producte__in=productes, data_entrega__gte=datetime.datetime.today())
 
-    def get_context_data(self, **kwargs):
-        context = super(ComandesListView, self).get_context_data(**kwargs)
-        # trobades = Link.objects.exclude(where__isnull=True).exclude(where__exact='').order_by('date')
-        # context["trobades"] = trobades
-        # keAses = Link.objects.filter(title__endswith ='kaIdius?')
-        # context["keases"] = keAses
-        # subamolls = Subamoll.objects.all()
-        # context["subamolls"] = subamolls
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(ComandesListView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
 
+class HistorialListView(ListView):
+    model = Comanda
+    template_name = "romani/historial_list.html"
+
+    def get_queryset(self):
+        productor = Productor.objects.filter(responsable=self.request.user)
+        productes = Producte.objects.filter(productor=productor)
+        return Comanda.objects.filter(producte__in=productes, data_entrega__lte=datetime.datetime.today())
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(HistorialListView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
+
+class ProductesListView(ListView):
+    model = Producte
+
+    def get_queryset(self):
+        productors = Productor.objects.filter(responsable=self.request.user)
+        return Producte.objects.filter(productor__in=productors)
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ProductesListView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
+
+class ProductorsListView(ListView):
+    model = Productor
+
+    def get_queryset(self):
+        return Productor.objects.filter(responsable=self.request.user)
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ProductorsListView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
+
+class DatesListView(ListView):
+    model = Producte
+    template_name = "romani/dates_list.html"
+
+    def get_queryset(self):
+        productors = Productor.objects.filter(responsable=self.request.user)
+        return Producte.objects.filter(productor__in=productors)
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(DatesListView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
+
+
+class ProductorUpdateView(UpdateView):
+    model = Productor
+    form_class = ProductorForm
+    success_url="/vista_productor/"
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ProductorUpdateView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
+
+
+class ProducteUpdateView(UpdateView):
+    model = Producte
+    form_class = ProducteForm
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ProducteUpdateView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
+
+class ProducteDatesUpdateView(UpdateView):
+    model = Producte
+    form_class = ProducteDatesForm
+    template_name = "romani/productedates_form.html"
+    success_url="/vista_dates/"
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ProducteDatesUpdateView, self).get_context_data(**kwargs)
+    #     productor = Productor.objects.filter(responsable=self.request.user).first()
+    #     context["productor"] = productor
+    #     return context
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
