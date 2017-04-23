@@ -1,6 +1,6 @@
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte
 from django.contrib.auth.models import  User
 from django.forms.widgets import CheckboxSelectMultiple
 import datetime
@@ -68,6 +68,15 @@ class ProducteForm(forms.ModelForm):
         model = Producte
         # fields = ("nom", "cuerpo", "adjunt", "responsable")
         exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega")
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProducteForm, self).__init__(*args, **kwargs)
+
+        self.fields["nodes"].widget = CheckboxSelectMultiple()
+        self.fields["nodes"].queryset = Node.objects.all()
+        self.fields["formats"].widget = CheckboxSelectMultiple()
+        self.fields["formats"].queryset = TipusProducte.objects.filter(productor=self.instance.productor)
 
 
 

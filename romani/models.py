@@ -11,6 +11,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 
 
+
 class Adjunt(models.Model):
 
     def validate_file(fieldfile_obj):
@@ -26,11 +27,31 @@ class Adjunt(models.Model):
     def __str__(self):
         return self.arxiu.url
 
+class Productor(models.Model):
+
+    def validate_file(fieldfile_obj):
+
+        filesize = fieldfile_obj.file.size
+        megabyte_limit = 5.0
+        if filesize > megabyte_limit*1024*1024:
+            raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
+
+
+    nom = models.CharField(max_length=20)
+    adjunt = models.ManyToManyField(Adjunt)
+    responsable = models.ForeignKey(User)
+    cuerpo = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.nom
+
+
 class TipusProducte(models.Model):
 
     nom = models.CharField(max_length=20)
     preu = models.FloatField(default=0.0)
     stock = models.IntegerField(default=0)
+    productor = models.ForeignKey(Productor)
 
     def __str__(self):
         return "%s %s€ %s %s unit" % (self.nom, self.preu, self.producte.all(), self.stock)
@@ -115,23 +136,6 @@ class Etiqueta(models.Model):
         return self.nom
 
 
-class Productor(models.Model):
-
-    def validate_file(fieldfile_obj):
-
-        filesize = fieldfile_obj.file.size
-        megabyte_limit = 5.0
-        if filesize > megabyte_limit*1024*1024:
-            raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
-
-
-    nom = models.CharField(max_length=20)
-    adjunt = models.ManyToManyField(Adjunt)
-    responsable = models.ForeignKey(User)
-    cuerpo = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.nom
 
 import random
 

@@ -249,12 +249,13 @@ class ProducteUpdateView(UpdateView):
     model = Producte
     form_class = ProducteForm
     success_url="/vista_productes/"
+    # user = request.user
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(ProducteUpdateView, self).get_context_data(**kwargs)
-    #     productor = Productor.objects.filter(responsable=self.request.user).first()
-    #     context["productor"] = productor
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(ProducteUpdateView, self).get_context_data(**kwargs)
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
+        return context
 
 class ProducteDatesUpdateView(UpdateView):
     model = Producte
