@@ -45,27 +45,33 @@
                         </div>
     </div>
     <br/>
+     <table>
+     <th>Producte</th>
+     <th>Lloc d'entrega</th>
+     <th>[Cant Format]</th>
+     <th>Data d'entrega</th>
+     <th>Franja horària</th>
+     <th>Preu</th>
+     <th>Client</th>
+     <th>Data de comanda</th>
         {% for link in object_list %}
-            <form method="post" action="" class="vote_form">
-              <li>
-{#                <a href=" ">#}
-                  [{{ link.producte.nom }}]
-                {% csrf_token %}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
+{#            <form method="post" action="" class="vote_form">#}
+{#              <li>#}
 
-                  <b>{{ link.lloc_entrega }}</b>
-                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} {{ link.franja_horaria}} {{ link.preu }}€ / {{ link.client.first_name }} /  {{ link.data_comanda.date }}
-{#                </a>#}
-              </li>
-            </form>
-            <br/>
+               <tr>
+                        <td>[{{ link.producte.nom }}]</td>
+                        <td>{{ link.lloc_entrega }}</td>
+                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
+                        <td>{{ link.data_entrega.date }}</td>
+                        <td>{{ link.franja_horaria}}</td>
+                        <td>{{ link.preu }}€</td>
+                        <td>{{ link.client.first_name }}</td>
+                        <td>{{ link.data_comanda.date }}</td>
+                    </tr>
+
+{#              </li>#}
+{#            </form>#}
+{#            <br/>#}
         {% endfor %}
+       </table>
 {% endblock %}

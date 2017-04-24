@@ -238,5 +238,25 @@ nav.sidebar ul.level1 ul.level2 li a {
               </a>
             </li>
         </ul>
+         {% if request.user|has_group:"Productors" %}
+        <ul class='level1'>
+            <li class=''>
+              <a class='expandable' href="{% url 'vista_comandes' %}" title='Zona de Productors'>
+                <span id="zonaproductors" name="zonaproductors" class='glyphicon glyphicon-folder-open collapsed-element'></span>
+                <span class='expanded-element'>Zona Productor</span>
+              </a>
+            </li>
+        </ul>
+        {% endif %}
+        {% if request.user|has_group:"Nodes" %}
+        <ul class='level1'>
+            <li class=''>
+              <a class='expandable' href="" title='Zona de Nodes'>
+                <span id="zonanodes" name="zonanodes" class='glyphicon glyphicon-heart-empty collapsed-element'></span>
+                <span class='expanded-element'>Zona Nodes</span>
+              </a>
+            </li>
+        </ul>
+        {% endif %}
  </nav>
 {% endif %}

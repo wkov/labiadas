@@ -45,9 +45,13 @@
                         </div>
     </div>
     <br/>
+    <table>
+    <th>Producte</th>
+    <th>Nodes a on arriba</th>
         {% for link in object_list %}
             <form method="post" action="" class="vote_form">
-              <li>
+{#              <li>#}
+                <tr><td>
                   <a href="{% url 'productedates_update' link.pk %}">
                   [{{ link.nom }}]
                 {% csrf_token %}
@@ -60,15 +64,19 @@
 {#                {% else %}#}
 {#                <button>-</button>#}
 {#                {% endif %}#}
-                </a>
-                    {{ link.productor }}
+                </a></td>
+                <td>
+{#                    {{ link.productor }}#}
                   {% for aux in link.nodes.all %}
                     {{ aux }} /
                   {% endfor %}
+                </td>
 {#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
-
-              </li>
+                </tr>
+{#                <tr></tr>#}
+{#              </li>#}
             </form>
-            <br/>
+{#            <br/>#}
         {% endfor %}
+    </table>
 {% endblock %}

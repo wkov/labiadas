@@ -67,7 +67,7 @@ class ProducteForm(forms.ModelForm):
     class Meta:
         model = Producte
         # fields = ("nom", "cuerpo", "adjunt", "responsable")
-        exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega")
+        exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega", "frequencies")
 
     def __init__(self, *args, **kwargs):
 
@@ -84,7 +84,7 @@ class ProducteDatesForm(forms.ModelForm):
 
     class Meta:
         model = Producte
-        fields = ("nom", "dies_entrega", )
+        fields = ("nom", "dies_entrega", "frequencies" )
         # exclude = ("productor", "karma_value", "datahora", "karma_date")
 
     def __init__(self, *args, **kwargs):

@@ -45,31 +45,25 @@
                         </div>
     </div>
     <br/>
+    <table>
+    <th>Producte</th>
+    <th>Productor</th>
+    <th>Etiqueta</th>
+
         {% for link in object_list %}
-            <form method="post" action="" class="vote_form">
-              <li>
+            <tr>
+{#            <form method="post" action="" class="vote_form">#}
+              <td>
                   <a href="{% url 'producte_update' link.pk %}">
                   [{{ link.nom }}]
-                {% csrf_token %}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
-
-                    {{ link.productor }}
-                  <b>{{ link.etiqueta.nom }}</b>
-{#                  {% for aux in link.nodes.all %}#}
-{#                    {{ aux }} /#}
-{#                  {% endfor %}#}
-{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
                 </a>
-              </li>
-            </form>
-            <br/>
+              </td>
+            <td>{{ link.productor }}</td>
+            <td>{{ link.etiqueta.nom }}</td>
+{#            </form>#}
+{#            <br/>#}
+                </tr>
         {% endfor %}
+
+    </table>
 {% endblock %}
