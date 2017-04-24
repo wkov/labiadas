@@ -49,7 +49,6 @@
     <th>Producte</th>
     <th>Productor</th>
     <th>Etiqueta</th>
-    <th>Text curt</th>
 
         {% for link in object_list %}
             <tr>
@@ -61,7 +60,6 @@
               </td>
             <td>{{ link.productor }}</td>
             <td>{{ link.etiqueta.nom }}</td>
-                <td>{{ link.entradilla }}</td>
 {#            </form>#}
 {#            <br/>#}
                 </tr>

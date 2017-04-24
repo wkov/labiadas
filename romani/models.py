@@ -65,13 +65,50 @@ class FranjaHoraria(models.Model):
     def __str__(self):
         return "%s-%s" % (self.inici, self.final)
 
+
+
+class Frequencia(models.Model):
+    num = models.IntegerField()
+    nom = models.CharField(max_length=30)
+
+    def __str__(self):
+        return "%s %s" % (self.num, self.nom)
+
+
+
+class Node(models.Model):
+
+    nom = models.CharField(max_length=20)
+    position = GeopositionField()
+    carrer = models.CharField(max_length=50, blank=True, null=True)
+    numero = models.CharField(max_length=5, blank=True, null=True)
+    pis = models.CharField(max_length=15, blank=True, null=True)
+    poblacio = models.CharField(max_length=40)
+    codi_postal = models.CharField(max_length=5, blank=True, null=True)
+    responsable = models.CharField(max_length=20)
+    a_domicili = models.NullBooleanField()
+    text = models.TextField(max_length=1000)
+    frequencies = models.ManyToManyField(Frequencia)
+    productors = models.ManyToManyField(Productor, blank=True)
+
+    def __str__(self):
+        return "%s %s" % (self.nom, self.poblacio)
+
+    def prox_dias(self):
+        return self.dies_entrega.all().order_by('date')[0:6]
+
+    def get_frequencia(self):
+        return self.frequencies.filter(num__gt=0).order_by('num').first()
+
+
 class DiaEntrega(models.Model):
 
     franjes_horaries = models.ManyToManyField(FranjaHoraria,  related_name="dia")
     date = models.DateTimeField()
+    node = models.ForeignKey(Node, related_name="dies_entrega")
 
     def __str__(self):
-        return " %s %s %s" % (self.node.all(), self.date, self.franjes_horaries.all())
+        return " %s %s %s" % (self.node, self.date, self.franjes_horaries.all())
 
     def dia_num(self):
         return self.date.weekday()
@@ -95,38 +132,6 @@ class DiaEntrega(models.Model):
 
 
 
-class Frequencia(models.Model):
-    num = models.IntegerField()
-    nom = models.CharField(max_length=30)
-
-    def __str__(self):
-        return "%s %s" % (self.num, self.nom)
-
-
-
-class Node(models.Model):
-
-    nom = models.CharField(max_length=20)
-    position = GeopositionField()
-    carrer = models.CharField(max_length=50, blank=True, null=True)
-    numero = models.CharField(max_length=5, blank=True, null=True)
-    pis = models.CharField(max_length=15, blank=True, null=True)
-    poblacio = models.CharField(max_length=40)
-    codi_postal = models.CharField(max_length=5, blank=True, null=True)
-    responsable = models.CharField(max_length=20)
-    dies_entrega = models.ManyToManyField(DiaEntrega, related_name="node")
-    a_domicili = models.NullBooleanField()
-    text = models.TextField(max_length=1000)
-    frequencies = models.ManyToManyField(Frequencia, related_name="node")
-
-    def __str__(self):
-        return "%s %s" % (self.nom, self.poblacio)
-
-    def prox_dias(self):
-        return self.dies_entrega.all().order_by('date')[0:6]
-
-    def get_frequencia(self):
-        return self.frequencies.filter(num__gt=0).order_by('num').first()
 
 class Etiqueta(models.Model):
     nom = models.CharField(max_length=15)

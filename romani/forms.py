@@ -67,14 +67,15 @@ class ProducteForm(forms.ModelForm):
     class Meta:
         model = Producte
         # fields = ("nom", "cuerpo", "adjunt", "responsable")
-        exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega", "frequencies")
+        exclude = ("productor", "karma_value", "datahora", "karma_date", "frequencies", "dies_entrega")
 
     def __init__(self, *args, **kwargs):
 
         super(ProducteForm, self).__init__(*args, **kwargs)
 
         self.fields["nodes"].widget = CheckboxSelectMultiple()
-        self.fields["nodes"].queryset = Node.objects.all()
+
+        self.fields["nodes"].queryset = Node.objects.filter(productors__id__exact=self.instance.productor.id)
         self.fields["formats"].widget = CheckboxSelectMultiple()
         self.fields["formats"].queryset = TipusProducte.objects.filter(productor=self.instance.productor)
 
@@ -92,4 +93,4 @@ class ProducteDatesForm(forms.ModelForm):
         super(ProducteDatesForm, self).__init__(*args, **kwargs)
 
         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
-        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now())
+        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__in=self.instance.nodes.all)

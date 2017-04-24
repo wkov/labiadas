@@ -53,8 +53,8 @@ class franjahorariaAdmin(admin.ModelAdmin):
 
 class nodeAdmin(admin.ModelAdmin):
     list_display = ('nom','carrer','poblacio','codi_postal','responsable', 'a_domicili')
-    search_fields = ['nom','carrer','poblacio','codi_postal','responsable','dies_entrega','a_domicili']
-    list_filter = ['nom','carrer','poblacio','codi_postal','responsable','dies_entrega', 'a_domicili']
+    search_fields = ['nom','carrer','poblacio','codi_postal','responsable','a_domicili']
+    list_filter = ['nom','carrer','poblacio','codi_postal','responsable','a_domicili']
 
 class keyAdmin(admin.ModelAdmin):
     list_display = ('key','usuari','nou_usuari', 'data')
