@@ -93,4 +93,4 @@ class ProducteDatesForm(forms.ModelForm):
         super(ProducteDatesForm, self).__init__(*args, **kwargs)
 
         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
-        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__in=self.instance.nodes.all)
+        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__in=self.instance.nodes.all())
