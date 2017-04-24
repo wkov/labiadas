@@ -12,7 +12,7 @@ from .models import UserProfile, Etiqueta, Key
 from .forms import UserProfileForm, ComandaForm, InfoForm, ProductorForm, ProducteForm, ProducteDatesForm
 import datetime
 from django.utils import timezone
-# from notifications import notify
+from notifications import notify
 from django.contrib.auth.models import  User
 from django.http import JsonResponse
 import json
