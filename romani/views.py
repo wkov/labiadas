@@ -292,7 +292,7 @@ class ProductorUpdateView(UpdateView):
 class NodeUpdateView(UpdateView):
     model = Node
     form_class = NodeForm
-    success_url="/vista_productors/"
+    success_url="/vista_nodes/"
 
 
 class ProducteUpdateView(UpdateView):
@@ -317,7 +317,7 @@ class NodeProductorsUpdateView(UpdateView):
     model = Node
     form_class = NodeProductorsForm
     template_name = "romani/nodeproductors_form.html"
-    success_url="/vista_productors/"
+    success_url="/vista_nodesproductors/"
 
     # def get_context_data(self, **kwargs):
     #     context = super(ProducteDatesUpdateView, self).get_context_data(**kwargs)

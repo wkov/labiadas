@@ -78,7 +78,9 @@ class DiaEntregaForm(forms.ModelForm):
 
         super(DiaEntregaForm, self).__init__(*args, **kwargs)
         self.fields["node"].queryset = nodes
-        self.fields["franjes_horaries"].queryset = FranjaHoraria.objects.filter(dia__node__in=nodes).distinct()
+        self.fields["franjes_horaries"].widget = CheckboxSelectMultiple()
+        self.fields["franjes_horaries"].queryset = FranjaHoraria.objects.filter(dia__node__in=nodes).order_by('inici', 'final').distinct()
+
         # self.fields["date"].input_formats = '%m-%d-%Y'
 
 class NodeForm(forms.ModelForm):
