@@ -103,10 +103,10 @@ class ProducteForm(forms.ModelForm):
         super(ProducteForm, self).__init__(*args, **kwargs)
 
         self.fields["nodes"].widget = CheckboxSelectMultiple()
-
         self.fields["nodes"].queryset = Node.objects.filter(productors__id__exact=self.instance.productor.id)
         self.fields["formats"].widget = CheckboxSelectMultiple()
         self.fields["formats"].queryset = TipusProducte.objects.filter(productor=self.instance.productor)
+
 
 class NodeProductorsForm(forms.ModelForm):
 
@@ -120,6 +120,7 @@ class NodeProductorsForm(forms.ModelForm):
 
         self.fields["productors"].widget = CheckboxSelectMultiple()
         self.fields["productors"].queryset = Productor.objects.all()
+
 
 class ProducteDatesForm(forms.ModelForm):
 

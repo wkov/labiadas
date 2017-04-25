@@ -44,6 +44,9 @@ class Productor(models.Model):
 
     def __str__(self):
         return self.nom
+    #
+    # def get_pks(self):
+    #     return self.objects.values_list('pk').all()
 
 
 class TipusProducte(models.Model):
@@ -99,6 +102,12 @@ class Node(models.Model):
 
     def get_frequencia(self):
         return self.frequencies.filter(num__gt=0).order_by('num').first()
+
+    def dies_entrega_passats(self):
+        return self.dies_entrega.filter(date__lte=datetime.datetime.today())
+
+    def dies_entrega_futurs(self):
+        return self.dies_entrega.filter(date__gte=datetime.datetime.today())
 
 
 class DiaEntrega(models.Model):

@@ -1,12 +1,10 @@
 {% extends "base.html" %}
-
+{% csrf_token %}
 {% block content %}
 
-<form method="post" action="">
-  {% csrf_token %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodes' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'vista_nodes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
                                     <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -14,7 +12,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesdates' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'vista_nodesdates' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
                                     <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -39,8 +37,33 @@
                         </div>
     </div>
     <br/>
-  {{ form.as_p }}
-{#  <input type="text" id="datepicker" size="30">#}
-  <input type="submit" value="Grabar">
-</form>
+     <table>
+     <th>Producte</th>
+     <th>Lloc d'entrega</th>
+     <th>[Cant Format]</th>
+     <th>Data d'entrega</th>
+     <th>Franja horària</th>
+     <th>Preu</th>
+     <th>Client</th>
+     <th>Data de comanda</th>
+        {% for link in object_list %}
+{#            <form method="post" action="" class="vote_form">#}
+{#              <li>#}
+
+               <tr>
+                        <td>[{{ link.producte.nom }}]</td>
+                        <td>{{ link.lloc_entrega }}</td>
+                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
+                        <td>{{ link.data_entrega.date }}</td>
+                        <td>{{ link.franja_horaria}}</td>
+                        <td>{{ link.preu }}€</td>
+                        <td>{{ link.client.first_name }}</td>
+                        <td>{{ link.data_comanda.date }}</td>
+                    </tr>
+
+{#              </li>#}
+{#            </form>#}
+{#            <br/>#}
+        {% endfor %}
+       </table>
 {% endblock %}

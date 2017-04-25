@@ -179,6 +179,14 @@ class ComandesListView(ListView):
     #     context["productor"] = productor
     #     return context
 
+class NodeComandesListView(ListView):
+    model = Comanda
+    template_name = "romani/nodecomanda_list.html"
+
+    def get_queryset(self):
+        diaentrega = DiaEntrega.objects.filter(pk=self.kwargs["pk"]).first()
+        return Comanda.objects.filter(lloc_entrega=diaentrega.node, data_entrega=diaentrega.date)
+
 class HistorialListView(ListView):
     model = Comanda
     template_name = "romani/historial_list.html"
@@ -276,6 +284,12 @@ class NodesDatesListView(ListView):
     #     context["productor"] = productor
     #     return context
 
+class NodesHistorialListView(ListView):
+    model = Node
+    template_name = "romani/nodehistorial_list.html"
+
+    def get_queryset(self):
+        return Node.objects.filter(responsable=self.request.user)
 
 class ProductorUpdateView(UpdateView):
     model = Productor
@@ -954,7 +968,9 @@ def NodeCalcView(request):
             date = datetime.date.today() + timedelta(hours=48)
             for dia in node.dies_entrega.filter(date__gt =date)[0:5]:
                 if dia in producte.dies_entrega.all():
-                    a = datetime.datetime.strptime(str(dia.date.date()), '%Y-%m-%d').strftime('%d/%m/%Y')
+                    # a = str(dia.date())
+                    day_str = str(dia.date.year) + "-" + str(dia.date.month) + "-" + str(dia.date.day)
+                    a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
                     json_obj = dict(
                         dia = dia.dia(),
                         date = a,
