@@ -104,7 +104,7 @@ class Node(models.Model):
 class DiaEntrega(models.Model):
 
     franjes_horaries = models.ManyToManyField(FranjaHoraria,  related_name="dia")
-    date = models.DateTimeField()
+    date = models.DateField()
     node = models.ForeignKey(Node, related_name="dies_entrega")
 
     def __str__(self):

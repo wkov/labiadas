@@ -9,7 +9,7 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import DetailView
 from .models import UserProfile, Etiqueta, Key
-from .forms import UserProfileForm, ComandaForm, InfoForm, ProductorForm, ProducteForm, ProducteDatesForm
+from .forms import UserProfileForm, ComandaForm, InfoForm, ProductorForm, ProducteForm, ProducteDatesForm, NodeForm, NodeProductorsForm, DiaEntregaForm
 import datetime
 from django.utils import timezone
 from notifications import notify
@@ -49,6 +49,7 @@ class UserProfileRegistrationForm(RegistrationForm):
     class Meta:
         model = User
         fields = ("username", "email", 'first_name', 'last_name')
+        # widgets = {'date': forms.DateInput(attrs={'id': 'datepicker'})}
 
 
 
@@ -206,6 +207,41 @@ class ProductesListView(ListView):
     #     context["productor"] = productor
     #     return context
 
+class DiaEntregaCreateView(CreateView):
+    model = DiaEntrega
+    form_class = DiaEntregaForm
+    success_url = "/vista_nodesdates/"
+
+    def get_form_kwargs(self):
+        kwargs = super(DiaEntregaCreateView, self).get_form_kwargs()
+        nodes = Node.objects.filter(responsable=self.request.user)
+        kwargs['nodes'] = nodes
+        return kwargs
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ProductorsListView, self).get_context_data(**kwargs)
+    #     productors = Productor.objects.filter(responsable=self.request.user)
+    #     context["productors"] = productors
+    #     return context
+
+    def form_valid(self, form):
+        f = form.save(commit=False)
+        f.save()
+        return super(DiaEntregaCreateView, self).form_valid(form)
+
+class NodesListView(ListView):
+    model = Node
+
+    def get_queryset(self):
+        return Node.objects.filter(responsable=self.request.user)
+
+class NodesProductorsListView(ListView):
+    model = Node
+    template_name = "romani/nodesproductors_list.html"
+
+    def get_queryset(self):
+        return Node.objects.filter(responsable=self.request.user)
+
 class ProductorsListView(ListView):
     model = Productor
 
@@ -226,6 +262,14 @@ class DatesListView(ListView):
         productors = Productor.objects.filter(responsable=self.request.user)
         return Producte.objects.filter(productor__in=productors)
 
+class NodesDatesListView(ListView):
+    model = Node
+    template_name = "romani/nodedates_list.html"
+
+    def get_queryset(self):
+        return Node.objects.filter(responsable=self.request.user)
+
+
     # def get_context_data(self, **kwargs):
     #     context = super(DatesListView, self).get_context_data(**kwargs)
     #     productor = Productor.objects.filter(responsable=self.request.user).first()
@@ -245,6 +289,12 @@ class ProductorUpdateView(UpdateView):
     #     return context
 
 
+class NodeUpdateView(UpdateView):
+    model = Node
+    form_class = NodeForm
+    success_url="/vista_productors/"
+
+
 class ProducteUpdateView(UpdateView):
     model = Producte
     form_class = ProducteForm
@@ -262,6 +312,12 @@ class ProducteDatesUpdateView(UpdateView):
     form_class = ProducteDatesForm
     template_name = "romani/productedates_form.html"
     success_url="/vista_dates/"
+
+class NodeProductorsUpdateView(UpdateView):
+    model = Node
+    form_class = NodeProductorsForm
+    template_name = "romani/nodeproductors_form.html"
+    success_url="/vista_productors/"
 
     # def get_context_data(self, **kwargs):
     #     context = super(ProducteDatesUpdateView, self).get_context_data(**kwargs)

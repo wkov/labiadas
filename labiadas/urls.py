@@ -9,9 +9,10 @@ from romani.models import EmailModelBackend
 
 from django.contrib.auth.decorators import login_required as auth
 
-from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView, ComandesListView, ProductesListView, ProducteDatesUpdateView
-from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte, HistorialListView, ProducteUpdateView
-from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView, ProductorsListView, ProductorUpdateView, DatesListView
+from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView, ComandesListView, ProductesListView, ProducteDatesUpdateView, NodesListView, NodesDatesListView
+from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte, HistorialListView, ProducteUpdateView, NodeUpdateView, NodesProductorsListView
+from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView, ProductorsListView, ProductorUpdateView, DatesListView, NodeProductorsUpdateView
+from romani.views import DiaEntregaCreateView
 
 from django.contrib.auth.views import login, logout_then_login
 
@@ -31,12 +32,22 @@ urlpatterns = [
     url(r'^vista_productes/', auth(ProductesListView.as_view()), name='vista_productes'),
     url(r'^vista_dates/', auth(DatesListView.as_view()), name='vista_dates'),
     url(r'^vista_historial/', auth(HistorialListView.as_view()), name='vista_historial'),
+    url(r'^vista_nodes/', auth(NodesListView.as_view()), name='vista_nodes'),
+    url(r'^vista_nodesdates/', auth(NodesDatesListView.as_view()), name='vista_nodesdates'),
+    url(r'^vista_nodesproductors/', auth(NodesProductorsListView.as_view()), name='vista_nodesproductors'),
     url(r"^productor/update/(?P<pk>\d+)/$", auth(ProductorUpdateView.as_view()),
         name="productor_update"),
     url(r"^producte/update/(?P<pk>\d+)/$", auth(ProducteUpdateView.as_view()),
         name="producte_update"),
-        url(r"^producte_dates/update/(?P<pk>\d+)/$", auth(ProducteDatesUpdateView.as_view()),
+
+    url(r"^producte_dates/update/(?P<pk>\d+)/$", auth(ProducteDatesUpdateView.as_view()),
         name="productedates_update"),
+    url(r"^node/update/(?P<pk>\d+)/$", auth(NodeUpdateView.as_view()),
+        name="node_update"),
+    url(r"^node_productors/update/(?P<pk>\d+)/$", auth(NodeProductorsUpdateView.as_view()),
+        name="nodeproductors_update"),
+    url(r"^diaentrega/create/$", auth(DiaEntregaCreateView.as_view()),
+        name="diaentrega_create"),
     url(r'^nou_usuari/', auth(views.nouUsuariView), name="nou_usuari"),
     url(r'^nodes_nou_usuari/', auth(views.nodesNouUsuariView), name="nodes_nou_usuari"), #ajax: retorna nodes pel select de nou_usuari amb la opcio inicial marcada segons l'usuari que ha convidat
     url(r'^busk/$', auth(views.buskadorProducte) , name='busk'),

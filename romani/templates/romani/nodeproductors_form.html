@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method="post" action="">
+  {% csrf_token %}
+    <div style="margin: 0 auto; text-align:center;">
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'vista_nodes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
+                                    </span>
+                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                    <b id="pato" name="pato" class="pato">Editar Node</b>
+                                 </a>
+                        </div>
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'vista_nodesdates' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
+                                    </span>
+                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                 </a>
+                        </div>
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'vista_nodesproductors' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
+                                    </span>
+                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                    <b id="pato" name="pato" class="pato">Escollir Productors</b>
+                                 </a>
+                        </div>
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'vista_historial' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
+                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
+                                    </span>
+                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                    <b id="pato" name="pato" class="pato">Veure historial</b>
+                                 </a>
+                        </div>
+    </div>
+    <br/>
+  {{ form.as_p }}
+{#  <input type="text" id="datepicker" size="30">#}
+  <input type="submit" value="Add">
+</form>
+{% endblock %}

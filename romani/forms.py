@@ -1,9 +1,10 @@
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria
 from django.contrib.auth.models import  User
 from django.forms.widgets import CheckboxSelectMultiple
 import datetime
+
 
 class ComandaForm(forms.ModelForm):
     class Meta:
@@ -61,6 +62,32 @@ class ProductorForm(forms.ModelForm):
         fields = ("nom", "cuerpo", "adjunt")
         # exclude = ("")
 
+class DiaEntregaForm(forms.ModelForm):
+
+    date = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'}),
+                                 input_formats=('%d/%m/%Y',))
+    # date = forms.DateField(input_formats='%d/%m/%Y')
+
+    class Meta:
+        model = DiaEntrega
+        fields = ("date", "franjes_horaries", "node")
+    #     # exclude = ("")
+    #     widgets = {'date': forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'})}
+
+    def __init__(self, nodes, *args, **kwargs):
+
+        super(DiaEntregaForm, self).__init__(*args, **kwargs)
+        self.fields["node"].queryset = nodes
+        self.fields["franjes_horaries"].queryset = FranjaHoraria.objects.filter(dia__node__in=nodes).distinct()
+        # self.fields["date"].input_formats = '%m-%d-%Y'
+
+class NodeForm(forms.ModelForm):
+
+    class Meta:
+        model = Node
+        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "a_domicili", "text", "frequencies")
+        # exclude = ("")
+
 
 class ProducteForm(forms.ModelForm):
 
@@ -79,7 +106,18 @@ class ProducteForm(forms.ModelForm):
         self.fields["formats"].widget = CheckboxSelectMultiple()
         self.fields["formats"].queryset = TipusProducte.objects.filter(productor=self.instance.productor)
 
+class NodeProductorsForm(forms.ModelForm):
 
+    class Meta:
+        model = Node
+        fields = ("productors", )
+
+    def __init__(self, *args, **kwargs):
+
+        super(NodeProductorsForm, self).__init__(*args, **kwargs)
+
+        self.fields["productors"].widget = CheckboxSelectMultiple()
+        self.fields["productors"].queryset = Productor.objects.all()
 
 class ProducteDatesForm(forms.ModelForm):
 
