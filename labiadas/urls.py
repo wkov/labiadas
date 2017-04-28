@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required as auth
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView, ComandesListView, ProductesListView, ProducteDatesUpdateView, NodesListView, NodesDatesListView
 from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte, HistorialListView, ProducteUpdateView, NodeUpdateView, NodesProductorsListView
 from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView, ProductorsListView, ProductorUpdateView, DatesListView, NodeProductorsUpdateView
-from romani.views import DiaEntregaCreateView, NodesHistorialListView, NodeComandesListView
+from romani.views import DiaEntregaCreateView, NodesHistorialListView, NodeComandesListView, diaEntregaEvents, LlocsListView, LlocsUpdateView, DataComandesListView
 
 from django.contrib.auth.views import login, logout_then_login
 
@@ -29,8 +29,13 @@ urlpatterns = [
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
     url(r'^vista_productors/', auth(ProductorsListView.as_view()), name="productor_list"),
     url(r'^vista_comandes/', auth(ComandesListView.as_view()), name='vista_comandes'),
+    url(r'^data_comandes/(?P<pk>\d+)$', auth(DataComandesListView.as_view()), name='data_comandes'),
     url(r'^node_comandes/(?P<pk>\d+)$', auth(NodeComandesListView.as_view()), name='node_comandes'),
+
+    url(r'^calEvents/$', auth(diaEntregaEvents), name="calEvents"),
+
     url(r'^vista_productes/', auth(ProductesListView.as_view()), name='vista_productes'),
+    url(r'^vista_llocs/', auth(LlocsListView.as_view()), name='vista_llocs'),
     url(r'^vista_dates/', auth(DatesListView.as_view()), name='vista_dates'),
     url(r'^vista_historial/', auth(HistorialListView.as_view()), name='vista_historial'),
     url(r'^vista_nodes/', auth(NodesListView.as_view()), name='vista_nodes'),
@@ -41,7 +46,8 @@ urlpatterns = [
         name="productor_update"),
     url(r"^producte/update/(?P<pk>\d+)/$", auth(ProducteUpdateView.as_view()),
         name="producte_update"),
-
+    url(r"^producte_llocentrega/update/(?P<pk>\d+)/$", auth(LlocsUpdateView.as_view()),
+        name="producte_llocentrega_update"),
     url(r"^producte_dates/update/(?P<pk>\d+)/$", auth(ProducteDatesUpdateView.as_view()),
         name="productedates_update"),
     url(r"^node/update/(?P<pk>\d+)/$", auth(NodeUpdateView.as_view()),

@@ -1,7 +1,39 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% csrf_token %}
-{% block content %}
+{% block headers %}
+        <link href="{% static 'js/fullcalendar-3.3.1/fullcalendar.css' %}" rel="stylesheet">
+{#    <script src='js/fullcalendar-3.3.1/lib/jquery.min.js'></script>#}
+{#<script src='js/fullcalendar-3.3.1/lib/moment.min.js'></script>#}
+{#    <script src='js/fullcalendar-3.3.1/fullcalendar.js'></script>#}
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/moment.min.js'></script>
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>
+<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
+<script>
 
+$(document).ready(function() {
+
+    // page is now ready, initialize the calendar...
+
+    $('#calendar').fullCalendar({
+       aspectRatio: 3,
+       eventSources: [
+        {
+            url: '/calEvents/',
+            editable: false,
+            color: 'black',   // an option!
+            textColor: 'white' // an option!
+        }
+      ]
+    })
+
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -17,6 +49,14 @@
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                 </a>
+                        </div>
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'vista_llocs' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Llocs d'entrega" >
+                                    <span class="glyphicon glyphicon-fullscreen" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
+                                    </span>
+                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+                                    <b id="pato" name="pato" class="pato">Llocs d'entrega</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
@@ -45,6 +85,9 @@
                         </div>
     </div>
     <br/>
+
+<div id='calendar'></div>
+
     <table border="1">
 {#    <th>Producte</th>#}
 {#    <th>Nodes a on arriba</th>#}
@@ -70,7 +113,7 @@
                   {% for aux in link.nodes.all %}
 {#                      <tr><td>#}
 {#                      {% if link.dies_entrega in aux.dies_entrega.all %}#}
-                    <b>{{ aux }}</b> <br/>
+                    <b>{{ aux }}</b>  <br/>
 {#                      {% endif %}#}
                       {% for dia in aux.dies_entrega.all %}
                           {% if dia in link.dies_entrega.all %}

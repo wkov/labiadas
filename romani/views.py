@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+import simplejson as simplejson
 from .models import Producte, Productor, Comanda, Contracte, TipusProducte, Node, DiaEntrega, FranjaHoraria, Key, Convidat, Frequencia
 from django.db.models import Q
 from django.contrib.auth import get_user_model
@@ -9,7 +10,7 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import DetailView
 from .models import UserProfile, Etiqueta, Key
-from .forms import UserProfileForm, ComandaForm, InfoForm, ProductorForm, ProducteForm, ProducteDatesForm, NodeForm, NodeProductorsForm, DiaEntregaForm
+from .forms import UserProfileForm, ComandaForm, InfoForm, ProductorForm, ProducteForm, ProducteDatesForm, NodeForm, NodeProductorsForm, DiaEntregaForm, LlocsForm
 import datetime
 from django.utils import timezone
 from notifications import notify
@@ -147,8 +148,19 @@ def buskadorProducte(request):
         return render(request, "buscador.html", {
             'etiquetes': etiquetes, 'up': user_p})
 
+from django.core.serializers.json import DjangoJSONEncoder
 
-
+def diaEntregaEvents(request):
+    eventList = DiaEntrega.objects.all()
+    events = []
+    for event in eventList:
+        franja = event.franjes_horaries.order_by("inici").first()
+        day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + franja.inici + ":00"
+        dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + franja.final + ":00"
+        url = "http://127.0.0.1:8000/data_comandes/" + str(event.pk)
+        events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
+    # something similar for owned events, maybe with a different className if you like
+    return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
 
 def nouUsuariView(request):
 
@@ -178,6 +190,16 @@ class ComandesListView(ListView):
     #     productor = Productor.objects.filter(responsable=self.request.user).first()
     #     context["productor"] = productor
     #     return context
+
+class DataComandesListView(ListView):
+    model = Comanda
+    template_name = "romani/datacomandes_list.html"
+
+    def get_queryset(self):
+        diaentrega = DiaEntrega.objects.filter(pk=self.kwargs["pk"]).first()
+        productor = Productor.objects.filter(responsable=self.request.user)
+        productes = Producte.objects.filter(productor=productor)
+        return Comanda.objects.filter(producte__in=productes, data_entrega=diaentrega.date)
 
 class NodeComandesListView(ListView):
     model = Comanda
@@ -209,11 +231,33 @@ class ProductesListView(ListView):
         productors = Productor.objects.filter(responsable=self.request.user)
         return Producte.objects.filter(productor__in=productors)
 
+class LlocsListView(ListView):
+    model = Producte
+    template_name = "romani/llocsentrega.html"
+
+    def get_queryset(self):
+        productors = Productor.objects.filter(responsable=self.request.user)
+        return Producte.objects.filter(productor__in=productors)
+
     # def get_context_data(self, **kwargs):
     #     context = super(ProductesListView, self).get_context_data(**kwargs)
     #     productor = Productor.objects.filter(responsable=self.request.user).first()
     #     context["productor"] = productor
     #     return context
+
+class LlocsUpdateView(UpdateView):
+    model = Producte
+    form_class = LlocsForm
+    template_name = "romani/llocsentrega_form.html"
+    success_url="/vista_llocs/"
+    # user = request.user
+
+    def get_context_data(self, **kwargs):
+        context = super(LlocsUpdateView, self).get_context_data(**kwargs)
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
+        return context
+
 
 class DiaEntregaCreateView(CreateView):
     model = DiaEntrega
