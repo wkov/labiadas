@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404
-import simplejson as simplejson
 from .models import Producte, Productor, Comanda, Contracte, TipusProducte, Node, DiaEntrega, FranjaHoraria, Key, Convidat, Frequencia
 from django.db.models import Q
 from django.contrib.auth import get_user_model
