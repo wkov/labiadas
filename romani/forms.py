@@ -158,7 +158,7 @@ class ProductorDiaEntregaForm(forms.ModelForm):
             # productor = Productor.objects.get(pk=pro_pk)
             # self.fields["productes"].widget = CheckboxSelectMultiple()
             # productor = self.instance
-            self.fields["productes"].queryset = Producte.objects.filter(productor=self.instance)
+            self.fields["productes"].queryset = Producte.objects.filter(productor=kwargs['instance'])
         except User.DoesNotExist:
             pass
 
