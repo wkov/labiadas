@@ -145,7 +145,7 @@ def diaEntregaEvents(request, pro):
             franja = event.franjes_horaries.order_by("inici").first()
             day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + franja.inici + ":00"
             dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + franja.final + ":00"
-            url = "http://www.lamassa.org/pro/" + str(pro) + "/data_comandes/" + str(event.pk)
+            url = "http://lamassa.org/pro/" + str(pro) + "/data_comandes/" + str(event.pk)
             events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
     # something similar for owned events, maybe with a different className if you like
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
@@ -159,7 +159,7 @@ def diaEntregaSelected(request, pro):
         franja = event.franjes_horaries.order_by("inici").first()
         day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + franja.inici + ":00"
         dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + franja.final + ":00"
-        url = "http://www.lamassa.org/pro/" + str(pro) + "/data_comandes/" +  str(event.pk)
+        url = "http://lamassa.org/pro/" + str(pro) + "/data_comandes/" +  str(event.pk)
         events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
     # something similar for owned events, maybe with a different className if you like
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
