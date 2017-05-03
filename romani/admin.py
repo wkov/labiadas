@@ -18,14 +18,14 @@ class tipusproducteAdmin(admin.ModelAdmin):
     list_filter = ['nom','preu', 'producte']
 
 class comandaAdmin(admin.ModelAdmin):
-    list_display = ('producte','data_comanda','format','cancelat','client','data_entrega','lloc_entrega','entregat')
-    search_fields = ['producte','data_comanda','format','cancelat','client','data_entrega','lloc_entrega','entregat']
-    list_filter = ['producte','data_comanda','format','cancelat','client','data_entrega','lloc_entrega','entregat']
+    list_display = ('producte','data_comanda','format','cancelat','client','dia_entrega','lloc_entrega','entregat')
+    search_fields = ['producte','data_comanda','format','cancelat','client','dia_entrega','lloc_entrega','entregat']
+    list_filter = ['producte','data_comanda','format','cancelat','client','dia_entrega','lloc_entrega','entregat']
 
 class contracteAdmin(admin.ModelAdmin):
-    list_display = ('producte','data_comanda','format', 'client','data_entrega','lloc_entrega' )
-    search_fields = ['producte','data_comanda','format', 'client','data_entrega','lloc_entrega' ]
-    list_filter = ['producte','data_comanda','format', 'client','data_entrega','lloc_entrega' ]
+    list_display = ('producte','data_comanda','format', 'client','lloc_entrega' )
+    search_fields = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
+    list_filter = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
 
 class userprofileAdmin(admin.ModelAdmin):
     list_display = ('user','bio','lloc_entrega_perfil')

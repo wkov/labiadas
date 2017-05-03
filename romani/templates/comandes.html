@@ -55,7 +55,8 @@
                                      <div style="width:100%; display: inline-block">
                                         <label for="x_prox" style="font-size: medium; font-weight: 500"> Dia: </label>
                                              <b id="x_prox" name="x_prox">
-                                                {{ contracte.data_entrega_txt }}, &nbsp; {{ contracte.prox_entrega.date }}
+                                                {{ contracte.prox_entrega.dia }}, &nbsp; {{ contracte.prox_entrega.date }} <a type="button" class="glyphicon glyphicon-pencil"
+                                                                                                                              href="{% url 'contracte_update' contracte.pk  %}" title="Triar dies d'entrega"></a>
                                              </b>
                                      </div><br/>
                                      <div style="width:100%; display: inline-block">
@@ -115,7 +116,7 @@
                         <label for="l_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="l_hora" name="l_hora">  {{ comanda.franja_horaria.inici }} - {{ comanda.franja_horaria.final }}</b><br/>
                     </div>
                  <div style="width:100%; display: inline-block">
-                    <label for="l_entr" style="font-size: medium; font-weight: 500"> Entrega: </label> <b id="l_entr" name="l_entr">{{ comanda.data_entrega_txt }}, {{ comanda.data_entrega.date }}</b>
+                    <label for="l_entr" style="font-size: medium; font-weight: 500"> Entrega: </label> <b id="l_entr" name="l_entr">{{ comanda.dia_entrega.dia }}, {{ comanda.dia_entrega.date }}</b>
                  </div><br/>
                   <div style="width:100%; display: inline-block">
                     <label for="l_com" style="font-size: medium; font-weight: 500"> Comanda: </label> <b id="l_com" name="l_com">{{ comanda.data_comanda.date }}</b>

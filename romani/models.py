@@ -165,20 +165,26 @@ class Producte(models.Model):
     etiqueta = models.ForeignKey(Etiqueta)
     formats = models.ManyToManyField(TipusProducte, related_name='producte')
     esgotat = models.BooleanField(default=False)
-    nodes = models.ManyToManyField(Node, blank=True)
+    # nodes = models.ManyToManyField(Node, blank=True)
     entradilla = models.TextField(blank=False, max_length=75)
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     adjunt = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True)
-    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True)
+    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='productes')
     frequencies = models.ManyToManyField(Frequencia, blank=True)
     karma_date = models.DateTimeField(blank=True, null=True)
     karma_value = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.nom
+
+    def dies_entrega_futurs(self):
+        return self.dies_entrega.filter(date__gt=datetime.datetime.today())
+
+    def nodes(self):
+        return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
 
 
     def karma(self):
@@ -202,11 +208,11 @@ class Producte(models.Model):
 class Contracte(models.Model):
 
 
-    def next_weekday(self, d, weekday):
-        days_ahead = weekday - d.weekday()
-        if days_ahead <= 0: # Target day already happened this week
-            days_ahead += 7
-        return d + datetime.timedelta(days_ahead)
+    # def next_weekday(self, d, weekday):
+    #     days_ahead = weekday - d.weekday()
+    #     if days_ahead <= 0: # Target day already happened this week
+    #         days_ahead += 7
+    #     return d + datetime.timedelta(days_ahead)
 
     producte = models.ForeignKey(Producte)
     format = models.ForeignKey(TipusProducte)
@@ -214,10 +220,11 @@ class Contracte(models.Model):
     data_comanda = models.DateTimeField(auto_now_add=True)
     data_fi = models.DateTimeField(null=True, blank=True)
     client = models.ForeignKey(User)
-    primera_entrega = models.DateTimeField(null=True, blank=True)
-    darrera_entrega = models.DateTimeField(null=True, blank=True)
-    data_entrega = models.IntegerField(null=True, blank=True)
-    data_entrega_txt = models.CharField(max_length=10)
+    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, null=True)
+    # primera_entrega = models.DateTimeField(null=True, blank=True)
+    # darrera_entrega = models.DateTimeField(null=True, blank=True)
+    # data_entrega = models.IntegerField(null=True, blank=True)
+    # data_entrega_txt = models.CharField(max_length=10)
     # prox_no = models.NullBooleanField(blank=True)
     franja_horaria = models.ForeignKey(FranjaHoraria)
     lloc_entrega = models.ForeignKey(Node)
@@ -233,69 +240,78 @@ class Contracte(models.Model):
     def get_absolute_url(self):
         return reverse('comandes')
 
-   # Calculem segons la frequencia la data de la proxima entrega
+    # def primera_entrega(self):
+    #     return self.dies_entrega.order_by('-date').first()
+    #
+    # def darrera_entrega(self):
+    #     return self.dies_entrega.filter(date__lte=datetime.datetime.today()).order_by('date').first()
+
     def prox_entrega(self):
-        d = self.darrera_entrega
-        if d < timezone.now():
-            d = self.next_weekday(d, int(self.data_entrega))
-            if self.frequencia == 2:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
+        return self.dies_entrega.filter(date__gte=datetime.datetime.today()).order_by('date').first()
 
-                # if self.prox_no == True:
-                #     d = self.next_weekday(d, int(self.data_entrega))
-
-            if self.frequencia == 3:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                # if self.prox_no == True:
-                #     d = self.next_weekday(d, int(self.data_entrega))
-                #     d = self.next_weekday(d, int(self.data_entrega))
-
-            if self.frequencia == 4:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                # if self.prox_no == True:
-                #     d = self.next_weekday(d, int(self.data_entrega))
-                #     d = self.next_weekday(d, int(self.data_entrega))
-                #     d = self.next_weekday(d, int(self.data_entrega))
-
-            if self.frequencia == 5:
-                while d < timezone.now():
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                    d = self.next_weekday(d, int(self.data_entrega))
-                # if self.prox_no == True:
-                #     d = self.next_weekday(d, int(self.data_entrega))
-                #     d = self.next_weekday(d, int(self.data_entrega))
-                #     d = self.next_weekday(d, int(self.data_entrega))
-                #     d = self.next_weekday(d, int(self.data_entrega))
-    #     else:
-    #         if self.prox_no == True:
-    #             if self.frequencia == 2:
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #             if self.frequencia == 3:
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #             if self.frequencia == 4:
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #             if self.frequencia == 5:
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-    #                 d = self.next_weekday(d, int(self.data_entrega))
-            if d in self.producte.dies_entrega.all():
-                self.darrera_entrega = d
-            else:
-                self.darrera_entrega = ''
-
-        return self.darrera_entrega
+   # # Calculem segons la frequencia la data de la proxima entrega
+   #  def prox_entrega(self):
+   #      d = self.darrera_entrega.date
+   #      if d < timezone.now():
+   #          d = self.next_weekday(d, int(self.data_entrega))
+   #          if self.frequencia == 2:
+   #              while d < timezone.now():
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #
+   #              # if self.prox_no == True:
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #
+   #          if self.frequencia == 3:
+   #              while d < timezone.now():
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #              # if self.prox_no == True:
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #
+   #          if self.frequencia == 4:
+   #              while d < timezone.now():
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #              # if self.prox_no == True:
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #
+   #          if self.frequencia == 5:
+   #              while d < timezone.now():
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #                  d = self.next_weekday(d, int(self.data_entrega))
+   #              # if self.prox_no == True:
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #              #     d = self.next_weekday(d, int(self.data_entrega))
+   #  #     else:
+   #  #         if self.prox_no == True:
+   #  #             if self.frequencia == 2:
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #             if self.frequencia == 3:
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #             if self.frequencia == 4:
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #             if self.frequencia == 5:
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #  #                 d = self.next_weekday(d, int(self.data_entrega))
+   #          if d in self.producte.dies_entrega.all():
+   #              self.darrera_entrega = d
+   #          else:
+   #              self.darrera_entrega = ''
+   #
+   #      return self.darrera_entrega
 
 
 
@@ -307,8 +323,9 @@ class Comanda(models.Model):
     cantitat = models.PositiveIntegerField(blank=False)
     data_comanda = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(User)
-    data_entrega = models.DateTimeField(null=True, blank=True)
-    data_entrega_txt = models.CharField(max_length=10)
+    dia_entrega = models.ForeignKey(DiaEntrega, null=True, blank=True)
+    # data_entrega = models.DateTimeField(null=True, blank=True)
+    # data_entrega_txt = models.CharField(max_length=10)
     franja_horaria = models.ForeignKey(FranjaHoraria)
     lloc_entrega = models.ForeignKey(Node)
     entregat = models.NullBooleanField(blank=True)
@@ -383,7 +400,7 @@ class UserProfile(models.Model):
 
     def comandes_cistella(self):
         now = datetime.datetime.now()
-        return Comanda.objects.filter(client=self.user).filter(data_entrega__gte=now)
+        return Comanda.objects.filter(client=self.user).filter(dia_entrega__date__gte=now)
 
     def contractes_cistella(self):
         now = datetime.datetime.now()

@@ -1,9 +1,12 @@
 {% extends "base.html" %}
-{% csrf_token %}
+
 {% block content %}
+
+<form method="post" action="">
+  {% csrf_token %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_comandes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
                                     <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -11,7 +14,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_dates' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'vista_dates' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
                                     <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -19,7 +22,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_llocs' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Llocs d'entrega" >
+                                <a href="{% url 'vista_llocs' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Llocs d'entrega" >
                                     <span class="glyphicon glyphicon-fullscreen" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -27,7 +30,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_productes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+                                <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
                                     <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -35,7 +38,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_list' %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
+                                <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
                                     <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -43,7 +46,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_historial' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
+                                <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
                                     <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -52,24 +55,8 @@
                         </div>
     </div>
     <br/>
-        {% for link in object_list %}
-            <form method="post" action="" class="vote_form">
-              <li> [{{ link.producte.nom }}]
-                {% csrf_token %}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
-                <a href=" ">
-                  <b>{{ link.lloc_entrega.nom }}</b>
-                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}
-                </a>
-              </li>
-            </form>
-        {% endfor %}
+  {{ form.as_p }}
+{#  <input type="text" id="datepicker" size="30">#}
+  <input type="submit" value="Grabar">
+</form>
 {% endblock %}

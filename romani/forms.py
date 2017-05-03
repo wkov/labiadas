@@ -1,6 +1,6 @@
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte
 from django.contrib.auth.models import  User
 from django.forms.widgets import CheckboxSelectMultiple
 import datetime
@@ -108,22 +108,32 @@ class ProducteForm(forms.ModelForm):
         self.fields["formats"].queryset = TipusProducte.objects.filter(productor=self.instance.productor)
 
 
-class LlocsForm(forms.ModelForm):
+# class LlocsForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = Producte
+#         fields = ("nodes", )
+#         # exclude = ("productor", "karma_value", "datahora", "karma_date", "frequencies", "dies_entrega")
+#
+#     def __init__(self, *args, **kwargs):
+#
+#         super(LlocsForm, self).__init__(*args, **kwargs)
+#
+#         self.fields["nodes"].widget = CheckboxSelectMultiple()
+#         self.fields["nodes"].queryset = Node.objects.filter(productors__id__exact=self.instance.productor.id)
+
+class ContracteForm(forms.ModelForm):
 
     class Meta:
-        model = Producte
-        fields = ("nodes", )
-        # exclude = ("productor", "karma_value", "datahora", "karma_date", "frequencies", "dies_entrega")
+        model = Contracte
+        fields = ("dies_entrega", )
 
     def __init__(self, *args, **kwargs):
 
-        super(LlocsForm, self).__init__(*args, **kwargs)
+        super(ContracteForm, self).__init__(*args, **kwargs)
 
-        self.fields["nodes"].widget = CheckboxSelectMultiple()
-        self.fields["nodes"].queryset = Node.objects.filter(productors__id__exact=self.instance.productor.id)
-        # self.fields["formats"].widget = CheckboxSelectMultiple()
-        # self.fields["formats"].queryset = TipusProducte.objects.filter(productor=self.instance.productor)
-
+        self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
+        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(productes__id__exact=self.instance.producte.id, node=self.instance.lloc_entrega, date__gt=datetime.datetime.today()).order_by('date')
 
 class NodeProductorsForm(forms.ModelForm):
 
@@ -139,6 +149,40 @@ class NodeProductorsForm(forms.ModelForm):
         self.fields["productors"].queryset = Productor.objects.all()
 
 
+class ProductorDiaEntregaForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        # pro_pk = kwargs.pop('pro', None)
+        super(ProductorDiaEntregaForm, self).__init__(*args, **kwargs)
+        try:
+            # productor = Productor.objects.get(pk=pro_pk)
+            # self.fields["productes"].widget = CheckboxSelectMultiple()
+            # productor = self.instance
+            self.fields["productes"].queryset = Producte.objects.filter(productor=self.instance)
+        except User.DoesNotExist:
+            pass
+
+    productes = forms.CheckboxSelectMultiple()
+
+    class Meta:
+        model = Productor
+        # fields = ("date",  )
+        exclude = ("all", )
+
+    # def save(self, *args, **kwargs):
+    #   """
+    #   Update the primary email address on the related User object as well.
+    #   """
+    #   u = self.instance.user
+    #   # u.email = self.cleaned_data['email']
+    #   # u.username = self.cleaned_data['username']
+    #   u.first_name = self.cleaned_data['first_name']
+    #   u.last_name = self.cleaned_data['last_name']
+    #   u.save()
+    #   profile = super(UserProfileForm, self).save(*args,**kwargs)
+    #   return profile
+
+
 class ProducteDatesForm(forms.ModelForm):
 
     class Meta:
@@ -151,4 +195,4 @@ class ProducteDatesForm(forms.ModelForm):
         super(ProducteDatesForm, self).__init__(*args, **kwargs)
 
         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
-        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__in=self.instance.nodes.all(), node__productors__id__exact=self.instance.productor.id)
+        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__productors__id__exact=self.instance.productor.id)
