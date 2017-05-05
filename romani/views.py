@@ -766,10 +766,12 @@ def productorView(request,pk):
 
     p = Producte.objects.filter(productor=productor, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
+    adjunts = Adjunt.objects.filter(productor=productor)
+
     productes = sorted(p, key=lambda a: a.karma(), reverse=True)
 
 
-    return render(request, "productor.html",{'productor': productor, 'productes': productes})
+    return render(request, "productor.html",{'productor': productor, 'productes': productes, 'adjunts': adjunts})
 
 def comandesView(request):
 
