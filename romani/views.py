@@ -764,7 +764,7 @@ def productorView(request,pk):
 
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
 
-    p = Producte.objects.filter(productor=productor, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(productor=productor, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
     productes = sorted(p, key=lambda a: a.karma(), reverse=True)
 
