@@ -58,14 +58,17 @@ class UserProfileForm(forms.ModelForm):
 
 class ProductorForm(forms.ModelForm):
 
+    # adjunts = forms.MultipleChoiceField()
+
     class Meta:
         model = Productor
         fields = ("nom", "cuerpo")
         # exclude = ("")
 
-    # def __init__(self, *args, **kwargs):
+    # def __init__(self, productor, *args, **kwargs):
     #     super(ProductorForm, self).__init__(*args, **kwargs)
-    #     self.fields["adjunt"].queryset = Adjunt.objects.filter(productor=productor)
+    #     self.fields["adjunts"].queryset = Adjunt.objects.filter(productor=productor)
+    #     self.fields["adjunts"].widget = CheckboxSelectMultiple()
 
 class AdjuntForm(forms.ModelForm):
 
@@ -78,6 +81,7 @@ class AdjuntForm(forms.ModelForm):
         super(AdjuntForm, self).__init__(*args, **kwargs)
         self.fields["productor"].queryset = Productor.objects.filter(pk=productor.pk)
         self.fields["productor"].initial = productor
+        # self.fields["adjunts"].queryset = Adjunt.objects.filter(pk=productor.pk)
 
 
 class DiaEntregaForm(forms.ModelForm):

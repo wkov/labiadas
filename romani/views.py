@@ -575,10 +575,18 @@ class ProductorUpdateView(UpdateView):
     # success_url="/vista_productors/"
     template_name = "romani/productors/productor_form.html"
 
+    # def get_form_kwargs(self):
+    #     kwargs = super(ProductorUpdateView, self).get_form_kwargs()
+    #     productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
+    #     kwargs["productor"] = productor
+    #     return kwargs
+
     def get_context_data(self, **kwargs):
         context = super(ProductorUpdateView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(pk=self.kwargs['pk'])
         context["productor"] = productor
+        adjunts = Adjunt.objects.filter(productor=productor)
+        context["adjunts"] = adjunts
         return context
 
     def get_success_url(self):
