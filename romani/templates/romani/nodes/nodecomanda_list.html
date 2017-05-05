@@ -4,7 +4,7 @@
 
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
                                     <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -12,7 +12,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesdates' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'vista_nodesdates' node.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
                                     <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -20,24 +20,18 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesproductors' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+                                <a href="{% url 'nodeproductors_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
                                     <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
                                     <b id="pato" name="pato" class="pato">Escollir Productors</b>
                                  </a>
                         </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodeshistorial' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
-                                    <b id="pato" name="pato" class="pato">Veure historial</b>
-                                 </a>
-                        </div>
     </div>
     <br/>
-     <table>
+    {% if object_list %}<br/>
+        Comandes: <br/>
+     <table border="1">
      <th>Producte</th>
      <th>Lloc d'entrega</th>
      <th>[Cant Format]</th>
@@ -66,4 +60,46 @@
 {#            <br/>#}
         {% endfor %}
        </table>
+     {% endif %}
+    {% if contractes %}
+        <br/>
+        Contractes: <br/>
+     <table border="1">
+     <th>Producte</th>
+     <th>Lloc d'entrega</th>
+     <th>[Cant Format]</th>
+     <th>Data d'entrega</th>
+     <th>Franja horària</th>
+     <th>Preu</th>
+     <th>Client</th>
+     <th>Data de comanda</th>
+     <th>Freqüència</th>
+        {% for link in contractes %}
+{#            <form method="post" action="" class="vote_form">#}
+{#              <li>#}
+
+               <tr>
+                        <td>[{{ link.producte.nom }}]</td>
+                        <td>{{ link.lloc_entrega }}</td>
+                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
+                        <td>{{ link.prox_entrega.date }}</td>
+                        <td>{{ link.franja_horaria}}</td>
+                        <td>{{ link.preu }}€</td>
+                        <td>{{ link.client.first_name }}</td>
+                        <td>{{ link.data_comanda.date }}</td>
+                        <td>{{ link.freq_txt }}</td>
+                    </tr>
+
+{#              </li>#}
+{#            </form>#}
+{#            <br/>#}
+        {% endfor %}
+       </table>
+    {% endif %}
+    {% if not object_list %}
+        {% if not contractes %}
+            Encara no hi ha comandes fetes per aquest dia d'entrega
+        {% endif %}
+    {% endif %}
+
 {% endblock %}

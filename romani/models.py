@@ -11,22 +11,6 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 
 
-
-class Adjunt(models.Model):
-
-    def validate_file(fieldfile_obj):
-        filesize = fieldfile_obj.file.size
-        megabyte_limit = 5.0
-        if filesize > megabyte_limit*1024*1024:
-            raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
-
-
-    arxiu = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
-
-
-    def __str__(self):
-        return self.arxiu.url
-
 class Productor(models.Model):
 
     def validate_file(fieldfile_obj):
@@ -38,12 +22,32 @@ class Productor(models.Model):
 
 
     nom = models.CharField(max_length=20)
-    adjunt = models.ManyToManyField(Adjunt)
+    # adjunt = models.ManyToManyField(Adjunt)
     responsable = models.ForeignKey(User)
     cuerpo = models.TextField(blank=True)
 
     def __str__(self):
         return self.nom
+
+
+
+class Adjunt(models.Model):
+
+    def validate_file(fieldfile_obj):
+        filesize = fieldfile_obj.file.size
+        megabyte_limit = 5.0
+        if filesize > megabyte_limit*1024*1024:
+            raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
+
+
+    arxiu = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
+    productor = models.ForeignKey(Productor)
+
+
+    def __str__(self):
+        return self.arxiu.url
+
+
     #
     # def get_pks(self):
     #     return self.objects.values_list('pk').all()
@@ -58,15 +62,6 @@ class TipusProducte(models.Model):
 
     def __str__(self):
         return "%s %s€ %s %s unit" % (self.nom, self.preu, self.producte.all(), self.stock)
-
-class FranjaHoraria(models.Model):
-
-    inici = models.CharField(max_length=5)
-    final = models.CharField(max_length=5)
-
-
-    def __str__(self):
-        return "%s-%s" % (self.inici, self.final)
 
 
 
@@ -110,6 +105,19 @@ class Node(models.Model):
         return self.dies_entrega.filter(date__gte=datetime.datetime.today())
 
 
+
+class FranjaHoraria(models.Model):
+
+    inici = models.TimeField()
+    final = models.TimeField()
+
+    node = models.ForeignKey(Node)
+
+    def __str__(self):
+        return "%s-%s" % (self.inici, self.final)
+
+
+
 class DiaEntrega(models.Model):
 
     franjes_horaries = models.ManyToManyField(FranjaHoraria,  related_name="dia")
@@ -138,6 +146,8 @@ class DiaEntrega(models.Model):
         if self.date.strftime("%A") == "Sunday":
             return "Diumenge"
 
+    def franja_inici(self):
+        return self.franjes_horaries.order_by("inici").first()
 
 
 

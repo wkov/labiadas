@@ -1,8 +1,9 @@
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt
 from django.contrib.auth.models import  User
 from django.forms.widgets import CheckboxSelectMultiple
+from romani.widgets import SelectTimeWidget
 import datetime
 
 
@@ -59,8 +60,25 @@ class ProductorForm(forms.ModelForm):
 
     class Meta:
         model = Productor
-        fields = ("nom", "cuerpo", "adjunt")
+        fields = ("nom", "cuerpo")
         # exclude = ("")
+
+    # def __init__(self, *args, **kwargs):
+    #     super(ProductorForm, self).__init__(*args, **kwargs)
+    #     self.fields["adjunt"].queryset = Adjunt.objects.filter(productor=productor)
+
+class AdjuntForm(forms.ModelForm):
+
+    class Meta:
+        model = Adjunt
+        fields = ("arxiu", "productor")
+
+    def __init__(self, productor, *args, **kwargs):
+
+        super(AdjuntForm, self).__init__(*args, **kwargs)
+        self.fields["productor"].queryset = Productor.objects.filter(pk=productor.pk)
+        self.fields["productor"].initial = productor
+
 
 class DiaEntregaForm(forms.ModelForm):
 
@@ -74,14 +92,42 @@ class DiaEntregaForm(forms.ModelForm):
     #     # exclude = ("")
     #     widgets = {'date': forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'})}
 
-    def __init__(self, nodes, *args, **kwargs):
+    def __init__(self, node, *args, **kwargs):
 
         super(DiaEntregaForm, self).__init__(*args, **kwargs)
-        self.fields["node"].queryset = nodes
+        self.fields["node"].queryset = Node.objects.filter(pk=node.pk)
+        self.fields["node"].initial = node
         self.fields["franjes_horaries"].widget = CheckboxSelectMultiple()
-        self.fields["franjes_horaries"].queryset = FranjaHoraria.objects.filter(dia__node__in=nodes).order_by('inici', 'final').distinct()
+        self.fields["franjes_horaries"].queryset = FranjaHoraria.objects.filter(node=node).order_by('inici', 'final').distinct()
 
         # self.fields["date"].input_formats = '%m-%d-%Y'
+
+class FranjaHorariaForm(forms.ModelForm):
+
+    class Meta:
+        model = FranjaHoraria
+        fields = ("inici", "final", "node")
+        # exclude = ("node", )
+
+    def __init__(self, node, *args, **kwargs):
+
+        super(FranjaHorariaForm, self).__init__(*args, **kwargs)
+        self.fields["node"].queryset = Node.objects.filter(pk=node.pk)
+        self.fields["node"].initial = node
+        self.fields["inici"].widget=SelectTimeWidget()
+        self.fields["final"].widget=SelectTimeWidget()
+    # def save(self, *args, **kwargs):
+    #   """
+    #   Update the primary email address on the related User object as well.
+    #   """
+    #   u = self.instance.user
+    #   # u.email = self.cleaned_data['email']
+    #   # u.username = self.cleaned_data['username']
+    #   u.first_name = self.cleaned_data['first_name']
+    #   u.last_name = self.cleaned_data['last_name']
+    #   u.save()
+    #   profile = super(UserProfileForm, self).save(*args,**kwargs)
+    #   return profile
 
 class NodeForm(forms.ModelForm):
 
@@ -149,25 +195,25 @@ class NodeProductorsForm(forms.ModelForm):
         self.fields["productors"].queryset = Productor.objects.all()
 
 
-class ProductorDiaEntregaForm(forms.ModelForm):
+class ProductorDiaEntregaForm(forms.Form):
 
-    def __init__(self, *args, **kwargs):
-        # pro_pk = kwargs.pop('pro', None)
-        super(ProductorDiaEntregaForm, self).__init__(*args, **kwargs)
-        try:
-            # productor = Productor.objects.get(pk=pro_pk)
-            # self.fields["productes"].widget = CheckboxSelectMultiple()
-            # productor = self.instance
-            self.fields["productes"].queryset = Producte.objects.filter(productor=kwargs['instance'])
-        except User.DoesNotExist:
-            pass
+    # def __init__(self, *args, **kwargs):
+    #     # pro_pk = kwargs.pop('pro', None)
+    #     super(ProductorDiaEntregaForm, self).__init__(*args, **kwargs)
+    #     try:
+    #         # productor = Productor.objects.get(pk=pro_pk)
+    #         # self.fields["productes"].widget = CheckboxSelectMultiple()
+    #         # productor = self.instance
+    #         self.fields["productes"].queryset = Producte.objects.filter(productor=self.)
+    #     except User.DoesNotExist:
+    #         pass
 
-    productes = forms.CheckboxSelectMultiple()
+    productes = forms.MultipleChoiceField(widget=CheckboxSelectMultiple())
 
-    class Meta:
-        model = Productor
-        # fields = ("date",  )
-        exclude = ("all", )
+    # class Meta:
+    #     model = Productor
+    #     # fields = ("date",  )
+    #     exclude = ("all", )
 
     # def save(self, *args, **kwargs):
     #   """
@@ -183,16 +229,16 @@ class ProductorDiaEntregaForm(forms.ModelForm):
     #   return profile
 
 
-class ProducteDatesForm(forms.ModelForm):
-
-    class Meta:
-        model = Producte
-        fields = ("nom", "dies_entrega", "frequencies" )
-        # exclude = ("productor", "karma_value", "datahora", "karma_date")
-
-    def __init__(self, *args, **kwargs):
-
-        super(ProducteDatesForm, self).__init__(*args, **kwargs)
-
-        self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
-        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__productors__id__exact=self.instance.productor.id)
+# class ProducteDatesForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = Producte
+#         fields = ("nom", "dies_entrega", "frequencies" )
+#         # exclude = ("productor", "karma_value", "datahora", "karma_date")
+#
+#     def __init__(self, *args, **kwargs):
+#
+#         super(ProducteDatesForm, self).__init__(*args, **kwargs)
+#
+#         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
+#         self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__productors__id__exact=self.instance.productor.id)

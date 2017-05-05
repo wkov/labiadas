@@ -58,14 +58,14 @@ $(document).ready(function() {
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_llocs' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Llocs d'entrega" >
-                                    <span class="glyphicon glyphicon-fullscreen" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
-                                    <b id="pato" name="pato" class="pato">Llocs d'entrega</b>
-                                 </a>
-                        </div>
+{#                        <div style=" position: relative; display: inline-block; ">#}
+{#                                <a href="{% url 'vista_llocs' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Llocs d'entrega" >#}
+{#                                    <span class="glyphicon glyphicon-fullscreen" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
+{#                                    <b id="pato" name="pato" class="pato">Llocs d'entrega</b>#}
+{#                                 </a>#}
+{#                        </div>#}
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
                                     <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
@@ -95,15 +95,15 @@ $(document).ready(function() {
 
 <div id='calendar'></div>
 
-    <table border="1">
+{#    <table border="1">#}
 {#    <th>Producte</th>#}
 {#    <th>Nodes a on arriba</th>#}
-        {% for link in object_list %}
+{#        {% for link in object_list %}#}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
-                <tr><td>
-<a href="{% url 'productedates_update' link.pk %}">
-                  [{{ link.nom }}]</a>
+{#                <tr><td>#}
+{#<a href="{% url 'productedates_update' link.pk %}">#}
+{#                  [{{ link.nom }}]</a>#}
 {#                {% csrf_token %}#}
 {#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
 {#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
@@ -114,32 +114,32 @@ $(document).ready(function() {
 {#                {% else %}#}
 {#                <button>-</button>#}
 {#                {% endif %}#}
-                </td>
-                <td>
+{#                </td>#}
+{#                <td>#}
 {#                    {{ link.productor }}#}
-                  {% for aux in link.nodes %}
+{#                  {% for aux in link.nodes %}#}
 {#                      <tr><td>#}
 {#                      {% if link.dies_entrega in aux.dies_entrega.all %}#}
-                    <b>{{ aux }}</b>  <br/>
+{#                    <b>{{ aux }}</b>  <br/>#}
 {#                      {% endif %}#}
-                      {% for dia in aux.dies_entrega.all %}
-                          {% if dia in link.dies_entrega.all %}
-                            {{ dia.date }} /
-                              {% for d in dia.franjes_horaries.all %}
-                                  {{ d.inici }} - {{ d.final }} /
-                              {% endfor %}
-                              <br/>
-                          {% endif %}
-                      {% endfor %}
+{#                      {% for dia in aux.dies_entrega.all %}#}
+{#                          {% if dia in link.dies_entrega.all %}#}
+{#                            {{ dia.date }} /#}
+{#                              {% for d in dia.franjes_horaries.all %}#}
+{#                                  {{ d.inici }} - {{ d.final }} /#}
+{#                              {% endfor %}#}
+{#                              <br/>#}
+{#                          {% endif %}#}
+{#                      {% endfor %}#}
 {#                      </td></tr>#}
-                  {% endfor %}
-                </td>
+{#                  {% endfor %}#}
+{#                </td>#}
 {#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
-                </tr>
+{#                </tr>#}
 {#                <tr></tr>#}
 {#              </li>#}
 {#            </form>#}
 {#            <br/>#}
-        {% endfor %}
-    </table>
+{#        {% endfor %}#}
+{#    </table>#}
 {% endblock %}

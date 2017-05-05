@@ -10,7 +10,7 @@
   {% csrf_token %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
                                     <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -18,7 +18,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesdates' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'vista_nodesdates' node.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
                                     <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -26,24 +26,16 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesproductors' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+                                <a href="{% url 'nodeproductors_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
                                     <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
                                     <b id="pato" name="pato" class="pato">Escollir Productors</b>
                                  </a>
                         </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodeshistorial' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
-                                    <b id="pato" name="pato" class="pato">Veure historial</b>
-                                 </a>
-                        </div>
     </div>
     <br/>
-    <a href="{% url 'diaentrega_create' %}">Crear franja horària</a> <br/><br/>
+    <a href="{% url 'franjahoraria_create' node.pk %}">Crear franja horària</a> <br/><br/>
   {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}
   <input type="submit" value="Grabar">

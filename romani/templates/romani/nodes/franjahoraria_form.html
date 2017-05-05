@@ -2,11 +2,15 @@
 
 {% block content %}
 
-{#<form method="post" action="">#}
-{#  {% csrf_token %}#}
+{#    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>#}
+{#    <script src="/ui/jquery.ui.datepicker.js"></script>#}
+
+
+<form method="post" action="">
+  {% csrf_token %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'node_update' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
                                     <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -14,7 +18,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesdates' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'vista_nodesdates' node.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
                                     <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -22,7 +26,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'nodeproductors_update' object.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+                                <a href="{% url 'nodeproductors_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
                                     <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -31,41 +35,8 @@
                         </div>
     </div>
     <br/>
-{#  {{ form.as_p }}#}
+  {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}
-{#  <input type="submit" value="Add">#}
-{##}
-{##}
-{##}
-{##}
-{#</form>#}
-
-<form method="post">
-{% csrf_token %}
-{% for field in form %}
-    <p>
-{#        {{ field.errors }}#}
-{#        {{ field.label_tag }} {{ field }}#}
-        {% if field.name == "productors" %}
-{#          {% for productor in form.productors.field.queryset %}#}
-{#              {% if productor in node.productors.all %}#}
-{#                <input type="checkbox" id="{{ productor.pk }}" checked="checked">  <a href="{% url 'productor' productor.pk %}">{{ productor.nom }} </a> </input> <br/>#}
-{#              {% else %}#}
-{#                <input type="checkbox" id="{{ productor.pk }}">  <a href="{% url 'productor' productor.pk %}">{{ productor.nom }} </a> </input> <br/>#}
-{#              {% endif %}#}
-{#              {{ field.label_tag }}{{ field. }}#}
-{#          {% endfor %}#}
-{#        {% else %}#}
-            {{ field.errors }}
-            {{ field.label_tag }} {{ field }}
-        {% endif %}
-    </p>
-{% endfor %}
-<p><input type="submit" value="Grabar" /></p>
+  <input type="submit" value="Grabar">
 </form>
-
-
-
-
-
 {% endblock %}

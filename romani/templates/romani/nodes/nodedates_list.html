@@ -1,10 +1,53 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% csrf_token %}
+
+{% block headers %}
+
+<link href="{% static 'js/fullcalendar-3.3.1/fullcalendar.css' %}" rel="stylesheet">
+{#    <script src='js/fullcalendar-3.3.1/lib/jquery.min.js'></script>#}
+{#<script src='js/fullcalendar-3.3.1/lib/moment.min.js'></script>#}
+{#    <script src='js/fullcalendar-3.3.1/fullcalendar.js'></script>#}
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/moment.min.js'></script>
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>
+<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
+<script>
+
+$(document).ready(function() {
+
+    // page is now ready, initialize the calendar...
+
+    $('#calendar').fullCalendar({
+       aspectRatio: 3,
+       eventSources: [
+        {
+            url: '/dis/' + {{ node.pk }} + '/Events/',
+            editable: false,
+            color: 'white',   // an option!
+            textColor: 'green' // an option!
+        }
+{#           ,#}
+{#        {#}
+{#            url: '/pro/' + {{ productor.pk }} + '/cal2Events/',#}
+{#            editable: false,#}
+{#            color: 'green',   // an option!#}
+{#            textColor: 'white' // an option!#}
+{#        }#}
+      ]
+    })
+
+});
+
+</script>
+
+{% endblock %}
+
 {% block content %}
 
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodes' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Modificar node" >
                                     <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -12,7 +55,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesdates' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'vista_nodesdates' node.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
                                     <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -20,33 +63,29 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesproductors' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+                                <a href="{% url 'nodeproductors_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
                                     <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
                                     <b id="pato" name="pato" class="pato">Escollir Productors</b>
                                  </a>
                         </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodeshistorial' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
-                                    <b id="pato" name="pato" class="pato">Veure historial</b>
-                                 </a>
-                        </div>
     </div>
     <br/>
-    <a href="{% url 'diaentrega_create' %}">Crear data d'entrega</a>
-    <table border="1">
+    <a href="{% url 'diaentrega_create' node.pk %}">Crear data d'entrega</a>
+
+       <br/> <br/>
+
+<div id='calendar'></div>
+{#    <table border="1">#}
 {#    <th>Producte</th>#}
 {#    <th>Nodes a on arriba</th>#}
-        {% for link in object_list %}
+{#        {% for link in object_list %}#}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
-                <tr><td>
+{#                <tr><td>#}
 {#<a href="">#}
-                  [{{ link.nom }}]
+{#                  [{{ link.nom }}]#}
 {#                    </a>#}
 {#                {% csrf_token %}#}
 {#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
@@ -58,29 +97,29 @@
 {#                {% else %}#}
 {#                <button>-</button>#}
 {#                {% endif %}#}
-                </td>
-                <td>
+{#                </td>#}
+{#                <td>#}
 {#                    {{ link.productor }}#}
-                  {% for aux in link.dies_entrega_futurs.all %}
+{#                  {% for aux in link.dies_entrega_futurs.all %}#}
 {#                      <tr><td>#}
 {#                      {% if link.dies_entrega in aux.dies_entrega.all %}#}
-                      <a href="{% url 'node_comandes' aux.pk %}">
-                    <b>{{ aux.date }}</b>
+{#                      <a href="{% url 'node_comandes' aux.pk %}">#}
+{#                    <b>{{ aux.date }}</b>#}
 {#                      {% endif %}#}
- /
-                              {% for d in aux.franjes_horaries.all %}
-                                  {{ d.inici }} - {{ d.final }} /
-                              {% endfor %} </a>
-                              <br/>
+{# /#}
+{#                              {% for d in aux.franjes_horaries.all %}#}
+{#                                  {{ d.inici }} - {{ d.final }} /#}
+{#                              {% endfor %} </a>#}
+{#                              <br/>#}
 {#                      </td></tr>#}
-                  {% endfor %}
-                </td>
+{#                  {% endfor %}#}
+{#                </td>#}
 {#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
-                </tr>
+{#                </tr>#}
 {#                <tr></tr>#}
 {#              </li>#}
 {#            </form>#}
 {#            <br/>#}
-        {% endfor %}
-    </table>
+{#        {% endfor %}#}
+{#    </table>#}
 {% endblock %}
