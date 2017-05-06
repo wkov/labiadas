@@ -11,6 +11,8 @@ from django.views.generic import DetailView
 from .models import UserProfile, Etiqueta, Key, Adjunt
 from .forms import UserProfileForm, ComandaForm, InfoForm, ProductorForm, ProducteForm, NodeForm, NodeProductorsForm, DiaEntregaForm, ContracteForm, ProductorDiaEntregaForm, AdjuntForm, FranjaHorariaForm
 
+from django.http import HttpResponse
+
 
 import datetime
 from django.utils import timezone
@@ -121,67 +123,7 @@ def buskadorProducte(request):
         return render(request, "buscador.html", {
             'etiquetes': etiquetes, 'up': user_p})
 
-def eventsProductor(productor):
-    # productor = Productor.objects.filter(responsable=user)
-    eventList = set()
-    productes = Producte.objects.filter(productor=productor)
 
-    for p in productes:
-        for d in DiaEntrega.objects.filter(productes__id__exact=p.id):
-            if d:
-                eventList.add(d)
-
-    return eventList
-
-
-from django.core.serializers.json import DjangoJSONEncoder
-
-def diaNodeEvents(request, dis):
-    # productor = Productor.objects.filter(responsable=request.user)
-    # eventList = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__productors__id__exact=productor)
-    p = Node.objects.get(pk=dis)
-    eventList = DiaEntrega.objects.filter(node=p)
-    events = []
-    for event in eventList:
-            franja = event.franja_inici()
-            day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-            dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
-            url = "http://127.0.0.1:8000/dis/" + str(dis) + "/node_comandes/" + str(event.pk)
-            events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
-    # something similar for owned events, maybe with a different className if you like
-    return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
-
-
-def diaEntregaEvents(request, pro):
-    # productor = Productor.objects.filter(responsable=request.user)
-    # eventList = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__productors__id__exact=productor)
-    p = Productor.objects.get(pk=pro)
-    eventList = DiaEntrega.objects.filter(node__productors__id__exact=p.id)
-    productorAgenda = eventsProductor(p)
-    events = []
-    for event in eventList:
-        if event not in productorAgenda:
-            franja = event.franja_inici()
-            day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-            dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
-            url = "http://127.0.0.1:8000/pro/" + str(pro) + "/data_comandes/" + str(event.pk)
-            events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
-    # something similar for owned events, maybe with a different className if you like
-    return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
-
-def diaEntregaSelected(request, pro):
-
-    p = Productor.objects.get(pk=pro)
-    eventList = eventsProductor(p)
-    events = []
-    for event in eventList:
-        franja = event.franja_inici()
-        day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-        dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
-        url = "http://127.0.0.1:8000/pro/" + str(pro) + "/data_comandes/" +  str(event.pk)
-        events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
-    # something similar for owned events, maybe with a different className if you like
-    return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
 
 
 
@@ -212,210 +154,13 @@ def nouUsuariView(request):
     return render(request, "nouUsuari.html", {'up': user_p, 'nodes': nodes, 'frequencia': s.nom})
 
 
-class ComandesListView(ListView):
-    model = Comanda
-    template_name = "romani/productors/comanda_list.html"
-
-    def get_queryset(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        productes = Producte.objects.filter(productor=productor)
-        return Comanda.objects.filter(producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
-
-    def get_context_data(self, **kwargs):
-        context = super(ComandesListView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        productes = Producte.objects.filter(productor=productor)
-        context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        context["productor"] = productor
-        return context
-
-# class DataComandesListView(ListView):
-#     model = Comanda
-#     template_name = "romani/productors/datacomandes_list.html"
-#
-#     def get_queryset(self):
-#         diaentrega = DiaEntrega.objects.filter(pk=self.kwargs["pk"]).first()
-#         productor = Productor.objects.get(pk=self.kwargs['pro'])
-#         productes = Producte.objects.filter(productor=productor)
-#         return Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(DataComandesListView, self).get_context_data(**kwargs)
-#         productor = Productor.objects.get(pk=self.kwargs['pro'])
-#         context["productor"] = productor
-#         productes = Producte.objects.filter(productor=productor)
-#         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"]).first()
-#         context["contractes"] = Contracte.objects.filter(producte__in=productes, dies_entrega__id__exact=diaentrega )
-#         return context
-
-class NodeComandesListView(ListView):
-    model = Comanda
-    template_name = "romani/nodes/nodecomanda_list.html"
-
-    def get_queryset(self):
-        diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
-        return Comanda.objects.filter(lloc_entrega=diaentrega.node, dia_entrega=diaentrega)
-
-    def get_context_data(self, **kwargs):
-        context = super(NodeComandesListView, self).get_context_data(**kwargs)
-        node = Node.objects.get(pk=self.kwargs['dis'])
-        context["node"] = node
-        diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
-        context["contractes"] = Contracte.objects.filter(dies_entrega__id__exact=diaentrega.id)
-        return context
-
-class HistorialListView(ListView):
-    model = Comanda
-    template_name = "romani/productors/historial_list.html"
-
-    def get_queryset(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        productes = Producte.objects.filter(productor=productor)
-        return Comanda.objects.filter(producte__in=productes, dia_entrega__date__lte=datetime.datetime.today())
-
-    def get_context_data(self, **kwargs):
-        context = super(HistorialListView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        context["productor"] = productor
-        productes = Producte.objects.filter(productor=productor)
-        context["contractes"] = Contracte.objects.filter(producte__in=productes)
-
-        return context
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(HistorialListView, self).get_context_data(**kwargs)
-    #     productor = Productor.objects.filter(responsable=self.request.user).first()
-    #     context["productor"] = productor
-    #     return context
-
-class ProductesListView(ListView):
-    model = Producte
-    template_name = "romani/productors/producte_list.html"
-
-    def get_queryset(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        return Producte.objects.filter(productor=productor)
-
-    def get_context_data(self, **kwargs):
-        context = super(ProductesListView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        context["productor"] = productor
-        return context
-
-class LlocsListView(ListView):
-    model = Producte
-    template_name = "romani/productors/llocsentrega.html"
-
-    def get_queryset(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        return Producte.objects.filter(productor=productor)
-
-    def get_context_data(self, **kwargs):
-        context = super(LlocsListView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        context["productor"] = productor
-        return context
-        context["nodes"] = Node.objects.filter()
-
-# class LlocsUpdateView(UpdateView):
-#     model = Producte
-#     form_class = LlocsForm
-#     template_name = "romani/productors/llocsentrega_form.html"
-#     success_url="/vista_llocs/"
-#     # user = request.user
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(LlocsUpdateView, self).get_context_data(**kwargs)
-#         productors = Productor.objects.filter(responsable=self.request.user)
-#         context["productors"] = productors
-#         return context
-
-class AdjuntCreateView(CreateView):
-
-    model = Adjunt
-    form_class = AdjuntForm
-    template_name = "romani/productors/adjunt.html"
-
-    def get_form_kwargs(self):
-        kwargs = super(AdjuntCreateView, self).get_form_kwargs()
-        productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
-        kwargs["productor"] = productor
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super(AdjuntCreateView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
-        context["productor"] = productor
-        return context
-
-    def get_success_url(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        return "/productor/update/" + str(productor.pk)
 
 
-class FranjaHorariaCreateView(CreateView):
 
-    model = FranjaHoraria
-    form_class = FranjaHorariaForm
-    # success_url = "/vista_nodesdates/"
-    template_name = "romani/nodes/franjahoraria_form.html"
 
-    def get_form_kwargs(self):
-        kwargs = super(FranjaHorariaCreateView, self).get_form_kwargs()
-        node = Node.objects.get(responsable=self.request.user, pk=self.kwargs['dis'])
-        kwargs['node'] = node
-        return kwargs
 
-    def get_context_data(self, **kwargs):
-        context = super(FranjaHorariaCreateView, self).get_context_data(**kwargs)
-        node = Node.objects.get(pk=self.kwargs['dis'])
-        context["node"] = node
-        return context
 
-    def get_success_url(self):
-        node = Node.objects.get(pk=self.kwargs['dis'])
-        return "/dis/" + str(node.pk) + "/diaentrega/create/"
 
-class DiaEntregaCreateView(CreateView):
-    model = DiaEntrega
-    form_class = DiaEntregaForm
-    # success_url = "/vista_nodesdates/"
-    template_name = "romani/nodes/diaentrega_form.html"
-
-    def get_form_kwargs(self):
-        kwargs = super(DiaEntregaCreateView, self).get_form_kwargs()
-        node = Node.objects.get(responsable=self.request.user, pk=self.kwargs['dis'])
-        kwargs['node'] = node
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super(DiaEntregaCreateView, self).get_context_data(**kwargs)
-        node = Node.objects.get(pk=self.kwargs['dis'])
-        context["node"] = node
-        return context
-
-    def get_success_url(self):
-        node = Node.objects.get(pk=self.kwargs['dis'])
-        return "/dis/" + str(node.pk) + "/vista_nodesdates/"
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(ProductorsListView, self).get_context_data(**kwargs)
-    #     productors = Productor.objects.filter(responsable=self.request.user)
-    #     context["productors"] = productors
-    #     return context
-
-    def form_valid(self, form):
-        f = form.save(commit=False)
-        f.save()
-        return super(DiaEntregaCreateView, self).form_valid(form)
-
-class NodesListView(ListView):
-    model = Node
-    template_name = "romani/nodes/node_list.html"
-
-    def get_queryset(self):
-        return Node.objects.filter(responsable=self.request.user)
 
 # class NodesProductorsListView(ListView):
 #     model = Node
@@ -430,168 +175,6 @@ class NodesListView(ListView):
 #         context["node"] = node
 #         return context
 
-class ProductorsListView(ListView):
-    model = Productor
-    template_name = "romani/productors/productor_list.html"
-
-    def get_queryset(self):
-        return Productor.objects.filter(responsable=self.request.user)
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(ProductorsListView, self).get_context_data(**kwargs)
-    #     productor = Productor.objects.filter(responsable=self.request.user).first()
-    #     context["productor"] = productor
-    #     return context
-
-class DatesListView(ListView):
-    model = Producte
-    template_name = "romani/productors/dates_list.html"
-
-    def get_queryset(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        return Producte.objects.filter(productor=productor)
-
-    def get_context_data(self, **kwargs):
-        context = super(DatesListView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        context["productor"] = productor
-        return context
-
-class NodesDatesListView(ListView):
-    model = Node
-    template_name = "romani/nodes/nodedates_list.html"
-
-    def get_queryset(self):
-        return Node.objects.get(pk=self.kwargs['dis'])
-
-    def get_context_data(self, **kwargs):
-        context = super(NodesDatesListView, self).get_context_data(**kwargs)
-        node = Node.objects.get(pk=self.kwargs['dis'])
-        context["node"] = node
-        return context
-    # def get_context_data(self, **kwargs):
-    #     context = super(DatesListView, self).get_context_data(**kwargs)
-    #     productor = Productor.objects.filter(responsable=self.request.user).first()
-    #     context["productor"] = productor
-    #     return context
-
-# class NodesHistorialListView(ListView):
-#     model = Node
-#     template_name = "romani/nodes/nodehistorial_list.html"
-#
-#     def get_queryset(self):
-#         return Node.objects.get(pk=self.kwargs['dis'])
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(NodesHistorialListView, self).get_context_data(**kwargs)
-#         node = Node.objects.get(pk=self.kwargs['dis'])
-#         context["node"] = node
-#         return context
-
-def DiaEntregaProductorView(request, pk, dataentrega):
-
-    productor = Productor.objects.get(pk=pk)
-    diaentrega = DiaEntrega.objects.get(pk=dataentrega)
-
-
-    if request.POST:
-
-           form=ProductorDiaEntregaForm(request.POST)
-
-           try:
-               prod = request.POST.getlist('productes')
-
-               productes_dia = []
-               for d in prod:
-                   aux = Producte.objects.get(pk=d)
-                   if aux:
-                       productes_dia.append(aux)
-
-
-
-               productes = Producte.objects.filter(productor=productor)
-               for p in productes:
-                   if p not in productes_dia:
-                       if p in diaentrega.productes.all():
-                           if not Comanda.objects.filter(producte=p, dia_entrega=diaentrega):
-                                diaentrega.productes.remove(p)
-                           else:
-                               message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
-                               productes_sel = Producte.objects.filter(dies_entrega__id__exact=diaentrega.id)
-                               comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
-                               contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
-                               return render(request, "romani/productors/diaentrega.html", {'form': form, 'dia': diaentrega, 'productor': productor, 'productes': productes,
-                                                                 'productes_sel': productes_sel, 'comandes': comandes, 'contractes': contractes, 'message': message})
-
-
-               for dp in productes_dia:
-                   if dp not in diaentrega.productes.all():
-                       diaentrega.productes.add(dp)
-           except:
-               productes = Producte.objects.filter(productor=productor)
-               for p in productes:
-                   if p in diaentrega.productes.all():
-                       diaentrega.productes.remove(p)
-
-           return render(request, "romani/productors/dates_list.html", {'productor': productor})
-
-
-    productes = Producte.objects.filter(productor=productor)
-
-    productes_sel = Producte.objects.filter(dies_entrega__id__exact=diaentrega.id)
-
-    comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
-
-    contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
-
-    form=ProductorDiaEntregaForm()
-
-    form.fields['productes'].choices = [(x.pk, x) for x in Producte.objects.filter(productor=productor)]
-
-    form.fields['productes'].label = "Productes que portaras el dia d entrega"
-
-    return render(request, "romani/productors/diaentrega.html", {'form': form, 'dia': diaentrega, 'productor': productor, 'productes': productes,
-                                                                 'productes_sel': productes_sel, 'comandes': comandes, 'contractes': contractes})
-
-
-# class DiaEntregaProductorView(FormView):
-#     # model = Productor
-#     form_class = ProductorDiaEntregaForm
-#     success_url = "/vista_productors/"
-#     template_name = "romani/productors/diaentrega.html"
-#
-#     def get_object(self, queryset=None):
-#         return Productor.objects.get(pk=self.kwargs['pk'])
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(DiaEntregaProductorView, self).get_context_data(**kwargs)
-#         productor = Productor.objects.get(pk=self.kwargs['pk'])
-#         context["productor"] = productor
-#         return context
-
-class ProductorUpdateView(UpdateView):
-    model = Productor
-    form_class = ProductorForm
-    # success_url="/vista_productors/"
-    template_name = "romani/productors/productor_form.html"
-
-    # def get_form_kwargs(self):
-    #     kwargs = super(ProductorUpdateView, self).get_form_kwargs()
-    #     productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
-    #     kwargs["productor"] = productor
-    #     return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super(ProductorUpdateView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(pk=self.kwargs['pk'])
-        context["productor"] = productor
-        adjunts = Adjunt.objects.filter(productor=productor)
-        context["adjunts"] = adjunts
-        return context
-
-    def get_success_url(self):
-        pro = Productor.objects.get(pk=self.kwargs['pk'])
-        return "/pro/" + str(pro.id) + "/vista_dates/"
 
 
 class ContracteUpdateView(UpdateView):
@@ -600,15 +183,6 @@ class ContracteUpdateView(UpdateView):
     success_url="/comandes/"
     template_name = "romani/consumidors/contracte_form.html"
 
-class NodeUpdateView(UpdateView):
-    model = Node
-    form_class = NodeForm
-    # success_url="/vista_nodes/"
-    template_name = "romani/nodes/node_form.html"
-
-    def get_success_url(self):
-        node = Node.objects.get(pk=self.kwargs['pk'])
-        return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
     # def get_context_data(self, **kwargs):
     #     context = super(NodesUpdateView, self).get_context_data(**kwargs)
@@ -617,23 +191,6 @@ class NodeUpdateView(UpdateView):
     #     return context
 
 
-class ProducteUpdateView(UpdateView):
-    model = Producte
-    form_class = ProducteForm
-    # success_url="/vista_productes/"
-    template_name = "romani/productors/producte_form.html"
-    # user = request.user
-
-    def get_context_data(self, **kwargs):
-        context = super(ProducteUpdateView, self).get_context_data(**kwargs)
-        producte = Producte.objects.get(pk=self.kwargs['pk'])
-        context["productor"] = producte.productor
-        return context
-
-    def get_success_url(self):
-        p = Producte.objects.get(pk=self.kwargs['pk'])
-        pro_id = p.productor_id
-        return "/pro/" + str(pro_id) + "/vista_productes/"
 
 # class ProducteDatesUpdateView(UpdateView):
 #     model = Producte
@@ -646,16 +203,6 @@ class ProducteUpdateView(UpdateView):
 #         productor = Productor.objects.get(pk=self.kwargs['pk'])
 #         context["productor"] = productor
 #         return context
-
-class NodeProductorsUpdateView(UpdateView):
-    model = Node
-    form_class = NodeProductorsForm
-    template_name = "romani/nodes/nodeproductors_form.html"
-    success_url="dis/(?P<dis>\d+)/vista_nodesdates/"
-
-    def get_success_url(self):
-        node = Node.objects.get(pk=self.kwargs['pk'])
-        return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
 
     # def get_context_data(self, **kwargs):
@@ -861,11 +408,6 @@ def AjudaView(request):
 
 
 
-from django.http import HttpResponse
-
-from django.views.generic.edit import FormView
-from .models import Comanda
-from .forms import ComandaForm
 
 
 
@@ -926,7 +468,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 else:
                     return d_list
 
-
+        return d_list
 
 
 class JSONFormMixin(object):
@@ -934,13 +476,6 @@ class JSONFormMixin(object):
         response = HttpResponse(json.dumps(vdict), content_type='application/json')
         response.status = 200 if valid_form else 500
         return response
-
-# def next_weekday(d, weekday):
-#     days_ahead = weekday - d.weekday()
-#     if days_ahead <= 0: # Target day already happened this week
-#         days_ahead += 7
-#     return d + datetime.timedelta(days_ahead)
-
 
 
 
@@ -967,7 +502,7 @@ class ComandaFormBaseView(FormView):
         freq = Frequencia.objects.filter(num=frequencia).first()
         freq_txt = freq.nom
         data_entrega = DiaEntrega.objects.get(pk=data)
-        DiaEntrega.objects.filter(date__gt=data_entrega.date)
+        # DiaEntrega.objects.filter(date__gt=data_entrega.date)
         # data_entrega_txt = data_entrega.dia()
         # data_entrega_num = data_entrega.dia_num()
         franja_pk = form.data["franjes"]
@@ -998,8 +533,8 @@ class ComandaFormBaseView(FormView):
 
             v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, freq_txt=freq_txt, frequencia=frequencia)
 
-        for d in dies_entrega:
-            v.dies_entrega.add(d)
+            for d in dies_entrega:
+                v.dies_entrega.add(d)
 
         ret = {"success": 1}
         notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
@@ -1248,8 +783,8 @@ def NodeHorariView(request):
             json_res_aux = []
             for franja in dia.franjes_horaries.all():
                 json_obj_aux = dict(
-                    inici = franja.inici,
-                    final = franja.final,
+                    inici = str(franja.inici)[:5],
+                    final = str(franja.final)[:5],
                     pk = franja.pk
                 )
                 json_res_aux.append(json_obj_aux)
@@ -1401,8 +936,8 @@ def FranjaCalcView(request):
                 json_res = []
                 for franja in dia.franjes_horaries.all():
                     json_obj = dict(
-                        inici = franja.inici,
-                        final = franja.final,
+                        inici = str(franja.inici)[:5],
+                        final = str(franja.final)[:5],
                         pk = franja.pk
                     )
                     json_res.append(json_obj)

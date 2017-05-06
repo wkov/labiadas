@@ -9,10 +9,12 @@ from romani.models import EmailModelBackend
 
 from django.contrib.auth.decorators import login_required as auth
 
-from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView, ComandesListView, ProductesListView, NodesListView, NodesDatesListView, diaNodeEvents
-from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte, HistorialListView, ProducteUpdateView, NodeUpdateView
-from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView, ProductorsListView, ProductorUpdateView, DatesListView, NodeProductorsUpdateView
-from romani.views import DiaEntregaCreateView, NodeComandesListView, diaEntregaEvents, LlocsListView, ContracteUpdateView, diaEntregaSelected, DiaEntregaProductorView, FranjaHorariaCreateView, AdjuntCreateView
+from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView, NodeComandesListView
+from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView
+from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, LlocsListView, diaEntregaSelected, DiaEntregaProductorView
+from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView, ContracteUpdateView
+from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte
+from romani.views import ComandaFormView, InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
 
 from django.contrib.auth.views import login, logout_then_login
 
@@ -33,7 +35,7 @@ urlpatterns = [
 
     url(r'^vista_productors/', auth(ProductorsListView.as_view()), name="productor_list"),
     url(r'^pro/(?P<pro>\d+)/vista_comandes/', auth(ComandesListView.as_view()), name='vista_comandes'),
-    url(r'^pro/(?P<pk>\d+)/data_comandes/(?P<dataentrega>\d+)$', auth(views.DiaEntregaProductorView), name='data_comandes'),
+    url(r'^pro/(?P<pk>\d+)/data_comandes/(?P<dataentrega>\d+)$', auth(DiaEntregaProductorView), name='data_comandes'),
     url(r'^pro/(?P<pro>\d+)/calEvents/$', auth(diaEntregaEvents), name="calEvents"),
     url(r'^pro/(?P<pro>\d+)/cal2Events/$', auth(diaEntregaSelected), name="cal2Events"),
     url(r'^pro/(?P<pro>\d+)/vista_productes/', auth(ProductesListView.as_view()), name='vista_productes'),

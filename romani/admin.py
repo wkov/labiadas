@@ -33,8 +33,9 @@ class userprofileAdmin(admin.ModelAdmin):
     list_filter = ['user','bio','lloc_entrega_perfil']
 
 class adjuntAdmin(admin.ModelAdmin):
-    search_fields = ['arxiu']
-    list_filter = ['arxiu']
+    list_display = ('arxiu', 'productor')
+    search_fields = ['arxiu', 'productor']
+    list_filter = ['arxiu', 'productor']
 
 class etiquetaAdmin(admin.ModelAdmin):
     search_fields = ['nom', 'img']
