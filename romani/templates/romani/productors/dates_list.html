@@ -19,13 +19,13 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
        aspectRatio: 3,
        eventSources: [
-{#        {#}
-{#            url: '/pro/' + {{ productor.pk }} + '/calEvents/',#}
-{#            editable: false,#}
-{#            color: 'black',   // an option!#}
-{#            textColor: 'white' // an option!#}
-{#        }#}
-{#           ,#}
+        {
+            url: '/pro/' + {{ productor.pk }} + '/calEvents/',
+            editable: false,
+            color: 'black',   // an option!
+            textColor: 'white' // an option!
+        }
+           ,
         {
             url: '/pro/' + {{ productor.pk }} + '/cal2Events/',
             editable: false,
