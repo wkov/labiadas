@@ -19,19 +19,19 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
        aspectRatio: 3,
        eventSources: [
-        {
-            url: '/pro/' + {{ productor.pk }} + '/calEvents/',
-            editable: false,
-            color: 'black',   // an option!
-            textColor: 'white' // an option!
-        }
-{#           ,#}
 {#        {#}
-{#            url: '/pro/' + {{ productor.pk }} + '/cal2Events/',#}
+{#            url: '/pro/' + {{ productor.pk }} + '/calEvents/',#}
 {#            editable: false,#}
-{#            color: 'green',   // an option!#}
+{#            color: 'black',   // an option!#}
 {#            textColor: 'white' // an option!#}
 {#        }#}
+{#           ,#}
+        {
+            url: '/pro/' + {{ productor.pk }} + '/cal2Events/',
+            editable: false,
+            color: 'green',   // an option!
+            textColor: 'white' // an option!
+        }
       ]
     })
 
