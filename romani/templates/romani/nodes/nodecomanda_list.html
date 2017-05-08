@@ -29,9 +29,13 @@
                         </div>
     </div>
     <br/>
+
+    <a href="{% url 'export_comandes_xls' %}">Exportar comandes</a>
+
+    <br/>
     {% if object_list %}<br/>
         Comandes: <br/>
-     <table border="1">
+     <table border="1" style="width: 100%; text-align: center; ">
      <th>Producte</th>
      <th>Lloc d'entrega</th>
      <th>[Cant Format]</th>
@@ -64,7 +68,7 @@
     {% if contractes %}
         <br/>
         Contractes: <br/>
-     <table border="1">
+     <table border="1" style="width: 100%; text-align: center; ">
      <th>Producte</th>
      <th>Lloc d'entrega</th>
      <th>[Cant Format]</th>
@@ -99,7 +103,24 @@
     {% if not object_list %}
         {% if not contractes %}
             Encara no hi ha comandes fetes per aquest dia d'entrega
+            {% if not productes %}
+                ni productes confirmats pels productors
+            {% endif %}
         {% endif %}
+    {% endif %}
+
+    {% if productes %}
+        <br/><br/>
+     <p>Els següents productes estan disponibles el dia d'entrega seleccionat:</p>
+        <table border="1">
+        <th>Producte</th>
+        <th>Productor</th>
+        <th>Karma</th>
+    {% for p in productes %}
+        <tr><td>{{ p.nom }}</td><td>{{ p.productor }}</td><td>{{ p.karma_value }}</td></tr>
+    {% endfor %}
+        </table>
+    <br/>
     {% endif %}
 
 {% endblock %}

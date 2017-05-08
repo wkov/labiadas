@@ -9,8 +9,8 @@ from romani.models import EmailModelBackend
 
 from django.contrib.auth.decorators import login_required as auth
 
-from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView, NodeComandesListView
-from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView
+from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView, NodeComandesListView, export_comandes_xls
+from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, LlocsListView, diaEntregaSelected, DiaEntregaProductorView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView, ContracteUpdateView
 from romani.views import UserProfileEditView, etiquetaView, MyRegistrationView, CoordenadesView, AllCoordenadesView, buskadorProducte
@@ -44,9 +44,13 @@ urlpatterns = [
     url(r'^pro/(?P<pro>\d+)/vista_historial/', auth(HistorialListView.as_view()), name='vista_historial'),
     url(r"^productor/update/(?P<pk>\d+)/$", auth(ProductorUpdateView.as_view()), name="productor_update"),
     url(r"^producte/update/(?P<pk>\d+)/$", auth(ProducteUpdateView.as_view()), name="producte_update"),
+    url(r"^format/update/(?P<pk>\d+)/$", auth(TipusProducteUpdateView.as_view()), name="format_update"),
     url(r"^pro/(?P<pro>\d+)/adjunt/create/$", auth(AdjuntCreateView.as_view()), name="adjunt_create"),
+    url(r"^pro/(?P<pro>\d+)/format/create/$", auth(TipusProducteCreateView.as_view()), name="format_create"),
 
 
+
+    url(r'^export/xls/$', auth(export_comandes_xls), name='export_comandes_xls'),
     url(r'^vista_nodes/', auth(NodesListView.as_view()), name='vista_nodes'),
     url(r'^dis/(?P<dis>\d+)/node_comandes/(?P<pk>\d+)$', auth(NodeComandesListView.as_view()), name='node_comandes'),
     url(r'^dis/(?P<dis>\d+)/vista_nodesdates/', auth(NodesDatesListView.as_view()), name='vista_nodesdates'),

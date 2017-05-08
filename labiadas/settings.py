@@ -46,7 +46,11 @@ INSTALLED_APPS = (
     'notifications',
     'django_messages',
     'romani',
+    'xlwt',
 )
+
+
+
 
 SITE_ID = 1
 

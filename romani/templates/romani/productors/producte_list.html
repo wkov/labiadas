@@ -70,4 +70,24 @@
         {% endfor %}
 
     </table>
+        <br/>
+    <table>
+    <th>Selecciona el format que vols editar:</th>
+
+        {% for link in formats %}
+            <tr>
+{#            <form method="post" action="" class="vote_form">#}
+              <td>
+                  <a href="
+                  {% url 'format_update' link.pk %}
+                  ">
+                  <b>[{{ link.nom }}]</b>
+                </a>
+              </td>
+{#            </form>#}
+{#            <br/>#}
+                </tr>
+        {% endfor %}
+
+    </table>
 {% endblock %}

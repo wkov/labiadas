@@ -54,7 +54,17 @@ class UserProfileForm(forms.ModelForm):
       profile = super(UserProfileForm, self).save(*args,**kwargs)
       return profile
 
+class TipusProducteForm(forms.ModelForm):
 
+    class Meta:
+        model = TipusProducte
+        fields = ("nom", "preu", "stock", "productor" )
+
+    def __init__(self, productor, *args, **kwargs):
+
+        super(TipusProducteForm, self).__init__(*args, **kwargs)
+        self.fields["productor"].queryset = Productor.objects.filter(pk=productor.pk)
+        self.fields["productor"].initial = productor
 
 class ProductorForm(forms.ModelForm):
 

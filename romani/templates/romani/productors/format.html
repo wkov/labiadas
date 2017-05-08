@@ -2,28 +2,8 @@
 
 {% block content %}
 
-    <script>
-    jQuery(document).ready(function($) {
-
-        $("#checkAll").click(function () {
-
-            $('input:checkbox').not(this).prop('checked', this.checked);
-        })
-        })
-    </script>
-
-    <div>
-    {% if message %}
-
-            <div class="thumbnail" >
-            <span class="glyphicon glyphicon-info-sign"></span>
-                {{ message }}
-            </br>
-        </div>
-    {% endif %}
-    </div>
-
-
+<form method="post" action="">
+  {% csrf_token %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -34,7 +14,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_dates' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'vista_dates' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
                                     <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -50,7 +30,7 @@
 {#                                 </a>#}
 {#                        </div>#}
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+                                <a href="{% url 'vista_productes' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
                                     <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
@@ -75,98 +55,8 @@
                         </div>
     </div>
     <br/>
-<form method="post" action="">
-  {% csrf_token %}
-
-{#  {{ form.as_p }}#}
-<p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
-<p> &nbsp; &nbsp;
-<input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</p>
-    {% for p in productes %}
-
-        {% if p in productes_sel %}
-            <p> &nbsp; &nbsp;
-             <input type="checkbox" name="productes" value="{{p.pk}}" checked/><b> {{p.nom}}</b>
-            </p>
-        {% else %}
-            <p> &nbsp; &nbsp;
-             <input type="checkbox" name="productes" value= {{p.pk}} /><b> {{p.nom}}</b>
-            </p>
-        {% endif %}
-
-    {% endfor %}
+  {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}
   <input type="submit" value="Grabar">
 </form>
-
-
-
-{% if comandes %}
-
-   <br/>    Comandes: <br/>
-     <table border="1" style="width: 100%">
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Client</th>
-     <th>Data de comanda</th>
-        {% for link in comandes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
-               <tr>
-                        <td>[{{ link.producte.nom }}]</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td>{{ link.dia_entrega.date }}</td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-                        <td>{{ link.data_comanda.date }}</td>
-                    </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-       </table>
-    {% endif %}
-    {% if contractes %}
-    <br/>
-    Contractes: <br/>
-     <table border="1" style="width: 100%">
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Client</th>
-     <th>Data de comanda</th>
-     <th>Freqüència</th>
-        {% for link in contractes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
-               <tr>
-                        <td>[{{ link.producte.nom }}]</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td>{{ link.prox_entrega.date }}</td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-                        <td>{{ link.data_comanda.date }}</td>
-                        <td>{{ link.freq_txt }}</td>
-                    </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-       </table>
-    {% endif %}
 {% endblock %}

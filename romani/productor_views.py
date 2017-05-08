@@ -1,7 +1,7 @@
 __author__ = 'sergi'
 
-from .models import Comanda, Productor, Producte, Contracte, DiaEntrega
-from .forms import Adjunt, AdjuntForm, ProductorDiaEntregaForm, ProductorForm, ProducteForm
+from .models import Comanda, Productor, Producte, Contracte, DiaEntrega, TipusProducte
+from .forms import Adjunt, AdjuntForm, ProductorDiaEntregaForm, ProductorForm, ProducteForm, TipusProducteForm
 
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
@@ -87,6 +87,7 @@ class ProductesListView(ListView):
         context = super(ProductesListView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
+        context["formats"] = TipusProducte.objects.filter(productor=productor)
         return context
 
 class LlocsListView(ListView):
@@ -116,6 +117,54 @@ class LlocsListView(ListView):
 #         productors = Productor.objects.filter(responsable=self.request.user)
 #         context["productors"] = productors
 #         return context
+
+class TipusProducteCreateView(CreateView):
+
+    model = TipusProducte
+    form_class = TipusProducteForm
+    template_name = "romani/productors/format.html"
+
+    def get_form_kwargs(self):
+        kwargs = super(TipusProducteCreateView, self).get_form_kwargs()
+        producte = Producte.objects.get(productor__responsable=self.request.user, pk=self.kwargs['pro'])
+        kwargs["productor"] = producte.productor
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(TipusProducteCreateView, self).get_context_data(**kwargs)
+        producte = Producte.objects.get(productor__responsable=self.request.user, pk=self.kwargs['pro'])
+        context["productor"] = producte.productor
+        return context
+
+    def get_success_url(self):
+        producte = Producte.objects.get(pk=self.kwargs['pro'])
+        return "/producte/update/" + str(producte.pk)
+
+
+class TipusProducteUpdateView(UpdateView):
+    model = TipusProducte
+    form_class = TipusProducteForm
+    # success_url="/vista_productes/"
+    template_name = "romani/productors/format.html"
+    # user = request.user
+
+    def get_form_kwargs(self):
+        kwargs = super(TipusProducteUpdateView, self).get_form_kwargs()
+        tipusproducte = TipusProducte.objects.get(pk=self.kwargs['pk'])
+        kwargs["productor"] = tipusproducte.productor
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(TipusProducteUpdateView, self).get_context_data(**kwargs)
+        tipusproducte = TipusProducte.objects.get(pk=self.kwargs['pk'])
+        context["productor"] = tipusproducte.productor
+        return context
+
+    def get_success_url(self):
+        p = TipusProducte.objects.get(pk=self.kwargs['pk'])
+        pro_id = p.productor_id
+        return "/pro/" + str(pro_id) + "/vista_productes/"
+
 
 class AdjuntCreateView(CreateView):
 

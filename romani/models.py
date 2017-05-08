@@ -230,7 +230,7 @@ class Contracte(models.Model):
     data_comanda = models.DateTimeField(auto_now_add=True)
     data_fi = models.DateTimeField(null=True, blank=True)
     client = models.ForeignKey(User)
-    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, null=True)
+    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True)
     # primera_entrega = models.DateTimeField(null=True, blank=True)
     # darrera_entrega = models.DateTimeField(null=True, blank=True)
     # data_entrega = models.IntegerField(null=True, blank=True)

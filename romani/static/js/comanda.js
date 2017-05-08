@@ -112,10 +112,16 @@ jQuery(document).ready(function($)
 					  function(data) {
 
 						  modal.style.display = "none";
-						  //call = "Has fet la comanda correctament"
-						  //CallNotification(call,"success")
-						  location.reload()
-					});
+
+						  if ( data["contracte"] == 1) {
+							  url = "/contracte/update/" + data["pk"];
+							  location = url;
+							  //call = "Has fet la comanda correctament"
+							  //CallNotification(call,"success")
+						  }else {
+							  location.reload()
+						  }
+								});
 				}
 	});
 

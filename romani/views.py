@@ -126,19 +126,6 @@ def buskadorProducte(request):
 
 
 
-
-
-# def DiaEntregaProductorView(request, pro, pk):
-#     user_p = UserProfile.objects.filter(user=request.user).first()
-#     productor = Productor.objects.get(pk=pro)
-#     productes = Producte.objects.filter(productor=productor)
-#     diaentrega = DiaEntrega.objects.get(pk=pk)
-#     form = ProductorDiaEntregaForm
-#
-#     return render(request, "romani/productors/diaentrega.html", {'up': user_p, 'productes': productes, 'diaentrega': diaentrega})
-
-
-
 def nouUsuariView(request):
 
     nodes = Node.objects.all()
@@ -152,28 +139,6 @@ def nouUsuariView(request):
     user_p.save()
 
     return render(request, "nouUsuari.html", {'up': user_p, 'nodes': nodes, 'frequencia': s.nom})
-
-
-
-
-
-
-
-
-
-
-# class NodesProductorsListView(ListView):
-#     model = Node
-#     template_name = "romani/nodes/nodesproductors_list.html"
-#
-#     def get_queryset(self):
-#         return Node.objects.get(pk=self.kwargs['dis'])
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(NodesProductorsListView, self).get_context_data(**kwargs)
-#         node = Node.objects.get(pk=self.kwargs['dis'])
-#         context["node"] = node
-#         return context
 
 
 
@@ -430,19 +395,19 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
         if frequencia.num == 1:
             while(next_val):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
-                s = DiaEntrega.objects.filter(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk).first()
-                if(s):
+                try:
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
                     d_list.append(s)
-                else:
+                except:
                     return d_list
         if frequencia.num == 2:
             while(next_val):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
-                s = DiaEntrega.objects.filter(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk).first()
-                if(s):
+                try:
+                    s = DiaEntrega.objects.get(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
                     d_list.append(s)
-                else:
+                except:
                     return d_list
 
         if frequencia.num == 3:
@@ -450,10 +415,10 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
-                s = DiaEntrega.objects.filter(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk).first()
-                if(s):
+                try:
+                    s = DiaEntrega.objects.get(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
                     d_list.append(s)
-                else:
+                except:
                     return d_list
 
         if frequencia.num == 4:
@@ -462,10 +427,10 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
-                s = DiaEntrega.objects.filter(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk).first()
-                if(s):
+                try:
+                    s = DiaEntrega.objects.get(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
                     d_list.append(s)
-                else:
+                except:
                     return d_list
 
         return d_list
@@ -488,6 +453,8 @@ class ComandaFormBaseView(FormView):
         response.status = 200 if valid_form else 500
         return response
 
+    # def get_success_url(self):
+    #     return reverse("comandes")
 
     def form_valid(self, form):
         producte = get_object_or_404(Producte, pk=form.data["producte_pk"])
@@ -527,16 +494,21 @@ class ComandaFormBaseView(FormView):
 
         if frequencia == '0':
             v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu)
+
+            ret = {"contracte": 0, "success": 1}
+
         else:
 
             dies_entrega = prox_calc(producte, lloc_obj, data_entrega, franja, freq)
 
             v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, freq_txt=freq_txt, frequencia=frequencia)
 
+            ret = {"contracte": 1, "success": 1, "pk": v.pk}
+
             for d in dies_entrega:
                 v.dies_entrega.add(d)
 
-        ret = {"success": 1}
+        # ret = {"success": 1}
         notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
                   description="a la cistella" , timestamp=timezone.now())
 
@@ -897,8 +869,8 @@ def NodeCalcView(request):
             producte = Producte.objects.filter(pk=g).first()
             json_res = []
             date = datetime.date.today() + timedelta(hours=48)
-            for dia in node.dies_entrega.filter(date__gt =date)[0:5]:
-                if dia in producte.dies_entrega.all():
+            # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
+            for dia in producte.dies_entrega.order_by("date").filter(node=node,date__gte=date):
                     # a = str(dia.date())
                     day_str = str(dia.date.year) + "-" + str(dia.date.month) + "-" + str(dia.date.day)
                     a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
