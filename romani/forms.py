@@ -1,6 +1,6 @@
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt, Frequencia
 from django.contrib.auth.models import  User
 from django.forms.widgets import CheckboxSelectMultiple
 from romani.widgets import SelectTimeWidget
@@ -72,13 +72,13 @@ class ProductorForm(forms.ModelForm):
 
     class Meta:
         model = Productor
-        fields = ("nom", "cuerpo")
+        fields = ("nom", "text", "responsable")
         # exclude = ("")
 
-    # def __init__(self, productor, *args, **kwargs):
-    #     super(ProductorForm, self).__init__(*args, **kwargs)
-    #     self.fields["adjunts"].queryset = Adjunt.objects.filter(productor=productor)
-    #     self.fields["adjunts"].widget = CheckboxSelectMultiple()
+    def __init__(self, user, *args, **kwargs):
+        super(ProductorForm, self).__init__(*args, **kwargs)
+        self.fields["responsable"].queryset = User.objects.filter(pk=user.pk)
+        # self.fields["responsable"].initial = user
 
 class AdjuntForm(forms.ModelForm):
 
@@ -147,8 +147,16 @@ class NodeForm(forms.ModelForm):
 
     class Meta:
         model = Node
-        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "a_domicili", "text", "frequencies")
+        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "a_domicili", "text", "frequencies", "responsable")
         # exclude = ("")
+
+    def __init__(self, user, *args, **kwargs):
+        super(NodeForm, self).__init__(*args, **kwargs)
+        self.fields["responsable"].widget=CheckboxSelectMultiple()
+        self.fields["responsable"].queryset = User.objects.filter(pk=user.pk).all()
+        # self.fields["responsable"].initial = user
+        self.fields["frequencies"].widget=CheckboxSelectMultiple()
+        self.fields["frequencies"].queryset = Frequencia.objects.all()
 
 
 class ProducteForm(forms.ModelForm):
@@ -158,14 +166,14 @@ class ProducteForm(forms.ModelForm):
         # fields = ("nom", "cuerpo", "adjunt", "responsable")
         exclude = ("productor", "karma_value", "datahora", "karma_date", "frequencies", "dies_entrega", "nodes")
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, productor, *args, **kwargs):
 
         super(ProducteForm, self).__init__(*args, **kwargs)
 
         # self.fields["nodes"].widget = CheckboxSelectMultiple()
         # self.fields["nodes"].queryset = Node.objects.filter(productors__id__exact=self.instance.productor.id)
         self.fields["formats"].widget = CheckboxSelectMultiple()
-        self.fields["formats"].queryset = TipusProducte.objects.filter(productor=self.instance.productor)
+        self.fields["formats"].queryset = TipusProducte.objects.filter(productor=productor)
 
 
 # class LlocsForm(forms.ModelForm):

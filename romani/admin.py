@@ -2,13 +2,13 @@ from django.contrib import admin
 from .models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia
 
 class producteAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'productor', 'descripcio', 'entradilla', 'karma_date', 'karma_value')
+    list_display = ('nom', 'productor', 'descripcio', 'text_curt', 'karma_date', 'karma_value')
     search_fields = ['nom']
     list_filter = ['nom', 'productor']
 
 
 class productorAdmin(admin.ModelAdmin):
-    list_display = ('nom','cuerpo')
+    list_display = ('nom','text')
     search_fields = ['nom']
     list_filter = ['nom']
 
@@ -53,7 +53,7 @@ class franjahorariaAdmin(admin.ModelAdmin):
     list_filter = ['inici','final']
 
 class nodeAdmin(admin.ModelAdmin):
-    list_display = ('nom','carrer','poblacio','codi_postal','responsable', 'a_domicili')
+    list_display = ('nom','carrer','poblacio','codi_postal', 'a_domicili')
     search_fields = ['nom','carrer','poblacio','codi_postal','responsable','a_domicili']
     list_filter = ['nom','carrer','poblacio','codi_postal','responsable','a_domicili']
 

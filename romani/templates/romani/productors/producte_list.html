@@ -53,10 +53,15 @@
                         </div>
     </div>
     <br/>
-    <table>
-    <th>Selecciona el producte que vols editar:</th>
 
+    <a href="{% url 'producte_create' productor.pk %}">Crear Nou Producte</a> <br/>
+    <a href="{% url 'format_create' productor.pk %}">Crear Nou Format</a> <br/><br/>
+
+    <table>
+
+    <th>Selecciona el producte que vols editar:</th>
         {% for link in object_list %}
+
             <tr>
 {#            <form method="post" action="" class="vote_form">#}
               <td>
@@ -72,6 +77,8 @@
     </table>
         <br/>
     <table>
+
+
     <th>Selecciona el format que vols editar:</th>
 
         {% for link in formats %}

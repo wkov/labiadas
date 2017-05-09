@@ -3,19 +3,18 @@ __author__ = 'sergi'
 from .models import Node, DiaEntrega, FranjaHoraria, Comanda, Contracte
 from .forms import NodeForm, NodeProductorsForm, FranjaHorariaForm, DiaEntregaForm
 
+from django.contrib.auth.models import Group, User
+
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
-from django.views.generic.edit import DeleteView
 from django.views.generic import ListView
 
 import xlwt
+from itertools import chain
 
-from django.http import HttpResponse
-# from django.contrib.auth.models import User
-
-def export_comandes_xls(request):
+def export_comandes_xls(request, pk):
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="users.xls"'
+    response['Content-Disposition'] = 'attachment; filename="comandes.xls"'
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Comandes')
@@ -33,13 +32,26 @@ def export_comandes_xls(request):
 
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
+    old_row = ""
+    total = ""
+    rows = Comanda.objects.filter(dia_entrega__pk=pk).order_by('client').values_list('client__first_name', 'producte__nom', 'cantitat', 'format__nom', 'preu')
+    rows2 = Contracte.objects.filter(dies_entrega__id__exact=pk).order_by('client').values_list('client__first_name', 'producte__nom', 'cantitat', 'format__nom', 'preu')
 
-    rows = Comanda.objects.all().values_list('client__first_name', 'producte__nom', 'cantitat', 'format__nom', 'preu')
+    rows = list(chain(rows, rows2))
+    rows.sort(key=lambda tup: tup[0])
     for row in rows:
+        if row[0]!=old_row:
+            row_num += 1
+            ws.write(row_num, col_num, total, font_style)
+            total = 0
+        old_row=row[0]
+        total = row[4] + total
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
 
+    row_num += 1
+    ws.write(row_num, col_num, total, font_style)
 
 
     wb.save(response)
@@ -81,6 +93,7 @@ class NodeComandesListView(ListView):
         node = Node.objects.get(pk=self.kwargs['dis'])
         context["node"] = node
         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
+        context["diaentrega"] = diaentrega
         context["contractes"] = Contracte.objects.filter(dies_entrega__id__exact=diaentrega.id)
         context['productes'] = diaentrega.productes.all()
         return context
@@ -133,23 +146,82 @@ class DiaEntregaCreateView(CreateView):
         node = Node.objects.get(pk=self.kwargs['dis'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
+
+class DiaEntregaUpdateView(UpdateView):
+    model = DiaEntrega
+    form_class = DiaEntregaForm
+    template_name = "romani/nodes/diaentrega_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super(DiaEntregaUpdateView, self).get_form_kwargs()
+        d = DiaEntrega.objects.get(pk=self.kwargs['pk'])
+        kwargs['node'] = d.node
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(DiaEntregaUpdateView, self).get_context_data(**kwargs)
+        d = DiaEntrega.objects.get(pk=self.kwargs['pk'])
+        context["node"] = d.node
+        return context
+
+    def get_success_url(self):
+        d = DiaEntrega.objects.get(pk=self.kwargs['pk'])
+        return "/dis/" + str(d.node.pk) + "/node_comandes/" + str(d.pk)
+
     # def form_valid(self, form):
     #     f = form.save(commit=False)
     #     f.save()
     #     return super(DiaEntregaCreateView, self).form_valid(form)
 
 
+
+class NodeCreateView(CreateView):
+    model = Node
+    form_class = NodeForm
+    template_name = "romani/nodes/node_form.html"
+    success_url = "/vista_nodes/"
+
+    def get_form_kwargs(self):
+        kwargs = super(NodeCreateView, self).get_form_kwargs()
+        user = self.request.user
+        kwargs["user"] = user
+        return kwargs
+
+    def form_valid(self, form):
+        f = form.save(commit=False)
+        g = Group.objects.get(name='Nodes')
+
+        for r in form.data["responsable"]:
+            u = User.objects.get(pk=r)
+            if not u in g.user_set.all():
+                g.user_set.add(u)
+        f.save()
+        return super(NodeCreateView, self).form_valid(form)
+
 class NodeUpdateView(UpdateView):
     model = Node
     form_class = NodeForm
-    # success_url="/vista_nodes/"
     template_name = "romani/nodes/node_form.html"
+
+
+    def get_form_kwargs(self):
+        kwargs = super(NodeUpdateView, self).get_form_kwargs()
+        user = self.request.user
+        kwargs["user"] = user
+        return kwargs
 
     def get_success_url(self):
         node = Node.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
-
+    def form_valid(self, form):
+        f = form.save(commit=False)
+        g = Group.objects.get(name='Nodes')
+        for r in form.data["responsable"]:
+            if not r in g.user_set.all():
+                g.user_set.add(self.request.user)
+        f.save()
+        return super(NodeUpdateView, self).form_valid(form)
 
 class NodeProductorsUpdateView(UpdateView):
     model = Node

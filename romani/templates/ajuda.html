@@ -58,7 +58,21 @@
     que sempre trobaràs en el menú esquerra
             <br/> <br/>
 
-    <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge"> 6) Tens algun altre dubte ?</a><br/>
+    <a href="{% url 'productor_list' %}"> 6) Sóc <b>productor</b>, què haig de fer per oferir els meus productes?</a><br/>
+    Els productors teniu una secció de la web dedicada especialment a vosaltres. Registra't com a productor:
+        <a href="{% url 'productor_list' %}">
+            <span class='glyphicon glyphicon-globe collapsed-element'></span></a>
+            <br/> <br/>
+
+
+    <a href="{% url 'vista_nodes' %}"> 7) Sóc responsable d'un <b>Lloc d'entrega</b> de productes, com puc fer servir la web?</a><br/>
+    Els responsables de llocs d'entrega teniu una secció de la web dedicada. Registra't com a responsable de Lloc d'entrega:
+        <a href="{% url 'vista_nodes' %}">
+            <span class='glyphicon glyphicon-globe collapsed-element'></span></a>
+            <br/> <br/>
+
+
+    <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge"> 8) Tens algun altre dubte ?</a><br/>
     Escriu-nos un missatge <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge">
           (Clica aquí <span class="glyphicon glyphicon-comment" style="color: #f6a828">  </span>)</a>
     i et contestarem l'abans possible.

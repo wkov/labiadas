@@ -126,19 +126,19 @@ class TipusProducteCreateView(CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(TipusProducteCreateView, self).get_form_kwargs()
-        producte = Producte.objects.get(productor__responsable=self.request.user, pk=self.kwargs['pro'])
-        kwargs["productor"] = producte.productor
+        productor = Productor.objects.get(pk=self.kwargs['pro'])
+        kwargs["productor"] = productor
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(TipusProducteCreateView, self).get_context_data(**kwargs)
-        producte = Producte.objects.get(productor__responsable=self.request.user, pk=self.kwargs['pro'])
-        context["productor"] = producte.productor
+        productor = Productor.objects.get(pk=self.kwargs['pro'])
+        context["productor"] = productor
         return context
 
     def get_success_url(self):
-        producte = Producte.objects.get(pk=self.kwargs['pro'])
-        return "/producte/update/" + str(producte.pk)
+        productor = Productor.objects.get(pk=self.kwargs['pro'])
+        return "/pro/" + str(productor.pk) + "/vista_productes/"
 
 
 class TipusProducteUpdateView(UpdateView):
@@ -323,6 +323,12 @@ class ProducteUpdateView(UpdateView):
     template_name = "romani/productors/producte_form.html"
     # user = request.user
 
+    def get_form_kwargs(self):
+        kwargs = super(ProducteUpdateView, self).get_form_kwargs()
+        producte = Producte.objects.get(pk=self.kwargs['pk'])
+        kwargs["productor"] = producte.productor
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super(ProducteUpdateView, self).get_context_data(**kwargs)
         producte = Producte.objects.get(pk=self.kwargs['pk'])
@@ -334,17 +340,53 @@ class ProducteUpdateView(UpdateView):
         pro_id = p.productor_id
         return "/pro/" + str(pro_id) + "/vista_productes/"
 
+
+class ProductorCreateView(CreateView):
+    model = Productor
+    form_class = ProductorForm
+    template_name = "romani/productors/productor_form.html"
+    success_url = "/vista_productors/"
+
+    def get_form_kwargs(self):
+        kwargs = super(ProductorCreateView, self).get_form_kwargs()
+        user = self.request.user
+        kwargs["user"] = user
+        return kwargs
+
+class ProducteCreateView(CreateView):
+    model = Producte
+    form_class = ProducteForm
+    template_name = "romani/productors/producte_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super(ProducteCreateView, self).get_form_kwargs()
+        productor = Productor.objects.get(pk=self.kwargs['pro'])
+        kwargs["productor"] = productor
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(ProducteCreateView, self).get_context_data(**kwargs)
+        context["productor"] = Productor.objects.get(pk=self.kwargs['pro'])
+        return context
+
+    def get_success_url(self):
+        p = Productor.objects.get(pk=self.kwargs['pro'])
+        return "/pro/" + str(p.pk) + "/vista_productes/"
+
+
 class ProductorUpdateView(UpdateView):
     model = Productor
     form_class = ProductorForm
     # success_url="/vista_productors/"
     template_name = "romani/productors/productor_form.html"
 
-    # def get_form_kwargs(self):
-    #     kwargs = super(ProductorUpdateView, self).get_form_kwargs()
-    #     productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
-    #     kwargs["productor"] = productor
-    #     return kwargs
+
+
+    def get_form_kwargs(self):
+        kwargs = super(ProductorUpdateView, self).get_form_kwargs()
+        user = self.request.user
+        kwargs["user"] = user
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(ProductorUpdateView, self).get_context_data(**kwargs)

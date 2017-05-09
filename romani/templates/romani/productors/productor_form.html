@@ -4,6 +4,7 @@
 
 <form method="post" action="">
   {% csrf_token %}
+{% if productor %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -56,7 +57,7 @@
     </div>
     <br/>
     <a href="{% url 'adjunt_create' productor.pk %}">Carregar nova foto</a>
-
+{% endif %}
        <br/>
     <br/>
   {{ form.as_p }}

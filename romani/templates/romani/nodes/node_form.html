@@ -4,6 +4,7 @@
 
 <form method="post" action="">
   {% csrf_token %}
+    {% if object %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'node_update' object.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -30,6 +31,7 @@
                                  </a>
                         </div>
     </div>
+    {% endif %}
     <br/>
   {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}

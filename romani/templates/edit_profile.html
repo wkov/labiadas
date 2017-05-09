@@ -69,8 +69,6 @@
                         marker[i] = new google.maps.Marker({
                           position: place,
                           title: "A Domicili",
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
                           map: map,
                           icon: img_domicili
                     });
@@ -78,8 +76,6 @@
 					    marker[i] = new google.maps.Marker({
                           position: place,
                           title: arrayItem.nom,
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
                           map: map,
                           icon: image
                     });
@@ -124,109 +120,6 @@
           });
 
 
-{#        map.addListener('click', function(e) {#}
-{#                placeMarker(e.latLng, map);#}
-{# });#}
-{##}
-{#     var punt_lat = document.getElementById("punt_lat");#}
-{#     var punt_lng = document.getElementById("punt_lng");#}
-{##}
-{#     if (marker_d == null)#}
-{#     {#}
-{#       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);#}
-{#       marker_d = new google.maps.Marker({#}
-{#          position: loqation,#}
-{#          map: map#}
-{#      }); } else {   marker_d.setPosition(loqation); }#}
-
-{#            google.maps.event.trigger(map, 'resize');#}
-{#            map.setCenter(loc);#}
- }
-{#      function initMap2() {#}
-{#        var loc;#}
-{#          loc = new google.maps.LatLng(41.539064, 2.2130028);#}
-{#          map = new google.maps.Map(document.getElementById('map'), {#}
-{#          center: loc,#}
-{#          zoom: 12,#}
-{#          mapTypeId: 'satellite'#}
-{#        });#}
-{##}
-{##}
-{#          $.post("/allcoordenades/", function(data) {#}
-{#              var i = 0;#}
-{#              var marker = [];#}
-{#              var image = '/static/img/u-pick_stand.png'#}
-{#              var img_domicili = '/static/img/vespa.png'#}
-{#              data.forEach( function(arrayItem)#}
-{#				{#}
-{#                    var contentString = '<div id="content">'+#}
-{#                          '<div id="siteNotice">'+#}
-{#                          '</div>'+#}
-{#                          '<h1 id="firstHeading" class="firstHeading">' +#}
-{#                          arrayItem.nom +#}
-{#                          '</h1>'+#}
-{#                          '<div id="bodyContent">'+#}
-{#                          '<p><b>' +#}
-{#                          arrayItem.nom +#}
-{#                          '</b>,' +#}
-{#                          arrayItem.text +#}
-{#                          '</p>' +#}
-{#                          '</div>'+#}
-{#                          '</div>';#}
-{##}
-{#                      var infowindow = new google.maps.InfoWindow({#}
-{#                        content: contentString#}
-{#                      });#}
-{##}
-{#                    var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);#}
-{#                    if (arrayItem.a_domicili == "True"){#}
-{#                        marker[i] = new google.maps.Marker({#}
-{#                          position: place,#}
-{#                          title: "A Domicili",#}
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
-{#                          map: map,#}
-{#                          icon: img_domicili#}
-{#                    });#}
-{#                    }else{#}
-{#					    marker[i] = new google.maps.Marker({#}
-{#                          position: place,#}
-{#                          title: arrayItem.nom,#}
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
-{#                          map: map,#}
-{#                          icon: image#}
-{#                    });#}
-{#                        }#}
-{#                      marker[i].addListener('click', function() {#}
-{#                        infowindow.open(map, marker[i]);#}
-{#                      });#}
-{##}
-{#					i++;#}
-{#				});#}
-{##}
-{#          });#}
-{##}
-{##}
-{##}
-{##}
-{#        map.addListener('click', function(e) {#}
-{#                placeMarker(e.latLng, map);#}
-{#{);#}
-{##}
-{#     var punt_lat = document.getElementById("punt_lat");#}
-{#     var punt_lng = document.getElementById("punt_lng");#}
-{##}
-{#     if (marker_d == null)#}
-{#     {#}
-{#       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);#}
-{#       marker_d = new google.maps.Marker({#}
-{#          position: loqation,#}
-{#          map: map#}
-{#      }); } else {   marker_d.setPosition(loqation); }#}
-{##}
-{##}
-{# }#}
           function coord() {
 
               $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function (data) {
@@ -235,14 +128,6 @@
                   var Lng = data["Lng"];
                   var location = new google.maps.LatLng(Lat, Lng);
 
-{#                  map = new google.maps.Map(document.getElementById('map'), {#}
-{#                      center: location,#}
-{#                      zoom: 15#}
-{#                      ,#}
-{#                      mapTypeId: 'satellite'#}
-{#                  });#}
-
-                  {#            map.setCenter(location);#}
                               map.setZoom(15);
 
                               google.maps.event.trigger(map, 'resize');
@@ -266,14 +151,6 @@
               zoom: 15,
                   mapTypeId: 'satellite'
                 });
-
-{#            map.setCenter(location);#}
-{#            map.setZoom(15);#}
-
-{#            google.maps.event.trigger(map, 'resize');#}
-{#            map.setCenter(location);#}
-
-
         });
 
 
@@ -368,79 +245,94 @@
 
 				});
 
-
-{#    map.addListener('click', function(e) {#}
-{#    placeMarker(e.latLng, map);#}
-{#    });#}
-
-{#     var punt_lat = document.getElementById("punt_lat");#}
-{#     var punt_lng = document.getElementById("punt_lng");#}
-{##}
-{#     if (marker_d == null)#}
-{#     {#}
-{#       var loqation= new google.maps.LatLng(punt_lat.value, punt_lng.value);#}
-{#       marker_d = new google.maps.Marker({#}
-{#          position: loqation,#}
-{#          map: map#}
-{#      }); } else {   marker_d.setPosition(loqation); }#}
-
-
-{#          $.post("/horari/", function(data) {#}
-{#            var acc = document.getElementById('accordion');#}
-{#            var j;#}
-{#            var h;#}
-{#            var b;#}
-{#            var t = "";#}
-{#            var g;#}
-{#            data.forEach( function (arrayItemx){#}
-{##}
-{#                h = "<a>" + arrayItemx.dia + "</a>";#}
-{#                g = "<div>";#}
-{##}
-{#                arrayItemx.franjes.forEach( function (arrayItem)#}
-{#                {#}
-{#                    g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";#}
-{#                });#}
-{#                t = t + h + g + "</div>";#}
-{##}
-{#            })#}
-{##}
-{#            t = t + "</div>";#}
-{##}
-{#            acc.innerHTML = t;#}
-{##}
-{##}
-{#			$( "#accordion" ).accordion( "refresh" );#}
-{##}
-{#          })#}
     }
 
 
-{#function placeMarker(location) {#}
-{##}
-{# var punt_lat = document.getElementById("punt_lat");#}
-{# var punt_lng = document.getElementById("punt_lng");#}
-{##}
-{# if (marker_d == null)#}
-{# {#}
-{#   marker_d = new google.maps.Marker({#}
-{#      position: location,#}
-{#      map: map#}
-{#  }); } else {   marker_d.setPosition(location); }#}
-{##}
-{##}
-{# punt_lat.value = location.lat();#}
-{# punt_lng.value = location.lng();#}
-{# }#}
 
 
+jQuery(document).ready(function($) {
 
-{#$(document).ready(function(){#}
-{#            $( "#tabs" ).tabs();#}
-{#            $('#tabs-2').bind('click', function() {#}
-{#                initMap();#}
-{#            });#}
-{#          });#}
+
+    $('.lloc_entrega_perfil').change(function (e) {
+        //Aqui filtrem les opcions a domicili. s'han d'afegir totes les noves
+        var carrer = document.getElementById('carrer');
+        var numero = document.getElementById('numero');
+        var pis = document.getElementById('pis')
+        var poblacio = document.getElementById('poblacio');
+        var punt_lat = document.getElementById('punt_lat');
+        var punt_lng = document.getElementById('punt_lng');
+        var freq = document.getElementById('freq');
+        $.post("/domicili/", $(this).serializeArray(),
+                function (data) {
+                    if (data["a_domicili"] == true) {
+                        carrer.readOnly = false;
+                        numero.readOnly = false;
+                        pis.readOnly = false;
+                        poblacio.readOnly = true;
+                        punt_lat.readOnly = false;
+                        punt_lng.readOnly = false;
+                        carrer.disabled = false;
+                        numero.disabled = false;
+                        pis.disabled = false;
+                        punt_lat.disabled = false;
+                        punt_lng.disabled = false;
+                    } else {
+                        carrer.disabled = true;
+                        numero.disabled = true;
+                        pis.disabled = true;
+                        punt_lat.disabled = true;
+                        punt_lng.disabled = true;
+                    }
+                    freq.innerHTML = data["frequencia"];
+                    carrer.value = data["carrer"];
+                    numero.value = data["numero"];
+                    pis.value = data["pis"];
+                    poblacio.value = data["poblacio"];
+                    lat = data["geopuntx_lat"];
+                    punt_lat.value = lat;
+                    if (data["geopuntx_lat"]) {
+                    } else {
+                        punt_lat.placeholder = "clica en el mapa (opcional)";
+                    }
+                    lng = data["geopuntx_lng"];
+                    punt_lng.value = lng;
+                    if (data["geopuntx_lng"]) {
+                    } else {
+                        punt_lng.placeholder = "clica en el mapa (opcional)";
+                    }
+                });
+        var acc = document.getElementById('accordion');
+        $.post("/horari/", $(this).serializeArray(),
+                function (data) {
+                    var j;
+                    var h;
+                    var b;
+                    var t = "";
+                    var g;
+                    data.forEach(function (arrayItemx) {
+
+                        h = "<a>" + arrayItemx.dia + "</a>";
+                        g = "<div>"
+
+                        arrayItemx.franjes.forEach(function (arrayItem) {
+                            g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
+                        });
+                        t = t + h + g + "</div>";
+
+                    })
+
+                    t = t + "</div>";
+                    acc.innerHTML = t;
+
+                    $("#accordion").accordion("refresh");
+                    //
+                    //acc.accordion("refresh");
+
+                })
+    });
+
+
+})
 
 
   </script>

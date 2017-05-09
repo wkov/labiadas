@@ -4,8 +4,6 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
 import datetime
-from django.utils import timezone
-
 
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
@@ -23,8 +21,8 @@ class Productor(models.Model):
 
     nom = models.CharField(max_length=20)
     # adjunt = models.ManyToManyField(Adjunt)
-    responsable = models.ForeignKey(User)
-    cuerpo = models.TextField(blank=True)
+    responsable = models.ManyToManyField(User)
+    text = models.TextField(blank=True)
 
     def __str__(self):
         return self.nom
@@ -70,7 +68,7 @@ class Frequencia(models.Model):
     nom = models.CharField(max_length=30)
 
     def __str__(self):
-        return "%s %s" % (self.num, self.nom)
+        return "%s" % (self.nom)
 
 
 
@@ -83,7 +81,7 @@ class Node(models.Model):
     pis = models.CharField(max_length=15, blank=True, null=True)
     poblacio = models.CharField(max_length=40)
     codi_postal = models.CharField(max_length=5, blank=True, null=True)
-    responsable = models.CharField(max_length=20)
+    responsable = models.ManyToManyField(User)
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
     frequencies = models.ManyToManyField(Frequencia)
@@ -149,6 +147,9 @@ class DiaEntrega(models.Model):
     def franja_inici(self):
         return self.franjes_horaries.order_by("inici").first()
 
+    def franja_final(self):
+        return self.franjes_horaries.order_by("-final").first()
+
 
 
 
@@ -176,7 +177,7 @@ class Producte(models.Model):
     formats = models.ManyToManyField(TipusProducte, related_name='producte')
     esgotat = models.BooleanField(default=False)
     # nodes = models.ManyToManyField(Node, blank=True)
-    entradilla = models.TextField(blank=False, max_length=75)
+    text_curt = models.TextField(blank=False, max_length=75)
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     adjunt = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
@@ -259,6 +260,9 @@ class Contracte(models.Model):
     def prox_entrega(self):
         return self.dies_entrega.filter(date__gte=datetime.datetime.today()).order_by('date').first()
 
+    # def hora_entrega(self):
+    #     for f in self.prox_entrega().franjes_horaries.all():
+    #
    # # Calculem segons la frequencia la data de la proxima entrega
    #  def prox_entrega(self):
    #      d = self.darrera_entrega.date
@@ -426,7 +430,10 @@ def create_profile(sender, instance, created, **kwargs):
         # Aqui encara no podem mirar el key per esbrinar el lloc_entrega de l'usuari que l'ha convidat,de moment assignem node 1 i a MyRegistrationView succes_url modifiquem la taula Key,
         # despres al procesar nou_usuari en nodes_nou_usuari ja es calcula el node de l'usuari que convida i se li proposa en pantalla
         text = "El registre s'ha completat amb èxit. Benvingut a La Massa. Visita la web i descobreix tots els productes que tens al teu abast:  http://www.lamassa.org/   Gràcies!"
+        # try:
         send_mail("Benvingut a La Massa", text, 'lamassaxarxa@gmail.com', [instance.email] ,fail_silently=True )
+
+
 
         profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="", lloc_entrega_perfil=node )
 

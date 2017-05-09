@@ -93,7 +93,7 @@
      <th>Lloc d'entrega</th>
      <th>[Cant Format]</th>
      <th>Data d'entrega</th>
-     <th>Franja horària</th>
+{#     <th>Franja horària</th>#}
      <th>Preu</th>
      <th>Client</th>
      <th>Data de comanda</th>
@@ -107,8 +107,10 @@
                         <td>[{{ link.producte.nom }}]</td>
                         <td>{{ link.lloc_entrega }}</td>
                         <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td>{{ link.dies_entrega.all }}</td>
-                        <td>{{ link.franja_horaria}}</td>
+                        <td>{% for l in link.dies_entrega.all %}
+                            [{{ l.date }}]
+                            {% endfor %}</td>
+{#                        <td>{{ link.franja_horaria}}</td>#}
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
                         <td>{{ link.data_comanda.date }}</td>

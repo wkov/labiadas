@@ -50,7 +50,7 @@
                                         <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>
                                             <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' contracte.lloc_entrega.pk %}" title="Visualitzar punt de trobada">{{ contracte.lloc_entrega.nom  }} <span class="glyphicon glyphicon-map-marker" >
                                             </span> </a> <br/>
-                                        <label for="x_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="x_hora" name="x_hora"> {{ contracte.franja_horaria.inici }} - {{ contracte.franja_horaria.final }} </b><br/>
+                                        <label for="x_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="x_hora" name="x_hora"> {{ contracte.prox_entrega.franja_inici.inici }} - {{ contracte.prox_entrega.franja_final.final }} </b><br/>
                                      </div>
                                      <div style="width:100%; display: inline-block">
                                         <label for="x_prox" style="font-size: medium; font-weight: 500"> Dia: </label>
