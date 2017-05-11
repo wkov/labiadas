@@ -250,6 +250,11 @@ class ContracteUpdateView(UpdateView):
     success_url="/comandes/"
     template_name = "romani/consumidors/contracte_form.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(ContracteUpdateView, self).get_context_data(**kwargs)
+        contracte = Contracte.objects.get(pk=self.kwargs['pk'])
+        context['producte']=contracte.producte
+        return context
 
 
 

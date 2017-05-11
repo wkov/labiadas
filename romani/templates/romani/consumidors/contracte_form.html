@@ -4,7 +4,8 @@
 
 <form method="post" action="">
   {% csrf_token %}
-
+<p>A continuació pots veure tots els dies d'entrega en que pots demanar {{ producte }}. T'hem preseleccionat els dies que coincideixen
+    amb la teva elecció. Ara pots marcar o desmarcar els dies en que rebràs la comanda segons desitjis. </p><br/>
   {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}
   <input type="submit" value="Grabar">

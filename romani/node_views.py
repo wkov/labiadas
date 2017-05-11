@@ -94,7 +94,12 @@ class NodeComandesListView(ListView):
         context["node"] = node
         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
         context["diaentrega"] = diaentrega
-        context["contractes"] = Contracte.objects.filter(dies_entrega__id__exact=diaentrega.id)
+        contractes = []
+        contractes_qs = Contracte.objects.filter(dies_entrega__id__exact=diaentrega.id)
+        for c in contractes_qs:
+            if c.prox_entrega() == diaentrega:
+                contractes.append(c)
+        context["contractes"] = contractes
         context['productes'] = diaentrega.productes.all()
         return context
 
@@ -198,6 +203,7 @@ class NodeCreateView(CreateView):
         f.save()
         return super(NodeCreateView, self).form_valid(form)
 
+
 class NodeUpdateView(UpdateView):
     model = Node
     form_class = NodeForm
@@ -217,11 +223,14 @@ class NodeUpdateView(UpdateView):
     def form_valid(self, form):
         f = form.save(commit=False)
         g = Group.objects.get(name='Nodes')
+
         for r in form.data["responsable"]:
-            if not r in g.user_set.all():
-                g.user_set.add(self.request.user)
+            u = User.objects.get(pk=r)
+            if not u in g.user_set.all():
+                g.user_set.add(u)
         f.save()
         return super(NodeUpdateView, self).form_valid(form)
+
 
 class NodeProductorsUpdateView(UpdateView):
     model = Node
@@ -232,13 +241,6 @@ class NodeProductorsUpdateView(UpdateView):
     def get_success_url(self):
         node = Node.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
-
-
-
-
-
-
-
 
 
 

@@ -1,7 +1,7 @@
 from django import forms
 # from .models import Comanda
 from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt, Frequencia
-from django.contrib.auth.models import  User
+from django.contrib.auth.models import  User, Group
 from django.forms.widgets import CheckboxSelectMultiple
 from romani.widgets import SelectTimeWidget
 import datetime
@@ -153,7 +153,9 @@ class NodeForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(NodeForm, self).__init__(*args, **kwargs)
         self.fields["responsable"].widget=CheckboxSelectMultiple()
-        self.fields["responsable"].queryset = User.objects.filter(pk=user.pk).all()
+        # self.fields["responsable"].queryset = User.objects.filter(pk=user.pk).all()
+        g = Group.objects.get(name='Nodes')
+        self.fields["responsable"].queryset = g.user_set.all()
         # self.fields["responsable"].initial = user
         self.fields["frequencies"].widget=CheckboxSelectMultiple()
         self.fields["frequencies"].queryset = Frequencia.objects.all()

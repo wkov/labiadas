@@ -37,8 +37,9 @@
 {#                        </div>#}
 {#    </div>#}
     <br/>
+    <p>Benvingut a la secció dels Llocs d'entrega. Pots gestionar els llocs d'entrega dels quals ets responsable o crear-ne de nous.</p>
     <a href="{% url 'node_create' %}">Crear Nou Lloc d'Entrega </a> <br/><br/>
-    <br/>
+
         {% for link in object_list %}
             <form method="post" action="" class="vote_form">
               <li>
