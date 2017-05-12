@@ -138,7 +138,7 @@ def etiquetaView(request,pk):
                     break
             break
 
-    p = Producte.objects.filter(etiqueta=etiqueta, nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(etiqueta=etiqueta, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
     productes = sorted(p, key=lambda a: a.karma(), reverse=True)
 

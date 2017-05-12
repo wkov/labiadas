@@ -63,6 +63,10 @@ class NodesListView(ListView):
     template_name = "romani/nodes/node_list.html"
 
     def get_queryset(self):
+        g = Group.objects.get(name='Nodes')
+        u = self.request.user
+        if not u in g.user_set.all():
+                g.user_set.add(u)
         return Node.objects.filter(responsable=self.request.user)
 
 
@@ -94,12 +98,7 @@ class NodeComandesListView(ListView):
         context["node"] = node
         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
         context["diaentrega"] = diaentrega
-        contractes = []
-        contractes_qs = Contracte.objects.filter(dies_entrega__id__exact=diaentrega.id)
-        for c in contractes_qs:
-            if c.prox_entrega() == diaentrega:
-                contractes.append(c)
-        context["contractes"] = contractes
+        context["contractes"] = Contracte.objects.filter(dies_entrega__id__exact=diaentrega.id)
         context['productes'] = diaentrega.productes.all()
         return context
 
@@ -192,16 +191,16 @@ class NodeCreateView(CreateView):
         kwargs["user"] = user
         return kwargs
 
-    def form_valid(self, form):
-        f = form.save(commit=False)
-        g = Group.objects.get(name='Nodes')
-
-        for r in form.data["responsable"]:
-            u = User.objects.get(pk=r)
-            if not u in g.user_set.all():
-                g.user_set.add(u)
-        f.save()
-        return super(NodeCreateView, self).form_valid(form)
+    # def form_valid(self, form):
+    #     f = form.save(commit=False)
+    #     g = Group.objects.get(name='Nodes')
+    #
+    #     for r in form.data["responsable"]:
+    #         u = User.objects.get(pk=r)
+    #         if not u in g.user_set.all():
+    #             g.user_set.add(u)
+    #     f.save()
+    #     return super(NodeCreateView, self).form_valid(form)
 
 
 class NodeUpdateView(UpdateView):
@@ -220,16 +219,16 @@ class NodeUpdateView(UpdateView):
         node = Node.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
-    def form_valid(self, form):
-        f = form.save(commit=False)
-        g = Group.objects.get(name='Nodes')
-
-        for r in form.data["responsable"]:
-            u = User.objects.get(pk=r)
-            if not u in g.user_set.all():
-                g.user_set.add(u)
-        f.save()
-        return super(NodeUpdateView, self).form_valid(form)
+    # def form_valid(self, form):
+    #     f = form.save(commit=False)
+    #     g = Group.objects.get(name='Nodes')
+    #
+    #     for r in form.data["responsable"]:
+    #         u = User.objects.get(pk=r)
+    #         if not u in g.user_set.all():
+    #             g.user_set.add(u)
+    #     f.save()
+    #     return super(NodeUpdateView, self).form_valid(form)
 
 
 class NodeProductorsUpdateView(UpdateView):

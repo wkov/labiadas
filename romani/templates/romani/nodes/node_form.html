@@ -8,30 +8,37 @@
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'node_update' object.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar Node</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_nodesdates' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'nodeproductors_update' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
-                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Escollir Productors</b>
                                  </a>
                         </div>
     </div>
     {% endif %}
+    <div id="dialog" title="Lloc d'entrega">
+        <p>Edita la informació que es mostrarà al teu perfil i als usuaris que hagin de vindre a recollir la cistella</p>
+        <p>Indica la <b>freqüència</b> amb que obrireu el Lloc d'entrega, la freqüència que indiquis és orientativa, serveix per facilitar les comandes periòdiques dels usuaris.</p>
+        <p>Marcar "Sí" en el camp "<b>A Domicili</b>" indica que el Lloc d'entrega que s'està editant treballa únicament a domicili i que els usuaris hauran d'introduir la seva direcció per a rebre la comanda</p>
+        <p>Escull els <b>responsables</b> del Lloc d'entrega entre els usuaris de la xarxa amb aquest rol. Si trobes a faltar algú, digue-li que visiti la secció d'Ajuda de la xarxa i segueixi les instruccions.
+        Una vegada hagi seguit els passos t'apareixerà a la llista i el podràs incorporar com a responsable</p>
+    </div>
     <br/>
   {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}

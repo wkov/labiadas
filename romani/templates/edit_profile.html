@@ -345,6 +345,10 @@ jQuery(document).ready(function($) {
 
   $( function() {
     $( "#accordion" ).accordion();
+
+
+
+
   } );
 
   </script>
@@ -389,6 +393,7 @@ jQuery(document).ready(function($) {
                   <label>Nom: </label>     {{ form.first_name }} <br/>
                   <label>Cognoms: </label>     {{ form.last_name }}  <br/>
                 <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
+{#                <div class="loader"></div>#}
             </div>
             <div id="tabs-2">
                 <span class="glyphicon glyphicon-flag"></span>
@@ -458,7 +463,9 @@ jQuery(document).ready(function($) {
                                 <label style="float: left" for="poblacio">Població:</label>
                                 <input id="poblacio"  name="poblacio" style="max-width: 300px" class="form-control" value="{{ object.lloc_entrega_perfil.poblacio }}" readonly/></div>
                     {% endif %}
-                    <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button> <br/><br/><br/>
+                    <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span>
+{#                        <div class="loader"></div> #}
+                    </button> <br/><br/><br/>
             </div>
 
 

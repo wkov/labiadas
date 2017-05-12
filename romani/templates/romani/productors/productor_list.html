@@ -53,8 +53,12 @@
 {#                        </div>#}
 {#    </div>#}
     <br/>
-    <p>Benvingut a la secció dels productors. Pots gestionar els teus perfils de productor ja existents o crear-ne de nous.</p><br/>
+    <div id="dialog" title="Benvingut">
+    <p>A la secció dels productors pots gestionar els teus perfils de productor ja existents o crear-ne de nous.</p>
+    </div>
+    <br/>
     <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
+    {% if object_list %}
         {% for link in object_list %}
             <form method="post" action="" class="vote_form">
               <li>
@@ -83,4 +87,7 @@
             </form>
             <br/>
         {% endfor %}
+    {% else %}
+        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
+    {% endif %}
 {% endblock %}

@@ -260,6 +260,10 @@ class Contracte(models.Model):
     def prox_entrega(self):
         return self.dies_entrega.filter(date__gte=datetime.datetime.today()).order_by('date').first()
 
+    def old_entregas(self):
+        return self.dies_entrega.filter(date__lte=datetime.datetime.today()).order_by('date')
+
+
     # def hora_entrega(self):
     #     for f in self.prox_entrega().franjes_horaries.all():
     #
@@ -419,6 +423,15 @@ class UserProfile(models.Model):
     def contractes_cistella(self):
         now = datetime.datetime.now()
         return Contracte.objects.filter(client=self.user).filter(data_fi__isnull=True)
+
+    def pro_comandes(self):
+        now = datetime.datetime.now()
+        return Comanda.objects.filter(producte__productor__responsable=self.user).filter(dia_entrega__date__gte=now)
+
+    def pro_contractes(self):
+        now = datetime.datetime.now()
+        return Contracte.objects.filter(producte__productor__responsable=self.user)
+
 
 
 from django.core.mail import send_mail

@@ -77,7 +77,10 @@ class ProductorForm(forms.ModelForm):
 
     def __init__(self, user, *args, **kwargs):
         super(ProductorForm, self).__init__(*args, **kwargs)
-        self.fields["responsable"].queryset = User.objects.filter(pk=user.pk)
+        self.fields["responsable"].widget = CheckboxSelectMultiple()
+        g = Group.objects.get(name='Productors')
+        self.fields["responsable"].queryset = g.user_set.all()
+        # self.fields["responsable"].queryset = User.objects.filter(pk=user.pk)
         # self.fields["responsable"].initial = user
 
 class AdjuntForm(forms.ModelForm):
@@ -147,7 +150,7 @@ class NodeForm(forms.ModelForm):
 
     class Meta:
         model = Node
-        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "a_domicili", "text", "frequencies", "responsable")
+        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "text", "frequencies", "a_domicili", "responsable")
         # exclude = ("")
 
     def __init__(self, user, *args, **kwargs):

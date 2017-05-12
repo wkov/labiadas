@@ -19,6 +19,17 @@ def comandes_unread(context):
     total = uno + dos
     return total
 
+@register.assignment_tag(takes_context=True)
+def productor_comandes_unread(context):
+    user = user_context(context)
+    if not user:
+        return ''
+    up = UserProfile.objects.get(user=user)
+    uno = up.pro_comandes().count()
+    dos = up.pro_contractes().count()
+    total = uno + dos
+    return total
+
 @register.filter(name='has_group')
 def has_group(user, group_name):
     group =  Group.objects.get(name=group_name)

@@ -242,6 +242,11 @@ nav.sidebar ul.level1 ul.level2 li a {
         <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'productor_list' %}" title='Zona de Productors'>
+              {% productor_comandes_unread as pro_unread_com %}
+                <span id="notification_count">
+                        {{ pro_unread_com }}
+                </span>
+
                 <span id="zonaproductors" name="zonaproductors" class='glyphicon glyphicon-folder-open collapsed-element'></span>
                 <span class='expanded-element'>Zona Productor</span>
               </a>

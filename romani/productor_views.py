@@ -8,6 +8,8 @@ from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
 from django.views.generic import ListView
 
+from django.contrib.auth.models import Group
+
 from django.shortcuts import render, get_object_or_404
 
 import datetime
@@ -195,6 +197,10 @@ class ProductorsListView(ListView):
     template_name = "romani/productors/productor_list.html"
 
     def get_queryset(self):
+        g = Group.objects.get(name='Productors')
+        u = self.request.user
+        if not u in g.user_set.all():
+            g.user_set.add(u)
         return Productor.objects.filter(responsable=self.request.user)
 
     # def get_context_data(self, **kwargs):

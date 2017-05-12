@@ -2,14 +2,14 @@
 {% load staticfiles %}
 {% csrf_token %}
 {% block headers %}
-        <link href="{% static 'js/fullcalendar-3.3.1/fullcalendar.css' %}" rel="stylesheet">
+{#        <link href="{% static 'js/fullcalendar-3.3.1/fullcalendar.css' %}" rel="stylesheet">#}
 {#    <script src='js/fullcalendar-3.3.1/lib/jquery.min.js'></script>#}
 {#<script src='js/fullcalendar-3.3.1/lib/moment.min.js'></script>#}
 {#    <script src='js/fullcalendar-3.3.1/fullcalendar.js'></script>#}
-<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/moment.min.js'></script>
-<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>
-<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
-<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
+{#<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/moment.min.js'></script>#}
+{#<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>#}
+{#<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>#}
+{#<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>#}
 <script>
 
 $(document).ready(function() {
@@ -44,17 +44,17 @@ $(document).ready(function() {
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Comandes rebudes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_dates' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
@@ -68,31 +68,34 @@ $(document).ready(function() {
 {#                        </div>#}
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
-                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar productes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
-                                    <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar productor</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Veure historial</b>
                                  </a>
                         </div>
     </div>
-    <br/><p>Clica sobre el dia d'entrega per seleccionar els productes que portaràs. En <b style="color: green">verd</b> estan pintats els dies en que <b style="color: green">SÍ</b> t'has compromés a portar productes,
-    en <b style="color: black">negre</b> els que <b style="color: black">NO</b> has confirmat assistència</p>
+    <br/>
+    <div id="dialog" title="Calendari d'entregues">
+        <p>Clica sobre el dia d'entrega per seleccionar els productes que portaràs. En <b style="color: green">verd</b> estan pintats els dies en que <b style="color: green">SÍ</b> t'has compromés a portar productes,
+        en <b style="color: black">negre</b> els que <b style="color: black">NO</b> has confirmat assistència</p>
+    </div>
 
 <div id='calendar'></div>
 

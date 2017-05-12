@@ -37,7 +37,9 @@
 {#                        </div>#}
 {#    </div>#}
     <br/>
-    <p>Benvingut a la secció dels Llocs d'entrega. Pots gestionar els llocs d'entrega dels quals ets responsable o crear-ne de nous.</p>
+    <div id="dialog" title="Benvingut">
+    <p>A la secció dels Llocs d'entrega pots gestionar els punts dels quals ets responsable o crear-ne de nous.</p>
+    </div>
     <a href="{% url 'node_create' %}">Crear Nou Lloc d'Entrega </a> <br/><br/>
 
         {% for link in object_list %}

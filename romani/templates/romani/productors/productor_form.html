@@ -8,17 +8,17 @@
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Comandes rebudes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_dates' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
@@ -32,32 +32,36 @@
 {#                        </div>#}
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
-                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar productes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_update' productor.pk %}" id="etq_selected"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
-                                    <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar productor</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">
-                                    </span>
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
+{#                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
+{#                                    </span>#}
+{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Veure historial</b>
                                  </a>
                         </div>
     </div>
+
     <br/>
     <a href="{% url 'adjunt_create' productor.pk %}">Carregar nova foto</a>
 {% endif %}
+
+
+
        <br/>
     <br/>
   {{ form.as_p }}
@@ -65,6 +69,19 @@
 
 
             {% if adjunts %}
+
+                    <div id="dialog" title="Edita la teva info">
+                        <p>
+                            Mostra't als usuaris. Pots carregar tantes fotos com vulguis. Seran les que veuran els usuaris quan mirin el teu perfil.
+                            El text també pot ser tant llarg com necessitis. Quanta més informació millor
+                        </p>
+                        <p>
+                            En el llistat de possibles responsables pots marcar més d'una persona. Si algú que no hi és vol aparèixer a la llista haurà de seguir l'Ajuda de la web.
+                            Els que veus són els usuaris de La Massa amb rol de responsable com tu.
+                        </p>
+                        </div>
+
+
                 <br />
 
 
@@ -101,6 +118,17 @@
                     <span class="sr-only">Next</span>
                 </a>
                 </div>
+
+            {% else %}
+                    <div id="dialog" title="Edita la teva info">
+                        <p>
+                            La informació que introdueixis serà el que veurà la gent quan visiti el teu perfil
+                        </p>
+                        <p>
+                            En el llistat de possibles responsables pots marcar més d'una persona. Si algú que no hi és vol aparèixer a la llista haurà de seguir l'Ajuda de la web.
+                            Els que veus són els usuaris de La Massa amb rol de responsable com tu.
+                        </p>
+                        </div>
             {% endif %}
 
   <input type="submit" value="Grabar">
