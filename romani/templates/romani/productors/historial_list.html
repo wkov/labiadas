@@ -62,7 +62,9 @@
     {% if object_list %}
     <br/>
         Comandes: <br/>
-        <table border="1" style="width: 100%; text-align: center; ">
+        <table border="1" id="myTable" class="tablesorter" style="width: 100%; text-align: center; ">
+        <thead>
+        <tr>
          <th>Producte</th>
          <th>Lloc d'entrega</th>
          <th>[Cant Format]</th>
@@ -70,7 +72,10 @@
          <th>Franja horària</th>
          <th>Preu</th>
          <th>Client</th>
-         <th>Data de comanda</th>
+{#         <th>Data de comanda</th>#}
+        </tr>
+         </thead>
+        <tbody>
             {% for link in object_list %}
     {#            <form method="post" action="" class="vote_form">#}
     {#              <li>#}
@@ -83,19 +88,22 @@
                             <td>{{ link.franja_horaria}}</td>
                             <td>{{ link.preu }}€</td>
                             <td>{{ link.client.first_name }}</td>
-                            <td>{{ link.data_comanda.date }}</td>
+{#                            <td>{{ link.data_comanda.date }}</td>#}
                         </tr>
 
     {#              </li>#}
     {#            </form>#}
     {#            <br/>#}
             {% endfor %}
+        </tbody>
            </table>
     {% endif %}
     {% if contractes %}
     <br/>
     Contractes: <br/>
-     <table border="1" style="width: 100%; text-align: center; ">
+     <table border="1" id="myTable2" class="tablesorter" style="width: 100%; text-align: center; ">
+     <thead>
+     <tr>
      <th>Producte</th>
      <th>Lloc d'entrega</th>
      <th>[Cant Format]</th>
@@ -103,9 +111,12 @@
 {#     <th>Franja horària</th>#}
      <th>Preu</th>
      <th>Client</th>
-     <th>Data de comanda</th>
+{#     <th>Data de comanda</th>#}
      <th>Fi de contracte</th>
      <th>Freqüència</th>
+     </tr>
+     </thead>
+     <tbody>
         {% for link in contractes %}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
@@ -120,7 +131,7 @@
 {#                        <td>{{ link.franja_horaria}}</td>#}
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
-                        <td>{{ link.data_comanda.date }}</td>
+{#                        <td>{{ link.data_comanda.date }}</td>#}
                         <td>{{ link.data_fi }}</td>
                         <td>{{ link.freq_txt }}</td>
                     </tr>
@@ -129,6 +140,7 @@
 {#            </form>#}
 {#            <br/>#}
         {% endfor %}
+     </tbody>
        </table>
     {% endif %}
 {% endblock %}

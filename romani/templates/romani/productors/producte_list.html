@@ -65,45 +65,102 @@
 
     <a href="{% url 'producte_create' productor.pk %}">Crear Nou Producte</a> <br/>
     <a href="{% url 'format_create' productor.pk %}">Crear Nou Format</a> <br/><br/>
+    Llistat de productes amb els seus respectius formats:
+{#    <table border="1">#}
+    <div id=accordion>
 
-    <table>
-
-    <th>Selecciona el producte que vols editar:</th>
         {% for link in object_list %}
 
-            <tr>
+{#            <tr>#}
 {#            <form method="post" action="" class="vote_form">#}
-              <td>
+{#              <td>#}
+                <h3>
                   <a href="{% url 'producte_update' link.pk %}">
-                  <b>[{{ link.nom }}]</b>
-                </a>
-              </td>
+                  <b>{{ link.nom }}</b>
+                </a></h3>
+
+{#              </td>#}
 {#            </form>#}
 {#            <br/>#}
+{#                </tr>#}
+{#            <tr>#}
+{#            <td></td>#}
+                <div>
+                <a type="button" href="{% url 'producte_update' link.pk %}">Editar Producte</a><br/><br/>
+
+                <p>Editar Formats:</p>
+                <table id="myTable" class="tablesorter">
+                <thead>
+                <tr>
+                <th>Nom</th>
+                <th>Preu</th>
+                <th>Stock</th>
+                <th>Productes amb el mateix format:</th>
                 </tr>
-        {% endfor %}
-
-    </table>
-        <br/>
-    <table>
-
-
-    <th>Selecciona el format que vols editar:</th>
-
-        {% for link in formats %}
+                </thead>
+                <tbody>
+                {% for f in link.formats.all %}
             <tr>
-{#            <form method="post" action="" class="vote_form">#}
-              <td>
-                  <a href="
-                  {% url 'format_update' link.pk %}
-                  ">
-                  <b>[{{ link.nom }}]</b>
+                    <td>
+            <a href="
+                  {% url 'format_update' f.pk %}
+                  " style="color: white;">
+                  {{ f.nom }}
                 </a>
-              </td>
-{#            </form>#}
-{#            <br/>#}
-                </tr>
+                    </td>
+            <td>
+                <a href="
+                  {% url 'format_update' f.pk %}
+                  " style="color: white;">
+                {{ f.preu }}</a>
+            </td>
+            <td>
+                <a href="
+                  {% url 'format_update' f.pk %}
+                  " style="color: white;">
+                {{ f.stock }}</a>
+            </td>
+            <td>
+                <a href="
+                  {% url 'format_update' f.pk %}
+                  " style="color: white;">
+                {% for p in f.producte.all %}
+
+                    [{{ p.nom }}]
+
+                {% endfor %}
+                </a>
+                </td>
+            </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+                </div>
+{#            </tr>#}
         {% endfor %}
 
-    </table>
+</div>
+{#    </table>#}
+{#        <br/>#}
+{#    <table>#}
+{##}
+{##}
+{#    <th>Selecciona el format que vols editar:</th>#}
+{##}
+{#        {% for link in formats %}#}
+{#            <tr>#}
+{#            <form method="post" action="" class="vote_form">#}
+{#              <td>#}
+{#                  <a href="#}
+{#                  {% url 'format_update' link.pk %}#}
+{#                  ">#}
+{#                  <b>[{{ link.nom }}]</b>#}
+{#                </a>#}
+{#              </td>#}
+{#            </form>#}
+{#            <br/>#}
+{#                </tr>#}
+{#        {% endfor %}#}
+{##}
+{#    </table>#}
 {% endblock %}

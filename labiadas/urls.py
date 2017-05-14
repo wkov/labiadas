@@ -15,6 +15,7 @@ from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, 
 from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export_comandes_xls, NodeCreateView
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, LlocsListView, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView
+from romani.productor_views import ContracteDetailView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
@@ -77,6 +78,8 @@ urlpatterns = [
 
     url(r"^contracte/update/(?P<pk>\d+)/$", auth(ContracteUpdateView.as_view()),
         name="contracte_update"),
+    url(r"^contracte/(?P<pk>\d+)/$", auth(ContracteDetailView.as_view()),
+        name="contracte_detail"),
     # url(r"^producte_llocentrega/update/(?P<pk>\d+)/$", auth(LlocsUpdateView.as_view()),
     #     name="producte_llocentrega_update"),
     # url(r"^producte_dates/update/(?P<pk>\d+)/$", auth(ProducteDatesUpdateView.as_view()),

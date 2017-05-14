@@ -62,8 +62,11 @@
         {% for link in object_list %}
             <form method="post" action="" class="vote_form">
               <li>
-                  <a href="{% url 'vista_dates' link.pk %}">
+                  <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor">
                   [{{ link.nom }}]
+                 <span id="notification_count">
+                        {{ link.comandes_count }}
+                </span>
                 {% csrf_token %}
 {#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
 {#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
@@ -82,6 +85,11 @@
 {#                  {% endfor %}#}
 {#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
                 </a>
+                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
+                      <span id="notification_count">
+                        {{ link.comandes_count }}
+                      </span>
+                  </a>
 {#                  {{ link.responsable }}#}
               </li>
             </form>

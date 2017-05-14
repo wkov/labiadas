@@ -27,6 +27,12 @@ class Productor(models.Model):
     def __str__(self):
         return self.nom
 
+    def comandes_count(self):
+        now=datetime.datetime.now()
+        cm = Comanda.objects.filter(producte__productor=self).filter(dia_entrega__date__gte=now).count()
+        ct = Contracte.objects.filter(producte__productor=self).filter(data_fi__isnull=True).count()
+        return cm + ct
+
 
 
 class Adjunt(models.Model):
@@ -430,7 +436,7 @@ class UserProfile(models.Model):
 
     def pro_contractes(self):
         now = datetime.datetime.now()
-        return Contracte.objects.filter(producte__productor__responsable=self.user)
+        return Contracte.objects.filter(producte__productor__responsable=self.user).filter(data_fi__isnull=True)
 
 
 

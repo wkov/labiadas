@@ -35,7 +35,9 @@
     <br/>
     {% if object_list %}<br/>
         Comandes: <br/>
-     <table border="1" style="width: 100%; text-align: center; ">
+     <table border="1" id="myTable" class="tablesorter" style="width: 100%; text-align: center; ">
+     <thead>
+     <tr>
      <th>Producte</th>
      <th>Lloc d'entrega</th>
      <th>[Cant Format]</th>
@@ -44,6 +46,9 @@
      <th>Preu</th>
      <th>Client</th>
      <th>Data de comanda</th>
+     </tr>
+     </thead>
+     <tbody>
         {% for link in object_list %}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
@@ -63,12 +68,15 @@
 {#            </form>#}
 {#            <br/>#}
         {% endfor %}
+     </tbody>
        </table>
      {% endif %}
     {% if contractes %}
         <br/>
         Contractes: <br/>
-     <table border="1" style="width: 100%; text-align: center; ">
+     <table border="1" id="myTable2" class="tablesorter" style="width: 100%; text-align: center; ">
+     <thead>
+     <tr>
      <th>Producte</th>
      <th>Lloc d'entrega</th>
      <th>[Cant Format]</th>
@@ -78,6 +86,9 @@
      <th>Client</th>
      <th>Data de comanda</th>
      <th>Freqüència</th>
+     </tr>
+     </thead>
+     <tbody>
         {% for link in contractes %}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
@@ -98,6 +109,7 @@
 {#            </form>#}
 {#            <br/>#}
         {% endfor %}
+     </tbody>
        </table>
     {% endif %}
     {% if not object_list %}

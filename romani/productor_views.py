@@ -6,7 +6,7 @@ from .forms import Adjunt, AdjuntForm, ProductorDiaEntregaForm, ProductorForm, P
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from django.contrib.auth.models import Group
 
@@ -267,8 +267,8 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                for p in productes:
                    if p not in productes_dia:
                        if p in diaentrega.productes.all():
-                           if not Comanda.objects.filter(producte=p, dia_entrega=diaentrega):
-                                diaentrega.productes.remove(p)
+                           if not ((Comanda.objects.filter(producte=p, dia_entrega=diaentrega))or(Contracte.objects.filter(producte=p, dies_entrega=diaentrega))):
+                               diaentrega.productes.remove(p)
                            else:
                                message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
                                productes_sel = Producte.objects.filter(dies_entrega__id__exact=diaentrega.id)
@@ -308,6 +308,15 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                                                                  'productes_sel': productes_sel, 'comandes': comandes, 'contractes': contractes})
 
 
+class ContracteDetailView(DetailView):
+    model = Contracte
+    template_name = "romani/productors/contracte_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ContracteDetailView, self).get_context_data(**kwargs)
+        contracte = Contracte.objects.get(pk=self.kwargs['pk'])
+        context["productor"] = contracte.producte.productor
+        return context
 # class DiaEntregaProductorView(FormView):
 #     # model = Productor
 #     form_class = ProductorDiaEntregaForm

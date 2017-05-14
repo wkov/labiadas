@@ -200,6 +200,7 @@ class ContracteForm(forms.ModelForm):
     class Meta:
         model = Contracte
         fields = ("dies_entrega", )
+        labels = {"dies_entrega": "Dies d'entrega"}
 
     def __init__(self, *args, **kwargs):
 
@@ -207,6 +208,7 @@ class ContracteForm(forms.ModelForm):
 
         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
         self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(productes__id__exact=self.instance.producte.id, node=self.instance.lloc_entrega, date__gt=datetime.datetime.today()).order_by('date')
+        # self.fields["dies_entrega"].
 
 class NodeProductorsForm(forms.ModelForm):
 

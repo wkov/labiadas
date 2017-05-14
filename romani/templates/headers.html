@@ -41,12 +41,22 @@
     <script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
 
 
+<script type="text/javascript" src="{%  static 'js/tablesorter-master/jquery.tablesorter.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'js/tablesorter-master/themes/green/style.css' %}">
+
+
+
+
     <script>
 
 
     $(function() {
 
+        $( "#accordion" ).accordion();
 
+        $("#myTable").tablesorter();
+
+        $("#myTable2").tablesorter();
 
     $( "#dialog" ).dialog({
   position: { my: "right top", at: "right top+75", of: "#page-content-wrapper"},
