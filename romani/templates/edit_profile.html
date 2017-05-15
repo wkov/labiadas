@@ -269,20 +269,20 @@ jQuery(document).ready(function($) {
                         carrer.readOnly = false;
                         numero.readOnly = false;
                         pis.readOnly = false;
-                        poblacio.readOnly = true;
-                        punt_lat.readOnly = false;
-                        punt_lng.readOnly = false;
-                        carrer.disabled = false;
-                        numero.disabled = false;
-                        pis.disabled = false;
-                        punt_lat.disabled = false;
-                        punt_lng.disabled = false;
+{#                        poblacio.readOnly = true;#}
+{#                        punt_lat.readOnly = false;#}
+{#                        punt_lng.readOnly = false;#}
+{#                        carrer.disabled = false;#}
+{#                        numero.disabled = false;#}
+{#                        pis.disabled = false;#}
+{#                        punt_lat.disabled = false;#}
+{#                        punt_lng.disabled = false;#}
                     } else {
-                        carrer.disabled = true;
-                        numero.disabled = true;
-                        pis.disabled = true;
-                        punt_lat.disabled = true;
-                        punt_lng.disabled = true;
+                        carrer.readOnly = true;
+                        numero.readOnly = true;
+                        pis.readOnly = true;
+{#                        punt_lat.disabled = true;#}
+{#                        punt_lng.disabled = true;#}
                     }
                     freq.innerHTML = data["frequencia"];
                     carrer.value = data["carrer"];

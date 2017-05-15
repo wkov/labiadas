@@ -229,8 +229,6 @@ def ConvidarView(request):
 
 def DomiciliView(request):
 
-
-
     if request.POST:
 
         if 'lloc_entrega_perfil' in request.POST:
@@ -443,8 +441,8 @@ def FreqCalcView(request):
             node = get_object_or_404(Node, pk=l)
             producte = Producte.objects.filter(pk=g).first()
             json_res = []
-            for f in node.frequencies.all():
-                if f in producte.frequencies.all():
+            for f in node.frequencies.freq_list():
+                if f in producte.frequencies.freq_list():
                     json_obj = dict(
                         nom = f.nom,
                         num = f.num
@@ -587,12 +585,14 @@ class UserProfileEditView(UpdateView):
 
         # if form.email and User.objects.filter(email=form.email).exclude(username=form.username).count():
         #     raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
-        # lloc = get_object_or_404(Node, pk=form.data["lloc_entrega_perfil"])
-        #
-        # if lloc.a_domicili == False:
-        #
-        #     form.instance.carrer = ""
+        lloc = get_object_or_404(Node, pk=form.data["lloc_entrega_perfil"])
 
+        if lloc.a_domicili == False:
+
+            form.instance.carrer = ""
+            form.instance.numero = ""
+            form.instance.pis = ""
+            form.instance.poblacio = ""
 
         return super(UserProfileEditView, self).form_valid(form)
 

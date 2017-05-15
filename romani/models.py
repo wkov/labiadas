@@ -212,20 +212,20 @@ class Producte(models.Model):
         return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
 
 
-    def karma(self):
-        try:
-            if not self.karma_date.date() == datetime.datetime.today().date():
-                com = self.comanda_set.all().count()
-                con = self.contracte_set.all().count()
-                rnd = random.randint(0, 5)
-                self.karma_value = com + con + rnd
-                self.karma_date = datetime.datetime.today()
-        except:
-            com = self.comanda_set.all().count()
-            con = self.contracte_set.all().count()
-            rnd = random.randint(0, 5)
-            self.karma_value = com + con + rnd
-            self.karma_date = datetime.datetime.today()
+    def karma(self, node):
+        # try:
+        #     if not self.karma_date.date() == datetime.datetime.today().date():
+        #         com = self.comanda_set.filter(lloc_entrega=node).count()
+        #         con = self.contracte_set.filter(lloc_entrega=node).count()
+        #         rnd = random.randint(0, 5)
+        #         self.karma_value = com + con + rnd
+        #         self.karma_date = datetime.datetime.today()
+        # except:
+        com = self.comanda_set.filter(lloc_entrega=node).count()
+        con = self.contracte_set.filter(lloc_entrega=node).count()
+        rnd = random.randint(0, 5)
+        self.karma_value = com + con*3 + rnd
+        # self.karma_date = datetime.datetime.today()
         self.save()
         return self.karma_value
 

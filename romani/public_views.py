@@ -50,7 +50,7 @@ def buskadorProducte(request):
         posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
                                         esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
-        productes = sorted(posts, key=lambda a: a.karma(), reverse=True)
+        productes = sorted(posts, key=lambda a: a.karma(user_p.lloc_entrega_perfil), reverse=True)
 
         return render(request, "buscador.html", {
             'posts': productes,
@@ -65,7 +65,9 @@ def coopeView(request):
 
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+    date = datetime.date.today() + timedelta(hours=48)
+
+    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = date)
 
     etiquetes_pre = Etiqueta.objects.all()
 
@@ -79,7 +81,7 @@ def coopeView(request):
                     break
             break
 
-    nodes = Node.objects.all()
+    # nodes = Node.objects.all()
 
 
     # productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False).order_by(karma descending)
@@ -89,7 +91,7 @@ def coopeView(request):
 
 
 
-    productes = sorted(p, key=lambda a: a.karma(), reverse=True)
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
 
@@ -104,7 +106,7 @@ def coopeView(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    return render(request, "productes.html", {'productes':products,'etiquetes': etiquetes, 'up': user_p, 'nodes': nodes})
+    return render(request, "productes.html", {'productes':products,'etiquetes': etiquetes, 'up': user_p})
 
 
 def producteView(request,pk):
@@ -140,7 +142,7 @@ def etiquetaView(request,pk):
 
     p = Producte.objects.filter(etiqueta=etiqueta, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
 
-    productes = sorted(p, key=lambda a: a.karma(), reverse=True)
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
 
@@ -171,7 +173,7 @@ def productorView(request,pk):
 
     adjunts = Adjunt.objects.filter(productor=productor)
 
-    productes = sorted(p, key=lambda a: a.karma(), reverse=True)
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
 
 
     return render(request, "productor.html",{'productor': productor, 'productes': productes, 'adjunts': adjunts})
@@ -351,7 +353,6 @@ class ComandaFormBaseView(FormView):
         data = form.data["dataentrega"]
         frequencia = form.data["frequencia"]
         freq = Frequencia.objects.filter(num=frequencia).first()
-        freq_txt = freq.nom
         data_entrega = DiaEntrega.objects.get(pk=data)
         # DiaEntrega.objects.filter(date__gt=data_entrega.date)
         # data_entrega_txt = data_entrega.dia()
@@ -385,7 +386,7 @@ class ComandaFormBaseView(FormView):
 
             dies_entrega = prox_calc(producte, lloc_obj, data_entrega, franja, freq)
 
-            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, freq_txt=freq_txt, frequencia=frequencia)
+            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, frequencia=freq)
 
             ret = {"contracte": 1, "success": 1, "pk": v.pk}
 
