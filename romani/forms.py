@@ -148,7 +148,7 @@ class NodeForm(forms.ModelForm):
         self.fields["responsable"].widget=CheckboxSelectMultiple()
         g = Group.objects.get(name='Nodes')
         self.fields["responsable"].queryset = g.user_set.all()
-        self.fields["frequencies"].widget=CheckboxSelectMultiple()
+        # self.fields["frequencies"].widget=CheckboxSelectMultiple()
         self.fields["frequencies"].queryset = Frequencia.objects.all()
 
 
@@ -156,7 +156,7 @@ class ProducteForm(forms.ModelForm):
 
     class Meta:
         model = Producte
-        exclude = ("productor", "karma_value", "datahora", "karma_date", "frequencies", "dies_entrega", "nodes")
+        exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega", "nodes")
 
     def __init__(self, productor, *args, **kwargs):
         super(ProducteForm, self).__init__(*args, **kwargs)
