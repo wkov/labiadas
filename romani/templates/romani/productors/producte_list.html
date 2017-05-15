@@ -86,9 +86,9 @@
 {#            <tr>#}
 {#            <td></td>#}
                 <div>
-                <a type="button" href="{% url 'producte_update' link.pk %}">Editar Producte</a><br/><br/>
+                <a type="button" class="glyphicon glyphicon-pencil" href="{% url 'producte_update' link.pk %}">  Editar Producte</a><br/><br/>
 
-                <p>Editar Formats:</p>
+                <p>Formats disponibles per {{ link.nom }}:</p>
                 <table id="myTable" class="tablesorter">
                 <thead>
                 <tr>

@@ -107,7 +107,6 @@ class FranjaHorariaCreateView(CreateView):
 
     model = FranjaHoraria
     form_class = FranjaHorariaForm
-    # success_url = "/vista_nodesdates/"
     template_name = "romani/nodes/franjahoraria_form.html"
 
     def get_form_kwargs(self):
@@ -131,7 +130,6 @@ class FranjaHorariaCreateView(CreateView):
 class DiaEntregaCreateView(CreateView):
     model = DiaEntrega
     form_class = DiaEntregaForm
-    # success_url = "/vista_nodesdates/"
     template_name = "romani/nodes/diaentrega_form.html"
 
     def get_form_kwargs(self):

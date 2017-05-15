@@ -11,16 +11,13 @@ from django.contrib.auth.models import User
 
 class Productor(models.Model):
 
-    def validate_file(fieldfile_obj):
-
-        filesize = fieldfile_obj.file.size
-        megabyte_limit = 5.0
-        if filesize > megabyte_limit*1024*1024:
-            raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
-
+    # def validate_file(fieldfile_obj):
+    #     filesize = fieldfile_obj.file.size
+    #     megabyte_limit = 5.0
+    #     if filesize > megabyte_limit*1024*1024:
+    #         raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
 
     nom = models.CharField(max_length=20)
-    # adjunt = models.ManyToManyField(Adjunt)
     responsable = models.ManyToManyField(User)
     text = models.TextField(blank=True)
 
@@ -52,11 +49,6 @@ class Adjunt(models.Model):
         return self.arxiu.url
 
 
-    #
-    # def get_pks(self):
-    #     return self.objects.values_list('pk').all()
-
-
 class TipusProducte(models.Model):
 
     nom = models.CharField(max_length=20)
@@ -76,6 +68,19 @@ class Frequencia(models.Model):
     def __str__(self):
         return "%s" % (self.nom)
 
+    def freq_list(self):
+        if self.num == 0:
+            return Frequencia.objects.filter(pk=self.pk)
+        if self.num == 1:
+            return Frequencia.objects.filter(num__in = [0, 1, 2, 3, 4])
+        if self.num == 2:
+            return Frequencia.objects.filter(num__in = [0, 2, 4])
+        if self.num == 3:
+            return Frequencia.objects.filter(num__in = [0, 3])
+        if self.num == 4:
+            return Frequencia.objects.filter(num__in = [0, 4])
+
+
 
 
 class Node(models.Model):
@@ -90,7 +95,7 @@ class Node(models.Model):
     responsable = models.ManyToManyField(User)
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
-    frequencies = models.ManyToManyField(Frequencia)
+    frequencies = models.ForeignKey(Frequencia)
     productors = models.ManyToManyField(Productor, blank=True)
 
     def __str__(self):
@@ -100,7 +105,7 @@ class Node(models.Model):
         return self.dies_entrega.all().order_by('date')[0:6]
 
     def get_frequencia(self):
-        return self.frequencies.filter(num__gt=0).order_by('num').first()
+        return self.frequencies.freq_list().filter(num__gt=0).order_by('num').first()
 
     def dies_entrega_passats(self):
         return self.dies_entrega.filter(date__lte=datetime.datetime.today())
@@ -190,7 +195,7 @@ class Producte(models.Model):
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True)
     dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='productes')
-    frequencies = models.ManyToManyField(Frequencia, blank=True)
+    frequencies = models.ForeignKey(Frequencia)
     karma_date = models.DateTimeField(blank=True, null=True)
     karma_value = models.IntegerField(blank=True, null=True)
 
@@ -224,13 +229,6 @@ class Producte(models.Model):
 
 class Contracte(models.Model):
 
-
-    # def next_weekday(self, d, weekday):
-    #     days_ahead = weekday - d.weekday()
-    #     if days_ahead <= 0: # Target day already happened this week
-    #         days_ahead += 7
-    #     return d + datetime.timedelta(days_ahead)
-
     producte = models.ForeignKey(Producte)
     format = models.ForeignKey(TipusProducte)
     cantitat = models.PositiveIntegerField(blank=False)
@@ -238,18 +236,10 @@ class Contracte(models.Model):
     data_fi = models.DateTimeField(null=True, blank=True)
     client = models.ForeignKey(User)
     dies_entrega = models.ManyToManyField(DiaEntrega, blank=True)
-    # primera_entrega = models.DateTimeField(null=True, blank=True)
-    # darrera_entrega = models.DateTimeField(null=True, blank=True)
-    # data_entrega = models.IntegerField(null=True, blank=True)
-    # data_entrega_txt = models.CharField(max_length=10)
-    # prox_no = models.NullBooleanField(blank=True)
     franja_horaria = models.ForeignKey(FranjaHoraria)
     lloc_entrega = models.ForeignKey(Node)
-    entregat = models.NullBooleanField(blank=True)
-    cancelat = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
-    frequencia = models.IntegerField(null=True, blank=True)
-    freq_txt = models.CharField(max_length=30)
+    frequencia = models.ForeignKey(Frequencia)
 
     def __str__(self):
         return self.producte.nom
@@ -257,87 +247,11 @@ class Contracte(models.Model):
     def get_absolute_url(self):
         return reverse('comandes')
 
-    # def primera_entrega(self):
-    #     return self.dies_entrega.order_by('-date').first()
-    #
-    # def darrera_entrega(self):
-    #     return self.dies_entrega.filter(date__lte=datetime.datetime.today()).order_by('date').first()
-
     def prox_entrega(self):
         return self.dies_entrega.filter(date__gte=datetime.datetime.today()).order_by('date').first()
 
     def old_entregas(self):
         return self.dies_entrega.filter(date__lte=datetime.datetime.today()).order_by('date')
-
-
-    # def hora_entrega(self):
-    #     for f in self.prox_entrega().franjes_horaries.all():
-    #
-   # # Calculem segons la frequencia la data de la proxima entrega
-   #  def prox_entrega(self):
-   #      d = self.darrera_entrega.date
-   #      if d < timezone.now():
-   #          d = self.next_weekday(d, int(self.data_entrega))
-   #          if self.frequencia == 2:
-   #              while d < timezone.now():
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #
-   #              # if self.prox_no == True:
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #
-   #          if self.frequencia == 3:
-   #              while d < timezone.now():
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #              # if self.prox_no == True:
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #
-   #          if self.frequencia == 4:
-   #              while d < timezone.now():
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #              # if self.prox_no == True:
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #
-   #          if self.frequencia == 5:
-   #              while d < timezone.now():
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #                  d = self.next_weekday(d, int(self.data_entrega))
-   #              # if self.prox_no == True:
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #              #     d = self.next_weekday(d, int(self.data_entrega))
-   #  #     else:
-   #  #         if self.prox_no == True:
-   #  #             if self.frequencia == 2:
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #             if self.frequencia == 3:
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #             if self.frequencia == 4:
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #             if self.frequencia == 5:
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #  #                 d = self.next_weekday(d, int(self.data_entrega))
-   #          if d in self.producte.dies_entrega.all():
-   #              self.darrera_entrega = d
-   #          else:
-   #              self.darrera_entrega = ''
-   #
-   #      return self.darrera_entrega
-
-
 
 
 class Comanda(models.Model):
@@ -348,8 +262,6 @@ class Comanda(models.Model):
     data_comanda = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(User)
     dia_entrega = models.ForeignKey(DiaEntrega, null=True, blank=True)
-    # data_entrega = models.DateTimeField(null=True, blank=True)
-    # data_entrega_txt = models.CharField(max_length=10)
     franja_horaria = models.ForeignKey(FranjaHoraria)
     lloc_entrega = models.ForeignKey(Node)
     entregat = models.NullBooleanField(blank=True)
@@ -373,14 +285,14 @@ class EmailModelBackend(ModelBackend):
         except User.DoesNotExist:
             return None
 
-
-
-class Convidat(models.Model):
-
-    mail = models.EmailField()
-
-    def __str__(self):
-        return self.mail
+#
+#
+# class Convidat(models.Model):
+#
+#     mail = models.EmailField()
+#
+#     def __str__(self):
+#         return self.mail
 
 
 class Key(models.Model):
@@ -405,16 +317,16 @@ class UserProfile(models.Model):
     bio = models.TextField(null=True, blank=True)
     lloc_entrega_perfil = models.ForeignKey(Node, blank=True, null=True)
     invitacions = models.IntegerField(default=10, blank=True, null=True)
+    avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
+
     carrer = models.CharField(max_length=30, blank=True, null=True)
     numero = models.CharField(max_length=5, blank=True, null=True)
     pis = models.CharField(max_length=10, blank=True, null=True)
     poblacio = models.CharField(max_length=30, blank=True, null=True)
-    avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
-    convidats = models.ManyToManyField(Convidat, blank=True)
+
+
     punt_lat = models.CharField(max_length=25, null=True, blank=True)
     punt_lng = models.CharField(max_length=25, null=True, blank=True)
-
-
 
     def __unicode__(self):
         return  self.user.first_name
@@ -451,8 +363,6 @@ def create_profile(sender, instance, created, **kwargs):
         text = "El registre s'ha completat amb èxit. Benvingut a La Massa. Visita la web i descobreix tots els productes que tens al teu abast:  http://www.lamassa.org/   Gràcies!"
         # try:
         send_mail("Benvingut a La Massa", text, 'lamassaxarxa@gmail.com', [instance.email] ,fail_silently=True )
-
-
 
         profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="", lloc_entrega_perfil=node )
 

@@ -62,13 +62,7 @@
 
 
 
-       <br/>
-    <br/>
-  {{ form.as_p }}
-{#  <input type="text" id="datepicker" size="30">#}
-
-
-            {% if adjunts %}
+       <br/>           {% if adjunts %}
 
                     <div id="dialog" title="Edita la teva info">
                         <p>
@@ -130,6 +124,12 @@
                         </p>
                         </div>
             {% endif %}
+    <br/>
+  {{ form.as_p }}
+{#  <input type="text" id="datepicker" size="30">#}
+
+
+
 
   <input type="submit" value="Grabar">
 </form>

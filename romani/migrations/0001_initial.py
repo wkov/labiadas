@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('nom', models.CharField(max_length=20)),
                 ('descripcio', models.TextField(blank=True, default='')),
                 ('datahora', models.DateTimeField(auto_now_add=True)),
-                ('adjunt', models.FileField(null=True, upload_to='documents/%Y/%m/%d', validators=[romani.models.Productor.validate_file])),
+                ('adjunt', models.FileField(null=True, upload_to='documents/%Y/%m/%d')),
                 ('entradilla', models.TextField()),
                 ('cuerpo', models.TextField(blank=True)),
             ],

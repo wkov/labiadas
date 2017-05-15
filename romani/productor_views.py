@@ -1,7 +1,7 @@
 __author__ = 'sergi'
 
 from .models import Comanda, Productor, Producte, Contracte, DiaEntrega, TipusProducte
-from .forms import Adjunt, AdjuntForm, ProductorDiaEntregaForm, ProductorForm, ProducteForm, TipusProducteForm
+from .forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, ProductorDiaEntregaForm
 
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
@@ -32,27 +32,6 @@ class ComandesListView(ListView):
         context["productor"] = productor
         return context
 
-# class DataComandesListView(ListView):
-#     model = Comanda
-#     template_name = "romani/productors/datacomandes_list.html"
-#
-#     def get_queryset(self):
-#         diaentrega = DiaEntrega.objects.filter(pk=self.kwargs["pk"]).first()
-#         productor = Productor.objects.get(pk=self.kwargs['pro'])
-#         productes = Producte.objects.filter(productor=productor)
-#         return Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(DataComandesListView, self).get_context_data(**kwargs)
-#         productor = Productor.objects.get(pk=self.kwargs['pro'])
-#         context["productor"] = productor
-#         productes = Producte.objects.filter(productor=productor)
-#         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"]).first()
-#         context["contractes"] = Contracte.objects.filter(producte__in=productes, dies_entrega__id__exact=diaentrega )
-#         return context
-
-
-
 class HistorialListView(ListView):
     model = Comanda
     template_name = "romani/productors/historial_list.html"
@@ -68,14 +47,7 @@ class HistorialListView(ListView):
         context["productor"] = productor
         productes = Producte.objects.filter(productor=productor)
         context["contractes"] = Contracte.objects.filter(producte__in=productes)
-
         return context
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(HistorialListView, self).get_context_data(**kwargs)
-    #     productor = Productor.objects.filter(responsable=self.request.user).first()
-    #     context["productor"] = productor
-    #     return context
 
 class ProductesListView(ListView):
     model = Producte
@@ -107,21 +79,8 @@ class LlocsListView(ListView):
         return context
         context["nodes"] = Node.objects.filter()
 
-# class LlocsUpdateView(UpdateView):
-#     model = Producte
-#     form_class = LlocsForm
-#     template_name = "romani/productors/llocsentrega_form.html"
-#     success_url="/vista_llocs/"
-#     # user = request.user
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(LlocsUpdateView, self).get_context_data(**kwargs)
-#         productors = Productor.objects.filter(responsable=self.request.user)
-#         context["productors"] = productors
-#         return context
 
 class TipusProducteCreateView(CreateView):
-
     model = TipusProducte
     form_class = TipusProducteForm
     template_name = "romani/productors/format.html"
@@ -146,9 +105,7 @@ class TipusProducteCreateView(CreateView):
 class TipusProducteUpdateView(UpdateView):
     model = TipusProducte
     form_class = TipusProducteForm
-    # success_url="/vista_productes/"
     template_name = "romani/productors/format.html"
-    # user = request.user
 
     def get_form_kwargs(self):
         kwargs = super(TipusProducteUpdateView, self).get_form_kwargs()
@@ -203,11 +160,6 @@ class ProductorsListView(ListView):
             g.user_set.add(u)
         return Productor.objects.filter(responsable=self.request.user)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(ProductorsListView, self).get_context_data(**kwargs)
-    #     productor = Productor.objects.filter(responsable=self.request.user).first()
-    #     context["productor"] = productor
-    #     return context
 
 class DatesListView(ListView):
     model = Producte
@@ -222,25 +174,6 @@ class DatesListView(ListView):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
         return context
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(DatesListView, self).get_context_data(**kwargs)
-    #     productor = Productor.objects.filter(responsable=self.request.user).first()
-    #     context["productor"] = productor
-    #     return context
-
-# class NodesHistorialListView(ListView):
-#     model = Node
-#     template_name = "romani/nodes/nodehistorial_list.html"
-#
-#     def get_queryset(self):
-#         return Node.objects.get(pk=self.kwargs['dis'])
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(NodesHistorialListView, self).get_context_data(**kwargs)
-#         node = Node.objects.get(pk=self.kwargs['dis'])
-#         context["node"] = node
-#         return context
 
 def DiaEntregaProductorView(request, pk, dataentrega):
 
@@ -413,7 +346,7 @@ class ProductorUpdateView(UpdateView):
 
     def get_success_url(self):
         pro = Productor.objects.get(pk=self.kwargs['pk'])
-        return "/pro/" + str(pro.id) + "/vista_dates/"
+        return "/productor/update/" + str(pro.id)
 
 
 

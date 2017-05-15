@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Producte, TipusProducte, Node, DiaEntrega, Convidat, Frequencia
+from .models import Producte, TipusProducte, Node, DiaEntrega, Frequencia
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
@@ -511,8 +511,8 @@ class InfoFormBaseView(FormView):
         for i in producte.nodes().all():
             if i == user_profile.lloc_entrega_perfil:
                 # Guardem les frequencies del node per informar a l-usuari en el modal
-                for d in i.frequencies.all():
-                    if d in producte.frequencies.all():
+                for d in i.frequencies.freq_list():
+                    if d in producte.frequencies.freq_list():
                         f_obj = dict(nom = d.nom,
                                      num = d.num
                                      )
