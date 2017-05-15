@@ -587,6 +587,11 @@ class UserProfileEditView(UpdateView):
 
         # if form.email and User.objects.filter(email=form.email).exclude(username=form.username).count():
         #     raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
+        # lloc = get_object_or_404(Node, pk=form.data["lloc_entrega_perfil"])
+        #
+        # if lloc.a_domicili == False:
+        #
+        #     form.instance.carrer = ""
 
 
         return super(UserProfileEditView, self).form_valid(form)

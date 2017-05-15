@@ -86,13 +86,13 @@ class Frequencia(models.Model):
 class Node(models.Model):
 
     nom = models.CharField(max_length=20)
-    position = GeopositionField()
+    position = GeopositionField(null=False, blank=False)
     carrer = models.CharField(max_length=50, blank=True, null=True)
     numero = models.CharField(max_length=5, blank=True, null=True)
     pis = models.CharField(max_length=15, blank=True, null=True)
-    poblacio = models.CharField(max_length=40)
+    poblacio = models.CharField(max_length=40, blank=False, null=False)
     codi_postal = models.CharField(max_length=5, blank=True, null=True)
-    responsable = models.ManyToManyField(User)
+    responsable = models.ManyToManyField(User, null=False, blank=False)
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
     frequencies = models.ForeignKey(Frequencia)

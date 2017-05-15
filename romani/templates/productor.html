@@ -12,7 +12,7 @@
                  Enviar missatge al productor <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828"></span>
                 </a>
             <br />
-            {{ productor.cuerpo|linebreaks }}<br />
+            {{ productor.text|linebreaks }}<br />
             {% if adjunts %}
                 <br />
 
@@ -75,7 +75,7 @@
 {#                <span class="glyphicon glyphicon-info-sign" style="float: bottom"></span>#}
                 </a></h3></div><br/><br/><br/>
           <div class="xxent" style="background-color:#FFFFFF; display: block;">
-                <p id="entradilla" name="entradilla">{{ producte.entradilla }}</p>
+                <p id="entradilla" name="entradilla">{{ producte.text_curt }}</p>
             </div>
           <form style="width:100%; display: inline-block; position: relative">
 <button class="glyphicon glyphicon-duplicate" id="id_carro"  style="visibility: hidden" title="Copiar comanda"></button>
