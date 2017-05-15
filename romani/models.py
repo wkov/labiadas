@@ -105,7 +105,10 @@ class Node(models.Model):
         return self.dies_entrega.all().order_by('date')[0:6]
 
     def get_frequencia(self):
-        return self.frequencies.freq_list().filter(num__gt=0).order_by('num').first()
+        if self.frequencies.num == 0:
+            return self.frequencies.freq_list().order_by('num').first()
+        else:
+            return self.frequencies.freq_list().filter(num__gt=0).order_by('num').first()
 
     def dies_entrega_passats(self):
         return self.dies_entrega.filter(date__lte=datetime.datetime.today())

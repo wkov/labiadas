@@ -29,96 +29,95 @@
       var map;
       var marker_d;
       function initMap() {
-        var loc;
+          var loc;
           loc = new google.maps.LatLng(41.539064, 2.2130028);
           map = new google.maps.Map(document.getElementById('map'), {
-          center: loc,
-          zoom: 12,
-{#          mapTypeId: 'satellite'#}
-        });
+              center: loc,
+              zoom: 12,
+              {#          mapTypeId: 'satellite'#}
+          });
 
 
-          $.post("/allcoordenades/", function(data) {
+          $.post("/allcoordenades/", function (data) {
               var i = 0;
               var marker = [];
               var image = '/static/img/u-pick_stand.png'
               var img_domicili = '/static/img/vespa.png'
-              data.forEach( function(arrayItem)
-				{
-                    var contentString = '<div id="content">'+
-                          '<div id="siteNotice">'+
-                          '</div>'+
+              data.forEach(function (arrayItem) {
+                  var contentString = '<div id="content">' +
+                          '<div id="siteNotice">' +
+                          '</div>' +
                           '<h1 id="firstHeading" class="firstHeading">' +
                           arrayItem.nom +
-                          '</h1>'+
-                          '<div id="bodyContent">'+
+                          '</h1>' +
+                          '<div id="bodyContent">' +
                           '<p><b>' +
                           arrayItem.nom +
                           '</b>,' +
                           arrayItem.text +
                           '</p>' +
-                          '</div>'+
+                          '</div>' +
                           '</div>';
 
-                      var infowindow = new google.maps.InfoWindow({
-                        content: contentString
-                      });
+                  var infowindow = new google.maps.InfoWindow({
+                      content: contentString
+                  });
 
-                    var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
-                    if (arrayItem.a_domicili == "True"){
-                        marker[i] = new google.maps.Marker({
+                  var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
+                  if (arrayItem.a_domicili == "True") {
+                      marker[i] = new google.maps.Marker({
                           position: place,
                           title: "A Domicili",
                           map: map,
                           icon: img_domicili
-                    });
-                    }else{
-					    marker[i] = new google.maps.Marker({
+                      });
+                  } else {
+                      marker[i] = new google.maps.Marker({
                           position: place,
                           title: arrayItem.nom,
                           map: map,
                           icon: image
-                    });
-                        }
-                      marker[i].addListener('click', function() {
-                        infowindow.open(map, marker[i]);
                       });
+                  }
+                  marker[i].addListener('click', function () {
+                      infowindow.open(map, marker[i]);
+                  });
 
-					i++;
-				});
-
-          });
-
-
-          $.post("/horari/", function(data) {
-            var acc = document.getElementById('accordion');
-            var j;
-            var h;
-            var b;
-            var t = "";
-            var g;
-            data.forEach( function (arrayItemx){
-
-                h = "<a>" + arrayItemx.dia + "</a>";
-                g = "<div>";
-
-                arrayItemx.franjes.forEach( function (arrayItem)
-                {
-                    g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
-                });
-                t = t + h + g + "</div>";
-
-            })
-
-            t = t + "</div>";
-
-            acc.innerHTML = t;
-
-
-			$( "#accordion" ).accordion( "refresh" );
+                  i++;
+              });
 
           });
 
+
+          $.post("/horari/", function (data) {
+              var acc = document.getElementById('accordion');
+              var j;
+              var h;
+              var b;
+              var t = "";
+              var g;
+              data.forEach(function (arrayItemx) {
+
+                  h = "<a>" + arrayItemx.dia + "</a>";
+                  g = "<div>";
+
+                  arrayItemx.franjes.forEach(function (arrayItem) {
+                      g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
+                  });
+                  t = t + h + g + "</div>";
+
+              });
+
+              t = t + "</div>";
+
+              acc.innerHTML = t;
+
+
+              $("#accordion").accordion("refresh");
+
+          });
+
+      }
 
           function coord() {
 
@@ -128,14 +127,16 @@
                   var Lng = data["Lng"];
                   var location = new google.maps.LatLng(Lat, Lng);
 
-                              map.setZoom(15);
+                  map.setZoom(15);
 
-                              google.maps.event.trigger(map, 'resize');
-                              map.setCenter(location);
+                  google.maps.event.trigger(map, 'resize');
+                  map.setCenter(location);
 
 
               });
           }
+
+
 
 
     function coord2() {
@@ -229,7 +230,7 @@
 						});
 						t = t + h + g + "</div>";
 
-					})
+					});
 
 					t = t + "</div>";
 
@@ -328,11 +329,11 @@ jQuery(document).ready(function($) {
                     //
                     //acc.accordion("refresh");
 
-                })
+                });
     });
 
 
-})
+});
 
 
   </script>
