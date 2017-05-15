@@ -364,7 +364,7 @@ def AllCoordenadesView(request):
         json_res = []
 
         for node in nodes:
-
+            if node.position:
             # if node.a_domicili == False:
                 json_obj = dict(
                 Lat = str(node.position.latitude),
