@@ -49,6 +49,14 @@
 
     <script>
 
+        $( function endLoading() {
+            document.getElementById( 'loading' ).style.display = 'none';
+            document.getElementById('page-content-wrapper').style.visibility = 'visible'
+{#            document.getElementsByClassName( 'loader' ).style.display = 'none';#}
+{#            $("#back_img").style.display= "none";#}
+{#            $(".loader").style.display = 'none';#}
+
+        });
 
     $(function() {
 

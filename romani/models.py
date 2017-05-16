@@ -48,12 +48,18 @@ class Adjunt(models.Model):
     def __str__(self):
         return self.arxiu.url
 
+# class Stock(models.Model):
+#
+#     dies_entrega = models.ManyToManyField(DiaEntrega)
+#     format = models.ForeignKey(TipusProducte)
+#     stock = models.IntegerField(blank=True, null=True)
 
 class TipusProducte(models.Model):
 
     nom = models.CharField(max_length=20)
     preu = models.FloatField(default=0.0)
-    stock = models.IntegerField(default=0)
+    stock = models.IntegerField(blank=True, null=True)
+    # stock = models.ForeignKey(Stock, blank=True, null=True)
     productor = models.ForeignKey(Productor)
 
     def __str__(self):

@@ -10,13 +10,18 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body>
+<body onload="endLoading()">
+
+
+
 <div id="back_img">
     <header class="nav-down">
     <div id="div_header">
         <div id="div_menu1">
               <a  href="{% url 'coope' %}"> <h1>
-                    la massa </h1></a>
+                    la massa  </h1></a>
+                    <div id="loading" class="loader"></div>
+
 {#            Més proper, Massa Xarxa, lamassa.net , Més a prop#}
         </div>
         <div id="div_user">
@@ -31,7 +36,7 @@
 
 
 
-    <div id="page-content-wrapper">
+    <div id="page-content-wrapper" style="visibility: hidden">
         <div class="container-fluid">
            <div class="row">
 

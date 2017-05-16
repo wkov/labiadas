@@ -206,7 +206,7 @@ def comandaDelete(request, pk):
     comandaDel = Comanda.objects.filter(pk=pk).first()
 
     time = timedelta(hours=48)
-    tt = comandaDel.dia_entrega__date - time
+    tt = comandaDel.dia_entrega.date - time
     if datetime.datetime.date(datetime.datetime.now()) < tt.date():
         notify.send(comandaDel.producte, recipient = request.user,  verb="Has tret ",
             description="de la cistella" , url=comandaDel.producte.adjunt.url, timestamp=timezone.now())
@@ -228,12 +228,17 @@ def comandaDelete(request, pk):
 def contracteDelete(request, pk):
 
     contracteDel = Contracte.objects.filter(pk=pk).first()
+    time = timedelta(hours=48)
+    tt = contracteDel.dia_entrega.date - time
 
-    notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
-          description="de la cistella" , url=contracteDel.producte.adjunt.url, timestamp=timezone.now())
-
-    contracteDel.data_fi = datetime.datetime.now()
-    contracteDel.save()
+    if datetime.datetime.date(datetime.datetime.now()) < tt.date():
+        notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
+              description="de la cistella" , url=contracteDel.producte.adjunt.url, timestamp=timezone.now())
+        contracteDel.data_fi = datetime.datetime.now()
+        contracteDel.save()
+    else:
+        messages.error(request, (u"Falten menys de 48h per el proper dia d'entrega, ja estem preparant la comanda i no podem treure el producte de la cistella."
+                                 u"Quan hagis rebut aquesta entrega podràs anul·lar el vincle"))
 
     comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
     now = datetime.datetime.now()
@@ -291,7 +296,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -302,7 +307,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -314,7 +319,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d.date, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -360,8 +365,7 @@ class ComandaFormBaseView(FormView):
         franja_pk = form.data["franjes"]
         franja = FranjaHoraria.objects.get(pk=franja_pk)
 
-        format.stock = format.stock - int(cantitat)
-        format.save()
+
 
         lloc = form.data["lloc_entrega"]
         lloc_obj = get_object_or_404(Node, pk = lloc)
@@ -378,6 +382,10 @@ class ComandaFormBaseView(FormView):
 
 
         if frequencia == '0':
+
+            format.stock = format.stock - int(cantitat)
+            format.save()
+
             v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu)
 
             ret = {"contracte": 0, "success": 1}
@@ -391,7 +399,10 @@ class ComandaFormBaseView(FormView):
             ret = {"contracte": 1, "success": 1, "pk": v.pk}
 
             for d in dies_entrega:
+                format.stock = format.stock - int(cantitat)
                 v.dies_entrega.add(d)
+
+            format.save()
 
         # ret = {"success": 1}
         notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,

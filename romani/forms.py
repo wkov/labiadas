@@ -5,7 +5,7 @@ from django.contrib.auth.models import  User, Group
 from django.forms.widgets import CheckboxSelectMultiple
 from romani.widgets import SelectTimeWidget
 import datetime
-
+from datetime import timedelta
 
 class ComandaForm(forms.ModelForm):
     class Meta:
@@ -174,7 +174,8 @@ class ContracteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ContracteForm, self).__init__(*args, **kwargs)
         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
-        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(productes__id__exact=self.instance.producte.id, node=self.instance.lloc_entrega, date__gt=datetime.datetime.today()).order_by('date')
+        date = datetime.date.today() + timedelta(hours=48)
+        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(productes__id__exact=self.instance.producte.id, node=self.instance.lloc_entrega, date__gt=date).order_by('date')
 
 
 class NodeProductorsForm(forms.ModelForm):

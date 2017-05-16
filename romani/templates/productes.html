@@ -84,6 +84,9 @@
                                     {% if tipusproducte.stock > 0 %}
                                         <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
                                     {% endif %}
+                                    {% if tipusproducte.stock == "None" %}
+                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
+                                    {% endif %}
                                 {% endfor %}
                             </select>
                             <div style="float: right; padding-top: 10px">
