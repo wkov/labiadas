@@ -1,14 +1,64 @@
 {% extends "base.html" %}
 
+{% block headers %}
+
+
+{#    <style>#}
+{#    .shape {#}
+{#      margin-left: 4em;#}
+{#      margin-top: 2.5em;#}
+{#      height: 8em;#}
+{#      width: 8em;#}
+{#      box-shadow: 4px 4px 8px;#}
+{#      color: #ccc;#}
+{#      background-repeat: no-repeat;#}
+{#      background-size: 90%;#}
+{#      background-position: 50%;#}
+{#    }#}
+{#    .circle, .pill {#}
+{#      border-radius: 8em;#}
+{#    }#}
+{#    .pill, .rectangle {#}
+{#      width: 16em;#}
+{#    }#}
+{#    .square, .circle {#}
+{#      margin-left: 9em;#}
+{#    }#}
+{#    .border {#}
+{#      border: 2px solid #333333;#}
+{#    }#}
+{#    .toggles {#}
+{#      width: 200px;#}
+{#    }#}
+{#    .toggle-wrap, .shape {#}
+{#      display: inline-block;#}
+{#      vertical-align: top;#}
+{#    }#}
+{#    .controls {#}
+{#      background: #ccc;#}
+{#      padding: 1em;#}
+{#      display: inline-block;#}
+{#    }#}
+{#  </style>#}
+{% endblock %}
+
 {% block content %}
 
     <script>
     jQuery(document).ready(function($) {
-
         $("#checkAll").click(function () {
 
             $('input:checkbox').not(this).prop('checked', this.checked);
         })
+
+
+        var selects = document.querySelectorAll('select[name="speed"]');
+
+        selects[0].addEventListener('change', function () {
+        for (var i = 0; i < selects.length; i++) {
+            selects[i].value = selects[0].value;
+        }
+});
         })
     </script>
 
@@ -85,20 +135,74 @@
 {#  {{ form.as_p }}#}
 <p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
 <p> &nbsp; &nbsp;
-<input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</p>
+
+<table border="1">
+        <tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</p></td>
+        <td> <select name="speed" id="speed">
+      <option>Límit per producció [40]</option>
+      <option>Límit per stock fixe []</option>
+      <option selected="selected">Sense Límit</option>
+    </select></td>
+    </tr>
     {% for p in productes %}
-
+        <tr>
+        <td>
         {% if p in productes_sel %}
-            <p> &nbsp; &nbsp;
-             <input type="checkbox" name="productes" value="{{p.pk}}" checked/><b> {{p.nom}}</b>
-            </p>
+{#            <td> &nbsp; &nbsp;#}
+{#             <input type="checkbox"  name="productes" value="{{p.pk}}" checked/>#}
+            <b> {{p.nom}}</b>
+{#            </td>#}
         {% else %}
-            <p> &nbsp; &nbsp;
-             <input type="checkbox" name="productes" value= {{p.pk}} /><b> {{p.nom}}</b>
-            </p>
+{#            <td> &nbsp; &nbsp;#}
+{#             <input type="checkbox" name="productes" value= {{p.pk}} />#}
+            <b> {{p.nom}}</b>
+{#            </td>#}
         {% endif %}
+        </td>
+        <td>
+        {% for f in p.formats.all %}
+{#            <tr>#}
+{#            <td>#}
+             <input type="checkbox" name="formats" value="{{f.pk}}" checked/><b> {{f.nom}} </b>
 
+
+{#                <label for="speed">Unitats</label>#}
+    <select name="speed" id="speed">
+      <option>Límit per producció [40]</option>
+      <option>Límit per stock fixe []</option>
+      <option selected="selected">Sense Límit</option>
+    </select>
+
+
+
+
+            <br/>
+{#            </td>#}
+{#            </tr>#}
+        {% endfor %}
+        </td>
+        </tr>
     {% endfor %}
+</table>
+
+
+
+{#  <div class="toggle-wrap">#}
+{#    <h3>3.) Customize</h3>#}
+{#    <div class="toggles">#}
+{#      <label for="color">Shadow</label>#}
+{#      <input class="toggle brand-toggle" type="checkbox" name="color" id="color">#}
+{#      <label for="border">Border</label>#}
+{#      <input class="toggle" type="checkbox" name="border" id="border">#}
+{#      <label for="background-color">Background</label>#}
+{#      <input class="toggle brand-toggle" type="checkbox" name="background-color" id="background-color" checked>#}
+{#      <label for="background-image">Background Image</label>#}
+{#      <input class="toggle brand-toggle" type="checkbox" name="background-image" id="background-image" checked>#}
+{#    </div>#}
+{#  </div>#}
+
+
+
 {#  <input type="text" id="datepicker" size="30">#}
   <input type="submit" value="Grabar">
 </form>

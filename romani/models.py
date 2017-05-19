@@ -48,22 +48,25 @@ class Adjunt(models.Model):
     def __str__(self):
         return self.arxiu.url
 
+
+# S'ha de crear un botó al calendari de productors que faciliti crear un dia de producció. en aquest el productor indica
+# els productes i formats que produirà i el stock que generarà de cada format. Després quan visita un posible dia d'entrega, a l'hora de confirmar
+# els productes i formats que porta, podrà triar entre tirar de l'stock permanent o associar el format a un dia de producció. amb lo qual
+# ja tindrem el stock que podem oferir als usuaris consumidors
+# quan portes un format d'un producte a un dia d'entrega tens 3 opcions: sense límit, límit permanent o límit de dia de produccio
+#
 # class Stock(models.Model):
 #
 #     dies_entrega = models.ManyToManyField(DiaEntrega)
 #     format = models.ForeignKey(TipusProducte)
 #     stock = models.IntegerField(blank=True, null=True)
 
-class TipusProducte(models.Model):
 
-    nom = models.CharField(max_length=20)
-    preu = models.FloatField(default=0.0)
-    stock = models.IntegerField(blank=True, null=True)
-    # stock = models.ForeignKey(Stock, blank=True, null=True)
-    productor = models.ForeignKey(Productor)
 
-    def __str__(self):
-        return "%s %s€ %s %s unit" % (self.nom, self.preu, self.producte.all(), self.stock)
+#
+
+
+
 
 
 
@@ -108,7 +111,7 @@ class Node(models.Model):
         return "%s %s" % (self.nom, self.poblacio)
 
     def prox_dias(self):
-        return self.dies_entrega.all().order_by('date')[0:6]
+        return self.dies_entrega.filter(date__gte=datetime.datetime.now()).order_by('date')[0:6]
 
     def get_frequencia(self):
         if self.frequencies.num == 0:
@@ -171,8 +174,6 @@ class DiaEntrega(models.Model):
         return self.franjes_horaries.order_by("-final").first()
 
 
-
-
 class Etiqueta(models.Model):
     nom = models.CharField(max_length=15)
     img = models.FileField(upload_to='etiquetes')
@@ -194,7 +195,7 @@ class Producte(models.Model):
 
     nom = models.CharField(max_length=20)
     etiqueta = models.ForeignKey(Etiqueta)
-    formats = models.ManyToManyField(TipusProducte, related_name='producte')
+    # formats = models.ManyToManyField(TipusProducte, related_name='producte')
     esgotat = models.BooleanField(default=False)
     # nodes = models.ManyToManyField(Node, blank=True)
     text_curt = models.TextField(blank=False, max_length=75)
@@ -234,6 +235,40 @@ class Producte(models.Model):
         # self.karma_date = datetime.datetime.today()
         self.save()
         return self.karma_value
+
+
+class TipusProducte(models.Model):
+
+    nom = models.CharField(max_length=20)
+    preu = models.FloatField(default=0.0)
+    stock = models.IntegerField(blank=True, null=True)
+    # stock = models.ForeignKey(Stock, blank=True, null=True)
+    productor = models.ForeignKey(Productor)
+    producte = models.ForeignKey(Producte, related_name='formats', blank=True, null=True)
+
+    def __str__(self):
+        return "%s %s€ %s %s unit" % (self.nom, self.preu, self.producte, self.stock)
+
+
+
+class DiaProduccio(models.Model):
+    date = models.DateField()
+    # stocks = models.ManyToManyField(Stock, related_name="diaProduccio")
+    dies_entrega = models.ManyToManyField(DiaEntrega)
+    productor = models.ForeignKey(Productor)
+    node = models.ForeignKey(Node, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.date)
+
+class Stock(models.Model):
+
+    # dies_entrega = models.ManyToManyField(DiaEntrega)??
+    dia_prod = models.ForeignKey(DiaProduccio, related_name='stocks')
+    format = models.ForeignKey(TipusProducte, related_name='stocks')
+    # formats = models.ManyToManyField(TipusProducte, related_name='stocks')
+    stock = models.IntegerField(blank=True, null=True)
+
 
 
 class Contracte(models.Model):

@@ -851,7 +851,10 @@ background-color: #bce0b9;
 
 
 
-
+#dialog{
+    width: 800px;
+    /*max_width:100px;*/
+}
 
 
 

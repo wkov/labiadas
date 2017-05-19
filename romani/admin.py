@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia
+from .models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock
 
 class producteAdmin(admin.ModelAdmin):
     list_display = ('nom', 'productor', 'descripcio', 'text_curt', 'karma_date', 'karma_value')
@@ -14,8 +14,8 @@ class productorAdmin(admin.ModelAdmin):
 
 class tipusproducteAdmin(admin.ModelAdmin):
     # list_display = ('nom', 'producte_nom','preu','pk','stock')
-    search_fields = ['nom','preu', 'producte']
-    list_filter = ['nom','preu', 'producte']
+    search_fields = ['nom','preu', 'productor']
+    list_filter = ['nom','preu', 'productor']
 
 class comandaAdmin(admin.ModelAdmin):
     list_display = ('producte','data_comanda','format','cancelat','client','dia_entrega','lloc_entrega','entregat')
@@ -67,9 +67,18 @@ class frequenciaAdmin(admin.ModelAdmin):
     search_fields = ['nom','num']
     list_filter = ['nom','num']
 
+class diaProduccioAdmin(admin.ModelAdmin):
+    list_display = ['date','productor', 'node']
+    search_fields = ['date','productor', 'node']
+    list_filter = ['date','productor', 'node']
 
+class stockAdmin(admin.ModelAdmin):
+    list_display = ['dia_prod','format', 'stock']
+    search_fields = ['dia_prod','format', 'stock']
+    list_filter = ['dia_prod','format', 'stock']
 
-
+admin.site.register(Stock, stockAdmin)
+admin.site.register(DiaProduccio, diaProduccioAdmin)
 admin.site.register(Producte, producteAdmin)
 admin.site.register(Productor, productorAdmin)
 admin.site.register(TipusProducte, tipusproducteAdmin)

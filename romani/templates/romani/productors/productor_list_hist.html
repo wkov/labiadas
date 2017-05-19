@@ -3,7 +3,7 @@
 {% block content %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
 {#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -19,7 +19,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
+                                <a href="{% url 'productor_hist_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
 {#                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -133,7 +133,7 @@
      <th>Lloc d'entrega</th>
      <th>Cant</th>
      <th>Format</th>
-     <th>Pròxima data d'entrega</th>
+     <th>Data d'entrega</th>
      <th>Franja horària</th>
      <th>Preu</th>
      <th>Usuari</th>
@@ -145,20 +145,23 @@
         {% for link in contractes %}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
-
+{#            {% if link.old_entregas %}#}
                <tr>
                         <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
                         <td>{{ link.producte.productor.nom }}</td>
                         <td>{{ link.lloc_entrega }}</td>
                         <td>{{ link.cantitat }}</td>
                         <td>{{ link.format.nom }}</td>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>
+                        <td>{% for l in link.old_entregas.all %}
+                            [{{ l.date }}]
+                            {% endfor %}</td>
                         <td>{{ link.franja_horaria}}</td>
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
 {#                        <td>{{ link.data_comanda.date }}</td>#}
                         <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
                     </tr>
+{#            {% endif %}#}
 {#</a>#}
 {#              </li>#}
 {#            </form>#}

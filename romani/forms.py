@@ -1,6 +1,6 @@
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt, Frequencia
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt, Frequencia, DiaProduccio, Stock
 from django.contrib.auth.models import  User, Group
 from django.forms.widgets import CheckboxSelectMultiple
 from romani.widgets import SelectTimeWidget
@@ -58,7 +58,7 @@ class TipusProducteForm(forms.ModelForm):
 
     class Meta:
         model = TipusProducte
-        fields = ("nom", "preu", "stock", "productor" )
+        fields = ("nom", "preu", "stock", "productor", "producte" )
 
     def __init__(self, productor, *args, **kwargs):
 
@@ -118,6 +118,31 @@ class DiaEntregaForm(forms.ModelForm):
         self.fields["franjes_horaries"].queryset = FranjaHoraria.objects.filter(node=node).order_by('inici', 'final').distinct()
 
 
+class DiaProduccioForm(forms.ModelForm):
+
+    date = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'}),
+                                 input_formats=('%d/%m/%Y',))
+
+    class Meta:
+        model = DiaProduccio
+        fields = ("date", "productor", "node")
+        exclude = ("dies_entrega", )
+
+class StockForm(forms.ModelForm):
+
+
+    class Meta:
+        model = Stock
+        fields = ("format", "stock",)
+        # exclude = ( )
+    #
+    #
+    # def __init__(self, *args, **kwargs):
+    #     super(StockForm, self).__init__(*args, **kwargs)
+    #     # self.fields["format"].disabled = True
+    #     self.fields['format'].widget.attrs['readonly'] = True
+
+
 class ProductorDiaEntregaForm(forms.Form):
 
     productes = forms.MultipleChoiceField(widget=CheckboxSelectMultiple())
@@ -158,10 +183,10 @@ class ProducteForm(forms.ModelForm):
         model = Producte
         exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega", "nodes")
 
-    def __init__(self, productor, *args, **kwargs):
-        super(ProducteForm, self).__init__(*args, **kwargs)
-        self.fields["formats"].widget = CheckboxSelectMultiple()
-        self.fields["formats"].queryset = TipusProducte.objects.filter(productor=productor)
+    # def __init__(self, productor, *args, **kwargs):
+    #     super(ProducteForm, self).__init__(*args, **kwargs)
+    #     self.fields["formats"].widget = CheckboxSelectMultiple()
+    #     self.fields["formats"].queryset = TipusProducte.objects.filter(productor=productor)
 
 
 class ContracteForm(forms.ModelForm):

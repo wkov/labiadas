@@ -422,7 +422,7 @@ def NodeCalcView(request):
             json_res = []
             date = datetime.date.today() + timedelta(hours=48)
             # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
-            for dia in producte.dies_entrega.order_by("date").filter(node=node,date__gte=date):
+            for dia in producte.dies_entrega.order_by("date").filter(node=node,date__gte=date)[:5]:
                     # a = str(dia.date())
                     day_str = str(dia.date.year) + "-" + str(dia.date.month) + "-" + str(dia.date.day)
                     a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')

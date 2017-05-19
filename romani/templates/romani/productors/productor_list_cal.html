@@ -1,9 +1,42 @@
 {% extends "base.html" %}
 {% csrf_token %}
+
+
+{% block headers %}
+<script>
+
+$(document).ready(function() {
+
+    $('#calendar').fullCalendar({
+       aspectRatio: 3,
+       eventSources: [
+        {
+            url: '/pro/distriEvents/',
+            editable: false,
+            color: 'black',   // an option!
+            textColor: 'white' // an option!
+        }
+           ,
+        {
+            url: '/pro/distriSelected/',
+            editable: false,
+            color: 'green',   // an option!
+            textColor: 'white' // an option!
+        }
+      ]
+    })
+
+});
+
+</script>
+{% endblock %}
+
+
+
 {% block content %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
 {#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -11,7 +44,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_cal_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
 {#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -31,12 +64,15 @@
 
 
     <br/>
-    <div id="dialog" title="Benvingut">
-    <p>A la secció dels productors pots gestionar els teus perfils de productor ja existents o crear-ne de nous.</p>
+    <div id="dialog" title="Calendari d'entregues">
+        <p>Clica sobre el dia d'entrega per seleccionar els productes que portaràs. En <b style="color: green">verd</b> estan pintats els dies en que <b style="color: green">SÍ</b> t'has compromés a portar productes,
+        en <b style="color: black">negre</b> els que <b style="color: black">NO</b> has confirmat assistència</p>
     </div>
     <br/>
     <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
-    {% if object_list %}
+
+
+        {% if object_list %}
         {% for link in object_list %}
             <form method="post" action="" class="vote_form">
               <li>
@@ -79,96 +115,10 @@
 
 
 
-        <br/>
-    {% if comandes %}
-    Comandes: <br/>
-     <table border="1" id="myTable" class="tablesorter" style="width: 100%">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Productor</th>
-     <th>Lloc d'entrega</th>
-     <th>Cant</th>
-     <th>Format</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Usuari</th>
-{#     <th>Data de comanda</th>#}
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in comandes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
-               <tr>
-                        <td>{{ link.producte.nom }}</td>
-                        <td>{{ link.producte.productor.nom }}</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>{{ link.cantitat }}</td>
-                        <td>{{ link.format.nom }}</td>
-                        <td>{{ link.dia_entrega.date }}</td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
-                    </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-     </tbody>
-       </table>
-    {% endif %}
-    {% if contractes %}
-<br/>
-    Contractes: <br/>
-     <table style="width: 100%" id="myTable2" class="tablesorter" border="1">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Productor</th>
-     <th>Lloc d'entrega</th>
-     <th>Cant</th>
-     <th>Format</th>
-     <th>Pròxima data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Usuari</th>
-{#     <th>Data de comanda</th>#}
-     <th>Freqüència</th>
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in contractes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
-               <tr>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
-                        <td>{{ link.producte.productor.nom }}</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>{{ link.cantitat }}</td>
-                        <td>{{ link.format.nom }}</td>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
-                    </tr>
-{#</a>#}
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-     </tbody>
-       </table>
-    {% endif %}
 
 
+
+    <div id='calendar'></div>
 
 
 

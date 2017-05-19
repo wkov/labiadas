@@ -14,8 +14,9 @@ from romani.public_views import coopeView, etiquetaView, comandesView, entregasV
 from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView
 from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export_comandes_xls, NodeCreateView
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
-from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, LlocsListView, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView
-from romani.productor_views import ContracteDetailView
+from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, LlocsListView, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
+from romani.productor_views import ContracteDetailView, distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
+from romani.productor_views import DiaProduccioUpdateView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
@@ -38,10 +39,16 @@ urlpatterns = [
 
 
     url(r'^vista_productors/', auth(ProductorsListView.as_view()), name="productor_list"),
+    url(r'^distri_cal/', auth(ProductorsCalListView.as_view()), name="productor_cal_list"),
+    url(r'^distri_hist/', auth(ProductorsHistListView.as_view()), name="productor_hist_list"),
     url(r'^pro/(?P<pro>\d+)/vista_comandes/', auth(ComandesListView.as_view()), name='vista_comandes'),
     url(r'^pro/(?P<pk>\d+)/data_comandes/(?P<dataentrega>\d+)$', auth(DiaEntregaProductorView), name='data_comandes'),
+    url(r'^pro/distri_dia/(?P<dataentrega>\d+)$', auth(DiaEntregaDistribuidorView), name='distri_data_comandes'),
     url(r'^pro/(?P<pro>\d+)/calEvents/$', auth(diaEntregaEvents), name="calEvents"),
     url(r'^pro/(?P<pro>\d+)/cal2Events/$', auth(diaEntregaSelected), name="cal2Events"),
+    url(r'^pro/(?P<pro>\d+)/calProdEvents/$', auth(diaProdEvents), name="calProdEvents"),
+    url(r'^pro/distriEvents/$', auth(distriCalendarEvents), name="distriEvents"),
+    url(r'^pro/distriSelected/$', auth(distriCalendarSelected), name="distriSelected"),
     url(r'^pro/(?P<pro>\d+)/vista_productes/', auth(ProductesListView.as_view()), name='vista_productes'),
     url(r'^pro/(?P<pro>\d+)/vista_llocs/', auth(LlocsListView.as_view()), name='vista_llocs'),
     url(r'^pro/(?P<pro>\d+)/vista_dates/', auth(DatesListView.as_view()), name='vista_dates'),
@@ -53,7 +60,8 @@ urlpatterns = [
     url(r"^pro/(?P<pro>\d+)/format/create/$", auth(TipusProducteCreateView.as_view()), name="format_create"),
     url(r"^pro/(?P<pro>\d+)/producte/create/$", auth(ProducteCreateView.as_view()), name="producte_create"),
     url(r"^productor/create/$", auth(ProductorCreateView.as_view()), name="productor_create"),
-
+    url(r"^pro/(?P<pro>\d+)/diaproduccio/$", auth(DiaProduccioCreateView), name="diaproduccio_create"),
+    url(r"^pro/(?P<pro>\d+)/diaproduccio_update/(?P<pk>\d+)$", auth(DiaProduccioUpdateView), name="diaproduccio_update"),
 
     url(r'^export/xls/(?P<pk>\d+)/$', auth(export_comandes_xls), name='export_comandes_xls'),
     url(r'^vista_nodes/', auth(NodesListView.as_view()), name='vista_nodes'),

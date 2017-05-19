@@ -1,9 +1,32 @@
 {% extends "base.html" %}
-{% csrf_token %}
+
 {% block content %}
-    <div style="margin: 0 auto; text-align:center;">
+
+    <script>
+    jQuery(document).ready(function($) {
+
+        $("#checkAll").click(function () {
+
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        })
+        })
+    </script>
+
+    <div>
+    {% if message %}
+
+            <div class="thumbnail" >
+            <span class="glyphicon glyphicon-info-sign"></span>
+                {{ message }}
+            </br>
+        </div>
+    {% endif %}
+    </div>
+
+
+     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
 {#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -11,7 +34,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_cal_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
 {#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -27,74 +50,51 @@
                                  </a>
                         </div>
     </div>
-
-
-
+    <div id="dialog" title="Dia d'entrega"><p>
+        Una vegada seleccionis els productes que portaràs el {{ dia.date }}, et podran fer comandes per aquest dia tots els usuaris de {{ dia.node.nom }}
+    </p>
+    <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>
     <br/>
-    <div id="dialog" title="Benvingut">
-    <p>A la secció dels productors pots gestionar els teus perfils de productor ja existents o crear-ne de nous.</p>
-    </div>
-    <br/>
-    <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
-    {% if object_list %}
-        {% for link in object_list %}
-            <form method="post" action="" class="vote_form">
-              <li>
-                  <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor">
-                  [{{ link.nom }}]
-                 <span id="notification_count">
-                        {{ link.comandes_count }}
-                </span>
-                {% csrf_token %}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
+<form method="post" action="">
+  {% csrf_token %}
 
+{#  {{ form.as_p }}#}
+<p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
+<p> &nbsp; &nbsp;
+<input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</p>
+    {% for p in productes %}
 
-{#                  <b>{{ link.etiqueta.nom }}</b>#}
-{#                  {% for aux in link.nodes.all %}#}
-{#                    {{ aux }} /#}
-{#                  {% endfor %}#}
-{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
-                </a>
-                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
-                      <span id="notification_count">
-                        {{ link.comandes_count }}
-                      </span>
-                  </a>
-{#                  {{ link.responsable }}#}
-              </li>
-            </form>
-            <br/>
-        {% endfor %}
-    {% else %}
-        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
-    {% endif %}
+        {% if p in productes_sel %}
+            <p> &nbsp; &nbsp;
+             <input type="checkbox" name="productes" value="{{p.pk}}" checked/><b> {{p.nom}}</b>
+            </p>
+        {% else %}
+            <p> &nbsp; &nbsp;
+             <input type="checkbox" name="productes" value= {{p.pk}} /><b> {{p.nom}}</b>
+            </p>
+        {% endif %}
+
+    {% endfor %}
+{#  <input type="text" id="datepicker" size="30">#}
+  <input type="submit" value="Grabar">
+</form>
 
 
 
-        <br/>
-    {% if comandes %}
-    Comandes: <br/>
+{% if comandes %}
+
+   <br/>    Comandes: <br/>
      <table border="1" id="myTable" class="tablesorter" style="width: 100%">
      <thead>
      <tr>
      <th>Producte</th>
-     <th>Productor</th>
      <th>Lloc d'entrega</th>
-     <th>Cant</th>
-     <th>Format</th>
+     <th>[Cant Format]</th>
      <th>Data d'entrega</th>
      <th>Franja horària</th>
      <th>Preu</th>
-     <th>Usuari</th>
-{#     <th>Data de comanda</th>#}
+     <th>Client</th>
+     <th>Data de comanda</th>
      </tr>
      </thead>
      <tbody>
@@ -103,16 +103,14 @@
 {#              <li>#}
 
                <tr>
-                        <td>{{ link.producte.nom }}</td>
-                        <td>{{ link.producte.productor.nom }}</td>
+                        <td>[{{ link.producte.nom }}]</td>
                         <td>{{ link.lloc_entrega }}</td>
-                        <td>{{ link.cantitat }}</td>
-                        <td>{{ link.format.nom }}</td>
+                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
                         <td>{{ link.dia_entrega.date }}</td>
                         <td>{{ link.franja_horaria}}</td>
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
+                        <td>{{ link.data_comanda.date }}</td>
                     </tr>
 
 {#              </li>#}
@@ -123,20 +121,17 @@
        </table>
     {% endif %}
     {% if contractes %}
-<br/>
+    <br/>
     Contractes: <br/>
-     <table style="width: 100%" id="myTable2" class="tablesorter" border="1">
-     <thead>
-     <tr>
+     <table border="1" id="myTable2" class="tablesorter" style="width: 100%">
+     <thead><tr>
      <th>Producte</th>
-     <th>Productor</th>
      <th>Lloc d'entrega</th>
-     <th>Cant</th>
-     <th>Format</th>
-     <th>Pròxima data d'entrega</th>
+     <th>[Cant Format]</th>
+     <th>Data d'entrega</th>
      <th>Franja horària</th>
      <th>Preu</th>
-     <th>Usuari</th>
+     <th>Client</th>
 {#     <th>Data de comanda</th>#}
      <th>Freqüència</th>
      </tr>
@@ -147,19 +142,17 @@
 {#              <li>#}
 
                <tr>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
-                        <td>{{ link.producte.productor.nom }}</td>
+                        <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>
                         <td>{{ link.lloc_entrega }}</td>
-                        <td>{{ link.cantitat }}</td>
-                        <td>{{ link.format.nom }}</td>
+                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
                         <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>
                         <td>{{ link.franja_horaria}}</td>
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
 {#                        <td>{{ link.data_comanda.date }}</td>#}
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
+                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.freq_txt }}</a></td>
                     </tr>
-{#</a>#}
+
 {#              </li>#}
 {#            </form>#}
 {#            <br/>#}
@@ -167,11 +160,4 @@
      </tbody>
        </table>
     {% endif %}
-
-
-
-
-
-
-
 {% endblock %}
