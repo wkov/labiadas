@@ -72,7 +72,7 @@ class ProductorForm(forms.ModelForm):
 
     class Meta:
         model = Productor
-        fields = ("nom", "text", "responsable")
+        fields = ("nom", "text", "responsable", "hores_limit")
         # exclude = ("")
 
     def __init__(self, user, *args, **kwargs):
@@ -130,22 +130,24 @@ class DiaProduccioForm(forms.ModelForm):
 
 class StockForm(forms.ModelForm):
 
+    # format = forms.CharField(max_length=45)
+
 
     class Meta:
         model = Stock
-        fields = ("format", "stock",)
-        # exclude = ( )
+        fields = ("stock","format")
+        # exclude = ("format",  )
     #
     #
     # def __init__(self, *args, **kwargs):
     #     super(StockForm, self).__init__(*args, **kwargs)
-    #     # self.fields["format"].disabled = True
-    #     self.fields['format'].widget.attrs['readonly'] = True
+        # self.fields["format"].disabled = True
+        # self.fields['format'].queryset = TipusProducte.objects.filter(pk__lte=10)
+        # self.fields['format'].queryset = TipusP
 
-
-class ProductorDiaEntregaForm(forms.Form):
-
-    productes = forms.MultipleChoiceField(widget=CheckboxSelectMultiple())
+# class ProductorDiaEntregaForm(forms.Form):
+#
+#     productes = forms.MultipleChoiceField(widget=CheckboxSelectMultiple())
 
 
 class FranjaHorariaForm(forms.ModelForm):
@@ -199,8 +201,8 @@ class ContracteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ContracteForm, self).__init__(*args, **kwargs)
         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
-        date = datetime.date.today() + timedelta(hours=48)
-        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(productes__id__exact=self.instance.producte.id, node=self.instance.lloc_entrega, date__gt=date).order_by('date')
+        date = datetime.date.today() + timedelta(hours=int(self.instance.format.productor.hores_limit))
+        self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(formats__id__exact=self.instance.format.id, node=self.instance.lloc_entrega, date__gt=date).order_by('date')
 
 
 class NodeProductorsForm(forms.ModelForm):

@@ -35,15 +35,17 @@ def buskadorProducte(request):
 
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
 
-    etiquetes = []
+    etiquetes = set()
 
     for e in etiquetes_pre:
         for p in e.producte_set.all():
-            for p2 in p.dies_entrega.all():
-                if p2 in dies_node_entrega:
-                    etiquetes.append(e)
-                    break
-            break
+            for f in p.formats.all():
+                for p2 in f.dies_entrega.all():
+                    if p2 in dies_node_entrega:
+                        etiquetes.add(e)
+                        break
+
+
 
 
     if not searchString == 0:
@@ -71,15 +73,15 @@ def coopeView(request):
 
     etiquetes_pre = Etiqueta.objects.all()
 
-    etiquetes = []
+    etiquetes = set()
 
     for e in etiquetes_pre:
         for p in e.producte_set.all():
-            for p2 in p.dies_entrega.all():
-                if p2 in dies_node_entrega:
-                    etiquetes.append(e)
-                    break
-            break
+            for f in p.formats.all():
+                for p2 in f.dies_entrega.all():
+                    if p2 in dies_node_entrega:
+                        etiquetes.add(e)
+                        break
 
     # nodes = Node.objects.all()
 
@@ -87,7 +89,7 @@ def coopeView(request):
     # productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False).order_by(karma descending)
 
 
-    p = Producte.objects.filter(esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(esgotat=False, formats__dies_entrega__in = dies_node_entrega ).distinct()
 
 
 
@@ -130,17 +132,17 @@ def etiquetaView(request,pk):
 
     etiquetes_pre = Etiqueta.objects.all()
 
-    etiquetes = []
+    etiquetes = set()
 
     for e in etiquetes_pre:
         for p in e.producte_set.all():
-            for p2 in p.dies_entrega.all():
-                if p2 in dies_node_entrega:
-                    etiquetes.append(e)
-                    break
-            break
+            for f in p.formats.all():
+                for p2 in f.dies_entrega.all():
+                    if p2 in dies_node_entrega:
+                        etiquetes.add(e)
+                        break
 
-    p = Producte.objects.filter(etiqueta=etiqueta, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(etiqueta=etiqueta, esgotat=False, formats__dies_entrega__in = dies_node_entrega ).distinct()
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
 
@@ -169,7 +171,7 @@ def productorView(request,pk):
 
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
 
-    p = Producte.objects.filter(productor=productor, esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(productor=productor, esgotat=False, formats__dies_entrega__in = dies_node_entrega ).distinct()
 
     adjunts = Adjunt.objects.filter(productor=productor)
 

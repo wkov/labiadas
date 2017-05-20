@@ -34,7 +34,7 @@
 
                         <a href="{% url 'productor' producte.productor.pk %}" > &nbsp; <h3>{{ producte.productor }}</h3></a>
 
-            <a href="{% url 'messages_compose_to' producte.productor.responsable %}" title="Enviar missatge al productor">
+            <a href="{% url 'messages_compose_to' producte.productor.responsable.first %}" title="Enviar missatge al productor">
                  Enviar missatge al productor <span class="glyphicon glyphicon-comment" style="color: #f6a828"></span>
                 </a>
 {#            <div style="float: right">#}

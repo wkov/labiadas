@@ -62,30 +62,32 @@
                         </div>
     </div>
 
-
-
+    {{ stockform.management_form }}
 
 
 <table border="1">
 <tr><td>{{ form.as_p }}
 </td></tr>
     {% for f in stockform %}
-<tr><td>
+<tr>
+{#    {{ f.id }}#}
+    <td>
     {% if f.instance.format %}
         <b>{{ f.instance.format.nom }}
         {{ f.instance.format.producte }}</b>
         {{ f.instance.format.preu }} €
+{#        {{ f.format }}#}
     {% else %}
-        {{ f.format }}
+       {{ f.initial.format.nom}} {{ f.initial.format.producte.nom}} {{ f.initial.format.preu }}
+{#        {{ f.instance.format.value }}#}
     {% endif %}</td>
-<td>{{ f.stock }} unitats</td><br/>
+
+<td>{{ f.id }}{{ f.format.as_hidden }} {{ f.stock }} unitats</td><br/>
     </tr>
         {% endfor %}
 </table>
-{#  <input type="text" id="datepicker" size="30">#}
   <input type="submit" value="Grabar">
 
 </form>
 
-    {{ stockform.management_form }}
 {% endblock %}

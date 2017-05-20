@@ -59,7 +59,7 @@
                     <p>
                     <a href="{% url 'productor'  producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
                             {{ producte.productor.nom }}</a>
-                    <a href="{% url 'messages_compose_to' producte.productor.responsable %}" title="Enviar missatge al productor">
+                    <a href="{% url 'messages_compose_to' producte.productor.responsable.first %}" title="Enviar missatge al productor">
                     <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
                  </div><br/></br>
 

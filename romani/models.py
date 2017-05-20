@@ -20,6 +20,7 @@ class Productor(models.Model):
     nom = models.CharField(max_length=20)
     responsable = models.ManyToManyField(User)
     text = models.TextField(blank=True)
+    hores_limit = models.IntegerField(default=48)
 
     def __str__(self):
         return self.nom
@@ -146,7 +147,9 @@ class DiaEntrega(models.Model):
     node = models.ForeignKey(Node, related_name="dies_entrega")
 
     def __str__(self):
-        return " %s %s %s" % (self.node, self.date, self.franjes_horaries.all())
+        a = datetime.datetime.strptime(str(self.date), '%Y-%m-%d').strftime('%d/%m/%Y')
+        s = str(self.franja_inici())
+        return " %s %s %s" % (self.node, str(a), str(s))
 
     def dia_num(self):
         return self.date.weekday()
@@ -204,7 +207,7 @@ class Producte(models.Model):
     adjunt = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True)
-    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='productes')
+    # dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='productes')
     frequencies = models.ForeignKey(Frequencia)
     karma_date = models.DateTimeField(blank=True, null=True)
     karma_value = models.IntegerField(blank=True, null=True)
@@ -212,8 +215,14 @@ class Producte(models.Model):
     def __str__(self):
         return self.nom
 
+
     def dies_entrega_futurs(self):
-        return self.dies_entrega.filter(date__gt=datetime.datetime.today())
+        # set = set()
+        return DiaEntrega.objects.filter(date__gt=datetime.datetime.today(), formats=self.formats.all())
+        # for s in self.formats.all():
+        #     for d in s.dies_entrega.filter(date__gt=datetime.datetime.today()):
+        #         set.add(d)
+        # return set
 
     def nodes(self):
         return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
@@ -242,6 +251,7 @@ class TipusProducte(models.Model):
     nom = models.CharField(max_length=20)
     preu = models.FloatField(default=0.0)
     stock = models.IntegerField(blank=True, null=True)
+    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='formats')
     # stock = models.ForeignKey(Stock, blank=True, null=True)
     productor = models.ForeignKey(Productor)
     producte = models.ForeignKey(Producte, related_name='formats', blank=True, null=True)
@@ -254,7 +264,7 @@ class TipusProducte(models.Model):
 class DiaProduccio(models.Model):
     date = models.DateField()
     # stocks = models.ManyToManyField(Stock, related_name="diaProduccio")
-    dies_entrega = models.ManyToManyField(DiaEntrega)
+    dies_entrega = models.ManyToManyField(DiaEntrega, related_name='dia_prod')
     productor = models.ForeignKey(Productor)
     node = models.ForeignKey(Node, blank=True, null=True)
 

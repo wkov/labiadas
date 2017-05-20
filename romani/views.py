@@ -416,13 +416,15 @@ def NodeCalcView(request):
     if request.POST:
         if 'lloc_entrega' in request.POST:
             l = request.POST.get('lloc_entrega')
-            g = request.POST.get('producte_pk')
+            # g = request.POST.get('producte_pk')
+            f = request.POST.get('format_pk')
             node = get_object_or_404(Node, pk=l)
-            producte = Producte.objects.filter(pk=g).first()
+            # producte = Producte.objects.filter(pk=g).first()
+            format = TipusProducte.objects.filter(pk=f).first()
             json_res = []
-            date = datetime.date.today() + timedelta(hours=48)
+            date = datetime.date.today() + timedelta(hours=format.productor.hores_limit)
             # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
-            for dia in producte.dies_entrega.order_by("date").filter(node=node,date__gte=date)[:5]:
+            for dia in format.dies_entrega.order_by("date").filter(node=node,date__gte=date)[:5]:
                     # a = str(dia.date())
                     day_str = str(dia.date.year) + "-" + str(dia.date.month) + "-" + str(dia.date.day)
                     a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
