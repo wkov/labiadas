@@ -72,19 +72,13 @@
                                     <select id="id_format" name="format" class="hidden_id">
 
                                     {% for tipusproducte in producte.formats.all %}
-
-                                        {% if tipusproducte.stock > 0 %}
-
-                                            <option value= {{ tipusproducte.pk }} >{{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
-
-                                        {% endif %}
-
-
-                {#                       <a href="{% url 'comandaCreate'  producte.pk  %}">#}
-                {#                         </a>#}
-
-
-                                     {% endfor %}
+                                    {% if tipusproducte.in_stock == True %}
+                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
+                                    {% endif %}
+{#                                    {% if tipusproducte.stock == "None" %}#}
+{#                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>#}
+{#                                    {% endif %}#}
+                                {% endfor %}
                                     </select>
 
             {#            <label id="id_total_preu" name="total_preu" class="hidden_id" text="567"></label>#}

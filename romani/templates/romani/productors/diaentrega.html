@@ -52,7 +52,7 @@
         })
 
 
-        var selects = document.querySelectorAll('select[name="speed"]');
+        var selects = document.querySelectorAll('select');
 
         selects[0].addEventListener('change', function () {
         for (var i = 0; i < selects.length; i++) {
@@ -73,7 +73,8 @@
     {% endif %}
     </div>
 
-
+<div style="float: left; position:absolute;     font-family: 'Satisfy', cursive;
+    font-size: 3em"> {{ productor.nom }} </div>
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -132,62 +133,152 @@
 <form method="post" action="">
   {% csrf_token %}
 
-{#  {{ form.as_p }}#}
+{#  {{ form.as_p }}#}<br/>
 <p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
 <p> &nbsp; &nbsp;
 
-<table border="1">
-        <tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</p></td>
-        <td> <select name="speed" id="speed">
-      <option value="0">Límit per producció [{{ dia_prod }}]</option>
-      <option value="1">Límit per stock fixe </option>
-      <option value="2" selected="selected">Sense Límit</option>
-    </select></td>
-    </tr>
-    {% for p in productes %}
-        <tr>
-        <td>
-
+{#<table border="1">#}
+{#        <tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</td>#}
+{#        <td> <select name="speed" id="speed">#}
+{#      <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
+{#      <option value="1">Límit per stock fixe </option>#}
+{#      <option value="2" selected="selected">Sense Límit</option>#}
+{#    </select></td>#}
+{#    </tr>#}
+{#    {% for p in productes %}#}
+{#        <tr>#}
+{#        <td>#}
+{##}
 {#            <td> &nbsp; &nbsp;#}
 {#             <input type="checkbox"  name="productes" value="{{p.pk}}" checked/>#}
-            <b> {{p.nom}}</b>
+{#            <b> {{p.nom}}</b>#}
 {#            </td>#}
 {#            <td> &nbsp; &nbsp;#}
 {#             <input type="checkbox" name="productes" value= {{p.pk}} />#}
 {#            </td>#}
-        </td>
-        <td>
-        {% for f in p.formats.all %}
-            {% if f in formats_sel %}
+{#        </td>#}
+{#        <td>#}
+{#        {% for f in p.formats.all %}#}
+{#            {% if f in formats_sel %}#}
+{#                {% for s in formats_sel %}#}
+{#                    {% if s.format == f %}#}
 {#            <tr>#}
 {#            <td>#}
-             <input type="checkbox" name="formats" value="{{f.pk}}" checked/><b> {{f.nom}} </b>
+{#             <input type="checkbox" name="formats" value="{{s.format.pk}}" checked/><b> {{f.nom}} </b>#}
+{##}
+{##}
+{#                    <select name="{{s.format.pk}}" id="{{s.format.pk}}">#}
+{#                {% if f.tipus_stock == 0 %}#}
+{#                  <option value="0" selected>Límit per producció [{{ dia_prod }}]</option>#}
+{#                  <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
+{#                  <option value="2">Sense Límit</option>#}
+{#                {% elif f.tipus_stock == 1 %}#}
+{#                  <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
+{#                  <option value="1" selected>Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
+{#                  <option value="2">Sense Límit</option>#}
+{#                {% elif f.tipus_stock == 2 %}#}
+{#                  <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
+{#                  <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
+{#                  <option value="2" selected>Sense Límit</option>#}
+{#                {% else %}#}
+{#                  <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
+{#                  <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
+{#                  <option value="2" selected>Sense Límit</option>#}
+{#                {% endif %}#}
+{#            </select>#}
+{##}
+{##}
+{##}
+{#                {% endif %}#}
+{#                {% endfor %}#}
+{#        {% else %}#}
+{#                <input type="checkbox" name="formats" value="{{f.pk}}"/><b> {{f.nom}} </b>#}
+{#                <select name="speed" id="speed">#}
+{#                      <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
+{#                      <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
+{#                      <option value="2" selected>Sense Límit</option>#}
+{#                </select>#}
+{##}
+{#        {% endif %}#}
+{##}
+{#                <label for="speed">Unitats</label>#}
+{##}
+{##}
+{##}
+{##}
+{#            <br/>#}
+{#            </td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#        </td>#}
+{#        </tr>#}
+{#    {% endfor %}#}
+{#</table>#}
 
+
+{{ formatstockform.management_form }}
+
+<table border="1">
+
+
+    <tr>
+        <td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot
+            <select name="speed" id="speed">
+              <option value="0">Límit per producció [{{ dia_prod }}]</option>
+              <option value="1">Límit per stock fixe </option>
+              <option value="2" selected="selected">Sense Límit</option>
+            </select>
+        </td>
+    </tr>
+
+
+    {% for f in formatstockform %}
+    <tr>
+    {#    {{ f.initial.format }}#}
+
+    {#    {{ f.initial.format.nom }}#}
+
+
+        {% if f.instance.format %}
+{#             <td><label>{{ f.instance.format.producte.nom }}</label></td>#}
+{#            {% if f.instance %}#}
+                <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}" checked/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>
+{#             {% else %}#}
+{#             <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}"/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>#}
+{#            {% endif %}#}
+{#                 {{ f.format }}#}
         {% else %}
-                <input type="checkbox" name="formats" value="{{f.pk}}"/><b> {{f.nom}} </b>
+{#             <td><label>{{ f.initial.format.producte.nom }}</label></td>#}
+            {% if f.initial.format %}
+                <td><input type="checkbox" name="formats" value="{{f.initial.format.pk}}"/><b> {{f.initial.format.nom}} {{f.initial.format.producte.nom}} </b>
+            {% else %}
+                <td>{{ f.format }}
+            {% endif %}
 
         {% endif %}
 
-{#                <label for="speed">Unitats</label>#}
-    <select name="speed" id="speed">
+{#        {% if not f.instance.pk %}#}
+{#            {% if not f.initial.format %}#}
+{#                {{ f.format }}#}
+{#            {% endif %}#}
+{#        {% endif %}#}
 
-      <option value="0">Límit per producció [{{ dia_prod }}]</option>
-      <option value="1">Límit per stock fixe [{{ f.stock }} unit]</option>
-      <option value="2" selected="selected">Sense Límit</option>
-    </select>
-
-
-
-
-            <br/>
-{#            </td>#}
-{#            </tr>#}
-        {% endfor %}
+        {{ f.id }}
+{#        {{ f.format }}#}
+        {{ f.tipus_stock }}
+        {{ f.dia.as_hidden }}
+        {{ f.format.as_hidden }}
         </td>
-        </tr>
+    {#    {{ f.as_p }}#}
+
+    {#    {{ f.tipus_stock }}#}
+    {##}
+    {#    {{ f.format }}#}
+    {##}
+    {#    {{ f.dia }}#}
+    </tr>
     {% endfor %}
 </table>
-
 
 
 {#  <div class="toggle-wrap">#}

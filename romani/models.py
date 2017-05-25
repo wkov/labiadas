@@ -7,6 +7,7 @@ import datetime
 
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
+from datetime import timedelta
 
 
 class Productor(models.Model):
@@ -216,16 +217,16 @@ class Producte(models.Model):
         return self.nom
 
 
-    def dies_entrega_futurs(self):
-        # set = set()
-        return DiaEntrega.objects.filter(date__gt=datetime.datetime.today(), formats=self.formats.all())
-        # for s in self.formats.all():
-        #     for d in s.dies_entrega.filter(date__gt=datetime.datetime.today()):
-        #         set.add(d)
-        # return set
-
-    def nodes(self):
-        return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
+    # def dies_entrega_futurs(self):
+    #     # set = set()
+    #     return DiaEntrega.objects.filter(date__gt=datetime.datetime.today(), formats__format=self.formats.all())
+    #     # for s in self.formats.all():
+    #     #     for d in s.dies_entrega.filter(date__gt=datetime.datetime.today()):
+    #     #         set.add(d)
+    #     # return set
+    #
+    # def nodes(self):
+    #     return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
 
 
     def karma(self, node):
@@ -246,18 +247,64 @@ class Producte(models.Model):
         return self.karma_value
 
 
+
+
+
+
 class TipusProducte(models.Model):
 
     nom = models.CharField(max_length=20)
     preu = models.FloatField(default=0.0)
-    stock = models.IntegerField(blank=True, null=True)
-    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='formats')
+    stock_fix = models.IntegerField(blank=True, null=True)
+    # dies_entrega = models.ManyToManyField(DiaFormatStock, blank=True, related_name='formats')
     # stock = models.ForeignKey(Stock, blank=True, null=True)
     productor = models.ForeignKey(Productor)
     producte = models.ForeignKey(Producte, related_name='formats', blank=True, null=True)
 
     def __str__(self):
-        return "%s %s€ %s %s unit" % (self.nom, self.preu, self.producte, self.stock)
+        return "%s %s" % (self.nom, self.producte)
+
+    def in_stock(self):
+        try:
+            date = datetime.date.today() + timedelta(hours=self.productor.hores_limit)
+            diesformat = self.dies_entrega.filter(dia__date__gte=date)
+            for d in diesformat:
+                if d.tipus_stock == '0':
+                    try:
+                        diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=self.productor).order_by('-date').first()
+                        if diaproduccio:
+                           s = self.stocks.get(dia_prod=diaproduccio)
+                           if s.stock > 0:
+                               return True
+                    except:
+                        pass
+                elif d.tipus_stock == '1':
+                    if self.stock_fix > 0:
+                        return True
+                elif d.tipus_stock == '2':
+                    return True
+        except:
+            return False
+
+    def dies_entrega_futurs(self):
+        date = datetime.datetime.today() + timedelta(hours=self.productor.hores_limit)
+        return DiaEntrega.objects.filter(date__gt=date, formats__format=self)
+
+    def nodes(self):
+        return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
+
+class DiaFormatStock(models.Model):
+    TIPUS_STOCK = (
+        ('0', 'Limit per produccio'),
+        ('1', 'Limit per stock fix'),
+        ('2', 'Sense Limit')
+    )
+
+
+    dia = models.ForeignKey(DiaEntrega, related_name='formats')
+    tipus_stock = models.CharField(max_length=10, choices=TIPUS_STOCK, default='2')
+    format = models.ForeignKey(TipusProducte, related_name='dies_entrega')
+
 
 
 

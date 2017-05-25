@@ -81,12 +81,12 @@
                             de <br/>
                             <select id="id_format" name="format" class="hidden_id form-control" style="width: 100% float:right" >
                                 {% for tipusproducte in producte.formats.all %}
-                                    {% if tipusproducte.stock > 0 %}
+                                    {% if tipusproducte.in_stock == True %}
                                         <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
                                     {% endif %}
-                                    {% if tipusproducte.stock == "None" %}
-                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
-                                    {% endif %}
+{#                                    {% if tipusproducte.stock == "None" %}#}
+{#                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>#}
+{#                                    {% endif %}#}
                                 {% endfor %}
                             </select>
                             <div style="float: right; padding-top: 10px">

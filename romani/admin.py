@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock
+from romani.models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock, DiaFormatStock
 
 class producteAdmin(admin.ModelAdmin):
     list_display = ('nom', 'productor', 'descripcio', 'text_curt', 'karma_date', 'karma_value')
@@ -41,6 +41,10 @@ class etiquetaAdmin(admin.ModelAdmin):
     search_fields = ['nom', 'img']
     list_filter = ['nom', 'img']
 
+class diaFormatStockAdmin(admin.ModelAdmin):
+    list_display = ('dia', 'tipus_stock', 'format')
+    search_fields = ['dia', 'tipus_stock', 'format']
+    list_filter = ['dia', 'tipus_stock', 'format']
 
 class diaentregaAdmin(admin.ModelAdmin):
     # list_display = ('franjes_horaries', 'date', 'node')
@@ -77,6 +81,7 @@ class stockAdmin(admin.ModelAdmin):
     search_fields = ['dia_prod','format', 'stock']
     list_filter = ['dia_prod','format', 'stock']
 
+admin.site.register(DiaFormatStock, diaFormatStockAdmin)
 admin.site.register(Stock, stockAdmin)
 admin.site.register(DiaProduccio, diaProduccioAdmin)
 admin.site.register(Producte, producteAdmin)

@@ -1,12 +1,13 @@
 __author__ = 'sergi'
 
 from django.shortcuts import render, get_object_or_404
-from .models import Producte, Productor, Comanda, Contracte, TipusProducte, Node, DiaEntrega, FranjaHoraria, Frequencia
+from romani.models import Producte, Productor, Comanda, Contracte, TipusProducte, Node, DiaEntrega, FranjaHoraria, Frequencia, DiaProduccio
 from django.db.models import Q
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
-from .models import UserProfile, Etiqueta, Adjunt
-from .forms import ComandaForm,ContracteForm
+from romani.models import UserProfile, Etiqueta, Adjunt
+from romani.forms import ComandaForm,ContracteForm
+from romani.views import stock_check, stock_calc
 
 from django.http import HttpResponse
 
@@ -41,7 +42,7 @@ def buskadorProducte(request):
         for p in e.producte_set.all():
             for f in p.formats.all():
                 for p2 in f.dies_entrega.all():
-                    if p2 in dies_node_entrega:
+                    if p2.dia in dies_node_entrega:
                         etiquetes.add(e)
                         break
 
@@ -50,7 +51,7 @@ def buskadorProducte(request):
 
     if not searchString == 0:
         posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
-                                        esgotat=False, dies_entrega__in = dies_node_entrega ).distinct()
+                                        esgotat=False, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
 
         productes = sorted(posts, key=lambda a: a.karma(user_p.lloc_entrega_perfil), reverse=True)
 
@@ -67,7 +68,7 @@ def coopeView(request):
 
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    date = datetime.date.today() + timedelta(hours=48)
+    date = datetime.date.today()
 
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = date)
 
@@ -79,7 +80,7 @@ def coopeView(request):
         for p in e.producte_set.all():
             for f in p.formats.all():
                 for p2 in f.dies_entrega.all():
-                    if p2 in dies_node_entrega:
+                    if p2.dia in dies_node_entrega:
                         etiquetes.add(e)
                         break
 
@@ -88,9 +89,23 @@ def coopeView(request):
 
     # productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False).order_by(karma descending)
 
+    prod_aux = set()
+    for d in dies_node_entrega:
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d):
+            date = datetime.date.today() + timedelta(hours=t.productor.hores_limit)
+            if date <= d.date:
+                stock_result = stock_check(t, d)
+                if stock_result:
+                    prod_aux.add(t.producte.pk)
 
-    p = Producte.objects.filter(esgotat=False, formats__dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(esgotat=False, pk__in=prod_aux ).distinct()
 
+
+
+    # for aux in p:
+    #     for f in aux.formats.all():
+    #         if f.in_stock == True:
+    #             break
 
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
@@ -138,11 +153,11 @@ def etiquetaView(request,pk):
         for p in e.producte_set.all():
             for f in p.formats.all():
                 for p2 in f.dies_entrega.all():
-                    if p2 in dies_node_entrega:
+                    if p2.dia in dies_node_entrega:
                         etiquetes.add(e)
                         break
 
-    p = Producte.objects.filter(etiqueta=etiqueta, esgotat=False, formats__dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(etiqueta=etiqueta, esgotat=False, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
 
@@ -278,7 +293,7 @@ def next_weekday(d, weekday):
 
 
 
-def prox_calc(producte, node, dia_entrega, franja, frequencia):
+def prox_calc(format, node, dia_entrega, franja, frequencia):
 
         d = dia_entrega.date
         d_list = []
@@ -289,7 +304,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
             while(next_val):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -298,7 +313,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -309,7 +324,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -321,7 +336,7 @@ def prox_calc(producte, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, productes__id__exact=producte.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -384,33 +399,41 @@ class ComandaFormBaseView(FormView):
 
 
         if frequencia == '0':
-
-            format.stock = format.stock - int(cantitat)
-            format.save()
-
-            v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu)
-
-            ret = {"contracte": 0, "success": 1}
+            stock_result = stock_calc(format, data_entrega, cantitat)
+            # format.stock_fix = format.stock_fix - int(cantitat)
+            # format.save()
+            if stock_result == True:
+                v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu)
+                ret = {"contracte": 0, "success": 1}
+                notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
+                description="a la cistella" , timestamp=timezone.now())
+                messages.success(self.request, (u"Comanda realitzada correctament"))
+            else:
+                ret = {"contracte": 0, "success": 0}
+                messages.error(self.request, (u"ERROR. Comanda NO realitzada. Disculpa, s'ha esgotat el estoc disponible del producte"))
 
         else:
 
-            dies_entrega = prox_calc(producte, lloc_obj, data_entrega, franja, freq)
+            dies_entrega = prox_calc(format, lloc_obj, data_entrega, franja, freq)
 
-            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, frequencia=freq)
-
-            ret = {"contracte": 1, "success": 1, "pk": v.pk}
 
             for d in dies_entrega:
-                format.stock = format.stock - int(cantitat)
-                v.dies_entrega.add(d)
-
-            format.save()
+                stock_result = stock_calc(format, d, cantitat)
+                # format.stock_fix = format.stock_fix - int(cantitat)
+                if stock_result == True:
+                    v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, frequencia=freq)
+                    ret = {"contracte": 1, "success": 1, "pk": v.pk}
+                    notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
+                    description="a la cistella" , timestamp=timezone.now())
+                    messages.success(self.request, (u"Comanda realitzada correctament"))
+                    v.dies_entrega.add(d)
+                else:
+                    ret = {"contracte": 0, "success": 0}
+                    messages.error(self.request, (u"ERROR. Comanda NO realitzada. Disculpa, s'ha esgotat el estoc disponible del producte"))
+            # format.save()
 
         # ret = {"success": 1}
-        notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
-                  description="a la cistella" , timestamp=timezone.now())
 
-        messages.success(self.request, (u"Comanda realitzada correctament"))
 
 
         return self.create_response(ret, True)

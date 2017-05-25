@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% csrf_token %}
 {% block content %}
-
+<div style="float: left; position:absolute;     font-family: 'Satisfy', cursive;
+    font-size: 3em"> {{ productor.nom }} </div>
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -56,7 +57,7 @@
     <div id="dialog" title="Bústia de comandes"><p>Aquí pots veure totes les comandes que t'han arribat i els contractes vigents. Recorda que les comandes són puntuals; i els contractes periòdics</p></div>
 
     <br/>
-    {% if object_list %}
+    {% if object_list %}<br/>
     Comandes: <br/>
      <table border="1" id="myTable" class="tablesorter" style="width: 100%">
      <thead>

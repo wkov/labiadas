@@ -14,7 +14,7 @@ from romani.public_views import coopeView, etiquetaView, comandesView, entregasV
 from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView
 from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export_comandes_xls, NodeCreateView
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
-from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, LlocsListView, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
+from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
 from romani.productor_views import ContracteDetailView, distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
 from romani.productor_views import DiaProduccioUpdateView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
@@ -50,7 +50,6 @@ urlpatterns = [
     url(r'^pro/distriEvents/$', auth(distriCalendarEvents), name="distriEvents"),
     url(r'^pro/distriSelected/$', auth(distriCalendarSelected), name="distriSelected"),
     url(r'^pro/(?P<pro>\d+)/vista_productes/', auth(ProductesListView.as_view()), name='vista_productes'),
-    url(r'^pro/(?P<pro>\d+)/vista_llocs/', auth(LlocsListView.as_view()), name='vista_llocs'),
     url(r'^pro/(?P<pro>\d+)/vista_dates/', auth(DatesListView.as_view()), name='vista_dates'),
     url(r'^pro/(?P<pro>\d+)/vista_historial/', auth(HistorialListView.as_view()), name='vista_historial'),
     url(r"^productor/update/(?P<pk>\d+)/$", auth(ProductorUpdateView.as_view()), name="productor_update"),
@@ -63,13 +62,14 @@ urlpatterns = [
     url(r"^pro/(?P<pro>\d+)/diaproduccio/$", auth(DiaProduccioCreateView), name="diaproduccio_create"),
     url(r"^pro/(?P<pro>\d+)/diaproduccio_update/(?P<pk>\d+)$", auth(DiaProduccioUpdateView), name="diaproduccio_update"),
 
+
+
+
     url(r'^export/xls/(?P<pk>\d+)/$', auth(export_comandes_xls), name='export_comandes_xls'),
     url(r'^vista_nodes/', auth(NodesListView.as_view()), name='vista_nodes'),
     url(r'^dis/(?P<dis>\d+)/node_comandes/(?P<pk>\d+)$', auth(NodeComandesListView.as_view()), name='node_comandes'),
     url(r'^dis/(?P<dis>\d+)/vista_nodesdates/', auth(NodesDatesListView.as_view()), name='vista_nodesdates'),
     url(r'^dis/(?P<dis>\d+)/Events/$', auth(diaNodeEvents), name="calNodeEvents"),
-    # url(r'^dis/(?P<dis>\d+)/vista_nodesproductors/', auth(NodesProductorsListView.as_view()), name='vista_nodesproductors'),
-    # url(r'^dis/(?P<dis>\d+)/vista_nodeshistorial/', auth(NodesHistorialListView.as_view()), name='vista_nodeshistorial'),
     url(r"^node/update/(?P<pk>\d+)/$", auth(NodeUpdateView.as_view()),
         name="node_update"),
     url(r"^node_productors/update/(?P<pk>\d+)/$", auth(NodeProductorsUpdateView.as_view()),
@@ -88,10 +88,7 @@ urlpatterns = [
         name="contracte_update"),
     url(r"^contracte/(?P<pk>\d+)/$", auth(ContracteDetailView.as_view()),
         name="contracte_detail"),
-    # url(r"^producte_llocentrega/update/(?P<pk>\d+)/$", auth(LlocsUpdateView.as_view()),
-    #     name="producte_llocentrega_update"),
-    # url(r"^producte_dates/update/(?P<pk>\d+)/$", auth(ProducteDatesUpdateView.as_view()),
-    #     name="productedates_update"),
+
 
     url(r'^nou_usuari/', auth(views.nouUsuariView), name="nou_usuari"),
     url(r'^nodes_nou_usuari/', auth(views.nodesNouUsuariView), name="nodes_nou_usuari"), #ajax: retorna nodes pel select de nou_usuari amb la opcio inicial marcada segons l'usuari que ha convidat

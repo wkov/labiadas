@@ -34,6 +34,7 @@ $(document).ready(function() {
 
 
 {% block content %}
+
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -72,7 +73,7 @@ $(document).ready(function() {
     <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
 
 
-        {% if object_list %}
+        {% if object_list %}<ul>
         {% for link in object_list %}
             <form method="post" action="" class="vote_form">
               <li>
@@ -108,7 +109,7 @@ $(document).ready(function() {
               </li>
             </form>
             <br/>
-        {% endfor %}
+        {% endfor %}</ul>
     {% else %}
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
     {% endif %}

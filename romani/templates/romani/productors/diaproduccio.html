@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div style="float: left; position:absolute;     font-family: 'Satisfy', cursive;
+    font-size: 3em"> {{ productor.nom }} </div>
     <script>
     jQuery(document).ready(function($) {
         $("#checkAll").click(function () {
@@ -62,12 +64,13 @@
                         </div>
     </div>
 
-    {{ stockform.management_form }}
 
-
+<br/><br/>
+Introdueix els stocks que crees el dia de producció:
 <table border="1">
 <tr><td>{{ form.as_p }}
 </td></tr>
+    {{ stockform.management_form.as_hidden }}
     {% for f in stockform %}
 <tr>
 {#    {{ f.id }}#}

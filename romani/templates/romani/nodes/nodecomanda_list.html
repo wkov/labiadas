@@ -115,7 +115,7 @@
     {% if not object_list %}
         {% if not contractes %}
             Encara no hi ha comandes fetes per aquest dia d'entrega
-            {% if not productes %}
+            {% if not formats %}
                 ni productes confirmats pels productors
                 <br/><br/><a href="{% url 'diaentrega_update' diaentrega.pk  %}">Modificar dia d'entrega</a>
             {% endif %}
@@ -124,13 +124,14 @@
 
     {% if productes %}
         <br/><br/>
-     <p>Els següents productes estan disponibles el dia d'entrega seleccionat:</p>
+     <p>Els següents productes i formats estan disponibles el dia d'entrega seleccionat:</p>
         <table border="1">
         <th>Producte</th>
+        <th>Format</th>
         <th>Productor</th>
         <th>Etiqueta</th>
-    {% for p in productes %}
-        <tr><td>{{ p.nom }}</td><td>{{ p.productor }}</td><td>{{ p.etiqueta }}</td></tr>
+    {% for p in formats %}
+        <tr><td>{{ p.producte.nom }}</td><td>{{ p.nom }}</td><td>{{ p.productor }}</td><td>{{ p.producte.etiqueta }}</td></tr>
     {% endfor %}
         </table>
     <br/>

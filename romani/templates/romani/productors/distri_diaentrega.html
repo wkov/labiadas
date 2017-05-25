@@ -2,13 +2,31 @@
 
 {% block content %}
 
+{#    <script>#}
+{#    jQuery(document).ready(function($) {#}
+{##}
+{#        $("#checkAll").click(function () {#}
+{##}
+{#            $('input:checkbox').not(this).prop('checked', this.checked);#}
+{#        })#}
+{#        })#}
+{#    </script>#}
+
     <script>
     jQuery(document).ready(function($) {
-
         $("#checkAll").click(function () {
 
             $('input:checkbox').not(this).prop('checked', this.checked);
         })
+
+
+        var selects = document.querySelectorAll('select');
+
+        selects[0].addEventListener('change', function () {
+        for (var i = 0; i < selects.length; i++) {
+            selects[i].value = selects[0].value;
+        }
+});
         })
     </script>
 
@@ -55,34 +73,121 @@
     </p>
     <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>
     <br/>
+
+        <br/>
+    <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
+    {% if productors %}
+        {% for link in productors %}
+            <form method="post" action="" class="vote_form">
+              <li>
+                  <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor">
+                  [{{ link.nom }}]
+                 <span id="notification_count">
+                        {{ link.comandes_count }}
+                </span>
+                {% csrf_token %}
+{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
+{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
+{#                {% if not user.is_authenticated %}#}
+{#                <button disabled title="Si us plau, login per votar">+</button>#}
+{#                {% elif link.pk not in voted %}#}
+{#                <button>+</button>#}
+{#                {% else %}#}
+{#                <button>-</button>#}
+{#                {% endif %}#}
+
+
+{#                  <b>{{ link.etiqueta.nom }}</b>#}
+{#                  {% for aux in link.nodes.all %}#}
+{#                    {{ aux }} /#}
+{#                  {% endfor %}#}
+{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
+                </a>
+                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
+                      <span id="notification_count">
+                        {{ link.comandes_count }}
+                      </span>
+                  </a>
+{#                  {{ link.responsable }}#}
+              </li>
+            </form>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
+    {% endif %}
+
+
+
 <form method="post" action="">
   {% csrf_token %}
-
-{#  {{ form.as_p }}#}
 <p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
 <p> &nbsp; &nbsp;
-<input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</p>
-    {% for p in productes %}
+{{ formatstockform.management_form }}
 
-        {% if p in productes_sel %}
-            <p> &nbsp; &nbsp;
-             <input type="checkbox" name="productes" value="{{p.pk}}" checked/><b> {{p.nom}}</b>
-            </p>
+<table border="1">
+
+
+<tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot &nbsp;
+    <select name="speed" id="speed">
+      <option value="0">Límit per producció</option>
+      <option value="1">Límit per stock fix</option>
+      <option value="2" selected="selected">Sense Límit</option>
+    </select></td>
+    </tr>
+
+
+    {% for f in formatstockform %}
+    <tr>
+    {#    {{ f.initial.format }}#}
+
+    {#    {{ f.initial.format.nom }}#}
+
+
+        {% if f.instance.format %}
+{#             <td><label>{{ f.instance.format.producte.nom }}</label></td>#}
+{#            {% if f.instance %}#}
+                <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}" checked/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>
+{#             {% else %}#}
+{#             <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}"/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>#}
+{#            {% endif %}#}
+{#                 {{ f.format }}#}
         {% else %}
-            <p> &nbsp; &nbsp;
-             <input type="checkbox" name="productes" value= {{p.pk}} /><b> {{p.nom}}</b>
-            </p>
+{#             <td><label>{{ f.initial.format.producte.nom }}</label></td>#}
+            {% if f.initial.format %}
+                <td><input type="checkbox" name="formats" value="{{f.initial.format.pk}}"/><b> {{f.initial.format.nom}} {{f.initial.format.producte.nom}} </b>
+            {% else %}
+                <td>{{ f.format }}
+            {% endif %}
+
         {% endif %}
 
+{#        {% if not f.instance.pk %}#}
+{#            {% if not f.initial.format %}#}
+{#                {{ f.format }}#}
+{#            {% endif %}#}
+{#        {% endif %}#}
+
+        {{ f.id }}
+{#        {{ f.format }}#}
+        {{ f.tipus_stock }}
+        {{ f.dia.as_hidden }}
+        {{ f.format.as_hidden }}
+        </td>
+    {#    {{ f.as_p }}#}
+
+    {#    {{ f.tipus_stock }}#}
+    {##}
+    {#    {{ f.format }}#}
+    {##}
+    {#    {{ f.dia }}#}
+    </tr>
     {% endfor %}
-{#  <input type="text" id="datepicker" size="30">#}
+</table>
   <input type="submit" value="Grabar">
 </form>
 
-
-
 {% if comandes %}
-
    <br/>    Comandes: <br/>
      <table border="1" id="myTable" class="tablesorter" style="width: 100%">
      <thead>
@@ -99,9 +204,6 @@
      </thead>
      <tbody>
         {% for link in comandes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
                <tr>
                         <td>[{{ link.producte.nom }}]</td>
                         <td>{{ link.lloc_entrega }}</td>
@@ -112,10 +214,6 @@
                         <td>{{ link.client.first_name }}</td>
                         <td>{{ link.data_comanda.date }}</td>
                     </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
         {% endfor %}
      </tbody>
        </table>
@@ -132,15 +230,11 @@
      <th>Franja horària</th>
      <th>Preu</th>
      <th>Client</th>
-{#     <th>Data de comanda</th>#}
      <th>Freqüència</th>
      </tr>
      </thead>
      <tbody>
         {% for link in contractes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
                <tr>
                         <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>
                         <td>{{ link.lloc_entrega }}</td>
@@ -149,13 +243,8 @@
                         <td>{{ link.franja_horaria}}</td>
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
                         <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.freq_txt }}</a></td>
                     </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
         {% endfor %}
      </tbody>
        </table>

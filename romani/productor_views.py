@@ -1,7 +1,7 @@
 __author__ = 'sergi'
 
-from .models import Comanda, Productor, Producte, Contracte, DiaEntrega, TipusProducte, DiaProduccio, Stock
-from .forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, DiaProduccioForm, StockForm
+from romani.models import Comanda, Productor, Producte, Contracte, DiaEntrega, TipusProducte, DiaProduccio, Stock, DiaFormatStock, Node
+from romani.forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, DiaProduccioForm, StockForm, DiaFormatStockForm
 
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
@@ -64,20 +64,20 @@ class ProductesListView(ListView):
         context["formats"] = TipusProducte.objects.filter(productor=productor)
         return context
 
-class LlocsListView(ListView):
-    model = Producte
-    template_name = "romani/productors/llocsentrega.html"
-
-    def get_queryset(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        return Producte.objects.filter(productor=productor)
-
-    def get_context_data(self, **kwargs):
-        context = super(LlocsListView, self).get_context_data(**kwargs)
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        context["productor"] = productor
-        return context
-        context["nodes"] = Node.objects.filter()
+# class LlocsListView(ListView):
+#     model = Producte
+#     template_name = "romani/productors/llocsentrega.html"
+#
+#     def get_queryset(self):
+#         productor = Productor.objects.get(pk=self.kwargs['pro'])
+#         return Producte.objects.filter(productor=productor)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(LlocsListView, self).get_context_data(**kwargs)
+#         productor = Productor.objects.get(pk=self.kwargs['pro'])
+#         context["productor"] = productor
+#         return context
+#         context["nodes"] = Node.objects.filter()
 
 
 class TipusProducteCreateView(CreateView):
@@ -223,68 +223,159 @@ class DatesListView(ListView):
 
 def DiaEntregaDistribuidorView(request, dataentrega):
 
+
     productors = Productor.objects.filter(responsable=request.user)
     diaentrega = DiaEntrega.objects.get(pk=dataentrega)
+    diaproduccio = DiaProduccio.objects.filter(date__lte=diaentrega.date, productor__in=productors).order_by('-date').first()
+    formats = TipusProducte.objects.filter(producte__productor__in=productors)
+    diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor__in=productors)
 
+    if diaformatstock:
+        f_lst = []
+        for d in diaformatstock:
+            f_lst.append(d.format)
+        for f in formats:
+            if f in f_lst:
+                formats = formats.exclude(pk=f.pk)
+        FormatStockFormset = modelformset_factory(DiaFormatStock, extra=len(formats), form=DiaFormatStockForm)
+        formatstockform = FormatStockFormset(queryset=diaformatstock, initial=[{'format': x, 'dia':diaentrega} for x in formats])
+    else:
+        FormatStockFormset = formset_factory(DiaFormatStockForm, extra=0)
+        formatstockform = FormatStockFormset(initial=[{'format': x, 'dia':diaentrega} for x in formats])
 
     if request.POST:
-
-           form=ProductorDiaEntregaForm(request.POST)
-
-           try:
-               prod = request.POST.getlist('productes')
-
-               productes_dia = []
-               for d in prod:
-                   aux = Producte.objects.get(pk=d)
-                   if aux:
-                       productes_dia.append(aux)
-
-
-
-               productes = Producte.objects.filter(productor__in=productors)
-               for p in productes:
-                   if p not in productes_dia:
-                       if p in diaentrega.productes.all():
-                           if not ((Comanda.objects.filter(producte=p, dia_entrega=diaentrega))or(Contracte.objects.filter(producte=p, dies_entrega=diaentrega))):
-                               diaentrega.productes.remove(p)
+        try:
+            formats_pk = request.POST.getlist('formats')
+            formset = FormatStockFormset(request.POST)
+            if formset.is_valid():
+                for f in formset:
+                   cd = f.cleaned_data
+                   format = cd.get('format')
+                   tipus_stock = cd.get('tipus_stock')
+                   if str(format.pk) in formats_pk:
+                       s = DiaFormatStock.objects.get_or_create(dia=diaentrega, format=format)
+                       if s:
+                           s[0].tipus_stock = tipus_stock
+                           s[0].save()
+                   else:
+                       try:
+                           s = DiaFormatStock.objects.get(format=format, dia=diaentrega)
+                           if not ((Comanda.objects.filter(format=format, dia_entrega=diaentrega))or(Contracte.objects.filter(format=format, dies_entrega=diaentrega))):
+                                       s.delete()
                            else:
-                               message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
-                               productes_sel = Producte.objects.filter(dies_entrega__id__exact=diaentrega.id)
-                               comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
-                               contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
-                               return render(request, "romani/productors/distri_diaentrega.html", {'form': form, 'dia': diaentrega, 'productors': productors, 'productes': productes,
-                                                                 'productes_sel': productes_sel, 'comandes': comandes, 'contractes': contractes, 'message': message})
+                                   message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
+                                   formats_sel = TipusProducte.objects.filter(dies_entrega__dia__id__exact=diaentrega.id)
+                                   comandes = Comanda.objects.filter(format__in=formats, dia_entrega=diaentrega)
+                                   contractes = Contracte.objects.filter(format__in=formats, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
+                                   return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'formatstockform': formatstockform,
+                                                                     'formats_sel': formats_sel, 'comandes': comandes, 'contractes': contractes, 'message': message})
+                       except:
+                           pass
 
-
-               for dp in productes_dia:
-                   if dp not in diaentrega.productes.all():
-                       diaentrega.productes.add(dp)
-           except:
+                return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors})
+        except:
                productes = Producte.objects.filter(productor__in=productors)
                for p in productes:
-                   if p in diaentrega.productes.all():
-                       diaentrega.productes.remove(p)
-
-           return render(request, "romani/productors/productor_list_cal.html")
-
+                   for f in p.formats.all():
+                       s = DiaFormatStock.objects.filter(dia=diaentrega, format=f)
+                       if s:
+                           s.delete()
+               return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors})
 
     productes = Producte.objects.filter(productor__in=productors)
 
-    productes_sel = Producte.objects.filter(dies_entrega__id__exact=diaentrega.id)
+    formats_sel = DiaFormatStock.objects.filter(dia=diaentrega)
 
     comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
 
     contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
 
-    form=ProductorDiaEntregaForm()
+    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'productes': productes, 'formatstockform': formatstockform,
+                                                                 'formats_sel': formats_sel, 'comandes': comandes, 'contractes': contractes, 'dia_prod': diaproduccio})
 
-    form.fields['productes'].choices = [(x.pk, x) for x in Producte.objects.filter(productor__in=productors)]
 
-    form.fields['productes'].label = "Productes que portaras el dia d entrega"
 
-    return render(request, "romani/productors/distri_diaentrega.html", {'form': form, 'dia': diaentrega, 'productors': productors, 'productes': productes,
-                                                                 'productes_sel': productes_sel, 'comandes': comandes, 'contractes': contractes})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ #    productors = Productor.objects.filter(responsable=request.user)
+ #    diaentrega = DiaEntrega.objects.get(pk=dataentrega)
+ #
+ #
+ #    if request.POST:
+ #
+ #           # form=ProductorDiaEntregaForm(request.POST)
+ #
+ #           try:
+ #               formats = request.POST.getlist('formats')
+ #
+ #               formats_dia = []
+ #               for d in formats:
+ #                   aux = TipusProducte.objects.get(pk=d)
+ #                   if aux:
+ #                       formats_dia.append(aux)
+ #
+ #
+ #
+ #               productes = Producte.objects.filter(productor__in=productors)
+ #               for p in productes:
+ #                   for f in p.formats.all():
+ #                       if f not in formats_dia:
+ #                           if f in diaentrega.formats.all():
+ #                               if not ((Comanda.objects.filter(producte=p, format=f, dia_entrega=diaentrega))or(Contracte.objects.filter(producte=p, format=f, dies_entrega=diaentrega))):
+ #                                   diaentrega.formats.remove(p)
+ #                               else:
+ #                                   message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
+ #                                   productes_sel = Producte.objects.filter(dies_entrega__id__exact=diaentrega.id)
+ #                                   comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
+ #                                   contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
+ #                                   return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'productes': productes,
+ #                                                                     'productes_sel': productes_sel, 'comandes': comandes, 'contractes': contractes, 'message': message})
+ #
+ #
+ #               for dp in formats_dia:
+ #                   if dp not in diaentrega.formats.all():
+ #                       diaentrega.formats.add(dp)
+ #           except:
+ #               productes = Producte.objects.filter(productor__in=productors)
+ #               for p in productes:
+ #                   for f in p.formats.all():
+ #                       if f in diaentrega.formats.all():
+ #                           diaentrega.formats.remove(f)
+ #
+ #           return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors})
+ #
+ #
+ #    productes = Producte.objects.filter(productor__in=productors)
+ #
+ #    formats_sel = TipusProducte.objects.filter(dies_entrega__id__exact=diaentrega.id)
+ #
+ #    comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
+ #
+ #    contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
+ #
+ #    # form=ProductorDiaEntregaForm()
+ #    #
+ #    # form.fields['productes'].choices = [(x.pk, x) for x in Producte.objects.filter(productor__in=productors)]
+ #    #
+ #    # form.fields['productes'].label = "Productes que portaras el dia d entrega"
+ #
+ #    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'productes': productes,
+ #                                                                 'productes_sel': formats_sel, 'comandes': comandes, 'contractes': contractes})
 
 
 
@@ -294,67 +385,70 @@ def DiaEntregaProductorView(request, pk, dataentrega):
     productor = Productor.objects.get(pk=pk)
     diaentrega = DiaEntrega.objects.get(pk=dataentrega)
     diaproduccio = DiaProduccio.objects.filter(date__lte=diaentrega.date, productor=productor).order_by('-date').first()
-
-
-    if request.POST:
-           #
-           # form=ProductorDiaEntregaForm(request.POST)
-
-           try:
-               formats = request.POST.getlist('formats')
-
-               formats_dia = []
-               for d in formats:
-                   aux = TipusProducte.objects.get(pk=d)
-                   if aux:
-                       formats_dia.append(aux)
-
-
-
-               productes = Producte.objects.filter(productor=productor)
-               for p in productes:
-                   for f in p.formats.all():
-                       if f not in formats_dia:
-                           if f in diaentrega.formats.all():
-                               if not ((Comanda.objects.filter(producte=p, format=f, dia_entrega=diaentrega))or(Contracte.objects.filter(producte=p, format=f, dies_entrega=diaentrega))):
-                                   diaentrega.formats.remove(f)
-                               else:
-                                   message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
-                                   formats_sel = TipusProducte.objects.filter(dies_entrega__id__exact=diaentrega.id)
-                                   comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
-                                   contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
-                                   return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'productes': productes,
-                                                                     'formats_sel': formats_sel, 'comandes': comandes, 'contractes': contractes, 'message': message})
-
-
-               for dp in formats_dia:
-                   if dp not in diaentrega.formats.all():
-                       diaentrega.formats.add(dp)
-           except:
-               productes = Producte.objects.filter(productor=productor)
-               for p in productes:
-                   for f in p.formats.all():
-                       if f in diaentrega.formats.all():
-                           diaentrega.formats.remove(f)
-
-           return render(request, "romani/productors/dates_list.html", {'productor': productor})
-
-
+    formats = TipusProducte.objects.filter(producte__productor=productor)
+    diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor=productor)
     productes = Producte.objects.filter(productor=productor)
 
-    formats_sel = TipusProducte.objects.filter(dies_entrega__id__exact=diaentrega.id)
+    if diaformatstock:
+        f_lst = []
+        for d in diaformatstock:
+            f_lst.append(d.format)
+        for f in formats:
+            if f in f_lst:
+                formats = formats.exclude(pk=f.pk)
+        FormatStockFormset = modelformset_factory(DiaFormatStock, extra=len(formats), form=DiaFormatStockForm)
+        formatstockform = FormatStockFormset(queryset=diaformatstock, initial=[{'format': x, 'dia':diaentrega} for x in formats])
+    else:
+        FormatStockFormset = formset_factory(DiaFormatStockForm, extra=0)
+        formatstockform = FormatStockFormset(initial=[{'format': x, 'dia':diaentrega} for x in formats])
+
+    if request.POST:
+        try:
+            formats_pk = request.POST.getlist('formats')
+            formset = FormatStockFormset(request.POST)
+            if formset.is_valid():
+                for f in formset:
+                   cd = f.cleaned_data
+                   format = cd.get('format')
+                   tipus_stock = cd.get('tipus_stock')
+                   if str(format.pk) in formats_pk:
+                       s = DiaFormatStock.objects.get_or_create(dia=diaentrega, format=format)
+                       if s:
+                           s[0].tipus_stock = tipus_stock
+                           s[0].save()
+                   else:
+                       try:
+                           s = DiaFormatStock.objects.get(format=format, dia=diaentrega)
+                           if not ((Comanda.objects.filter(format=format, dia_entrega=diaentrega))or(Contracte.objects.filter(format=format, dies_entrega=diaentrega))):
+                                       s.delete()
+                           else:
+                                   message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
+                                   formats_sel = TipusProducte.objects.filter(dies_entrega__dia__id__exact=diaentrega.id)
+                                   comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
+                                   contractes = Contracte.objects.filter(format__in=formats, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
+                                   return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform,
+                                                                     'formats_sel': formats_sel, 'comandes': comandes, 'contractes': contractes, 'message': message})
+                       except:
+                           pass
+
+                return render(request, "romani/productors/dates_list.html", {'productor': productor})
+        except:
+               productes_qs = Producte.objects.filter(productor=productor)
+               for p in productes_qs:
+                   for f in p.formats.all():
+                       s = DiaFormatStock.objects.filter(dia=diaentrega, format=f)
+                       if s:
+                           s.delete()
+               return render(request, "romani/productors/dates_list.html", {'productor': productor})
+
+
+    formats_sel = DiaFormatStock.objects.filter(dia=diaentrega)
 
     comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
 
     contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
 
-    # form=ProductorDiaEntregaForm()
-    #
-    # form.fields['productes'].choices = [(x.pk, x) for x in Producte.objects.filter(productor=productor)]
-    #
-    # form.fields['productes'].label = "Productes que portaras el dia d entrega"
-
-    return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'productes': productes,
+    return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'productes': productes, 'formatstockform': formatstockform,
                                                                  'formats_sel': formats_sel, 'comandes': comandes, 'contractes': contractes, 'dia_prod': diaproduccio})
 
 
@@ -406,6 +500,7 @@ def DiaProduccioCreateView(request, pro):
 
     form = DiaProduccioForm()
     form.fields['productor'].choices = [(x.pk, x) for x in Productor.objects.filter(pk=pro)]
+    form.fields['node'].choices = [(x.pk, x) for x in Node.objects.filter(productors__id__exact=pro)]
 
 
     return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes})
@@ -429,10 +524,17 @@ def DiaProduccioUpdateView(request, pro, pk):
                try:
                    prod = request.POST.getlist('formats')
                    dia = request.POST.get('date')
+                   try:
+                        node_pk = request.POST.get('node')
+                        node = Node.objects.get(pk=node_pk)
+                   except:
+                        node = ""
                    if dia:
                        a = datetime.datetime.strptime(dia, '%d/%m/%Y').strftime('%Y-%m-%d')
                        dp_obj.date = a
                        dp_obj.productor = productor
+                       if not node == "" :
+                           dp_obj.node = node
                        dp_obj.save()
                except:
                    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes})
@@ -453,6 +555,7 @@ def DiaProduccioUpdateView(request, pro, pk):
     form = DiaProduccioForm()
     form.fields['productor'].choices = [(x.pk, x) for x in Productor.objects.filter(pk=pro)]
     form.fields['date'].initial = dp_obj.date
+    form.fields['node'].initial = dp_obj.node
     return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes})
 
 
@@ -474,11 +577,11 @@ class ProducteUpdateView(UpdateView):
     template_name = "romani/productors/producte_form.html"
     # user = request.user
 
-    def get_form_kwargs(self):
-        kwargs = super(ProducteUpdateView, self).get_form_kwargs()
-        producte = Producte.objects.get(pk=self.kwargs['pk'])
-        kwargs["productor"] = producte.productor
-        return kwargs
+    # def get_form_kwargs(self):
+    #     kwargs = super(ProducteUpdateView, self).get_form_kwargs()
+    #     producte = Producte.objects.get(pk=self.kwargs['pk'])
+    #     kwargs["productor"] = producte.productor
+    #     return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(ProducteUpdateView, self).get_context_data(**kwargs)
@@ -560,7 +663,7 @@ def eventsProductor(productor):
     formats = TipusProducte.objects.filter(productor=productor)
 
     for p in formats:
-        for d in DiaEntrega.objects.filter(formats__id__exact=p.id):
+        for d in DiaEntrega.objects.filter(formats__format__id__exact=p.id):
             if d:
                 eventList.add(d)
 
@@ -628,7 +731,7 @@ def eventsProductors(user):
     formats = TipusProducte.objects.filter(productor__responsable=user)
 
     for p in formats:
-        for d in DiaEntrega.objects.filter(formats__id__exact=p.id):
+        for d in DiaEntrega.objects.filter(formats__format__id__exact=p.id):
             if d:
                 eventList.add(d)
 

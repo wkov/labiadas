@@ -83,6 +83,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django_messages.context_processors.inbox',
                 'labiadas.context_processors.notifications_user',
+                'labiadas.context_processors.node_user',
             ],
         },
     },

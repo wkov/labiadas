@@ -1,5 +1,5 @@
 
-from romani.models import UserProfile
+from romani.models import UserProfile, Productor
 
 def notifications_user(request):
     if not request.user.is_authenticated():
@@ -12,3 +12,18 @@ def notifications_user(request):
 
     return { 'notifications_user' : ret}
 
+
+def node_user(request):
+    if not request.user.is_authenticated():
+        return { 'node_user' : 'la massa'}
+
+    if request.user.is_anonymous():
+        return { 'node_user' : 'la massa'}
+
+    up = UserProfile.objects.get(user=request.user)
+
+    try:
+        pro = Productor.objects.filter(responsable=request.user)
+        return { 'node_user' : 'la massa'}
+    except:
+        return { 'node_user' : up.lloc_entrega_perfil.nom}

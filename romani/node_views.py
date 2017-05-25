@@ -1,7 +1,7 @@
 __author__ = 'sergi'
 
-from .models import Node, DiaEntrega, FranjaHoraria, Comanda, Contracte
-from .forms import NodeForm, NodeProductorsForm, FranjaHorariaForm, DiaEntregaForm
+from romani.models import Node, DiaEntrega, FranjaHoraria, Comanda, Contracte
+from romani.forms import NodeForm, NodeProductorsForm, FranjaHorariaForm, DiaEntregaForm
 
 from django.contrib.auth.models import Group, User
 
@@ -99,7 +99,7 @@ class NodeComandesListView(ListView):
         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
         context["diaentrega"] = diaentrega
         context["contractes"] = Contracte.objects.filter(dies_entrega__id__exact=diaentrega.id)
-        context['productes'] = diaentrega.productes.all()
+        context['formats'] = diaentrega.formats.all()
         return context
 
 

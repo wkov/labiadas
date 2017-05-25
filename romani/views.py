@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Producte, TipusProducte, Node, DiaEntrega, Frequencia
+from romani.models import Producte, TipusProducte, Node, DiaEntrega, Frequencia, DiaProduccio
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
-from .models import UserProfile, Key
-from .forms import UserProfileForm, InfoForm
+from romani.models import UserProfile, Key
+from romani.forms import UserProfileForm, InfoForm
 
 from django.http import HttpResponse
 
@@ -420,18 +420,19 @@ def NodeCalcView(request):
             f = request.POST.get('format_pk')
             node = get_object_or_404(Node, pk=l)
             # producte = Producte.objects.filter(pk=g).first()
-            format = TipusProducte.objects.filter(pk=f).first()
+            format = TipusProducte.objects.get(pk=f)
             json_res = []
             date = datetime.date.today() + timedelta(hours=format.productor.hores_limit)
             # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
-            for dia in format.dies_entrega.order_by("date").filter(node=node,date__gte=date)[:5]:
-                    # a = str(dia.date())
-                    day_str = str(dia.date.year) + "-" + str(dia.date.month) + "-" + str(dia.date.day)
+            for dia in format.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date)[:5]:
+                stock_result = stock_check(format, dia.dia)
+                if stock_result:
+                    day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
                     a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
                     json_obj = dict(
-                        dia = dia.dia(),
+                        dia = dia.dia.dia(),
                         date = a,
-                        pk = dia.pk)
+                        pk = dia.dia.pk)
                     json_res.append(json_obj)
             return HttpResponse(json.dumps(json_res), content_type='application/json')
 
@@ -490,7 +491,7 @@ class InfoFormBaseView(FormView):
         producte = get_object_or_404(Producte, pk=form.data["producte"])
         user = self.request.user
         format = get_object_or_404(TipusProducte, pk=form.data["format"])
-        user_profile = UserProfile.objects.filter(user = user).first()
+        user_profile = UserProfile.objects.get(user = user)
         cantitat = form.data["cantitat"]
         preu_aux = format.preu
         preu = preu_aux * float(cantitat)
@@ -508,7 +509,7 @@ class InfoFormBaseView(FormView):
         jfreq = []
 
         # Carreguem els possibles nodes on l-usuari pot trobar el producte concret
-        for i in producte.nodes().all():
+        for i in format.nodes().all():
             if i == user_profile.lloc_entrega_perfil:
                 # Guardem les frequencies del node per informar a l-usuari en el modal
                 for d in i.frequencies.freq_list():
@@ -605,3 +606,59 @@ class UserProfileEditView(UpdateView):
 
         messages.success(self.request, (u"S'han desat les modificacions realitzades"))
         return reverse("coope")
+
+
+def stock_calc(format, dia, cantitat):
+     # Comproba que hi hagi stock i resta les unitats corresponents
+     d = format.dies_entrega.get(dia=dia)
+     if d.tipus_stock == '0':
+            try:
+                diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=format.productor).order_by('-date').first()
+                if diaproduccio:
+                   s = format.stocks.get(dia_prod=diaproduccio)
+                   num = int(s.stock) - int(cantitat)
+                   if num >= 0:
+                       s.stock = int(s.stock) - int(cantitat)
+                       s.save()
+                       return True
+                   else:
+                       return False
+            except:
+                return False
+
+     elif d.tipus_stock == '1':
+            num = int(format.stock_fix) - int(cantitat)
+            if num >= 0:
+                format.stock_fix = int(format.stock_fix) - int(cantitat)
+                format.save()
+                return True
+            else:
+                return False
+
+     elif d.tipus_stock == '2':
+            return True
+
+
+def stock_check(format, dia):
+     # Comprova que hi hagi stock
+     d = format.dies_entrega.get(dia=dia)
+     if d.tipus_stock == '0':
+            try:
+                diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=format.productor).order_by('-date').first()
+                if diaproduccio:
+                   s = format.stocks.get(dia_prod=diaproduccio)
+                   if s.stock > 0:
+                       return True
+                   else:
+                       return False
+            except:
+                return False
+
+     elif d.tipus_stock == '1':
+            if format.stock_fix > 0:
+                return True
+            else:
+                return False
+
+     elif d.tipus_stock == '2':
+            return True
