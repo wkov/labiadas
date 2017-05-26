@@ -472,15 +472,15 @@ def DiaProduccioCreateView(request, pro):
                try:
                    # prod = request.POST.getlist('formats')
                    dia = request.POST.get('date')
-                   node = request.POST.get('node')
+                   # node = request.POST.get('node')
 
                    if dia:
 
                        a = datetime.datetime.strptime(dia, '%d/%m/%Y').strftime('%Y-%m-%d')
-                       if not node:
-                            dp = DiaProduccio.objects.create(date=a, productor=productor)
-                       else:
-                            dp = DiaProduccio.objects.create(date=a, productor=productor, node=node)
+                       # if not node:
+                       dp = DiaProduccio.objects.create(date=a, productor=productor)
+                       # else:
+                       #      dp = DiaProduccio.objects.create(date=a, productor=productor, node=node)
                except:
 
                    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes})
@@ -500,7 +500,9 @@ def DiaProduccioCreateView(request, pro):
 
     form = DiaProduccioForm()
     form.fields['productor'].choices = [(x.pk, x) for x in Productor.objects.filter(pk=pro)]
-    form.fields['node'].choices = [(x.pk, x) for x in Node.objects.filter(productors__id__exact=pro)]
+    form.fields['node'].queryset = Node.objects.filter(productors__id__exact=pro)
+
+    # form.fields['node'].initial = ''
 
 
     return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes})

@@ -67,6 +67,7 @@ class TipusProducteForm(forms.ModelForm):
         super(TipusProducteForm, self).__init__(*args, **kwargs)
         self.fields["productor"].queryset = Productor.objects.filter(pk=productor.pk)
         self.fields["productor"].initial = productor
+        self.fields["producte"].queryset = Producte.objects.filter(productor=productor)
 
 class ProductorForm(forms.ModelForm):
 
@@ -128,7 +129,7 @@ class DiaProduccioForm(forms.ModelForm):
     class Meta:
         model = DiaProduccio
         fields = ("date", "productor", "node")
-        exclude = ("dies_entrega", )
+        exclude = ("dies_entrega",)
 
 class DiaFormatStockForm(forms.ModelForm):
 
@@ -139,9 +140,11 @@ class DiaFormatStockForm(forms.ModelForm):
 
 
 
+
 class StockForm(forms.ModelForm):
 
     # format = forms.CharField(max_length=45)
+
 
 
     class Meta:

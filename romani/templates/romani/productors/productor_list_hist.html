@@ -1,28 +1,42 @@
 {% extends "base.html" %}
 {% csrf_token %}
 {% block content %}
+        <div style="float: left; position:absolute">
+        <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>
+        {% if object_list %}
+        {% for link in object_list %}
+              <li style="display: inline">
+                 &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">
+                    [{{ link.nom }}]
+                 <span id="notification_count">
+                        {{ link.comandes_count }}
+                </span>
+                </a>
+                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
+                      <span id="notification_count">
+                        {{ link.comandes_count }}
+                      </span>
+                  </a>
+              </li>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
+    {% endif %}
+    </div>
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Comandes rebudes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_cal_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_hist_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-{#                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Veure historial</b>
                                  </a>
                         </div>
@@ -34,147 +48,79 @@
     <div id="dialog" title="Benvingut">
     <p>A la secció dels productors pots gestionar els teus perfils de productor ja existents o crear-ne de nous.</p>
     </div>
-    <br/>
-    <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
-    {% if object_list %}
-        {% for link in object_list %}
-            <form method="post" action="" class="vote_form">
-              <li>
-                  <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor">
-                  [{{ link.nom }}]
-                 <span id="notification_count">
-                        {{ link.comandes_count }}
-                </span>
-                {% csrf_token %}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
 
-
-{#                  <b>{{ link.etiqueta.nom }}</b>#}
-{#                  {% for aux in link.nodes.all %}#}
-{#                    {{ aux }} /#}
-{#                  {% endfor %}#}
-{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
-                </a>
-                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
-                      <span id="notification_count">
-                        {{ link.comandes_count }}
-                      </span>
-                  </a>
-{#                  {{ link.responsable }}#}
-              </li>
-            </form>
-            <br/>
-        {% endfor %}
-    {% else %}
-        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
-    {% endif %}
-
-
-
-        <br/>
+        <br/><br/>
     {% if comandes %}
-    Comandes: <br/>
-     <table border="1" id="myTable" class="tablesorter" style="width: 100%">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Productor</th>
-     <th>Lloc d'entrega</th>
-     <th>Cant</th>
-     <th>Format</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Usuari</th>
-{#     <th>Data de comanda</th>#}
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in comandes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
-               <tr>
-                        <td>{{ link.producte.nom }}</td>
-                        <td>{{ link.producte.productor.nom }}</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>{{ link.cantitat }}</td>
-                        <td>{{ link.format.nom }}</td>
-                        <td>{{ link.dia_entrega.date }}</td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
-                    </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-     </tbody>
-       </table>
+             Comandes: <br/>
+             <table border="1" id="myTable" class="tablesorter" style="width: 100%">
+             <thead>
+             <tr>
+             <th>Producte</th>
+             <th>Productor</th>
+             <th>Lloc d'entrega</th>
+             <th>Cant</th>
+             <th>Format</th>
+             <th>Data d'entrega</th>
+             <th>Franja horària</th>
+             <th>Preu</th>
+             <th>Usuari</th>
+             </tr>
+             </thead>
+             <tbody>
+                {% for link in comandes %}
+                       <tr>
+                                <td>{{ link.producte.nom }}</td>
+                                <td>{{ link.producte.productor.nom }}</td>
+                                <td>{{ link.lloc_entrega }}</td>
+                                <td>{{ link.cantitat }}</td>
+                                <td>{{ link.format.nom }}</td>
+                                <td>{{ link.dia_entrega.date }}</td>
+                                <td>{{ link.franja_horaria}}</td>
+                                <td>{{ link.preu }}€</td>
+                                <td>{{ link.client.first_name }}</td>
+                            </tr>
+                {% endfor %}
+             </tbody>
+               </table>
     {% endif %}
     {% if contractes %}
 <br/>
     Contractes: <br/>
      <table style="width: 100%" id="myTable2" class="tablesorter" border="1">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Productor</th>
-     <th>Lloc d'entrega</th>
-     <th>Cant</th>
-     <th>Format</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Usuari</th>
-{#     <th>Data de comanda</th>#}
-     <th>Freqüència</th>
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in contractes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-{#            {% if link.old_entregas %}#}
-               <tr>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
-                        <td>{{ link.producte.productor.nom }}</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>{{ link.cantitat }}</td>
-                        <td>{{ link.format.nom }}</td>
-                        <td>{% for l in link.old_entregas.all %}
-                            [{{ l.date }}]
-                            {% endfor %}</td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
-                    </tr>
-{#            {% endif %}#}
-{#</a>#}
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-     </tbody>
-       </table>
+         <thead>
+             <tr>
+             <th>Producte</th>
+             <th>Productor</th>
+             <th>Lloc d'entrega</th>
+             <th>Cant</th>
+             <th>Format</th>
+             <th>Data d'entrega</th>
+             <th>Franja horària</th>
+             <th>Preu</th>
+             <th>Usuari</th>
+             <th>Freqüència</th>
+             </tr>
+         </thead>
+         <tbody>
+            {% for link in contractes %}
+                   <tr>
+                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
+                            <td>{{ link.producte.productor.nom }}</td>
+                            <td>{{ link.lloc_entrega }}</td>
+                            <td>{{ link.cantitat }}</td>
+                            <td>{{ link.format.nom }}</td>
+                            <td>{% for l in link.old_entregas.all %}
+                                [{{ l.date }}]
+                                {% endfor %}</td>
+                            <td>{{ link.franja_horaria}}</td>
+                            <td>{{ link.preu }}€</td>
+                            <td>{{ link.client.first_name }}</td>
+                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
+                   </tr>
+            {% endfor %}
+         </tbody>
+     </table>
     {% endif %}
-
-
-
-
-
 
 
 {% endblock %}

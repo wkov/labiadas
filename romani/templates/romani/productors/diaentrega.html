@@ -135,85 +135,6 @@
 
 {#  {{ form.as_p }}#}<br/>
 <p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
-<p> &nbsp; &nbsp;
-
-{#<table border="1">#}
-{#        <tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot</td>#}
-{#        <td> <select name="speed" id="speed">#}
-{#      <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
-{#      <option value="1">Límit per stock fixe </option>#}
-{#      <option value="2" selected="selected">Sense Límit</option>#}
-{#    </select></td>#}
-{#    </tr>#}
-{#    {% for p in productes %}#}
-{#        <tr>#}
-{#        <td>#}
-{##}
-{#            <td> &nbsp; &nbsp;#}
-{#             <input type="checkbox"  name="productes" value="{{p.pk}}" checked/>#}
-{#            <b> {{p.nom}}</b>#}
-{#            </td>#}
-{#            <td> &nbsp; &nbsp;#}
-{#             <input type="checkbox" name="productes" value= {{p.pk}} />#}
-{#            </td>#}
-{#        </td>#}
-{#        <td>#}
-{#        {% for f in p.formats.all %}#}
-{#            {% if f in formats_sel %}#}
-{#                {% for s in formats_sel %}#}
-{#                    {% if s.format == f %}#}
-{#            <tr>#}
-{#            <td>#}
-{#             <input type="checkbox" name="formats" value="{{s.format.pk}}" checked/><b> {{f.nom}} </b>#}
-{##}
-{##}
-{#                    <select name="{{s.format.pk}}" id="{{s.format.pk}}">#}
-{#                {% if f.tipus_stock == 0 %}#}
-{#                  <option value="0" selected>Límit per producció [{{ dia_prod }}]</option>#}
-{#                  <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
-{#                  <option value="2">Sense Límit</option>#}
-{#                {% elif f.tipus_stock == 1 %}#}
-{#                  <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
-{#                  <option value="1" selected>Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
-{#                  <option value="2">Sense Límit</option>#}
-{#                {% elif f.tipus_stock == 2 %}#}
-{#                  <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
-{#                  <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
-{#                  <option value="2" selected>Sense Límit</option>#}
-{#                {% else %}#}
-{#                  <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
-{#                  <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
-{#                  <option value="2" selected>Sense Límit</option>#}
-{#                {% endif %}#}
-{#            </select>#}
-{##}
-{##}
-{##}
-{#                {% endif %}#}
-{#                {% endfor %}#}
-{#        {% else %}#}
-{#                <input type="checkbox" name="formats" value="{{f.pk}}"/><b> {{f.nom}} </b>#}
-{#                <select name="speed" id="speed">#}
-{#                      <option value="0">Límit per producció [{{ dia_prod }}]</option>#}
-{#                      <option value="1">Límit per stock fixe [{{ f.stock_fix }} unit]</option>#}
-{#                      <option value="2" selected>Sense Límit</option>#}
-{#                </select>#}
-{##}
-{#        {% endif %}#}
-{##}
-{#                <label for="speed">Unitats</label>#}
-{##}
-{##}
-{##}
-{##}
-{#            <br/>#}
-{#            </td>#}
-{#            </tr>#}
-{#        {% endfor %}#}
-{#        </td>#}
-{#        </tr>#}
-{#    {% endfor %}#}
-{#</table>#}
 
 
 {{ formatstockform.management_form }}
@@ -303,9 +224,10 @@
 
 
 
-{% if comandes %}
+{% if comandes or contractes%}
 
-   <br/>    Comandes: <br/>
+{#   <br/>    Comandes: <br/>#}
+    <br/>
      <table border="1" id="myTable" class="tablesorter" style="width: 100%">
      <thead>
      <tr>
@@ -321,9 +243,6 @@
      </thead>
      <tbody>
         {% for link in comandes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
                <tr>
                         <td>[{{ link.producte.nom }}]</td>
                         <td>{{ link.lloc_entrega }}</td>
@@ -334,52 +253,60 @@
                         <td>{{ link.client.first_name }}</td>
                         <td>{{ link.data_comanda.date }}</td>
                     </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
         {% endfor %}
-     </tbody>
-       </table>
-    {% endif %}
-    {% if contractes %}
-    <br/>
-    Contractes: <br/>
-     <table border="1" id="myTable2" class="tablesorter" style="width: 100%">
-     <thead><tr>
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Client</th>
-{#     <th>Data de comanda</th>#}
-     <th>Freqüència</th>
-     </tr>
-     </thead>
-     <tbody>
         {% for link in contractes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
                <tr>
                         <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>
                         <td>{{ link.lloc_entrega }}</td>
                         <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>
+                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }} &nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>
                         <td>{{ link.franja_horaria}}</td>
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
                         <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.freq_txt }}</a></td>
-                    </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
+               </tr>
         {% endfor %}
      </tbody>
        </table>
     {% endif %}
+{#    {% if contractes %}#}
+{#    <br/>#}
+{#    Contractes: <br/>#}
+{#     <table border="1" id="myTable2" class="tablesorter" style="width: 100%">#}
+{#     <thead><tr>#}
+{#     <th>Producte</th>#}
+{#     <th>Lloc d'entrega</th>#}
+{#     <th>[Cant Format]</th>#}
+{#     <th>Data d'entrega</th>#}
+{#     <th>Franja horària</th>#}
+{#     <th>Preu</th>#}
+{#     <th>Client</th>#}
+{#     <th>Data de comanda</th>#}
+{#     <th>Freqüència</th>#}
+{#     </tr>#}
+{#     </thead>#}
+{#     <tbody>#}
+{#        {% for link in contractes %}#}
+{#            <form method="post" action="" class="vote_form">#}
+{#              <li>#}
+{##}
+{#               <tr>#}
+{#                        <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>#}
+{#                        <td>{{ link.lloc_entrega }}</td>#}
+{#                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>#}
+{#                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>#}
+{#                        <td>{{ link.franja_horaria}}</td>#}
+{#                        <td>{{ link.preu }}€</td>#}
+{#                        <td>{{ link.client.first_name }}</td>#}
+{#                        <td>{{ link.data_comanda.date }}</td>#}
+{#                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.freq_txt }}</a></td>#}
+{#                    </tr>#}
+{##}
+{#              </li>#}
+{#            </form>#}
+{#            <br/>#}
+{#        {% endfor %}#}
+{#     </tbody>#}
+{#       </table>#}
+{#    {% endif %}#}
 {% endblock %}

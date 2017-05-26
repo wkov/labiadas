@@ -57,9 +57,9 @@
     <div id="dialog" title="Bústia de comandes"><p>Aquí pots veure totes les comandes que t'han arribat i els contractes vigents. Recorda que les comandes són puntuals; i els contractes periòdics</p></div>
 
     <br/>
-    {% if object_list %}<br/>
-    Comandes: <br/>
-     <table border="1" id="myTable" class="tablesorter" style="width: 100%">
+    {% if object_list or contractes %}<br/>
+{#    Comandes: <br/>#}
+     <table border="1" id="myTable" class="tablesorter " style="width: 100%;">
      <thead>
      <tr>
      <th>Producte</th>
@@ -69,7 +69,8 @@
      <th>Franja horària</th>
      <th>Preu</th>
      <th>Usuari</th>
-{#     <th>Data de comanda</th>#}
+     <th>Freqüència</th>
+     <th>Data de comanda</th>
      </tr>
      </thead>
      <tbody>
@@ -85,55 +86,90 @@
                         <td>{{ link.franja_horaria}}</td>
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
-                    </tr>
+                        <td>Una sola vegada</td>
+                        <td>{{ link.data_comanda.date }}</td>
+               </tr>
 
 {#              </li>#}
 {#            </form>#}
 {#            <br/>#}
         {% endfor %}
-     </tbody>
-       </table>
-    {% endif %}
-    {% if contractes %}
-<br/>
-    Contractes: <br/>
-     <table style="width: 100%" id="myTable2" class="tablesorter" border="1">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Pròxima data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Usuari</th>
-{#     <th>Data de comanda</th>#}
-     <th>Freqüència</th>
-     </tr>
-     </thead>
-     <tbody>
+
+
         {% for link in contractes %}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
 
                <tr>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>
+                        <td>[{{ link.producte.nom }}]</td>
                         <td>{{ link.lloc_entrega }}</td>
                         <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>
+                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }} &nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>
                         <td>{{ link.franja_horaria}}</td>
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
-{#                        <td>{{ link.data_comanda.date }}</td>#}
                         <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
-                    </tr>
-</a>
+                        <td>{{ link.data_comanda.date }}</td>
+               </tr>
+{#                </a>#}
 {#              </li>#}
 {#            </form>#}
 {#            <br/>#}
         {% endfor %}
+
+
+
+
+
+
      </tbody>
        </table>
     {% endif %}
+{#    {% if contractes %}#}
+{#<br/>#}
+{#    Contractes: <br/>#}
+{#     <table style="width: 100%" id="myTable2" class="tablesorter" border="1">#}
+{#     <thead>#}
+{#     <tr>#}
+{#     <th>Producte</th>#}
+{#     <th>Lloc d'entrega</th>#}
+{#     <th>[Cant Format]</th>#}
+{#     <th>Pròxima data d'entrega</th>#}
+{#     <th>Franja horària</th>#}
+{#     <th>Preu</th>#}
+{#     <th>Usuari</th>#}
+{#     <th>Data de comanda</th>#}
+{#     <th>Freqüència</th>#}
+{#     </tr>#}
+{#     </thead>#}
+{#     <tbody>#}
+{#        {% for link in contractes %}#}
+{#            <form method="post" action="" class="vote_form">#}
+{#              <li>#}
+{##}
+{#               <tr>#}
+{#                        <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>#}
+{#                        <td>{{ link.lloc_entrega }}</td>#}
+{#                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>#}
+{#                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>#}
+{#                        <td>{{ link.franja_horaria}}</td>#}
+{#                        <td>{{ link.preu }}€</td>#}
+{#                        <td>{{ link.client.first_name }}</td>#}
+{#                        <td>{{ link.data_comanda.date }}</td>#}
+{#                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>#}
+{#                    </tr>#}
+{#</a>#}
+{#              </li>#}
+{#            </form>#}
+{#            <br/>#}
+{#        {% endfor %}#}
+{#     </tbody>#}
+{#       </table>#}
+{#    {% endif %}#}
+
+
+    <script>
+        $.("#myTable").style()
+        $.("#myTable").style()
+    </script>
 {% endblock %}

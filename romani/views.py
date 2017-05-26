@@ -565,7 +565,7 @@ class UserProfileEditView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileEditView, self).get_context_data(**kwargs)
-        nodes = Node.objects.all()
+        nodes = Node.objects.exclude(pk=1)
         context['nodes'] = nodes
         # now = datetime.datetime.now()
         # comandes = Comanda.objects.filter(client=self.request.user).filter(Q(dia_entrega__date__gte=now)|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')

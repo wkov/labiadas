@@ -64,13 +64,14 @@
                         </div>
     </div>
 
-
 <br/><br/>
+<a href="{% url 'diaproduccio_create' productor.pk %}" id="pro_menu_selected">Editar produccio</a>
+<br/>
 Introdueix els stocks que crees el dia de producció:
 <table border="1">
 <tr><td>{{ form.as_p }}
 </td></tr>
-    {{ stockform.management_form.as_hidden }}
+    {{ stockform.management_form }}
     {% for f in stockform %}
 <tr>
 {#    {{ f.id }}#}

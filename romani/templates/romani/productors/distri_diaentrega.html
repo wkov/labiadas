@@ -1,16 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-{#    <script>#}
-{#    jQuery(document).ready(function($) {#}
-{##}
-{#        $("#checkAll").click(function () {#}
-{##}
-{#            $('input:checkbox').not(this).prop('checked', this.checked);#}
-{#        })#}
-{#        })#}
-{#    </script>#}
+    <div style="float: left; position:absolute">
+        <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>
+        {% if object_list %}
+        {% for link in object_list %}
+              <li style="display: inline">
+                 &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">
+                    [{{ link.nom }}]
+                 <span id="notification_count">
+                        {{ link.comandes_count }}
+                </span>
+                </a>
+                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
+                      <span id="notification_count">
+                        {{ link.comandes_count }}
+                      </span>
+                  </a>
+              </li>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
+    {% endif %}
+    </div>
 
     <script>
     jQuery(document).ready(function($) {
@@ -18,7 +31,6 @@
 
             $('input:checkbox').not(this).prop('checked', this.checked);
         })
-
 
         var selects = document.querySelectorAll('select');
 
@@ -45,25 +57,16 @@
      <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Comandes rebudes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-{#                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Veure historial</b>
                                  </a>
                         </div>
@@ -73,51 +76,6 @@
     </p>
     <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>
     <br/>
-
-        <br/>
-    <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
-    {% if productors %}
-        {% for link in productors %}
-            <form method="post" action="" class="vote_form">
-              <li>
-                  <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor">
-                  [{{ link.nom }}]
-                 <span id="notification_count">
-                        {{ link.comandes_count }}
-                </span>
-                {% csrf_token %}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
-
-
-{#                  <b>{{ link.etiqueta.nom }}</b>#}
-{#                  {% for aux in link.nodes.all %}#}
-{#                    {{ aux }} /#}
-{#                  {% endfor %}#}
-{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
-                </a>
-                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
-                      <span id="notification_count">
-                        {{ link.comandes_count }}
-                      </span>
-                  </a>
-{#                  {{ link.responsable }}#}
-              </li>
-            </form>
-            <br/>
-        {% endfor %}
-    {% else %}
-        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
-    {% endif %}
-
-
 
 <form method="post" action="">
   {% csrf_token %}
@@ -136,24 +94,12 @@
     </select></td>
     </tr>
 
-
     {% for f in formatstockform %}
     <tr>
-    {#    {{ f.initial.format }}#}
-
-    {#    {{ f.initial.format.nom }}#}
-
 
         {% if f.instance.format %}
-{#             <td><label>{{ f.instance.format.producte.nom }}</label></td>#}
-{#            {% if f.instance %}#}
                 <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}" checked/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>
-{#             {% else %}#}
-{#             <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}"/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>#}
-{#            {% endif %}#}
-{#                 {{ f.format }}#}
         {% else %}
-{#             <td><label>{{ f.initial.format.producte.nom }}</label></td>#}
             {% if f.initial.format %}
                 <td><input type="checkbox" name="formats" value="{{f.initial.format.pk}}"/><b> {{f.initial.format.nom}} {{f.initial.format.producte.nom}} </b>
             {% else %}
@@ -161,26 +107,11 @@
             {% endif %}
 
         {% endif %}
-
-{#        {% if not f.instance.pk %}#}
-{#            {% if not f.initial.format %}#}
-{#                {{ f.format }}#}
-{#            {% endif %}#}
-{#        {% endif %}#}
-
-        {{ f.id }}
-{#        {{ f.format }}#}
-        {{ f.tipus_stock }}
-        {{ f.dia.as_hidden }}
-        {{ f.format.as_hidden }}
-        </td>
-    {#    {{ f.as_p }}#}
-
-    {#    {{ f.tipus_stock }}#}
-    {##}
-    {#    {{ f.format }}#}
-    {##}
-    {#    {{ f.dia }}#}
+                    {{ f.id }}
+                    {{ f.tipus_stock }}
+                    {{ f.dia.as_hidden }}
+                    {{ f.format.as_hidden }}
+                </td>
     </tr>
     {% endfor %}
 </table>
@@ -222,15 +153,16 @@
     <br/>
     Contractes: <br/>
      <table border="1" id="myTable2" class="tablesorter" style="width: 100%">
-     <thead><tr>
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Client</th>
-     <th>Freqüència</th>
+     <thead>
+     <tr>
+         <th>Producte</th>
+         <th>Lloc d'entrega</th>
+         <th>[Cant Format]</th>
+         <th>Data d'entrega</th>
+         <th>Franja horària</th>
+         <th>Preu</th>
+         <th>Client</th>
+         <th>Freqüència</th>
      </tr>
      </thead>
      <tbody>
@@ -247,6 +179,6 @@
                     </tr>
         {% endfor %}
      </tbody>
-       </table>
+     </table>
     {% endif %}
 {% endblock %}

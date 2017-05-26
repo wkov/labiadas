@@ -3,125 +3,86 @@
 
 
 {% block headers %}
-<script>
+    <script>
 
-$(document).ready(function() {
+        $(document).ready(function() {
 
-    $('#calendar').fullCalendar({
-       aspectRatio: 3,
-       eventSources: [
-        {
-            url: '/pro/distriEvents/',
-            editable: false,
-            color: 'black',   // an option!
-            textColor: 'white' // an option!
-        }
-           ,
-        {
-            url: '/pro/distriSelected/',
-            editable: false,
-            color: 'green',   // an option!
-            textColor: 'white' // an option!
-        }
-      ]
-    })
+            $('#calendar').fullCalendar({
+               aspectRatio: 3,
+               eventSources: [
+                {
+                    url: '/pro/distriEvents/',
+                    editable: false,
+                    color: 'black',   // an option!
+                    textColor: 'white' // an option!
+                }
+                   ,
+                {
+                    url: '/pro/distriSelected/',
+                    editable: false,
+                    color: 'green',   // an option!
+                    textColor: 'white' // an option!
+                }
+              ]
+            })
 
-});
+        });
 
-</script>
+    </script>
 {% endblock %}
 
-
-
 {% block content %}
-
-    <div style="margin: 0 auto; text-align:center;">
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>
-                                 </a>
-                        </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
-                                 </a>
-                        </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-{#                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Veure historial</b>
-                                 </a>
-                        </div>
-    </div>
-
-
-
-    <br/>
-    <div id="dialog" title="Calendari d'entregues">
-        <p>Clica sobre el dia d'entrega per seleccionar els productes que portaràs. En <b style="color: green">verd</b> estan pintats els dies en que <b style="color: green">SÍ</b> t'has compromés a portar productes,
-        en <b style="color: black">negre</b> els que <b style="color: black">NO</b> has confirmat assistència</p>
-    </div>
-    <br/>
-    <a href="{% url 'productor_create' %}">Crear Nou Productor</a> <br/><br/>
-
-
-        {% if object_list %}<ul>
+    <div style="float: left; position:absolute">
+        <a href="{% url 'productor_create' %}" id="pro_menu"> Crear Nou Productor</a> <br/>
+        {% if object_list %}
         {% for link in object_list %}
-            <form method="post" action="" class="vote_form">
-              <li>
-                  <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor">
-                  [{{ link.nom }}]
+              <li style="display: inline;">
+                 &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">
+                    [{{ link.nom }}]
                  <span id="notification_count">
                         {{ link.comandes_count }}
                 </span>
-                {% csrf_token %}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
-
-
-{#                  <b>{{ link.etiqueta.nom }}</b>#}
-{#                  {% for aux in link.nodes.all %}#}
-{#                    {{ aux }} /#}
-{#                  {% endfor %}#}
-{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
                 </a>
                   <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
                       <span id="notification_count">
                         {{ link.comandes_count }}
                       </span>
                   </a>
-{#                  {{ link.responsable }}#}
               </li>
-            </form>
             <br/>
-        {% endfor %}</ul>
+        {% endfor %}
     {% else %}
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
     {% endif %}
+    </div>
+    <div style="margin: 0 auto; text-align:center;">
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>
+                                 </a>
+                        </div>
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                 </a>
+                        </div>
+                        <div style=" position: relative; display: inline-block; ">
+                                <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
+                                    <b id="pato" name="pato" class="pato">Veure historial</b>
+                                 </a>
+                        </div>
+    </div>
+
+<br/><br/>
+    <br/>
+    <div id="dialog" title="Calendari d'entregues">
+        <p>Clica sobre el dia d'entrega per seleccionar els productes que portaràs. En <b style="color: green">verd</b> estan pintats els dies en que <b style="color: green">SÍ</b> t'has compromés a portar productes,
+        en <b style="color: black">negre</b> els que <b style="color: black">NO</b> has confirmat assistència</p>
+    </div>
 
 
 
-
-
-
-    <div id='calendar'></div>
-
-
+    <div id='calendar' style="position: relative"></div>
 
 
 

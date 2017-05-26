@@ -50,29 +50,29 @@
 
     <script>
 
-        $( function endLoading() {
+         function endLoading() {
             document.getElementById( 'loading' ).style.display = 'none';
             document.getElementById('page-content-wrapper').style.visibility = 'visible'
 {#            document.getElementsByClassName( 'loader' ).style.display = 'none';#}
 {#            $("#back_img").style.display= "none";#}
 {#            $(".loader").style.display = 'none';#}
 
-        });
+         }
 
-    $(function() {
+         $(function () {
 
-        $( "#accordion" ).accordion();
+             $("#accordion").accordion();
 
-        $("#myTable").tablesorter();
+             $("#myTable").tablesorter();
 
-        $("#myTable2").tablesorter();
+             $("#myTable2").tablesorter();
 
-    $( "#dialog" ).dialog({
-  position: { my: "right top", at: "right top+75", of: "#page-content-wrapper"},
-        width: "400px"
+             $("#dialog").dialog({
+                 position: {my: "right top", at: "right top+75", of: "#page-content-wrapper"},
+                 width: "400px"
 
-});
+             });
 
-    });
+         });
 
     </script>
