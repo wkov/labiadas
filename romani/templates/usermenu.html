@@ -90,7 +90,7 @@
                         {% endif %}
                           <td>
                             <div class="div_notification_image inline">
-                                    {% if notif.actor.adjunt %}
+                                    {% if notif.actor.foto %}
                                         <a href="{% url 'producte' notif.actor.pk %}">
                                         <img src="{{ notif.actor.adjunt.url }}" alt="avatar" height="42" width="42">
                                     {% elif notif.actor.avatar %}

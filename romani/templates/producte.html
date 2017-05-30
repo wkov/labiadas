@@ -24,9 +24,9 @@
 
         <div id="div_recurs"  style="display: block ">
             <div     class="thumbnail">
-            {% if producte.adjunt %}
+            {% if producte.foto %}
 
-                <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
+                <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
                 <div class="foto-producte" style="background-image:url('{{ producte.adjunt.url }}');" >
                         </div></a>
             {% endif %}

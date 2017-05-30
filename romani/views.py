@@ -502,7 +502,7 @@ class InfoFormBaseView(FormView):
         ret["producte"] = producte.nom
         ret["producte_pk"] = producte.pk
         ret["cantitat"] = cantitat
-        ret["imatge"] = producte.adjunt.url
+        ret["imatge"] = producte.foto.url
 
 
         json_res = []
@@ -655,10 +655,13 @@ def stock_check(format, dia):
                 return False
 
      elif d.tipus_stock == '1':
+         if format.stock_fix:
             if format.stock_fix > 0:
                 return True
             else:
                 return False
+         else:
+             return False
 
      elif d.tipus_stock == '2':
             return True

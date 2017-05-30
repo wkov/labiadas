@@ -21,7 +21,7 @@
     <div style="margin: 0 auto; text-align:center;">
         <h2>{% trans "Historial d'entregues" %}</h2>
         <div class="caption" >
-            <a type="button" href="{% url 'comandes'  %} " style="border: 3px; margin: 0" title="Visitar comandes actuals"> Veure cistella actual</a>
+            <a type="button" href="{% url 'comandes'  %} " id="pro_menu" style="border: 3px; margin: 0" title="Visitar comandes actuals"> Veure cistella actual</a>
         </div>
     </div>
     <br/>
@@ -36,8 +36,8 @@
 
 
 
-             {% if contracte.producte.adjunt %}
-                    <a href="{{ MEDIA_URL }}{{ contracte.producte.adjunt.url }}" style="float: right" >
+             {% if contracte.producte.foto %}
+                    <a href="{{ MEDIA_URL }}{{ contracte.producte.foto.url }}" style="float: right" >
                         <div class="g-item" style="background-image:url('{{ contracte.producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
                         </div>
                     </a>
@@ -94,8 +94,8 @@
     <div class="col-md-6 col-xs-12 col-sm-12 col-lg-4 ">
     <div class="thumbnail">
     <div class="caption">
-             {% if comanda.producte.adjunt %}
-                <a href="{{ MEDIA_URL }}{{ comanda.producte.adjunt.url }}" style="float: right" >
+             {% if comanda.producte.foto %}
+                <a href="{{ MEDIA_URL }}{{ comanda.producte.foto.url }}" style="float: right" >
                    <div class="g-item" style="background-image:url('{{ comanda.producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
                    </div>
                 </a>

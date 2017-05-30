@@ -3,8 +3,8 @@
 {% block content %}
     <div style="float: left; position:absolute">
         <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>
-        {% if object_list %}
-        {% for link in object_list %}
+        {% if productors %}
+        {% for link in productors %}
               <li style="display: inline">
                  &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">
                     [{{ link.nom }}]
@@ -21,7 +21,9 @@
             <br/>
         {% endfor %}
     {% else %}
+            <br/>
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
+
     {% endif %}
     </div>
 
@@ -78,7 +80,7 @@
     <br/>
 
 <form method="post" action="">
-  {% csrf_token %}
+  {% csrf_token %}<br/><br/>
 <p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
 <p> &nbsp; &nbsp;
 {{ formatstockform.management_form }}

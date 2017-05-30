@@ -16,7 +16,7 @@
     <div style="margin: 0 auto; text-align:center;">
         <h2>La teva cistella</h2>
         <div class="caption" >
-            <a type="button" href="{% url 'entregas'  %} " style="border: 3px; margin: 0" title="Visitar historial d'entregues"> Veure Historial d'entregues</a>
+            <a type="button" href="{% url 'entregas'  %} " id="pro_menu" style="border: 3px; margin: 0" title="Visitar historial d'entregues"> Veure Historial d'entregues</a>
         </div>
     </div>
     <br/>
@@ -25,8 +25,8 @@
                       <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
                         <div class="thumbnail" >
                           <div class="caption">
-                                     {% if contracte.producte.adjunt %}
-                                        <a href="{{ MEDIA_URL }}{{ contracte.producte.adjunt.url }}" >
+                                     {% if contracte.producte.foto %}
+                                        <a href="{{ MEDIA_URL }}{{ contracte.producte.foto.url }}" >
                                         <div class="g-item" style="background-image:url('{{ contracte.producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
                                             </div>
                                         </a>
@@ -88,8 +88,8 @@
           <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
             <div class="thumbnail" >
               <div class="caption">
-                      {% if comanda.producte.adjunt %}
-                        <a href="{{ MEDIA_URL }}{{ comanda.producte.adjunt.url }}" title="veure imatge">
+                      {% if comanda.producte.foto %}
+                        <a href="{{ MEDIA_URL }}{{ comanda.producte.foto.url }}" title="veure imatge">
                         <div class="g-item" style="background-image:url('{{ comanda.producte.adjunt.url }}');background-position: center;
             background-size: cover; " >
                             </div>

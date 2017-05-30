@@ -19,7 +19,7 @@ window.onclick = function(event) {
         <h5><b>NOVA COMANDA:</b></h5>
        <form method="post" class="comanda2_form">{% csrf_token %}
 {#           <img id="imatge" name="imatge" class="img-responsive" style="float: right; max-height: 300px "  >#}
-           <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
+           <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
                 <div class="g-item" id="imatge" style="float: right">
                     </div>
             </a>

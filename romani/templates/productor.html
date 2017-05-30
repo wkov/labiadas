@@ -63,8 +63,8 @@
       <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <div class="thumbnail" >
           <div class="caption">
-                  {% if producte.adjunt %}
-                    <a href="{{ MEDIA_URL }}{{ producte.adjunt.url }}" >
+                  {% if producte.foto %}
+                    <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
                         <div class="g-item" style="background-image:url('{{ producte.adjunt.url }}'); "></div>
 {#                        <img src="{{ producte.adjunt.url }}" style="float: right; width: auto; height:auto; max-width: 200px; max-height: 300px"  >#}
                     </a>

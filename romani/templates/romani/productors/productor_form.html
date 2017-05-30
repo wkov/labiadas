@@ -58,7 +58,12 @@
     </div>
 
     <br/><br/>
+
     <a href="{% url 'adjunt_create' productor.pk %}" id="pro_menu">Carregar nova foto</a>
+
+{% else %}
+    <br/>
+    <a href=""  id="pro_menu_selected">Editar Productor</a> <br/>
 {% endif %}
 
 

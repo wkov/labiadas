@@ -68,8 +68,8 @@
     <a href="{% url 'format_create' productor.pk %}" id="pro_menu">Crear Nou Format</a> <br/><br/>
     Llistat de productes amb els seus respectius formats:
 {#    <table border="1">#}
-    <div id=accordion>
-
+    <div>
+{# id=accordion#}
         {% for link in object_list %}
 
 {#            <tr>#}
@@ -77,7 +77,7 @@
 {#              <td>#}
                 <h3>
                   <a href="{% url 'producte_update' link.pk %}">
-                  <b>{{ link.nom }}</b>
+                  <b>{{ link.nom }} &nbsp; </b><span class="glyphicon glyphicon-pencil"></span>
                 </a></h3>
 
 {#              </td>#}
@@ -87,10 +87,9 @@
 {#            <tr>#}
 {#            <td></td>#}
                 <div>
-                <a type="button" class="glyphicon glyphicon-pencil" href="{% url 'producte_update' link.pk %}">  Editar Producte</a><br/><br/>
 
                 <p>Formats disponibles per {{ link.nom }}:</p>
-                <table id="myTable" class="tablesorter">
+                <table class="table-responsive" border="1" style="background-color: grey">
                 <thead>
                 <tr>
                 <th>Nom</th>
@@ -105,20 +104,20 @@
             <a href="
                   {% url 'format_update' f.pk %}
                   " style="color: white;">
-                  {{ f.nom }}
+                  {{ f.nom }} &nbsp;
                 </a>
                     </td>
             <td>
                 <a href="
                   {% url 'format_update' f.pk %}
                   " style="color: white;">
-                {{ f.preu }}</a>
+                {{ f.preu }} &nbsp;</a>
             </td>
             <td>
                 <a href="
                   {% url 'format_update' f.pk %}
                   " style="color: white;">
-                {{ f.stock_fix }}</a>
+                {{ f.stock_fix }} &nbsp; </a>
             </td>
 
             </tr>

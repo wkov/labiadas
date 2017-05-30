@@ -108,6 +108,7 @@ class Node(models.Model):
     text = models.TextField(max_length=1000)
     frequencies = models.ForeignKey(Frequencia)
     productors = models.ManyToManyField(Productor, blank=True)
+    privat = models.NullBooleanField()
 
     def __str__(self):
         return "%s %s" % (self.nom, self.poblacio)
@@ -205,7 +206,7 @@ class Producte(models.Model):
     text_curt = models.TextField(blank=False, max_length=75)
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
-    adjunt = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
+    foto = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True)
     # dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='productes')

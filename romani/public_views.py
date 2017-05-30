@@ -186,7 +186,7 @@ def productorView(request,pk):
 
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
 
-    p = Producte.objects.filter(productor=productor, esgotat=False, formats__dies_entrega__in = dies_node_entrega ).distinct()
+    p = Producte.objects.filter(productor=productor, esgotat=False, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
 
     adjunts = Adjunt.objects.filter(productor=productor)
 
@@ -281,6 +281,39 @@ class ContracteUpdateView(UpdateView):
         return context
 
 
+    def form_valid(self, form):
+
+        if form.has_changed():
+            s = form.cleaned_data["dies_entrega"]
+            error = 0
+            for r in s:
+
+                if r not in form.instance.dies_entrega.all():
+                    stock_result = stock_calc(form.instance.format, r, form.instance.cantitat)
+
+                    if not stock_result == True:
+                        form.cleaned_data["dies_entrega"].remove(r)
+                        error = error + 1
+
+            for x in form.instance.dies_entrega.all():
+
+                if x not in s:
+                    d = int(form.instance.cantitat)
+                    cant = -1*d
+                    stock_result = stock_calc(form.instance.format, x, cant)
+
+                    if not stock_result == True:
+                        error = error + 1
+
+
+
+            if error > 0:
+                messages.error(self.request, (u"S'ha esgotat el producte per algun dels dies seleccionats"))
+            else:
+                messages.success(self.request, (u"Comanda grabada correctament"))
+
+        return super(ContracteUpdateView, self).form_valid(form)
+
 
 
 
@@ -304,7 +337,7 @@ def prox_calc(format, node, dia_entrega, franja, frequencia):
             while(next_val):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__format__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -313,7 +346,7 @@ def prox_calc(format, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__format__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -324,7 +357,7 @@ def prox_calc(format, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__format__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -336,7 +369,7 @@ def prox_calc(format, node, dia_entrega, franja, frequencia):
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 d = next_weekday(d, int(dia_entrega.dia_num()))
                 try:
-                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__id__exact=format.pk)
+                    s = DiaEntrega.objects.get(date=d, node=node, franjes_horaries__id__exact=franja.id, formats__format__id__exact=format.pk)
                     d_list.append(s)
                 except:
                     return d_list
@@ -416,25 +449,27 @@ class ComandaFormBaseView(FormView):
 
             dies_entrega = prox_calc(format, lloc_obj, data_entrega, franja, freq)
 
+            error = 0
+
+            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, frequencia=freq)
 
             for d in dies_entrega:
                 stock_result = stock_calc(format, d, cantitat)
-                # format.stock_fix = format.stock_fix - int(cantitat)
                 if stock_result == True:
-                    v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, frequencia=freq)
-                    ret = {"contracte": 1, "success": 1, "pk": v.pk}
-                    notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
-                    description="a la cistella" , timestamp=timezone.now())
-                    messages.success(self.request, (u"Comanda realitzada correctament"))
+                    # d_inst = DiaEntrega.objects.get(pk=d.pk)
                     v.dies_entrega.add(d)
+                    # v.save()
                 else:
-                    ret = {"contracte": 0, "success": 0}
-                    messages.error(self.request, (u"ERROR. Comanda NO realitzada. Disculpa, s'ha esgotat el estoc disponible del producte"))
-            # format.save()
+                    error = error + 1
 
-        # ret = {"success": 1}
-
-
+            if error > 0:
+                # messages.error(self.request, (u"Disculpa, en algun dels dies seleccionats s'ha esgotat el estoc disponible del producte"))
+                ret = {"contracte": 0, "success": 0}
+            else:
+                # messages.success(self.request, (u"Comanda realitzada correctament"))
+                ret = {"contracte": 1, "success": 1, "pk": v.pk}
+                notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
+                description="a la cistella" , timestamp=timezone.now())
 
         return self.create_response(ret, True)
 
