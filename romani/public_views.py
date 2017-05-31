@@ -229,7 +229,8 @@ def comandaDelete(request, pk):
             description="de la cistella" , url=comandaDel.producte.adjunt.url, timestamp=timezone.now())
         comandaDel.delete()
     else:
-        messages.error(request, (u"Falten menys de 48h, no podem treure el producte de la cistella"))
+
+        message = u"Falten menys de 48h, no podem treure el producte de la cistella"
 
     comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
     now = datetime.datetime.now()
@@ -240,7 +241,7 @@ def comandaDelete(request, pk):
 
 
 
-    return render(request, "comandes.html",{'comandes': comandes, 'contractes': contractes, 'nodes': nodes, 'up': user_p})
+    return render(request, "comandes.html",{'comandes': comandes, 'message': message, 'contractes': contractes, 'nodes': nodes, 'up': user_p})
 
 def contracteDelete(request, pk):
 
@@ -254,8 +255,7 @@ def contracteDelete(request, pk):
         contracteDel.data_fi = datetime.datetime.now()
         contracteDel.save()
     else:
-        messages.error(request, (u"Falten menys de 48h per el proper dia d'entrega, ja estem preparant la comanda i no podem treure el producte de la cistella."
-                                 u"Quan hagis rebut aquesta entrega podràs anul·lar el vincle"))
+        message = u"Falten menys de 48h per el proper dia d'entrega, ja estem preparant la comanda i no podem treure el producte de la cistella. Quan hagis rebut aquesta entrega podràs anul·lar el vincle"
 
     comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
     now = datetime.datetime.now()
@@ -265,7 +265,7 @@ def contracteDelete(request, pk):
     user_p = UserProfile.objects.filter(user=request.user).first()
 
 
-    return render(request, "comandes.html",{'comandes': comandes, 'contractes': contractes, 'nodes': nodes, 'up': user_p})
+    return render(request, "comandes.html",{'comandes': comandes, 'contractes': contractes, 'nodes': nodes, 'up': user_p, 'message': message})
 
 
 class ContracteUpdateView(UpdateView):
@@ -443,7 +443,7 @@ class ComandaFormBaseView(FormView):
                 messages.success(self.request, (u"Comanda realitzada correctament"))
             else:
                 ret = {"contracte": 0, "success": 0}
-                messages.error(self.request, (u"ERROR. Comanda NO realitzada. Disculpa, s'ha esgotat el estoc disponible del producte"))
+                messages.error(self.request, (u"Disculpa, NO disposem de la cantitat sol·licitada."))
 
         else:
 

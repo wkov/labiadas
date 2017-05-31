@@ -76,7 +76,8 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block content %}
-
+<div style="float: left; position:absolute;     font-family: 'Satisfy', cursive;
+    font-size: 3em"> {{ node.nom }} </div>
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Modificar node" >
@@ -105,7 +106,7 @@ $(document).ready(function() {
     <div id="dialog" title="Calendari d'entregues">
         <p>En el calendari van apareixent les dates d'entrega que has creat. La data d'entrega és el dia i les hores en que esta obert el Lloc d'entrega per a
         que els productors puguin portar els seus productes i la gent passi a recollir-los.</p>
-    </div>
+    </div><br/>
     <a href="{% url 'diaentrega_create' node.pk %}" id="pro_menu">Crear data d'entrega</a>
 
        <br/>

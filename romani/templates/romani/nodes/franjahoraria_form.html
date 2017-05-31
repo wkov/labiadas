@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<div style="float: left; position:absolute;     font-family: 'Satisfy', cursive;
+    font-size: 3em"> {{ node.nom }} </div>
 {#    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>#}
 {#    <script src="/ui/jquery.ui.datepicker.js"></script>#}
 
@@ -34,7 +35,8 @@
                                  </a>
                         </div>
     </div>
-    <br/>
+    <br/><br/>
+    <a href="" id="pro_menu_selected">Editar Franja Horària</a>
   {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}
   <input type="submit" value="Grabar">

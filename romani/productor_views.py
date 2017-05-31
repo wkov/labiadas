@@ -9,7 +9,7 @@ from django.views.generic.edit import DeleteView
 from django.views.generic import ListView, DetailView
 
 from django.contrib.auth.models import Group
-from django.contrib import messages
+# from django.contrib import messages
 
 from django.shortcuts import render, get_object_or_404
 
@@ -65,21 +65,6 @@ class ProductesListView(ListView):
         context["formats"] = TipusProducte.objects.filter(productor=productor)
         return context
 
-# class LlocsListView(ListView):
-#     model = Producte
-#     template_name = "romani/productors/llocsentrega.html"
-#
-#     def get_queryset(self):
-#         productor = Productor.objects.get(pk=self.kwargs['pro'])
-#         return Producte.objects.filter(productor=productor)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(LlocsListView, self).get_context_data(**kwargs)
-#         productor = Productor.objects.get(pk=self.kwargs['pro'])
-#         context["productor"] = productor
-#         return context
-#         context["nodes"] = Node.objects.filter()
-
 
 class TipusProducteCreateView(CreateView):
     model = TipusProducte
@@ -99,7 +84,7 @@ class TipusProducteCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'ha desat el nou format"))
+        # messages.success(self.request, (u"S'ha desat el nou format"))
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         return "/pro/" + str(productor.pk) + "/vista_productes/"
 
@@ -122,7 +107,7 @@ class TipusProducteUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'han desat les modificacions en el format"))
+        # messages.success(self.request, (u"S'han desat les modificacions en el format"))
         p = TipusProducte.objects.get(pk=self.kwargs['pk'])
         pro_id = p.productor_id
         return "/pro/" + str(pro_id) + "/vista_productes/"
@@ -147,7 +132,7 @@ class AdjuntCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'ha carregat la nova foto a l'àlbum del productor"))
+        # messages.success(self.request, (u"S'ha carregat la nova foto a l'àlbum del productor"))
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         return "/productor/update/" + str(productor.pk)
 
@@ -350,7 +335,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                                                                      'formats_sel': formats_sel, 'comandes': comandes, 'contractes': contractes, 'message': message})
                        except:
                            pass
-                messages.success(request, (u"S'han desat les modificacions fetes en el dia d'entrega"))
+                # messages.success(request, (u"S'han desat les modificacions fetes en el dia d'entrega"))
                 return render(request, "romani/productors/dates_list.html", {'productor': productor})
         except:
                productes_qs = Producte.objects.filter(productor=productor)
@@ -359,7 +344,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                        s = DiaFormatStock.objects.filter(dia=diaentrega, format=f)
                        if s:
                            s.delete()
-               messages.success(self.request, (u"S'han desat les modificacions fetes en el dia d'entrega"))
+               # messages.success(request, (u"S'han desat les modificacions fetes en el dia d'entrega"))
                return render(request, "romani/productors/dates_list.html", {'productor': productor})
 
 
@@ -415,7 +400,7 @@ def DiaProduccioCreateView(request, pro):
                    stock = cd.get('stock')
                    s = Stock.objects.create(dia_prod=dia_prod, format=format, stock=stock)
 
-           messages.success(request, (u"S'ha creat correctament el dia de producció"))
+           # messages.success(request, (u"S'ha creat correctament el dia de producció"))
            return render(request, "romani/productors/dates_list.html", {'productor': productor})
 
 
@@ -472,7 +457,7 @@ def DiaProduccioUpdateView(request, pro, pk):
                    s.format = format
                    s.stock = stock
                    s.save()
-           messages.success(request, (u"S'han desat les modificacions fetes en el dia de producció"))
+           # messages.success(request, (u"S'han desat les modificacions fetes en el dia de producció"))
            return render(request, "romani/productors/dates_list.html", {'productor': productor})
 
 
@@ -514,7 +499,7 @@ class ProducteUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'han desat les modificacions fetes en el producte"))
+        # messages.success(self.request, (u"S'han desat les modificacions fetes en el producte"))
         p = Producte.objects.get(pk=self.kwargs['pk'])
         pro_id = p.productor_id
         return "/pro/" + str(pro_id) + "/vista_productes/"
@@ -532,8 +517,8 @@ class ProductorCreateView(CreateView):
         kwargs["user"] = user
         return kwargs
 
-    def form_valid(self):
-        messages.success(self.request, (u"S'han desat les modificacions"))
+    def form_valid(self, form):
+        # messages.success(self.request, (u"S'han desat les modificacions"))
         return super(ProductorCreateView, self).form_valid(form)
 
 class ProducteCreateView(CreateView):
@@ -553,7 +538,7 @@ class ProducteCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'ha creat correctament el producte"))
+        # messages.success(self.request, (u"S'ha creat correctament el producte"))
         p = Productor.objects.get(pk=self.kwargs['pro'])
         return "/pro/" + str(p.pk) + "/vista_productes/"
 
@@ -581,7 +566,7 @@ class ProductorUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'han desat les modificacions"))
+        # messages.success(self.request, (u"S'han desat les modificacions"))
         pro = Productor.objects.get(pk=self.kwargs['pk'])
         return "/productor/update/" + str(pro.id)
 

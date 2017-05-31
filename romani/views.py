@@ -410,7 +410,30 @@ def NodeSaveView(request):
 
                 return HttpResponse(json.dumps("OK"), content_type='application/json')
 
-
+# def StockCheckView(request):
+#     if request.POST:
+#         if 'id_cantitat' in request.POST:
+#             l = request.POST.get('id_cantitat')
+#         if 'id_format' in request.POST:
+#             f = request.POST.get('id_format')
+#
+#         node = get_object_or_404(Node, pk=l)
+#         # producte = Producte.objects.filter(pk=g).first()
+#         format = TipusProducte.objects.get(pk=f)
+#         json_res = []
+#         date = datetime.date.today() + timedelta(hours=format.productor.hores_limit)
+#         # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
+#         for dia in format.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date)[:5]:
+#             stock_result = stock_check(format, dia.dia)
+#             if stock_result:
+#                 day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
+#                 a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
+#                 json_obj = dict(
+#                     dia = dia.dia.dia(),
+#                     date = a,
+#                     pk = dia.dia.pk)
+#                 json_res.append(json_obj)
+#         return HttpResponse(json.dumps(json_res), content_type='application/json')
 
 def NodeCalcView(request):
     if request.POST:

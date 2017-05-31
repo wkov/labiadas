@@ -24,7 +24,8 @@
 {#{% endblock %}#}
 
 {% block content %}
-
+<div style="float: left; position:absolute;     font-family: 'Satisfy', cursive;
+    font-size: 3em"> {{ node.nom }} </div>
 {#<form method="post" action="">#}
 {#  {% csrf_token %}#}
     <div style="margin: 0 auto; text-align:center;">
@@ -53,7 +54,7 @@
                                  </a>
                         </div>
     </div>
-    <br/>
+    <br/><br/>
 {#  {{ form.as_p }}#}
 {#  <input type="text" id="datepicker" size="30">#}
 {#  <input type="submit" value="Add">#}

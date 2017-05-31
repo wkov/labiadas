@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% csrf_token %}
 {% block content %}
-
+<div style="float: left; position:absolute;     font-family: 'Satisfy', cursive;
+    font-size: 3em"> {{ node.nom }} </div>
 {#    <div style="margin: 0 auto; text-align:center;">#}
 {#                        <div style=" position: relative; display: inline-block; ">#}
 {#                                <a href="{% url 'vista_nodes' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}

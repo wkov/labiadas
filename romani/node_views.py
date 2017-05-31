@@ -4,7 +4,7 @@ from romani.models import Node, DiaEntrega, FranjaHoraria, Comanda, Contracte
 from romani.forms import NodeForm, NodeProductorsForm, FranjaHorariaForm, DiaEntregaForm
 
 from django.contrib.auth.models import Group, User
-from django.contrib import messages
+# from django.contrib import messages
 
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
@@ -54,7 +54,7 @@ def export_comandes_xls(request, pk):
     row_num += 1
     ws.write(row_num, col_num, total, font_style)
 
-    messages.success(request, (u"S'ha descarregat el arxiu amb les comandes del dia d'entrega"))
+    # messages.success(request, (u"S'ha descarregat el arxiu amb les comandes del dia d'entrega"))
     wb.save(response)
     return response
 
@@ -123,7 +123,7 @@ class FranjaHorariaCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'ha creat correctament la franja horària"))
+        # messages.success(self.request, (u"S'ha creat correctament la franja horària"))
         node = Node.objects.get(pk=self.kwargs['dis'])
         return "/dis/" + str(node.pk) + "/diaentrega/create/"
 
@@ -147,7 +147,7 @@ class DiaEntregaCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'ha creat correctament el lloc d'entrega"))
+        # messages.success(self.request, (u"S'ha creat correctament el lloc d'entrega"))
         node = Node.objects.get(pk=self.kwargs['dis'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
@@ -170,7 +170,7 @@ class DiaEntregaUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'han desat les modificacions en el dia d'entrega"))
+        # messages.success(self.request, (u"S'han desat les modificacions en el dia d'entrega"))
         d = DiaEntrega.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(d.node.pk) + "/node_comandes/" + str(d.pk)
 
@@ -194,7 +194,7 @@ class NodeCreateView(CreateView):
         return kwargs
 
     def form_valid(self, form):
-        messages.success(self.request, (u"S'ha creat correctament el lloc d'entrega"))
+        # messages.success(self.request, (u"S'ha creat correctament el lloc d'entrega"))
     #     f = form.save(commit=False)
     #     g = Group.objects.get(name='Nodes')
     #
@@ -219,7 +219,7 @@ class NodeUpdateView(UpdateView):
         return kwargs
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'han desat les modificacions en el lloc d'entrega"))
+        # messages.success(self.request, (u"S'han desat les modificacions en el lloc d'entrega"))
         node = Node.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
@@ -242,7 +242,7 @@ class NodeProductorsUpdateView(UpdateView):
     success_url="dis/(?P<dis>\d+)/vista_nodesdates/"
 
     def get_success_url(self):
-        messages.success(self.request, (u"S'ha desat la llista de productors seleccionats "))
+        # messages.success(self.request, (u"S'ha desat la llista de productors seleccionats "))
         node = Node.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
