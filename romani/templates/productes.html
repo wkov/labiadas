@@ -43,11 +43,11 @@
     {% for producte in productes %}
       <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12" >
         <div class="thumbnail" >
+            <span class="glyphicon glyphicon-time" style="background-color: #f6a828; float: right; position: absolute; z-index: 1; top: 0px; right: 0px"> {{ producte|next_day:up.lloc_entrega_perfil }}</span>
           <div class="caption">
                  {% if producte.foto %}
                     <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
                     <div class="g-item" style="background-image:url('{{ producte.foto.url }}');        " >
-                        <span class="glyphicon glyphicon-time"> {{ producte|next_day:up.lloc_entrega_perfil }}</span>
                         </div>
                     </a>
                  {% endif %}
