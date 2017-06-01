@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load romani_tags %}
 {% load i18n %}
 {% load staticfiles %}
 {% csrf_token %}
@@ -24,10 +25,11 @@
 
         <div id="div_recurs"  style="display: block ">
             <div     class="thumbnail">
-            {% if producte.foto %}
+            <div style="background-color: #f6a828; float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio';" title="Próxima entrega">
+            <span class="glyphicon glyphicon-time" ></span> {{ producte|next_day:up.lloc_entrega_perfil }}</div>            {% if producte.foto %}
 
                 <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
-                <div class="foto-producte" style="background-image:url('{{ producte.adjunt.url }}');" >
+                <div class="foto-producte" style="background-image:url('{{ producte.foto.url }}');" >
                         </div></a>
             {% endif %}
             <h2 >{{ producte.nom }} </h2>

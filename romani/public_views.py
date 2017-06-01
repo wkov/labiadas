@@ -182,6 +182,7 @@ def productorView(request,pk):
     productor = Productor.objects.filter(pk=pk).first()
     # productes = Producte.objects.filter(productor=productor)
 
+
     user_p = UserProfile.objects.filter(user=request.user).first()
 
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
@@ -193,7 +194,7 @@ def productorView(request,pk):
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
 
 
-    return render(request, "productor.html",{'productor': productor, 'productes': productes, 'adjunts': adjunts})
+    return render(request, "productor.html",{'productor': productor, 'productes': productes, 'adjunts': adjunts, 'up': user_p})
 
 def comandesView(request):
 
