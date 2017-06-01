@@ -255,18 +255,26 @@ class Producte(models.Model):
 
     def next_day(self, node):
 
-        date = datetime.date.today() + timedelta(hours=self.productor.hores_limit)
+        date = datetime.datetime.now() + timedelta(hours=self.productor.hores_limit)
         list = []
         for f in self.formats.all():
-            for s in f.dies_entrega.filter(dia__date__gte=date, dia__node=node).order_by('dia__date'):
-                res = s.stock_check()
-                if res:
-                    list.append(s)
-                    break
+            for s in f.dies_entrega.filter(dia__date__gte=date.date(), dia__node=node).order_by('dia__date'):
+
+                aux = s.dia.franja_inici()
+                daytime = datetime.datetime(s.dia.date.year, s.dia.date.month, s.dia.date.day, aux.inici.hour, aux.inici.minute)
+                # daytime.replace(day=s.dia.date.day, month=s.dia.date.month, year=s.dia.date.year, hour=aux.inici.hour, minute=aux.inici.minute)
+                # daytime.replace()
+
+                if daytime > date:
+
+                    res = s.stock_check()
+                    if res:
+                        list.append(daytime)
+                        break
         if list:
-            list.sort(key=lambda r: r.dia.date)
-            b = list[0].dia.date
-            a = datetime.date.today()
+            list.sort(key=lambda r: r)
+            b = list[0]
+            a = datetime.datetime.now()
             c = b - a
             d = divmod(c.total_seconds(),86400)
             if d[0] > 3:
