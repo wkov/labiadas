@@ -188,10 +188,10 @@ def ConvidarView(request):
                             enviarInvitacio(email, up.user.get_full_name(), k)
                             up.invitacions = up.invitacions - 1
 
-                            conv = Convidat.objects.create(mail = email)
-                            conv.save()
-
-                            up.convidats.add(conv)
+                            # conv = Convidat.objects.create(mail = email)
+                            # conv.save()
+                            #
+                            # up.convidats.add(conv)
 
                             up.save()
 

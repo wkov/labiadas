@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
 import datetime
 
+# from romani.views import stock_check
+
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from datetime import timedelta
@@ -251,6 +253,32 @@ class Producte(models.Model):
 
 
 
+    def next_day(self, node):
+
+        date = datetime.date.today() + timedelta(hours=self.productor.hores_limit)
+        list = []
+        for f in self.formats.all():
+            for s in f.dies_entrega.filter(dia__date__gte=date, dia__node=node).order_by('dia__date'):
+                res = s.stock_check()
+                if res:
+                    list.append(s)
+                    break
+        if list:
+            list.sort(key=lambda r: r.dia.date)
+            b = list[0].dia.date
+            a = datetime.date.today()
+            c = b - a
+            d = divmod(c.total_seconds(),86400)
+            if d[0] > 3:
+                return str(int(d[0])) + " dies"
+            else:
+                return str(int(divmod(c.total_seconds(),3600)[0])) + " hores"
+        else:
+            return False
+
+
+
+
 
 class TipusProducte(models.Model):
 
@@ -306,6 +334,31 @@ class DiaFormatStock(models.Model):
     tipus_stock = models.CharField(max_length=10, choices=TIPUS_STOCK, default='2')
     format = models.ForeignKey(TipusProducte, related_name='dies_entrega')
 
+    def stock_check(self):
+         d = self.format.dies_entrega.get(dia=self.dia)
+         if d.tipus_stock == '0':
+                try:
+                    diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=self.format.productor).order_by('-date').first()
+                    if diaproduccio:
+                       s = self.format.stocks.get(dia_prod=diaproduccio)
+                       if s.stock > 0:
+                           return True
+                       else:
+                           return False
+                except:
+                    return False
+
+         elif d.tipus_stock == '1':
+             if self.format.stock_fix:
+                if self.format.stock_fix > 0:
+                    return True
+                else:
+                    return False
+             else:
+                 return False
+
+         elif d.tipus_stock == '2':
+                return True
 
 
 

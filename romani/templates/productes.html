@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load romani_tags %}
 {% load i18n %}
 {% load staticfiles %}
 {% csrf_token %}
@@ -47,6 +47,7 @@
                  {% if producte.foto %}
                     <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
                     <div class="g-item" style="background-image:url('{{ producte.foto.url }}');        " >
+                         {{ producte|next_day:up.lloc_entrega_perfil }}
                         </div>
                     </a>
                  {% endif %}
