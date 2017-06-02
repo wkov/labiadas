@@ -4,7 +4,6 @@
 {% csrf_token %}
 
 {% block headers %}
-
     <script src="{% static 'js/comanda.js' %}"></script>
 {% endblock %}
 
@@ -32,6 +31,34 @@
 
     <div class="col-md-6 col-xs-12 col-sm-12 col-lg-4">
         <div class="thumbnail">
+
+        <form method="post" action="{% url 'vote' %}">
+
+          <div style="background-color: #f6a828; float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio';">
+{#              [{{ comanda.votes }}]#}
+            {% csrf_token %}
+            <input type="hidden" id="id_contracte" name="contracte" class="hidden_id" value="{{ contracte.pk }}" />
+            <input type="hidden" id="id_comanda" name="comanda" class="hidden_id" value="" />
+            <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />
+            {% if contracte.pk in upvoted_contractes %}
+{#            <button>+</button>#}
+                <button type="submit" name="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-upvoted hidden_id" value="Nothing" title="Ha anat bé"></button><br/>
+                <button type="submit" name="Down" value="Down"  style="width: 16px; height: 16px; padding: 0; border: none; "
+                        class="arrow-downvote hidden_id" title="He tingut problemes">
+                </button>
+            {% elif contracte.pk in downvoted_contractes %}
+                <button type="submit" name="Up" value="Up" style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>
+                <button type="submit" name="Nothing" value="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-downvoted hidden_id" title="He tingut problemes"></button>
+            {% else %}
+{#            <button>-</button>#}
+                <button type="submit" name="NewUp" value="NewUp" style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>
+                <button type="submit" name="NewDown" value="NewDown" style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-downvote hidden_id" title="He tingut problemes"></button>
+            {% endif %}
+          </div>
+        </form>
+
+
+
             <div class="caption">
 
 
@@ -93,6 +120,36 @@
         {% for comanda in comandes %}
     <div class="col-md-6 col-xs-12 col-sm-12 col-lg-4 ">
     <div class="thumbnail">
+
+
+            <form method="post" action="{% url 'vote' %}">
+
+          <div style="background-color: #f6a828; float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio';">
+{#              [{{ comanda.votes }}]#}
+            {% csrf_token %}
+            <input type="hidden" id="id_contracte" name="contracte" class="hidden_id" value="" />
+            <input type="hidden" id="id_comanda" name="comanda" class="hidden_id" value="{{ comanda.pk }}" />
+            <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />
+            {% if comanda.pk in upvoted_comandes %}
+{#            <button>+</button>#}
+                <button type="submit" name="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-upvoted hidden_id" value="Nothing" title="Ha anat bé"></button><br/>
+                <button type="submit" name="Down" value="Down"  style="width: 16px; height: 16px; padding: 0; border: none; "
+                        class="arrow-downvote hidden_id" title="He tingut problemes">
+                </button>
+            {% elif comanda.pk in downvoted_comandes %}
+                <button type="submit" name="Up" value="Up" style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>
+                <button type="submit" name="Nothing" value="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-downvoted hidden_id" title="He tingut problemes"></button>
+            {% else %}
+{#            <button>-</button>#}
+                <button type="submit" name="NewUp" value="NewUp" style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>
+                <button type="submit" name="NewDown" value="NewDown" style="width: 16px; height: 16px; padding: 0; border: none; " class="arrow-downvote hidden_id" title="He tingut problemes"></button>
+            {% endif %}
+          </div>
+        </form>
+
+
+
+
     <div class="caption">
              {% if comanda.producte.foto %}
                 <a href="{{ MEDIA_URL }}{{ comanda.producte.foto.url }}" style="float: right" >

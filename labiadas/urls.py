@@ -10,7 +10,7 @@ from romani.models import EmailModelBackend
 from django.contrib.auth.decorators import login_required as auth
 
 from romani.public_views import ContracteUpdateView, buskadorProducte, etiquetaView, ComandaFormView, producteView, productorView
-from romani.public_views import coopeView, etiquetaView, comandesView, entregasView, comandaDelete, contracteDelete
+from romani.public_views import coopeView, etiquetaView, comandesView, entregasView, comandaDelete, contracteDelete, VoteFormView
 from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView
 from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export_comandes_xls, NodeCreateView
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
@@ -88,6 +88,16 @@ urlpatterns = [
         name="contracte_update"),
     url(r"^contracte/(?P<pk>\d+)/$", auth(ContracteDetailView.as_view()),
         name="contracte_detail"),
+
+
+
+
+
+    url(r'^vote/$', auth(VoteFormView.as_view()), name="vote"),
+
+
+
+
 
 
     url(r'^nou_usuari/', auth(views.nouUsuariView), name="nou_usuari"),

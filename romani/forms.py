@@ -1,7 +1,7 @@
 
 from django import forms
 # from .models import Comanda
-from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt, Frequencia, DiaProduccio, Stock, DiaFormatStock
+from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria, Contracte, Adjunt, Frequencia, DiaProduccio, Stock, DiaFormatStock, Vote
 # from romani.views import stock_check_cant
 from django.contrib.auth.models import  User, Group
 from django.forms.widgets import CheckboxSelectMultiple
@@ -269,3 +269,9 @@ class NodeProductorsForm(forms.ModelForm):
         super(NodeProductorsForm, self).__init__(*args, **kwargs)
         self.fields["productors"].widget = CheckboxSelectMultiple()
         self.fields["productors"].queryset = Productor.objects.all()
+
+class VoteForm(forms.ModelForm):
+    class Meta:
+        model = Vote
+        fields = ("voter", "positiu")
+        exclude = ( "contracte", "comanda")

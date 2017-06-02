@@ -878,7 +878,33 @@ background-color: #bce0b9;
 }
 
 
-
+/*Upvotes and Downvotes*/
+.arrow-upvote {
+  cursor: pointer;
+  width: 20px;
+  height: 13px;
+  background: url( 'img/votes/arrow_up.png');
+ opacity: 0.5;
+}
+.arrow-upvoted {
+  cursor: pointer;
+  width: 20px;
+  height: 13px;
+  background: url('img/votes/arrow_up_sel.png');
+}
+.arrow-downvote {
+  cursor: pointer;
+  width: 20px;
+  height: 13px;
+  background: url('img/votes/arrow_down.png');
+ opacity: 0.5;
+}
+.arrow-downvoted {
+  cursor: pointer;
+  width: 20px;
+  height: 13px;
+  background: url('img/votes/arrow_down_sel.png');
+}
 
 
 

@@ -287,7 +287,6 @@ class Producte(models.Model):
 
 
 
-
 class TipusProducte(models.Model):
 
     nom = models.CharField(max_length=20)
@@ -514,6 +513,14 @@ class UserProfile(models.Model):
         return Contracte.objects.filter(producte__productor__responsable=self.user).filter(data_fi__isnull=True)
 
 
+class Vote(models.Model):
+    voter = models.ForeignKey(User)
+    contracte = models.ForeignKey(Contracte, blank=True, null=True)
+    comanda = models.ForeignKey(Comanda, blank=True, null=True)
+    positiu = models.BooleanField()
+
+    def __unicode__(self):
+        return "%s voted %s" % (self.voter.username, self.link.title)
 
 from django.core.mail import send_mail
 

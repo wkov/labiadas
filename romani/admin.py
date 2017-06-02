@@ -1,11 +1,15 @@
 from django.contrib import admin
-from romani.models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock, DiaFormatStock
+from romani.models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock, DiaFormatStock, Vote
 
 class producteAdmin(admin.ModelAdmin):
     list_display = ('nom', 'productor', 'descripcio', 'text_curt', 'karma_date', 'karma_value')
     search_fields = ['nom']
     list_filter = ['nom', 'productor']
 
+class voteAdmin(admin.ModelAdmin):
+    list_display = ('voter', 'contracte', 'comanda')
+    search_fields = ['voter', 'contracte', 'comanda']
+    list_filter = ['voter', 'contracte', 'comanda']
 
 class productorAdmin(admin.ModelAdmin):
     list_display = ('nom','text')
@@ -97,3 +101,4 @@ admin.site.register(FranjaHoraria, franjahorariaAdmin)
 admin.site.register(Contracte, contracteAdmin)
 admin.site.register(Key, keyAdmin)
 admin.site.register(Frequencia, frequenciaAdmin)
+admin.site.register(Vote, voteAdmin)

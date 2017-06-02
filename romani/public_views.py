@@ -1,12 +1,12 @@
 __author__ = 'sergi'
 
 from django.shortcuts import render, get_object_or_404
-from romani.models import Producte, Productor, Comanda, Contracte, TipusProducte, Node, DiaEntrega, FranjaHoraria, Frequencia, DiaProduccio
+from romani.models import Producte, Productor, Comanda, Contracte, TipusProducte, Node, DiaEntrega, FranjaHoraria, Frequencia, DiaProduccio, Vote
 from django.db.models import Q
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
 from romani.models import UserProfile, Etiqueta, Adjunt
-from romani.forms import ComandaForm,ContracteForm
+from romani.forms import ComandaForm,ContracteForm, VoteForm
 from romani.views import stock_check, stock_calc
 
 from django.http import HttpResponse
@@ -214,20 +214,47 @@ def entregasView(request):
     entregas = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('dia_entrega__date')
     contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__lte=now) & Q(data_fi__isnull=False)).order_by('data_fi')
 
+
+    voted = Vote.objects.filter(voter=request.user)
+
+    comandes_in_page = [comanda.pk for comanda in entregas]
+    upvoted_comandes = voted.filter(comanda_id__in=comandes_in_page, positiu = True)
+    if upvoted_comandes:
+        upvoted_comandes = upvoted_comandes.values_list('comanda_id', flat=True)
+    downvoted_comandes = voted.filter(comanda_id__in=comandes_in_page, positiu = False)
+    if downvoted_comandes:
+        downvoted_comandes = downvoted_comandes.values_list('comanda_id', flat=True)
+
+    contractes_in_page = [contracte.pk for contracte in contractes]
+    upvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=True)
+    if upvoted_contractes:
+        upvoted_contractes = upvoted_contractes.values_list('contracte_id', flat=True)
+    downvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=False)
+    if downvoted_contractes:
+        downvoted_contractes = downvoted_contractes.values_list('contracte_id', flat=True)
+
+
     nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    return render(request, "entregas.html",{'comandes': entregas, 'contractes': contractes, 'nodes': nodes, 'up': user_p})
+    return render(request, "entregas.html",{'comandes': entregas, 'contractes': contractes, 'nodes': nodes, 'up': user_p, 'upvoted_comandes': upvoted_comandes,
+                                            'downvoted_comandes': downvoted_comandes, 'upvoted_contractes': upvoted_contractes, 'downvoted_contractes': downvoted_contractes })
+
+
+
+
+
 
 def comandaDelete(request, pk):
 
     comandaDel = Comanda.objects.filter(pk=pk).first()
+    message = ""
 
     time = timedelta(hours=48)
     tt = comandaDel.dia_entrega.date - time
-    if datetime.datetime.date(datetime.datetime.now()) < tt.date():
+    if datetime.datetime.date(datetime.datetime.now()) < tt:
         notify.send(comandaDel.producte, recipient = request.user,  verb="Has tret ",
-            description="de la cistella" , url=comandaDel.producte.adjunt.url, timestamp=timezone.now())
+            description="de la cistella" , url=comandaDel.producte.foto.url, timestamp=timezone.now())
         comandaDel.delete()
     else:
 
@@ -246,17 +273,28 @@ def comandaDelete(request, pk):
 
 def contracteDelete(request, pk):
 
-    contracteDel = Contracte.objects.filter(pk=pk).first()
-    time = timedelta(hours=48)
-    tt = contracteDel.dia_entrega.date - time
 
-    if datetime.datetime.date(datetime.datetime.now()) < tt.date():
+    contracteDel = Contracte.objects.filter(pk=pk).first()
+    time = timedelta(hours=contracteDel.producte.productor.hores_limit)
+    message = ""
+    if contracteDel.prox_entrega():
+        t = contracteDel.prox_entrega()
+        tt = t.date - time
+
+        if datetime.datetime.date(datetime.datetime.now()) < tt:
+            notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
+                  description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
+            contracteDel.data_fi = datetime.datetime.now()
+            contracteDel.save()
+        else:
+            message = u"Falten menys de 48h per el proper dia d'entrega, ja estem preparant la comanda i no podem treure el producte de la cistella. Quan hagis rebut aquesta entrega podràs anul·lar el vincle"
+    else:
         notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
-              description="de la cistella" , url=contracteDel.producte.adjunt.url, timestamp=timezone.now())
+              description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
         contracteDel.data_fi = datetime.datetime.now()
         contracteDel.save()
-    else:
-        message = u"Falten menys de 48h per el proper dia d'entrega, ja estem preparant la comanda i no podem treure el producte de la cistella. Quan hagis rebut aquesta entrega podràs anul·lar el vincle"
+
+
 
     comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
     now = datetime.datetime.now()
@@ -485,4 +523,77 @@ class ComandaFormView(JSONFormMixin, ComandaFormBaseView):
     pass
 
 
+
+class VoteFormView(FormView):
+    form_class = VoteForm
+    success_url="/entregas/"
+    # def create_response(self, vdict=dict(), valid_form=True):
+    #     response = HttpResponse(json.dumps(vdict))
+    #     response.status = 200 if valid_form else 500
+    #     return response
+
+    def form_valid(self, form):
+
+        user = self.request.user
+
+        if form.data["contracte"]!="":
+            contracte = get_object_or_404(Contracte, pk=int(form.data["contracte"]))
+            # prev_votes = Vote.objects.filter(voter=user, comanda=comanda)
+            if self.request.POST.get("Up"):
+                v = Vote.objects.get(voter=user, contracte=contracte)
+                v.positiu = True
+                v.save()
+            elif self.request.POST.get("Down"):
+                v = Vote.objects.get(voter=user, contracte=contracte)
+                v.positiu = False
+                v.save()
+            elif self.request.POST.get("NewUp"):
+                v = Vote.objects.get_or_create(voter=user, contracte=contracte, positiu=True)
+            elif self.request.POST.get("NewDown"):
+                v = Vote.objects.get_or_create(voter=user, contracte=contracte, positiu=False)
+            else:
+                pass
+
+        if form.data["comanda"]!="":
+            comanda = get_object_or_404(Comanda, pk=int(form.data["comanda"]))
+            # prev_votes = Vote.objects.filter(voter=user, comanda=comanda)
+            if self.request.POST.get("Up"):
+                v = Vote.objects.get(voter=user, comanda=comanda)
+                v.positiu = True
+                v.save()
+            elif self.request.POST.get("Down"):
+                v = Vote.objects.get(voter=user, comanda=comanda)
+                v.positiu = False
+                v.save()
+            elif self.request.POST.get("NewUp"):
+                v = Vote.objects.create(voter=user, comanda=comanda, positiu=True)
+            elif self.request.POST.get("NewDown"):
+                v = Vote.objects.create(voter=user, comanda=comanda, positiu=False)
+            else:
+                pass
+
+        # link = get_object_or_404(Link, pk=form.data["link"])
+        # has_voted = (len(prev_votes) > 0)
+
+        ret = {"success": 1}
+        # if not has_voted:
+        #     # add vote
+        #     v = Vote.objects.create(voter=user, link=link)
+        #     ret["voteobj"] = v.id
+        # else:
+        #     # delete vote
+        #     prev_votes[0].delete()
+        #     ret["unvoted"] = 1
+        # return self.create_response(ret, True)
+        return super(VoteFormView, self).form_valid(form)
+
+
+
+    # def form_invalid(self, form):
+    #     ret = {"success": 0, "form_errors": form.errors }
+    #     return self.create_response(ret, False)
+
+#
+# class VoteFormView(JSONFormMixin, VoteFormBaseView):
+#     pass
 
