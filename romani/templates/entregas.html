@@ -34,7 +34,7 @@
 
         <form method="post" action="{% url 'vote' %}">
 
-          <div style="background-color: #f6a828; float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio';">
+          <div style="background-color: #f6a828; float: right; position: absolute; z-index: 10000000; top: 0px; right: 0px; font-family: 'Barrio';">
           Valoració: &nbsp;
 {#              [{{ comanda.votes }}]#}
             {% csrf_token %}
@@ -125,7 +125,7 @@
 
             <form method="post" action="{% url 'vote' %}">
 
-          <div style="background-color: #f6a828; float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio';">
+          <div style="background-color: #f6a828; float: right; position: absolute; z-index: 1000000; top: 0px; right: 0px; font-family: 'Barrio';">
           Valoració: &nbsp;
 {#              [{{ comanda.votes }}]#}
             {% csrf_token %}
