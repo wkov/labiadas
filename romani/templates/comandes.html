@@ -37,7 +37,7 @@
                           <div class="caption">
                                      {% if contracte.producte.foto %}
                                         <a href="{{ MEDIA_URL }}{{ contracte.producte.foto.url }}" >
-                                        <div class="g-item" style="background-image:url('{{ contracte.producte.adjunt.url }}');float: right; position:relative; z-index: 10" >
+                                        <div class="g-item" style="background-image:url('{{ contracte.producte.foto.url }}');float: right; position:relative; z-index: 10" >
                                             </div>
                                         </a>
                                       {% endif %}
@@ -100,7 +100,7 @@
               <div class="caption">
                       {% if comanda.producte.foto %}
                         <a href="{{ MEDIA_URL }}{{ comanda.producte.foto.url }}" title="veure imatge">
-                        <div class="g-item" style="background-image:url('{{ comanda.producte.adjunt.url }}');background-position: center;
+                        <div class="g-item" style="background-image:url('{{ comanda.producte.foto.url }}');background-position: center;
             background-size: cover; " >
                             </div>
                         </a>
