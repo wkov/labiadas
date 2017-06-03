@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
 import datetime
 
+from django.db.models import Q
 # from romani.views import stock_check
 
 from django.contrib.auth.backends import ModelBackend
@@ -109,7 +110,7 @@ class Node(models.Model):
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
     frequencies = models.ForeignKey(Frequencia)
-    productors = models.ManyToManyField(Productor, blank=True)
+    productors = models.ManyToManyField(Productor, blank=True, related_name='nodes')
     privat = models.NullBooleanField()
 
     def __str__(self):
@@ -218,6 +219,27 @@ class Producte(models.Model):
 
     def __str__(self):
         return self.nom
+
+    def votes_count(self):
+        total = 0
+        for vote in Vote.objects.filter(comanda__producte=self):
+            if vote.positiu == True:
+                total = total + 1
+            elif vote.positiu == False:
+                total = total - 1
+        for vote in Vote.objects.filter(contracte__producte=self):
+            num_dies = vote.contracte.dies_entrega.count()
+            if vote.positiu == True:
+                total = total + num_dies
+            elif vote.positiu == False:
+                total = total - num_dies
+        return total
+
+    def positive_votes(self):
+        return Vote.objects.filter((Q(comanda__producte=self) | Q(contracte__producte=self))).filter(positiu=True).count()
+
+    def negative_votes(self):
+        return Vote.objects.filter((Q(comanda__producte=self) | Q(contracte__producte=self))).filter(positiu=False).count()
 
 
     # def dies_entrega_futurs(self):
@@ -515,8 +537,8 @@ class UserProfile(models.Model):
 
 class Vote(models.Model):
     voter = models.ForeignKey(User)
-    contracte = models.ForeignKey(Contracte, blank=True, null=True)
-    comanda = models.ForeignKey(Comanda, blank=True, null=True)
+    contracte = models.ForeignKey(Contracte, blank=True, null=True, related_name='votes')
+    comanda = models.ForeignKey(Comanda, blank=True, null=True, related_name='votes')
     positiu = models.BooleanField()
 
     def __unicode__(self):

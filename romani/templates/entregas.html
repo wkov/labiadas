@@ -28,6 +28,7 @@
 
 
                 {% for contracte in contractes %}
+                    {% for s in contracte.old_entregas %}
 
     <div class="col-md-6 col-xs-12 col-sm-12 col-lg-4">
         <div class="thumbnail">
@@ -35,7 +36,12 @@
         <form method="post" action="{% url 'vote' %}">
 
           <div style="background-color: #f6a828; float: right; position: absolute; z-index: 10000000; top: 0px; right: 0px; font-family: 'Barrio';">
-          Valoració: &nbsp;
+                    <div style="float: left">
+              <div style="margin: 0 auto; text-align:center">
+          Valoració: &nbsp; <br/>
+          {{ contracte.producte.votes_count }} vots
+                  </div>
+          </div>
 {#              [{{ comanda.votes }}]#}
             {% csrf_token %}
             <input type="hidden" id="id_contracte" name="contracte" class="hidden_id" value="{{ contracte.pk }}" />
@@ -89,7 +95,7 @@
                 Preu: <b>{{ contracte.preu }}€</b><br/>
                 Format: <b>{{ contracte.format.nom }}</b><br/>
                 Hora:   <b> {{ contracte.franja_horaria.inici }} - {{ contracte.franja_horaria.final }}</b><br/>
-                Freq: <b>{{contracte.freq_txt}}</b><br/>
+                Dia: <b>{{s.date}}</b><br/>
                 Lloc:<a href="{% url 'node_detail' contracte.lloc_entrega.pk %}"> <b> {{ contracte.lloc_entrega.nom }} </b></a><br/>
                 </div>
                 <div style="width:100%; display: inline-block">
@@ -112,6 +118,7 @@
     </div>
     </div>
     </div>
+                        {% endfor %}
         {%  endfor %}
         {% endif %}
 
@@ -126,7 +133,13 @@
             <form method="post" action="{% url 'vote' %}">
 
           <div style="background-color: #f6a828; float: right; position: absolute; z-index: 1000000; top: 0px; right: 0px; font-family: 'Barrio';">
-          Valoració: &nbsp;
+          <div style="float: left">
+              <div style="margin: 0 auto; text-align:center">
+          Valoració: &nbsp; <br/>
+          {{ comanda.producte.votes_count }} vots
+                  </div>
+          </div>
+          <div style="float: right">
 {#              [{{ comanda.votes }}]#}
             {% csrf_token %}
             <input type="hidden" id="id_contracte" name="contracte" class="hidden_id" value="" />
@@ -146,6 +159,7 @@
                 <button type="submit" name="NewUp" value="NewUp" style="width: 16px; height: 16px; padding: 0; border: none; float:right" class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>
                 <button type="submit" name="NewDown" value="NewDown" style="width: 16px; height: 16px; padding: 0; border: none;float:right " class="arrow-downvote hidden_id" title="He tingut problemes"></button>
             {% endif %}
+          </div>
           </div>
         </form>
 

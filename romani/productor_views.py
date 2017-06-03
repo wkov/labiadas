@@ -213,8 +213,10 @@ class DatesListView(ListView):
 def DiaEntregaDistribuidorView(request, dataentrega):
 
 
-    productors = Productor.objects.filter(responsable=request.user)
+
     diaentrega = DiaEntrega.objects.get(pk=dataentrega)
+    productors_menu = Productor.objects.filter(responsable=request.user)
+    productors = Productor.objects.filter(responsable=request.user, nodes=diaentrega.node)
     diaproduccio = DiaProduccio.objects.filter(date__lte=diaentrega.date, productor__in=productors).order_by('-date').first()
     formats = TipusProducte.objects.filter(producte__productor__in=productors)
     diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor__in=productors)
@@ -279,7 +281,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
 
     contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
 
-    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'productes': productes, 'formatstockform': formatstockform,
+    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors_menu, 'productes': productes, 'formatstockform': formatstockform,
                                                                  'formats_sel': formats_sel, 'comandes': comandes, 'contractes': contractes, 'dia_prod': diaproduccio})
 
 
