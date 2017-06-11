@@ -37,8 +37,15 @@
     {% for producte in posts %}
       <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
         <div class="thumbnail" >
-<div style="background-color: #f6a828; float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio';" title="Próxima entrega">
-            <span class="glyphicon glyphicon-time" ></span> {{ producte|next_day:up.lloc_entrega_perfil }}</div>          <div class="caption">
+            <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
+                <div style="background-color: #f6a828; float: right " title="Próxima entrega">
+                <span class="glyphicon glyphicon-time" ></span> {{ producte|next_day:up.lloc_entrega_perfil }}</div>
+                <div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">
+                <span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>
+                <div style="background-color: #8ae090; color: white; float: right" title="Vots positius">
+                <span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>
+            </div>
+            <div class="caption">
                  {% if producte.foto %}
                     <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
                     <div class="g-item" style="background-image:url('{{ producte.foto.url }}');float: right; position:relative; z-index: 10" >

@@ -1,7 +1,7 @@
 __author__ = 'sergi'
 
 from romani.models import Comanda, Productor, Producte, Contracte, DiaEntrega, TipusProducte, DiaProduccio, Stock, DiaFormatStock, Node
-from romani.forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, DiaProduccioForm, StockForm, DiaFormatStockForm
+from romani.forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, DiaProduccioForm, StockForm, DiaFormatStockForm, ComandaProForm
 
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
@@ -22,7 +22,7 @@ class ComandesListView(ListView):
     def get_queryset(self):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         productes = Producte.objects.filter(productor=productor)
-        return Comanda.objects.filter(producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
+        return Comanda.objects.filter(format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
 
     def get_context_data(self, **kwargs):
         context = super(ComandesListView, self).get_context_data(**kwargs)
@@ -40,7 +40,7 @@ class HistorialListView(ListView):
     def get_queryset(self):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         productes = Producte.objects.filter(productor=productor)
-        return Comanda.objects.filter(producte__in=productes, dia_entrega__date__lte=datetime.datetime.today())
+        return Comanda.objects.filter(format__producte__in=productes, dia_entrega__date__lte=datetime.datetime.today())
 
     def get_context_data(self, **kwargs):
         context = super(HistorialListView, self).get_context_data(**kwargs)
@@ -138,6 +138,41 @@ class AdjuntCreateView(CreateView):
 
 
 
+class ComandaCreateView(CreateView):
+
+    model = Comanda
+    form_class = ComandaProForm
+    template_name = "romani/productors/comanda_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super(ComandaCreateView, self).get_form_kwargs()
+        productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
+        kwargs["productor"] = productor
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(ComandaCreateView, self).get_context_data(**kwargs)
+        productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
+        context["productor"] = productor
+        return context
+
+    def form_valid(self, form):
+        form_valid = super(ComandaCreateView, self).form_valid(form)
+        obj = form.save(commit=False)
+        obj.externa = True
+        # obj.lloc_entrega = form_valid.instance.dia_entrega.node
+        # obj.producte = form_valid.instance.format.producte
+        obj.save()
+        return form_valid
+
+    def get_success_url(self):
+
+        # messages.success(self.request, (u"S'ha carregat la nova foto a l'àlbum del productor"))
+        productor = Productor.objects.get(pk=self.kwargs['pro'])
+        return "/pro/" + str(productor.pk) + "/vista_comandes/"
+
+
+
 class ProductorsListView(ListView):
     model = Productor
     template_name = "romani/productors/productor_list.html"
@@ -154,7 +189,7 @@ class ProductorsListView(ListView):
         productors = Productor.objects.filter(responsable=self.request.user)
         productes = Producte.objects.filter(productor__in=productors)
         context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
-        context["comandes"] = Comanda.objects.filter(producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
+        context["comandes"] = Comanda.objects.filter(format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
         return context
 
 
@@ -193,7 +228,7 @@ class ProductorsHistListView(ListView):
         productors = Productor.objects.filter(responsable=self.request.user)
         productes = Producte.objects.filter(productor__in=productors)
         context["contractes"] = Contracte.objects.filter(producte__in=productes)
-        context["comandes"] = Comanda.objects.filter(producte__in=productes, dia_entrega__date__lte=datetime.datetime.today())
+        context["comandes"] = Comanda.objects.filter(format__producte__in=productes, dia_entrega__date__lte=datetime.datetime.today())
         return context
 
 class DatesListView(ListView):
@@ -277,7 +312,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
 
     formats_sel = DiaFormatStock.objects.filter(dia=diaentrega)
 
-    comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
+    comandes = Comanda.objects.filter(format__producte__in=productes, dia_entrega=diaentrega)
 
     contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
 
@@ -352,7 +387,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
 
     formats_sel = DiaFormatStock.objects.filter(dia=diaentrega)
 
-    comandes = Comanda.objects.filter(producte__in=productes, dia_entrega=diaentrega)
+    comandes = Comanda.objects.filter(format__producte__in=productes, dia_entrega=diaentrega)
 
     contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
 
@@ -400,7 +435,7 @@ def DiaProduccioCreateView(request, pro):
                    dia_prod = dp
                    format = cd.get('format')
                    stock = cd.get('stock')
-                   s = Stock.objects.create(dia_prod=dia_prod, format=format, stock=stock)
+                   s = Stock.objects.create(dia_prod=dia_prod, format=format, stock=stock, stock_ini=stock )
 
            # messages.success(request, (u"S'ha creat correctament el dia de producció"))
            return render(request, "romani/productors/dates_list.html", {'productor': productor})
@@ -467,7 +502,16 @@ def DiaProduccioUpdateView(request, pro, pk):
     form.fields['productor'].choices = [(x.pk, x) for x in Productor.objects.filter(pk=pro)]
     form.fields['date'].initial = dp_obj.date
     form.fields['node'].initial = dp_obj.node
-    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes})
+
+    next_dp_obj = DiaProduccio.objects.filter(date__gt=dp_obj.date, productor=productor).order_by('date').first()
+    if next_dp_obj:
+        comandes = Comanda.objects.filter(dia_entrega__date__gte=dp_obj.date, dia_entrega__date__lte=next_dp_obj.date, format__producte__productor=productor)
+        contractes = Contracte.objects.filter(dies_entrega__date__gte=dp_obj.date, dies_entrega__date__lte=next_dp_obj.date, producte__productor=productor)
+    else:
+        comandes = Comanda.objects.filter(dia_entrega__date__gte=dp_obj.date,format__producte__productor=productor)
+        contractes = Contracte.objects.filter(dies_entrega__date__gte=dp_obj.date, producte__productor=productor)
+
+    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes, 'comandes': comandes, 'contractes': contractes})
 
 
 class ContracteDetailView(DetailView):

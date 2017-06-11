@@ -64,7 +64,7 @@
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                    <b id="pato" name="pato" class="pato">Calendari</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
@@ -119,68 +119,57 @@
 </table>
   <input type="submit" value="Grabar">
 </form>
+<br/>
+    {% if comandes or contractes%}
+         <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
+         <thead>
+             <tr>
+             <th>Producte</th>
+             <th>Productor</th>
+             <th>Lloc d'entrega</th>
+             <th>Cant</th>
+             <th>Format</th>
+             <th>Data d'entrega</th>
+             <th>Franja horària</th>
+             <th>Preu</th>
+             <th>Usuari</th>
+             <th>Freqüència</th>
+             <th>Data de comanda</th>
+             </tr>
+         </thead>
+         <tbody>
+            {% for link in comandes %}
+                   <tr>
+                            <td>{{ link.format.producte.nom }}</td>
+                            <td>{{ link.producte.productor.nom }}</td>
+                            <td>{{ link.dia_entrega.node }}</td>
+                            <td>{{ link.cantitat }}</td>
+                            <td>{{ link.format.nom }}</td>
+                            <td>{{ link.dia_entrega.date }}</td>
+                            <td>{{ link.franja_horaria}}</td>
+                            <td>{{ link.preu }}€</td>
+                            <td>{{ link.client.first_name }}</td>
+                            <td> una sola vegada</td>
+                            <td>{{ link.data_comanda.date }}</td>
+                        </tr>
+            {% endfor %}
+            {% for link in contractes %}
+                   <tr>
+                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
+                            <td>{{ link.producte.productor.nom }}</td>
+                            <td>{{ link.lloc_entrega }}</td>
+                            <td>{{ link.cantitat }}</td>
+                            <td>{{ link.format.nom }}</td>
+                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ dia.date }}</a></td>
+                            <td>{{ link.franja_horaria}}</td>
+                            <td>{{ link.preu }}€</td>
+                            <td>{{ link.client.first_name }}</td>
+                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}&nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>
+                            <td>{{ link.data_comanda.date }}</td>
+                   </tr>
+            {% endfor %}
+         </tbody>
+           </table>
+    {% endif %}
 
-{% if comandes %}
-   <br/>    Comandes: <br/>
-     <table border="1" id="myTable" class="tablesorter" style="width: 100%">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Client</th>
-     <th>Data de comanda</th>
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in comandes %}
-               <tr>
-                        <td>[{{ link.producte.nom }}]</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td>{{ link.dia_entrega.date }}</td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-                        <td>{{ link.data_comanda.date }}</td>
-                    </tr>
-        {% endfor %}
-     </tbody>
-       </table>
-    {% endif %}
-    {% if contractes %}
-    <br/>
-    Contractes: <br/>
-     <table border="1" id="myTable2" class="tablesorter" style="width: 100%">
-     <thead>
-     <tr>
-         <th>Producte</th>
-         <th>Lloc d'entrega</th>
-         <th>[Cant Format]</th>
-         <th>Data d'entrega</th>
-         <th>Franja horària</th>
-         <th>Preu</th>
-         <th>Client</th>
-         <th>Freqüència</th>
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in contractes %}
-               <tr>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-                        <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.freq_txt }}</a></td>
-                    </tr>
-        {% endfor %}
-     </tbody>
-     </table>
-    {% endif %}
 {% endblock %}

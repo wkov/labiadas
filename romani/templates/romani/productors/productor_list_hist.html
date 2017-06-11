@@ -32,7 +32,7 @@
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_cal_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                    <b id="pato" name="pato" class="pato">Calendari</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
@@ -69,9 +69,9 @@
              <tbody>
                 {% for link in comandes %}
                        <tr>
-                                <td>{{ link.producte.nom }}</td>
-                                <td>{{ link.producte.productor.nom }}</td>
-                                <td>{{ link.lloc_entrega }}</td>
+                                <td>{{ link.format.producte.nom }}</td>
+                                <td>{{ link.format.productor.nom }}</td>
+                                <td>{{ link.dia_entrega.node }}</td>
                                 <td>{{ link.cantitat }}</td>
                                 <td>{{ link.format.nom }}</td>
                                 <td>{{ link.dia_entrega.date }}</td>
@@ -99,6 +99,7 @@
              <th>Preu</th>
              <th>Usuari</th>
              <th>Freqüència</th>
+             <th>Data Fi</th>
              </tr>
          </thead>
          <tbody>
@@ -116,6 +117,7 @@
                             <td>{{ link.preu }}€</td>
                             <td>{{ link.client.first_name }}</td>
                             <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
+                            <td>{{ link.data_fi }}</td>
                    </tr>
             {% endfor %}
          </tbody>

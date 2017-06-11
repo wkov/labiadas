@@ -253,8 +253,8 @@ def comandaDelete(request, pk):
     time = timedelta(hours=48)
     tt = comandaDel.dia_entrega.date - time
     if datetime.datetime.date(datetime.datetime.now()) < tt:
-        notify.send(comandaDel.producte, recipient = request.user,  verb="Has tret ",
-            description="de la cistella" , url=comandaDel.producte.foto.url, timestamp=timezone.now())
+        notify.send(comandaDel.format.producte, recipient = request.user,  verb="Has tret ",
+            description="de la cistella" , url=comandaDel.format.producte.foto.url, timestamp=timezone.now())
         comandaDel.delete()
     else:
 
@@ -475,7 +475,7 @@ class ComandaFormBaseView(FormView):
             # format.stock_fix = format.stock_fix - int(cantitat)
             # format.save()
             if stock_result == True:
-                v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu)
+                v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, preu=preu)
                 ret = {"contracte": 0, "success": 1}
                 notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
                 description="a la cistella" , timestamp=timezone.now())

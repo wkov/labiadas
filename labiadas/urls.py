@@ -16,7 +16,7 @@ from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
 from romani.productor_views import ContracteDetailView, distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
-from romani.productor_views import DiaProduccioUpdateView
+from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
@@ -61,6 +61,7 @@ urlpatterns = [
     url(r"^productor/create/$", auth(ProductorCreateView.as_view()), name="productor_create"),
     url(r"^pro/(?P<pro>\d+)/diaproduccio/$", auth(DiaProduccioCreateView), name="diaproduccio_create"),
     url(r"^pro/(?P<pro>\d+)/diaproduccio_update/(?P<pk>\d+)$", auth(DiaProduccioUpdateView), name="diaproduccio_update"),
+    url(r"^pro/(?P<pro>\d+)/comanda/create/$", auth(ComandaCreateView.as_view()), name="comanda_create"),
 
 
 

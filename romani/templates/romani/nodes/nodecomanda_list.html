@@ -55,8 +55,8 @@
 {#              <li>#}
 
                <tr>
-                        <td>[{{ link.producte.nom }}]</td>
-                        <td>{{ link.lloc_entrega }}</td>
+                        <td>[{{ link.format.producte.nom }}]</td>
+                        <td>{{ link.dia_entrega.node }}</td>
                         <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
                         <td>{{ link.dia_entrega.date }}</td>
                         <td>{{ link.franja_horaria}}</td>
@@ -103,7 +103,7 @@
                         <td>{{ link.preu }}€</td>
                         <td>{{ link.client.first_name }}</td>
                         <td>{{ link.data_comanda.date }}</td>
-                        <td>{{ link.freq_txt }}</td>
+                        <td>{{ link.frequencia }}</td>
                     </tr>
 
 {#              </li>#}

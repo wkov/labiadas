@@ -31,7 +31,7 @@ class Productor(models.Model):
 
     def comandes_count(self):
         now=datetime.datetime.now()
-        cm = Comanda.objects.filter(producte__productor=self).filter(dia_entrega__date__gte=now).count()
+        cm = Comanda.objects.filter(format__producte__productor=self).filter(dia_entrega__date__gte=now).count()
         ct = Contracte.objects.filter(producte__productor=self).filter(data_fi__isnull=True).count()
         return cm + ct
 
@@ -220,26 +220,26 @@ class Producte(models.Model):
     def __str__(self):
         return self.nom
 
-    def votes_count(self):
-        total = 0
-        for vote in Vote.objects.filter(comanda__producte=self):
-            if vote.positiu == True:
-                total = total + 1
-            elif vote.positiu == False:
-                total = total - 1
-        for vote in Vote.objects.filter(contracte__producte=self):
-            num_dies = vote.contracte.dies_entrega.count()
-            if vote.positiu == True:
-                total = total + num_dies
-            elif vote.positiu == False:
-                total = total - num_dies
-        return total
+    # def votes_count(self):
+    #     total = 0
+    #     for vote in Vote.objects.filter(comanda__producte=self):
+    #         if vote.positiu == True:
+    #             total = total + 1
+    #         elif vote.positiu == False:
+    #             total = total - 1
+    #     for vote in Vote.objects.filter(contracte__producte=self):
+    #         num_dies = vote.contracte.dies_entrega.count()
+    #         if vote.positiu == True:
+    #             total = total + num_dies
+    #         elif vote.positiu == False:
+    #             total = total - num_dies
+    #     return total
 
     def positive_votes(self):
-        return Vote.objects.filter((Q(comanda__producte=self) | Q(contracte__producte=self))).filter(positiu=True).count()
+        return Vote.objects.filter((Q(comanda__format__producte=self) | Q(contracte__producte=self))).filter(positiu=True).count()
 
     def negative_votes(self):
-        return Vote.objects.filter((Q(comanda__producte=self) | Q(contracte__producte=self))).filter(positiu=False).count()
+        return Vote.objects.filter((Q(comanda__format__producte=self) | Q(contracte__producte=self))).filter(positiu=False).count()
 
 
     # def dies_entrega_futurs(self):
@@ -263,7 +263,9 @@ class Producte(models.Model):
         #         self.karma_value = com + con + rnd
         #         self.karma_date = datetime.datetime.today()
         # except:
-        com = self.comanda_set.filter(lloc_entrega=node).count()
+        com = 0
+        for f in self.formats.all():
+            com = com + f.comanda_set.filter(dia_entrega__node=node).count()
         con = self.contracte_set.filter(lloc_entrega=node).count()
         rnd = random.randint(0, 5)
         self.karma_value = com + con*3 + rnd
@@ -393,10 +395,12 @@ class DiaFormatStock(models.Model):
 
 class DiaProduccio(models.Model):
     date = models.DateField()
+    caducitat = models.DateField()
     # stocks = models.ManyToManyField(Stock, related_name="diaProduccio")
-    dies_entrega = models.ManyToManyField(DiaEntrega, related_name='dia_prod')
+    # dies_entrega = models.ManyToManyField(DiaEntrega, related_name='dia_prod')
     productor = models.ForeignKey(Productor)
     node = models.ForeignKey(Node, blank=True, null=True)
+    # comandes = models.ManyToManyField(Comanda)
 
     def __str__(self):
         return str(self.date)
@@ -408,6 +412,7 @@ class Stock(models.Model):
     format = models.ForeignKey(TipusProducte, related_name='stocks')
     # formats = models.ManyToManyField(TipusProducte, related_name='stocks')
     stock = models.IntegerField(blank=True, null=True)
+    stock_ini = models.IntegerField(blank=True, null=True)
 
 
 
@@ -440,20 +445,20 @@ class Contracte(models.Model):
 
 class Comanda(models.Model):
 
-    producte = models.ForeignKey(Producte)
     format = models.ForeignKey(TipusProducte)
     cantitat = models.PositiveIntegerField(blank=False)
     data_comanda = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(User)
     dia_entrega = models.ForeignKey(DiaEntrega, null=True, blank=True)
     franja_horaria = models.ForeignKey(FranjaHoraria)
-    lloc_entrega = models.ForeignKey(Node)
-    entregat = models.NullBooleanField(blank=True)
-    cancelat = models.NullBooleanField(blank=True)
+    # lloc_entrega = models.ForeignKey(Node, blank=True, null=True)
+    externa = models.NullBooleanField(blank=True)
+    # entregat = models.NullBooleanField(blank=True)
+    # cancelat = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
 
     def __str__(self):
-        return self.producte.nom
+        return self.format.producte.nom
 
     def get_absolute_url(self):
         return reverse('comandes')
@@ -497,7 +502,7 @@ class UserProfile(models.Model):
         if filesize > megabyte_limit*1024*1024:
             raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
 
-    user = models.OneToOneField(User, unique=True)
+    user = models.OneToOneField(User, unique=True, related_name='user_profile')
     bio = models.TextField(null=True, blank=True)
     lloc_entrega_perfil = models.ForeignKey(Node, blank=True, null=True)
     invitacions = models.IntegerField(default=10, blank=True, null=True)
@@ -528,7 +533,7 @@ class UserProfile(models.Model):
 
     def pro_comandes(self):
         now = datetime.datetime.now()
-        return Comanda.objects.filter(producte__productor__responsable=self.user).filter(dia_entrega__date__gte=now)
+        return Comanda.objects.filter(format__producte__productor__responsable=self.user).filter(dia_entrega__date__gte=now)
 
     def pro_contractes(self):
         now = datetime.datetime.now()

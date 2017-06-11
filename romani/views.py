@@ -445,18 +445,23 @@ def NodeCalcView(request):
             # producte = Producte.objects.filter(pk=g).first()
             format = TipusProducte.objects.get(pk=f)
             json_res = []
-            date = datetime.date.today() + timedelta(hours=format.productor.hores_limit)
+            date = datetime.datetime.now() + timedelta(hours=format.productor.hores_limit)
             # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
-            for dia in format.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date)[:5]:
-                stock_result = stock_check(format, dia.dia)
-                if stock_result:
-                    day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
-                    a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
-                    json_obj = dict(
-                        dia = dia.dia.dia(),
-                        date = a,
-                        pk = dia.dia.pk)
-                    json_res.append(json_obj)
+            for dia in format.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date):
+                aux = dia.dia.franja_inici()
+                daytime = datetime.datetime(dia.dia.date.year, dia.dia.date.month, dia.dia.date.day, aux.inici.hour, aux.inici.minute)
+                if daytime > date:
+                    stock_result = stock_check(format, dia.dia)
+                    if stock_result:
+                        day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
+                        a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
+                        json_obj = dict(
+                            dia = dia.dia.dia(),
+                            date = a,
+                            pk = dia.dia.pk)
+                        json_res.append(json_obj)
+                if len(json_res) > 4:
+                    break
             return HttpResponse(json.dumps(json_res), content_type='application/json')
 
 def FreqCalcView(request):

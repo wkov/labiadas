@@ -12,9 +12,39 @@ from datetime import timedelta
 class ComandaForm(forms.ModelForm):
     class Meta:
         model = Comanda
-        exclude = ("entregat","cancelat","data_comanda","data_entrega", "lloc_entrega", "franja_horaria", "client", "preu", "format", "producte", "cantitat", "primera_entrega", "data_entrega_txt")
+        exclude = ("data_comanda","data_entrega", "franja_horaria", "client", "preu", "format", "producte", "cantitat", "primera_entrega", "data_entrega_txt", "externa")
 
+class ComandaProForm(forms.ModelForm):
+    class Meta:
+        model = Comanda
+        exclude = ("data_entrega_txt", "externa", "producte")
 
+    def __init__(self, productor, *args, **kwargs):
+
+        super(ComandaProForm, self).__init__(*args, **kwargs)
+        # self.fields["producte"].queryset = Producte.objects.filter(productor=productor)
+        self.fields["format"].queryset = TipusProducte.objects.filter(productor=productor)
+        self.fields["format"].label = "Producte"
+        # self.fields["client"].queryset = TipusProducte.objects.filter(productor=productor)
+        eventList = set()
+        # productes = Producte.objects.filter(productor=productor)
+        formats = TipusProducte.objects.filter(productor=productor)
+
+        for p in formats:
+            for d in DiaEntrega.objects.filter(formats__format__id__exact=p.id):
+                if d:
+                    eventList.add(d.pk)
+
+        self.fields["dia_entrega"].queryset = DiaEntrega.objects.filter(pk__in=eventList)
+        self.fields["franja_horaria"].queryset = FranjaHoraria.objects.filter(node__productors=productor)
+        self.fields["client"].queryset = User.objects.filter(user_profile__lloc_entrega_perfil__in=productor.nodes.all())
+        # self.fields["lloc_entrega"].queryset = Node.objects.filter(productors=productor)
+
+    def save(self, *args, **kwargs):
+        comanda = Comanda
+
+        comanda_form = super(ComandaProForm, self).save(*args,**kwargs)
+        return comanda_form
 
 class InfoForm(forms.ModelForm):
    class Meta:
@@ -125,11 +155,14 @@ class DiaProduccioForm(forms.ModelForm):
 
     date = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'}),
                                  input_formats=('%d/%m/%Y',))
+    caducitat = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker2'}),
+                                 input_formats=('%d/%m/%Y',))
 
     class Meta:
         model = DiaProduccio
-        fields = ("date", "productor", "node")
+        fields = ("date", "caducitat","productor", "node")
         exclude = ("dies_entrega",)
+
 
 class DiaFormatStockForm(forms.ModelForm):
 

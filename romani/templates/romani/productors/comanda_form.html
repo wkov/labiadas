@@ -5,10 +5,9 @@
     font-size: 3em"> {{ productor.nom }} </div>
 <form method="post" action="">
   {% csrf_token %}
-{% if productor %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
 {#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -40,7 +39,7 @@
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_update' productor.pk %}" id="etq_selected"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
+                                <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
 {#                                    <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
@@ -56,88 +55,15 @@
                                  </a>
                         </div>
     </div>
-
     <br/><br/>
 
-    <a href="{% url 'adjunt_create' productor.pk %}" id="pro_menu">Carregar nova foto</a>
-
-{% else %}
-    <br/>
-    <a href=""  id="pro_menu_selected">Editar Productor</a> <br/>
-{% endif %}
-
-
-
-       <br/>           {% if adjunts %}
-
-                    <div id="dialog" title="Edita la teva info">
-                        <p>
-                            Mostra't als usuaris. Pots carregar tantes fotos com vulguis. Seran les que veuran els usuaris quan mirin el teu perfil.
-                            El text també pot ser tant llarg com necessitis. Quanta més informació millor
-                        </p>
-                        <p>
-                            En el llistat de possibles responsables pots marcar més d'una persona. Si algú que no hi és vol aparèixer a la llista haurà de seguir l'Ajuda de la web.
-                            Els que veus són els usuaris de La Massa amb rol de responsable com tu.
-                        </p>
-                        </div>
-
-
-                <br />
-
-
-                <div id="myCarousel" class="carousel slide" data-ride="carousel">
-                <!-- Indicators -->
-                <ol class="carousel-indicators">
-                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                    <li data-target="#myCarousel" data-slide-to="1"></li>
-                    <li data-target="#myCarousel" data-slide-to="2"></li>
-                    <li data-target="#myCarousel" data-slide-to="3"></li>
-                    <li data-target="#myCarousel" data-slide-to="4"></li>
-                    <li data-target="#myCarousel" data-slide-to="5"></li>
-                </ol>
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner" role="listbox">
-                    {% for p in adjunts %}
-                            {% if forloop.counter == 1 %}
-                                <div class="item active">
-                            {% else %}
-                                <div class="item">
-                            {% endif %}
-                            <img src="{{ p.arxiu.url }}"  style="margin-left:auto;
-                                margin-right:auto; max-width: 460px; max-height: 345px;">
-                                </div>
-                    {% endfor %}
-                </div>
-<!-- Left and right controls -->
-                <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-                </div>
-
-            {% else %}
-                    <div id="dialog" title="Edita la teva info">
-                        <p>
-                            La informació que introdueixis serà el que veurà la gent quan visiti el teu perfil
-                        </p>
-                        <p>
-                            En el llistat de possibles responsables pots marcar més d'una persona. Si algú que no hi és vol aparèixer a la llista haurà de seguir l'Ajuda de la web.
-                            Els que veus són els usuaris de La Massa amb rol de responsable com tu.
-                        </p>
-                        </div>
-            {% endif %}
-    <br/>
+    <a href="{% url 'comanda_create' productor.pk %}" id="pro_menu_selected">Editar comanda</a><br/><br/><br/>
+{#    <a href="" id="pro_menu_selected">Editar Producte</a> <br/>#}
+{#    <a href="{% url 'format_create' productor.pk %}"  id="pro_menu">Crear Nou Format</a> <br/><br/>#}
+{#    <a href="{% url 'format_create' productor.pk %}">Crear nou format</a> <br/>#}
+{#    <br/>#}
   {{ form.as_p }}
 {#  <input type="text" id="datepicker" size="30">#}
-
-
-
-
   <input type="submit" value="Grabar">
 </form>
-
 {% endblock %}

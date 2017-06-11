@@ -91,7 +91,7 @@ class NodeComandesListView(ListView):
 
     def get_queryset(self):
         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
-        return Comanda.objects.filter(lloc_entrega=diaentrega.node, dia_entrega=diaentrega)
+        return Comanda.objects.filter(dia_entrega=diaentrega)
 
     def get_context_data(self, **kwargs):
         context = super(NodeComandesListView, self).get_context_data(**kwargs)

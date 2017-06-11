@@ -98,21 +98,21 @@
           <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
             <div class="thumbnail" >
               <div class="caption">
-                      {% if comanda.producte.foto %}
-                        <a href="{{ MEDIA_URL }}{{ comanda.producte.foto.url }}" title="veure imatge">
-                        <div class="g-item" style="background-image:url('{{ comanda.producte.foto.url }}');background-position: center;
+                      {% if comanda.format.producte.foto %}
+                        <a href="{{ MEDIA_URL }}{{ comanda.format.producte.foto.url }}" title="veure imatge">
+                        <div class="g-item" style="background-image:url('{{ comanda.format.producte.foto.url }}');background-position: center;
             background-size: cover; " >
                             </div>
                         </a>
                       {% endif %}
                     <div class="prodxx" style="    font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF;   display: inline-block" >
-                    <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte'  comanda.producte.pk  %}" title="Visualitzar en detall el producte">
-                        <b id="l_prod" name="l_prod">{{ comanda.producte }}</b></a></div><br/><br/>
+                    <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte' comanda.format.producte.pk  %}" title="Visualitzar en detall el producte">
+                        <b id="l_prod" name="l_prod">{{ comanda.format.producte }}</b></a></div><br/><br/>
                      <div class="prodxx" style="background-color:#FFFFFF;  display: inline-block; ">
                         <p>Autor: &nbsp;
-                        <a href="{% url 'productor'  comanda.producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
-                                {{ comanda.producte.productor.nom }}</a>
-                          <a href="{% url 'messages_compose_to' comanda.producte.productor.responsable %}" title="Enviar missatge al productor">
+                        <a href="{% url 'productor'  comanda.format.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                                {{ comanda.format.productor.nom }}</a>
+                          <a href="{% url 'messages_compose_to' comanda.format.productor.responsable %}" title="Enviar missatge al productor">
                          <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
                       </div>
                     <br/><br/>
@@ -121,7 +121,7 @@
                         <label for="l_form" style="font-size: medium; font-weight: 500"> Format:</label> <b id="l_form" name="l_form">{{ comanda.format.nom }}</b><br/>
                         <label for="l_preu" style="font-size: medium; font-weight: 500"> Preu: </label> <b id="l_preu" name="l_preu">{{ comanda.preu }}€</b> <br/>
                         <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>
-                        <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' comanda.lloc_entrega.pk %}" title="Visualitzar punt de trobada">{{ comanda.lloc_entrega.nom  }} <span class="glyphicon glyphicon-map-marker" >
+                        <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' comanda.dia_entrega.node.pk %}" title="Visualitzar punt de trobada">{{ comanda.dia_entrega.node.nom  }} <span class="glyphicon glyphicon-map-marker" >
                         </span> </a><br/>
                         <label for="l_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="l_hora" name="l_hora">  {{ comanda.franja_horaria.inici }} - {{ comanda.franja_horaria.final }}</b><br/>
                     </div>
@@ -135,7 +135,7 @@
                         <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ comanda.producte.pk }}" />
                         <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ comanda.producte.nom }}" />
                         <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
-                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ comanda.lloc_entrega.pk }}" />
+                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ comanda.dia_entrega.node.pk }}" />
                         <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id"/>
                         <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ comanda.preu }}" />
                         <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id" value="{{ comanda.cantitat }}" style="width: 29px"/>

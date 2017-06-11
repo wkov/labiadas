@@ -32,7 +32,7 @@
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_cal_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                    <b id="pato" name="pato" class="pato">Calendari</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
@@ -68,9 +68,9 @@
          <tbody>
             {% for link in comandes %}
                    <tr>
-                            <td>{{ link.producte.nom }}</td>
+                            <td>{{ link.format.producte.nom }}</td>
                             <td>{{ link.producte.productor.nom }}</td>
-                            <td>{{ link.lloc_entrega }}</td>
+                            <td>{{ link.dia_entrega.node }}</td>
                             <td>{{ link.cantitat }}</td>
                             <td>{{ link.format.nom }}</td>
                             <td>{{ link.dia_entrega.date }}</td>
@@ -82,6 +82,7 @@
                         </tr>
             {% endfor %}
             {% for link in contractes %}
+                {% if link.prox_entrega %}
                    <tr>
                             <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
                             <td>{{ link.producte.productor.nom }}</td>
@@ -95,6 +96,7 @@
                             <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}&nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>
                             <td>{{ link.data_comanda.date }}</td>
                    </tr>
+                {% endif %}
             {% endfor %}
          </tbody>
            </table>

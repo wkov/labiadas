@@ -17,7 +17,7 @@
 {#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                    <b id="pato" name="pato" class="pato">Calendari</b>
                                  </a>
                         </div>
 {#                        <div style=" position: relative; display: inline-block; ">#}
@@ -83,8 +83,8 @@
     {#              <li>#}
 
                    <tr>
-                            <td>[{{ link.producte.nom }}]</td>
-                            <td>{{ link.lloc_entrega }}</td>
+                            <td>[{{ link.format.producte.nom }}]</td>
+                            <td>{{ link.dia_entrega.node }}</td>
                             <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
                             <td>{{ link.dia_entrega.date }}</td>
                             <td>{{ link.franja_horaria}}</td>

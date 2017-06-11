@@ -120,7 +120,7 @@ LANGUAGE_CODE = 'es-ca'
 gettext = lambda s: s
 LANGUAGES = (
     ('es-ca', gettext('Catalan')),
-    # ('es-es', gettext('Spanish')),
+    ('es-es', gettext('Spanish')),
 )
 
 

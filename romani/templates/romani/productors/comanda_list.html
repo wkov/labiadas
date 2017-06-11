@@ -17,7 +17,7 @@
 {#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
+                                    <b id="pato" name="pato" class="pato">Calendari</b>
                                  </a>
                         </div>
 {#                        <div style=" position: relative; display: inline-block; ">#}
@@ -56,7 +56,11 @@
 
     <div id="dialog" title="Bústia de comandes"><p>Aquí pots veure totes les comandes que t'han arribat i els contractes vigents. Recorda que les comandes són puntuals; i els contractes periòdics</p></div>
 
-    <br/>
+    <br/><br/>
+
+
+    <a href="{% url 'comanda_create' productor.pk %}" id="pro_menu">Crear nova comanda</a>
+
     {% if object_list or contractes %}<br/>
 {#    Comandes: <br/>#}
      <table border="1" id="myTable" class="tablesorter " style="width: 100%;">
@@ -79,8 +83,8 @@
 {#              <li>#}
 
                <tr>
-                        <td>[{{ link.producte.nom }}]</td>
-                        <td>{{ link.lloc_entrega }}</td>
+                        <td>[{{ link.format.producte.nom }}]</td>
+                        <td>{{ link.dia_entrega.node }}</td>
                         <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
                         <td>{{ link.dia_entrega.date }}</td>
                         <td>{{ link.franja_horaria}}</td>
@@ -99,7 +103,7 @@
         {% for link in contractes %}
 {#            <form method="post" action="" class="vote_form">#}
 {#              <li>#}
-
+                {% if link.prox_entrega %}
                <tr>
                         <td>[{{ link.producte.nom }}]</td>
                         <td>{{ link.lloc_entrega }}</td>
@@ -111,6 +115,7 @@
                         <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
                         <td>{{ link.data_comanda.date }}</td>
                </tr>
+                {% endif %}
 {#                </a>#}
 {#              </li>#}
 {#            </form>#}
