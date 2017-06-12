@@ -174,7 +174,7 @@
                 </a>
              {% endif %}
               <div class="prodxx" style="    font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF; display: inline-block" >
-              <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte'  comanda.producte.pk  %}" title="Visualitzar en detall el producte">
+              <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte'  comanda.format.producte.pk  %}" title="Visualitzar en detall el producte">
               <b id="l_prod" name="l_prod">{{ comanda.producte }}</b></a></div><br/><br/>
 
              <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
@@ -192,7 +192,7 @@
 
              Preu:   <b>{{ comanda.preu }}</b>€<br/>
 
-             Lloc: <a href="{% url 'node_detail' comanda.lloc_entrega.pk %}"> <b> {{ comanda.lloc_entrega.nom }}</b></a>
+             Lloc: <a href="{% url 'node_detail' comanda.dia_entrega.lloc_entrega.pk %}"> <b> {{ comanda.dia_entrega.lloc_entrega.nom }}</b></a>
                     </div>
                     <br/>
               <div style="width:100%; display: inline-block">
@@ -203,8 +203,8 @@
               </div>
 
                     <form method="post"  class="comanda_form">{% csrf_token %}
-                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ comanda.producte.pk }}" />
-                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ comanda.producte.nom }}" />
+                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ comanda.format.producte.pk }}" />
+                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ comanda.format.producte.nom }}" />
                         <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
                         <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}" />
                         <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}"/>
