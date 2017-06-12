@@ -475,9 +475,9 @@ class ComandaFormBaseView(FormView):
             # format.stock_fix = format.stock_fix - int(cantitat)
             # format.save()
             if stock_result == True:
-                v = Comanda.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, preu=preu)
+                v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, preu=preu)
                 ret = {"contracte": 0, "success": 1}
-                notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
+                notify.send(format, recipient= user, verb="Has afegit ", action_object=v,
                 description="a la cistella" , timestamp=timezone.now())
                 messages.success(self.request, (u"Comanda realitzada correctament"))
             else:
