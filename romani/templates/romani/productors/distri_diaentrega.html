@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div style="float: left; position:absolute">
+    <div style="float: left; position:relative">
         <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>
         {% if productors %}
         {% for link in productors %}
@@ -90,8 +90,8 @@
 
 <tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot &nbsp;
     <select name="speed" id="speed">
-      <option value="0">Límit per producció</option>
-      <option value="1">Límit per stock fix</option>
+      <option value="0">Límit per stock</option>
+{#      <option value="1">Límit per stock fix</option>#}
       <option value="2" selected="selected">Sense Límit</option>
     </select></td>
     </tr>
@@ -120,7 +120,7 @@
   <input type="submit" value="Grabar">
 </form>
 <br/>
-    {% if comandes or contractes%}
+    {% if comandes %}
          <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
          <thead>
              <tr>
@@ -140,33 +140,18 @@
          <tbody>
             {% for link in comandes %}
                    <tr>
-                            <td>{{ link.format.producte.nom }}</td>
-                            <td>{{ link.producte.productor.nom }}</td>
+                            <td>{{ link.comanda.format.producte.nom }}</td>
+                            <td>{{ link.comanda.format.productor.nom }}</td>
                             <td>{{ link.dia_entrega.node }}</td>
-                            <td>{{ link.cantitat }}</td>
-                            <td>{{ link.format.nom }}</td>
+                            <td>{{ link.comanda.cantitat }}</td>
+                            <td>{{ link.comanda.format.nom }}</td>
                             <td>{{ link.dia_entrega.date }}</td>
-                            <td>{{ link.franja_horaria}}</td>
-                            <td>{{ link.preu }}€</td>
-                            <td>{{ link.client.first_name }}</td>
-                            <td> una sola vegada</td>
+                            <td>{{ link.franja_horaria }}</td>
+                            <td>{{ link.comanda.preu }}€</td>
+                            <td>{{ link.comanda.client.first_name }}</td>
+                            <td> {{ link.comanda.frequencia.nom }}</td>
                             <td>{{ link.data_comanda.date }}</td>
                         </tr>
-            {% endfor %}
-            {% for link in contractes %}
-                   <tr>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
-                            <td>{{ link.producte.productor.nom }}</td>
-                            <td>{{ link.lloc_entrega }}</td>
-                            <td>{{ link.cantitat }}</td>
-                            <td>{{ link.format.nom }}</td>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ dia.date }}</a></td>
-                            <td>{{ link.franja_horaria}}</td>
-                            <td>{{ link.preu }}€</td>
-                            <td>{{ link.client.first_name }}</td>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}&nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>
-                            <td>{{ link.data_comanda.date }}</td>
-                   </tr>
             {% endfor %}
          </tbody>
            </table>

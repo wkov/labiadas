@@ -114,7 +114,7 @@ jQuery(document).ready(function($)
 						  modal.style.display = "none";
 
 						  if ( data["contracte"] == 1) {
-							  url = "/contracte/update/" + data["pk"];
+							  url = "/dies_entrega/" + data["pk"] + "/0";
 							  location = url;
 							  //call = "Has fet la comanda correctament"
 							  //CallNotification(call,"success")

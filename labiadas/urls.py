@@ -9,13 +9,13 @@ from romani.models import EmailModelBackend
 
 from django.contrib.auth.decorators import login_required as auth
 
-from romani.public_views import ContracteUpdateView, buskadorProducte, etiquetaView, ComandaFormView, producteView, productorView
-from romani.public_views import coopeView, etiquetaView, comandesView, entregasView, comandaDelete, contracteDelete, VoteFormView
+from romani.public_views import buskadorProducte, etiquetaView, ComandaFormView, producteView, productorView, diesEntregaView
+from romani.public_views import coopeView, etiquetaView, comandesView, entregasView, comandaDelete, VoteFormView
 from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView
 from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export_comandes_xls, NodeCreateView
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
-from romani.productor_views import ContracteDetailView, distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
+from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
 from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView
@@ -85,10 +85,10 @@ urlpatterns = [
 
 
 
-    url(r"^contracte/update/(?P<pk>\d+)/$", auth(ContracteUpdateView.as_view()),
-        name="contracte_update"),
-    url(r"^contracte/(?P<pk>\d+)/$", auth(ContracteDetailView.as_view()),
-        name="contracte_detail"),
+    # url(r"^contracte/update/(?P<pk>\d+)/$", auth(ContracteUpdateView.as_view()),
+    #     name="contracte_update"),
+    # url(r"^contracte/(?P<pk>\d+)/$", auth(ContracteDetailView.as_view()),
+    #     name="contracte_detail"),
 
 
 
@@ -111,7 +111,7 @@ urlpatterns = [
     url(r'^comandes/', auth(comandesView), name="comandes"),
     url(r'^entregas/', auth(entregasView), name="entregas"),
     url(r'^comandaDelete/(?P<pk>\d+)$', auth(comandaDelete), name="comandaDelete"),
-    url(r'^contracteDelete/(?P<pk>\d+)$', auth(contracteDelete), name="contracteDelete"),
+    # url(r'^contracteDelete/(?P<pk>\d+)$', auth(contracteDelete), name="contracteDelete"),
     url(r'^etiqueta/(?P<pk>\d+)/$', auth(etiquetaView),name='etiqueta'),#llistat de productes relacionats amb la etiqueta
     url(r'^ajuda/', auth(views.AjudaView), name="ajuda"),
     url(r'^domicili/$', auth(DomiciliView), name="domicili"), #ajax: retorna els detalls de localització del node seleccionat en <select>
@@ -125,6 +125,7 @@ urlpatterns = [
     # url(r'^datacalc/$', auth(DataCalcView), name="datacalc"),  #ajax: calcula el dia concret (dd/mm/yyyy) segons el dia de la setmana (dilluns, dimarts,)  seleccionat
     url(r'^info/$', auth(InfoFormView.as_view()), name="info"), #genera el modal en que es confirma una comanda
     url(r'^comanda/$', auth(ComandaFormView.as_view()), name="comanda"), #confirma la comanda
+    url(r'^dies_entrega/(?P<pk>\d+)/(?P<pro>\d+)$', auth(diesEntregaView), name="diesEntrega"),
     url(r'^convidar/$', auth(ConvidarView), name="convidar"),
     url(r'^messages/', include('django_messages.urls')),
     url('^inbox/notifications/', include('notifications.urls', namespace="notifications")),

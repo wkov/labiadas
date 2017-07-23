@@ -28,11 +28,14 @@
 
         });
     </script>
+
+     {% notifications_unread as unread_count %}
+
 <div style="float: left">
 {#        <span id="span_imageprofile" name="span_imageprofile">#}
 {##} <a href="{% url 'edit_profile' %}" title="Perfil d'usuari">
-        {% if user.userprofile.avatar  %}
-            <img class="img-circle" src="{{ user.userprofile.avatar.url }}">
+        {% if foto_user  %}
+            <img class="img-circle" src="{{ foto_user }}">
         {% else %}
             <img class="img-circle" src="{% static "img/fusta.jpg" %}">
         {% endif %}
@@ -92,7 +95,7 @@
                             <div class="div_notification_image inline">
                                     {% if notif.actor.foto %}
                                         <a href="{% url 'producte' notif.actor.pk %}">
-                                        <img src="{{ notif.actor.adjunt.url }}" alt="avatar" height="42" width="42">
+                                        <img src="{{ notif.actor.foto.url }}" alt="avatar" height="42" width="42">
                                     {% elif notif.actor.avatar %}
                                         <a href="{% url 'edit_profile' %}">
                                         <img src="{{ notif.actor.avatar.url }}" alt="avatar" height="42" width="42">
@@ -104,7 +107,7 @@
                           </td>
                           <td>
 {#                            <input type="button" title="Marca com llegit" class="btn btn-default btn-es  pull-right" value="X" />#}
-                                    {% if notif.actor.adjunt %}
+                                    {% if notif.actor.foto %}
                                             <a href="{% url 'comandes' %}">
                                     {% else %}
                                         {% if notif.actor.avatar %}

@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
 from romani.models import UserProfile, Key
 from romani.forms import UserProfileForm, InfoForm
-
+from romani.public_views import stock_check_cant
 from django.http import HttpResponse
 
 from django.utils import timezone
@@ -441,6 +441,7 @@ def NodeCalcView(request):
             l = request.POST.get('lloc_entrega')
             # g = request.POST.get('producte_pk')
             f = request.POST.get('format_pk')
+            cant = request.POST.get('cantitat_t')
             node = get_object_or_404(Node, pk=l)
             # producte = Producte.objects.filter(pk=g).first()
             format = TipusProducte.objects.get(pk=f)
@@ -451,8 +452,8 @@ def NodeCalcView(request):
                 aux = dia.dia.franja_inici()
                 daytime = datetime.datetime(dia.dia.date.year, dia.dia.date.month, dia.dia.date.day, aux.inici.hour, aux.inici.minute)
                 if daytime > date:
-                    stock_result = stock_check(format, dia.dia)
-                    if stock_result:
+                    stock_result = stock_check_cant(format, dia.dia, cant)
+                    if stock_result == True:
                         day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
                         a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
                         json_obj = dict(
@@ -472,7 +473,7 @@ def FreqCalcView(request):
             node = get_object_or_404(Node, pk=l)
             producte = Producte.objects.filter(pk=g).first()
             json_res = []
-            for f in node.frequencies.freq_list():
+            for f in node.frequencia.freq_list():
                 if f in producte.frequencies.freq_list():
                     json_obj = dict(
                         nom = f.nom,
@@ -540,7 +541,7 @@ class InfoFormBaseView(FormView):
         for i in format.nodes().all():
             if i == user_profile.lloc_entrega_perfil:
                 # Guardem les frequencies del node per informar a l-usuari en el modal
-                for d in i.frequencies.freq_list():
+                for d in i.frequencia.freq_list():
                     if d in producte.frequencies.freq_list():
                         f_obj = dict(nom = d.nom,
                                      num = d.num
@@ -610,12 +611,7 @@ class UserProfileEditView(UpdateView):
         return context
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        # form.send_email()
 
-        # if form.email and User.objects.filter(email=form.email).exclude(username=form.username).count():
-        #     raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
         lloc = get_object_or_404(Node, pk=form.data["lloc_entrega_perfil"])
 
         if lloc.a_domicili == False:
@@ -635,61 +631,30 @@ class UserProfileEditView(UpdateView):
         messages.success(self.request, (u"S'han desat les modificacions realitzades"))
         return reverse("coope")
 
-
-def stock_calc(format, dia, cantitat):
-     # Comproba que hi hagi stock i resta les unitats corresponents
-     d = format.dies_entrega.get(dia=dia)
-     if d.tipus_stock == '0':
-            try:
-                diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=format.productor).order_by('-date').first()
-                if diaproduccio:
-                   s = format.stocks.get(dia_prod=diaproduccio)
-                   num = int(s.stock) - int(cantitat)
-                   if num >= 0:
-                       s.stock = int(s.stock) - int(cantitat)
-                       s.save()
-                       return True
-                   else:
-                       return False
-            except:
-                return False
-
-     elif d.tipus_stock == '1':
-            num = int(format.stock_fix) - int(cantitat)
-            if num >= 0:
-                format.stock_fix = int(format.stock_fix) - int(cantitat)
-                format.save()
-                return True
-            else:
-                return False
-
-     elif d.tipus_stock == '2':
-            return True
-
-
-def stock_check(format, dia):
-     # Comprova que hi hagi stock
-     d = format.dies_entrega.get(dia=dia)
-     if d.tipus_stock == '0':
-            try:
-                diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=format.productor).order_by('-date').first()
-                if diaproduccio:
-                   s = format.stocks.get(dia_prod=diaproduccio)
-                   if s.stock > 0:
-                       return True
-                   else:
-                       return False
-            except:
-                return False
-
-     elif d.tipus_stock == '1':
-         if format.stock_fix:
-            if format.stock_fix > 0:
-                return True
-            else:
-                return False
-         else:
-             return False
-
-     elif d.tipus_stock == '2':
-            return True
+#
+# def stock_check(format, dia):
+#      # Comprova que hi hagi stock
+#      d = format.dies_entrega.get(dia=dia)
+#      if d.tipus_stock == '0':
+#             try:
+#                 diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=format.productor, caducitat__gt=d.dia.date).order_by('caducitat').first()
+#                 if diaproduccio:
+#                    s = format.stocks.get(dia_prod=diaproduccio)
+#                    if s.stock() > 0:
+#                        return True
+#                    else:
+#                        return False
+#             except:
+#                 return False
+#
+#      # elif d.tipus_stock == '1':
+#      #     if format.stock_fix:
+#      #        if format.stock_fix > 0:
+#      #            return True
+#      #        else:
+#      #            return False
+#      #     else:
+#      #         return False
+#
+#      elif d.tipus_stock == '2':
+#             return True

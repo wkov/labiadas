@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
+# from romani.public_views import stock_check_cant
 import datetime
 
 from django.db.models import Q
@@ -28,12 +29,12 @@ class Productor(models.Model):
 
     def __str__(self):
         return self.nom
-
+    #
     def comandes_count(self):
         now=datetime.datetime.now()
-        cm = Comanda.objects.filter(format__producte__productor=self).filter(dia_entrega__date__gte=now).count()
-        ct = Contracte.objects.filter(producte__productor=self).filter(data_fi__isnull=True).count()
-        return cm + ct
+        cm = Entrega.objects.filter(comanda__format__producte__productor=self).filter(dia_entrega__date__gte=now).count()
+        # ct = Contracte.objects.filter(producte__productor=self).filter(data_fi__isnull=True).count()
+        return cm
 
 
 
@@ -83,16 +84,18 @@ class Frequencia(models.Model):
         return "%s" % (self.nom)
 
     def freq_list(self):
-        if self.num == 0:
+        if self.num == 0:  #una sola vegada
             return Frequencia.objects.filter(pk=self.pk)
-        if self.num == 1:
-            return Frequencia.objects.filter(num__in = [0, 1, 2, 3, 4])
-        if self.num == 2:
-            return Frequencia.objects.filter(num__in = [0, 2, 4])
-        if self.num == 3:
-            return Frequencia.objects.filter(num__in = [0, 3])
-        if self.num == 4:
-            return Frequencia.objects.filter(num__in = [0, 4])
+        if self.num == 5:  #més d'una vegada
+            return Frequencia.objects.filter(num__in = [0, 5])
+        if self.num == 1:  #cada setmana
+            return Frequencia.objects.filter(num__in = [0, 1, 2, 3, 4, 5])
+        if self.num == 2:  #cada 2 setmanes
+            return Frequencia.objects.filter(num__in = [0, 2, 4, 5])
+        if self.num == 3:  #cada 3 setmanes
+            return Frequencia.objects.filter(num__in = [0, 3, 5])
+        if self.num == 4:  #cada 4 setmanes
+            return Frequencia.objects.filter(num__in = [0, 4, 5])
 
 
 
@@ -109,7 +112,7 @@ class Node(models.Model):
     responsable = models.ManyToManyField(User, null=False, blank=False)
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
-    frequencies = models.ForeignKey(Frequencia)
+    frequencia = models.ForeignKey(Frequencia)
     productors = models.ManyToManyField(Productor, blank=True, related_name='nodes')
     privat = models.NullBooleanField()
 
@@ -120,10 +123,10 @@ class Node(models.Model):
         return self.dies_entrega.filter(date__gte=datetime.datetime.now()).order_by('date')[0:6]
 
     def get_frequencia(self):
-        if self.frequencies.num == 0:
-            return self.frequencies.freq_list().order_by('num').first()
+        if self.frequencia.num == 0:
+            return self.frequencia.freq_list().order_by('num').first()
         else:
-            return self.frequencies.freq_list().filter(num__gt=0).order_by('num').first()
+            return self.frequencia.freq_list().filter(num__gt=0).order_by('num').first()
 
     def dies_entrega_passats(self):
         return self.dies_entrega.filter(date__lte=datetime.datetime.today())
@@ -142,7 +145,6 @@ class FranjaHoraria(models.Model):
 
     def __str__(self):
         return "%s-%s" % (self.inici, self.final)
-
 
 
 class DiaEntrega(models.Model):
@@ -180,6 +182,12 @@ class DiaEntrega(models.Model):
 
     def franja_final(self):
         return self.franjes_horaries.order_by("-final").first()
+
+
+#
+
+
+
 
 
 class Etiqueta(models.Model):
@@ -236,10 +244,10 @@ class Producte(models.Model):
     #     return total
 
     def positive_votes(self):
-        return Vote.objects.filter((Q(comanda__format__producte=self) | Q(contracte__producte=self))).filter(positiu=True).count()
+        return Vote.objects.filter(entrega__comanda__format__producte=self).filter(positiu=True).count()
 
     def negative_votes(self):
-        return Vote.objects.filter((Q(comanda__format__producte=self) | Q(contracte__producte=self))).filter(positiu=False).count()
+        return Vote.objects.filter(entrega__comanda__format__producte=self).filter(positiu=False).count()
 
 
     # def dies_entrega_futurs(self):
@@ -265,10 +273,10 @@ class Producte(models.Model):
         # except:
         com = 0
         for f in self.formats.all():
-            com = com + f.comanda_set.filter(dia_entrega__node=node).count()
-        con = self.contracte_set.filter(lloc_entrega=node).count()
+            com = com + f.comanda_set.filter(entregas__dia_entrega__node=node).count()
+        # con = self.contracte_set.filter(lloc_entrega=node).count()
         rnd = random.randint(0, 5)
-        self.karma_value = com + con*3 + rnd
+        self.karma_value = com +  rnd + self.positive_votes() - self.negative_votes()
         # self.karma_date = datetime.datetime.today()
         self.save()
         return self.karma_value
@@ -277,36 +285,36 @@ class Producte(models.Model):
 
 
 
-    def next_day(self, node):
-
-        date = datetime.datetime.now() + timedelta(hours=self.productor.hores_limit)
-        list = []
-        for f in self.formats.all():
-            for s in f.dies_entrega.filter(dia__date__gte=date.date(), dia__node=node).order_by('dia__date'):
-
-                aux = s.dia.franja_inici()
-                daytime = datetime.datetime(s.dia.date.year, s.dia.date.month, s.dia.date.day, aux.inici.hour, aux.inici.minute)
-                # daytime.replace(day=s.dia.date.day, month=s.dia.date.month, year=s.dia.date.year, hour=aux.inici.hour, minute=aux.inici.minute)
-                # daytime.replace()
-
-                if daytime > date:
-
-                    res = s.stock_check()
-                    if res:
-                        list.append(daytime)
-                        break
-        if list:
-            list.sort(key=lambda r: r)
-            b = list[0]
-            a = datetime.datetime.now()
-            c = b - a
-            d = divmod(c.total_seconds(),86400)
-            if d[0] > 3:
-                return str(int(d[0])) + " dies"
-            else:
-                return str(int(divmod(c.total_seconds(),3600)[0])) + " hores"
-        else:
-            return False
+    # def next_day(self, node):
+    #
+    #     date = datetime.datetime.now() + timedelta(hours=self.productor.hores_limit)
+    #     list = []
+    #     for f in self.formats.all():
+    #         for s in f.dies_entrega.filter(dia__date__gte=date.date(), dia__node=node).order_by('dia__date'):
+    #
+    #             aux = s.dia.franja_inici()
+    #             daytime = datetime.datetime(s.dia.date.year, s.dia.date.month, s.dia.date.day, aux.inici.hour, aux.inici.minute)
+    #             # daytime.replace(day=s.dia.date.day, month=s.dia.date.month, year=s.dia.date.year, hour=aux.inici.hour, minute=aux.inici.minute)
+    #             # daytime.replace()
+    #
+    #             if daytime > date:
+    #
+    #                 res = stock_check_cant(s.format, s.dia, 1)
+    #                 if res:
+    #                     list.append(daytime)
+    #                     break
+    #     if list:
+    #         list.sort(key=lambda r: r)
+    #         b = list[0]
+    #         a = datetime.datetime.now()
+    #         c = b - a
+    #         d = divmod(c.total_seconds(),86400)
+    #         if d[0] > 3:
+    #             return str(int(d[0])) + " dies"
+    #         else:
+    #             return str(int(divmod(c.total_seconds(),3600)[0])) + " hores"
+    #     else:
+    #         return False
 
 
 
@@ -315,14 +323,11 @@ class TipusProducte(models.Model):
 
     nom = models.CharField(max_length=20)
     preu = models.FloatField(default=0.0)
-    stock_fix = models.IntegerField(blank=True, null=True)
-    # dies_entrega = models.ManyToManyField(DiaFormatStock, blank=True, related_name='formats')
-    # stock = models.ForeignKey(Stock, blank=True, null=True)
     productor = models.ForeignKey(Productor)
     producte = models.ForeignKey(Producte, related_name='formats', blank=True, null=True)
 
     def __str__(self):
-        return "%s %s" % (self.nom, self.producte)
+        return "%s %s" % (self.producte, self.nom)
 
     def in_stock(self):
         try:
@@ -334,13 +339,11 @@ class TipusProducte(models.Model):
                         diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=self.productor).order_by('-date').first()
                         if diaproduccio:
                            s = self.stocks.get(dia_prod=diaproduccio)
-                           if s.stock > 0:
+                           if s.stock() > 0:
                                return True
                     except:
                         pass
-                elif d.tipus_stock == '1':
-                    if self.stock_fix > 0:
-                        return True
+
                 elif d.tipus_stock == '2':
                     return True
         except:
@@ -355,8 +358,7 @@ class TipusProducte(models.Model):
 
 class DiaFormatStock(models.Model):
     TIPUS_STOCK = (
-        ('0', 'Limit per produccio'),
-        ('1', 'Limit per stock fix'),
+        ('0', 'Limit per stock'),
         ('2', 'Sense Limit')
     )
 
@@ -365,82 +367,49 @@ class DiaFormatStock(models.Model):
     tipus_stock = models.CharField(max_length=10, choices=TIPUS_STOCK, default='2')
     format = models.ForeignKey(TipusProducte, related_name='dies_entrega')
 
-    def stock_check(self):
-         d = self.format.dies_entrega.get(dia=self.dia)
-         if d.tipus_stock == '0':
-                try:
-                    diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=self.format.productor).order_by('-date').first()
-                    if diaproduccio:
-                       s = self.format.stocks.get(dia_prod=diaproduccio)
-                       if s.stock > 0:
-                           return True
-                       else:
-                           return False
-                except:
-                    return False
-
-         elif d.tipus_stock == '1':
-             if self.format.stock_fix:
-                if self.format.stock_fix > 0:
-                    return True
-                else:
-                    return False
-             else:
-                 return False
-
-         elif d.tipus_stock == '2':
-                return True
+    # def stock_check(self):
+    #      d = self.format.dies_entrega.get(dia=self.dia)
+    #      if d.tipus_stock == '0':
+    #             try:
+    #                 diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=self.format.productor).order_by('-date').first()
+    #                 if diaproduccio:
+    #                    s = self.format.stocks.get(dia_prod=diaproduccio)
+    #                    if s.stock() > 0:
+    #                        return True
+    #                    else:
+    #                        return False
+    #             except:
+    #                 return False
+    #
+    #      elif d.tipus_stock == '2':
+    #             return True
 
 
 
 class DiaProduccio(models.Model):
     date = models.DateField()
     caducitat = models.DateField()
-    # stocks = models.ManyToManyField(Stock, related_name="diaProduccio")
-    # dies_entrega = models.ManyToManyField(DiaEntrega, related_name='dia_prod')
     productor = models.ForeignKey(Productor)
     node = models.ForeignKey(Node, blank=True, null=True)
-    # comandes = models.ManyToManyField(Comanda)
 
     def __str__(self):
         return str(self.date)
 
 class Stock(models.Model):
 
-    # dies_entrega = models.ManyToManyField(DiaEntrega)??
     dia_prod = models.ForeignKey(DiaProduccio, related_name='stocks')
     format = models.ForeignKey(TipusProducte, related_name='stocks')
-    # formats = models.ManyToManyField(TipusProducte, related_name='stocks')
-    stock = models.IntegerField(blank=True, null=True)
-    stock_ini = models.IntegerField(blank=True, null=True)
+    stock_ini = models.IntegerField()
 
-
-
-class Contracte(models.Model):
-
-    producte = models.ForeignKey(Producte)
-    format = models.ForeignKey(TipusProducte)
-    cantitat = models.PositiveIntegerField(blank=False)
-    data_comanda = models.DateTimeField(auto_now_add=True)
-    data_fi = models.DateTimeField(null=True, blank=True)
-    client = models.ForeignKey(User)
-    dies_entrega = models.ManyToManyField(DiaEntrega, blank=True)
-    franja_horaria = models.ForeignKey(FranjaHoraria)
-    lloc_entrega = models.ForeignKey(Node)
-    preu = models.FloatField(default=0.0)
-    frequencia = models.ForeignKey(Frequencia)
-
-    def __str__(self):
-        return self.producte.nom
-
-    def get_absolute_url(self):
-        return reverse('comandes')
-
-    def prox_entrega(self):
-        return self.dies_entrega.filter(date__gte=datetime.datetime.today()).order_by('date').first()
-
-    def old_entregas(self):
-        return self.dies_entrega.filter(date__lte=datetime.datetime.today()).order_by('date')
+    def stock(self):
+        cant = 0
+        entregas = Entrega.objects.filter(comanda__format=self.format, dia_produccio=self.dia_prod)
+        for e in entregas:
+            cant = e.comanda.cantitat + cant
+        if cant > 0:
+            return self.stock_ini-cant
+        else:
+            return self.stock_ini
 
 
 class Comanda(models.Model):
@@ -449,19 +418,32 @@ class Comanda(models.Model):
     cantitat = models.PositiveIntegerField(blank=False)
     data_comanda = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(User)
-    dia_entrega = models.ForeignKey(DiaEntrega, null=True, blank=True)
-    franja_horaria = models.ForeignKey(FranjaHoraria)
-    # lloc_entrega = models.ForeignKey(Node, blank=True, null=True)
+    node = models.ForeignKey(Node)
     externa = models.NullBooleanField(blank=True)
-    # entregat = models.NullBooleanField(blank=True)
-    # cancelat = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
+    frequencia = models.ForeignKey(Frequencia)
 
     def __str__(self):
         return self.format.producte.nom
 
     def get_absolute_url(self):
         return reverse('comandes')
+
+    def prox_entrega(self):
+        return self.entregas.filter(dia_entrega__date__gte=datetime.datetime.today()).order_by('dia_entrega__date').first()
+
+
+
+
+class Entrega(models.Model):
+
+    dia_entrega = models.ForeignKey(DiaEntrega, related_name='entrega') #inclou el node
+    comanda = models.ForeignKey(Comanda, related_name='entregas')
+    data_comanda = models.DateTimeField(auto_now_add=True)
+
+    dia_produccio = models.ForeignKey(DiaProduccio, related_name='entregas', blank=True, null=True) #Per el cas en que el estoc depèn d'un dia de producció concret
+    franja_horaria = models.ForeignKey(FranjaHoraria, blank=True, null=True) #Per el cas en que és "a domicili!" obligat
+
 
 
 #per a loguejarse amb el email
@@ -474,14 +456,6 @@ class EmailModelBackend(ModelBackend):
         except User.DoesNotExist:
             return None
 
-#
-#
-# class Convidat(models.Model):
-#
-#     mail = models.EmailField()
-#
-#     def __str__(self):
-#         return self.mail
 
 
 class Key(models.Model):
@@ -525,25 +499,17 @@ class UserProfile(models.Model):
 
     def comandes_cistella(self):
         now = datetime.datetime.now()
-        return Comanda.objects.filter(client=self.user).filter(dia_entrega__date__gte=now)
+        return Comanda.objects.filter(client=self.user).filter(entregas__dia_entrega__date__gte=now)
 
-    def contractes_cistella(self):
-        now = datetime.datetime.now()
-        return Contracte.objects.filter(client=self.user).filter(data_fi__isnull=True)
 
-    def pro_comandes(self):
+    def pro_entregas(self):
         now = datetime.datetime.now()
-        return Comanda.objects.filter(format__producte__productor__responsable=self.user).filter(dia_entrega__date__gte=now)
-
-    def pro_contractes(self):
-        now = datetime.datetime.now()
-        return Contracte.objects.filter(producte__productor__responsable=self.user).filter(data_fi__isnull=True)
+        return Entrega.objects.filter(comanda__format__producte__productor__responsable=self.user).filter(dia_entrega__date__gte=now)
 
 
 class Vote(models.Model):
     voter = models.ForeignKey(User)
-    contracte = models.ForeignKey(Contracte, blank=True, null=True, related_name='votes')
-    comanda = models.ForeignKey(Comanda, blank=True, null=True, related_name='votes')
+    entrega = models.ForeignKey(Entrega, related_name='vote')
     positiu = models.BooleanField()
 
     def __unicode__(self):

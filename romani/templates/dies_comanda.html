@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{#{% block headers %}#}
+{#<script>#}
+{##}
+{#$(document).ready(function() {#}
+{##}
+{#    // page is now ready, initialize the calendar...#}
+{##}
+{#    $('#calendar').fullCalendar({#}
+{#       aspectRatio: 4,#}
+{##}
+{#    })#}
+{##}
+{#});#}
+{##}
+{#</script>#}
+{#{% endblock %}#}
+{% block content %}
+
+<form method="post" action="">
+  {% csrf_token %}
+<p>A continuació pots veure tots els dies d'entrega en que pots demanar {{ producte }}. T'hem preseleccionat els dies que coincideixen
+    amb la teva elecció. Ara pots marcar o desmarcar els dies en que rebràs la comanda segons desitjis. </p><br/>
+
+    {% for dia in dies_entrega_pas %}
+            <br>
+            <input type="checkbox" name="dies" value="{{ dia.pk }}" checked disabled> {{ dia.dia }}, {{ dia.date }} <br/>
+            {% for f in dia.franjes_horaries.all %}
+                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked disabled> {{ f.inici }} - {{ f.final }} <br>
+            {% endfor %}
+
+
+{#          <input type="radio" name="{{ dia.pk }}" value="female"> Female<br>#}
+{#          <input type="radio" name="{{ dia.pk }}" value="other"> Other<br>#}
+    {% endfor %}
+
+    {% for dia in dies_entrega_pos %}
+        <br>
+        {% if dia in dies_entrega_ini %}
+            <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }} <br/>
+            {% for f in dia.franjes_horaries.all %}
+                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }} <br>
+            {% endfor %}
+        {% else %}
+          <input type="checkbox" name="dies" value="{{ dia.pk }}"> {{ dia.dia }}, {{ dia.date }} <br/>
+            {% for f in dia.franjes_horaries.all %}
+                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }} <br>
+            {% endfor %}
+        {% endif %}
+
+{#          <input type="radio" name="{{ dia.pk }}" value="female"> Female<br>#}
+{#          <input type="radio" name="{{ dia.pk }}" value="other"> Other<br>#}
+    {% endfor %}
+
+{#    {% for dia in dies_entrega_fut %}#}
+{#            Esgotats:<br>#}
+{#            <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }} <br/>#}
+{#            {% for f in dia.franjes_horaries.all %}#}
+{#                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }} <br>#}
+{#            {% endfor %}#}
+{##}
+{##}
+{#          <input type="radio" name="{{ dia.pk }}" value="female"> Female<br>#}
+{#          <input type="radio" name="{{ dia.pk }}" value="other"> Other<br>#}
+{#    {% endfor %}#}
+
+{#  <input type="text" id="datepicker" size="30">#}
+  <input type="submit" value="Grabar">
+</form>
+    <br/><br/>
+{#    <div id='calendar'></div>#}
+{% endblock %}

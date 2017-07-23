@@ -11,54 +11,34 @@
         })
         })
     </script>
+
+
+
 <form method="post" action="">
   {% csrf_token %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Comandes rebudes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_dates' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Calendari</b>
                                  </a>
                         </div>
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_llocs' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Llocs d'entrega" >#}
-{#                                    <span class="glyphicon glyphicon-fullscreen" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-{#                                    <b id="pato" name="pato" class="pato">Llocs d'entrega</b>#}
-{#                                 </a>#}
-{#                        </div>#}
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
-{#                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar productes</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >
-{#                                    <span class="glyphicon glyphicon-user" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar productor</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-{#                                    <span class="glyphicon glyphicon-book" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Veure historial</b>
                                  </a>
                         </div>
@@ -90,13 +70,14 @@ Introdueix els stocks que crees el dia de producció:
 
     {% if f.instance.format %}
         Queden
+        {{ f.instance.stock }} unitats</td>
+
+    {% else %}
+{{ f.as_p }} unitats</td>
     {% endif %}
-
-    {{ f.stock }} unitats</td>
-
 {% if f.instance.format %}
     <td>
-    &nbsp; Stock inicial: {{ f.instance.stock_ini }} unitats
+    &nbsp; {{ f.as_p }} unitats
     </td>
 
 {% endif %}
@@ -109,7 +90,7 @@ Introdueix els stocks que crees el dia de producció:
 </form>
 
 
-    {% if comandes or contractes%}
+    {% if comandes %}
 
     {#   <br/>    Comandes: <br/>#}
         <br/>
@@ -130,33 +111,35 @@ Introdueix els stocks que crees el dia de producció:
          <tbody>
             {% for link in comandes %}
                    <tr>
-                            <td>[{{ link.format.producte.nom }}]</td>
+                            <td>[{{ link.comanda.format.producte.nom }}]</td>
                             <td>{{ link.dia_entrega.node }}</td>
-                            <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
+                            <td>[{{ link.comanda.cantitat }} &nbsp; {{ link.comanda.format.nom }}]</td>
                             <td>{{ link.dia_entrega.date }}</td>
-                            <td>{{ link.franja_horaria}}</td>
-                            <td>{{ link.preu }}€</td>
-                            <td>{{ link.client.first_name }}</td>
-                            <td>Una sola vegada</td>
+                            <td>{{ link.franja_horaria }}</td>
+                            <td>{{ link.comanda.preu }}€</td>
+                            <td>{{ link.comanda.client.first_name }}</td>
+                            <td>{{ link.comanda.frequencia }}</td>
                             <td>{{ link.data_comanda.date }}</td>
                         </tr>
             {% endfor %}
-            {% for link in contractes %}
-                   <tr>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>
-                            <td>{{ link.lloc_entrega }}</td>
-                            <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }} &nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>
-                            <td>{{ link.franja_horaria}}</td>
-                            <td>{{ link.preu }}€</td>
-                            <td>{{ link.client.first_name }}</td>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>
-                            <td>{{ link.data_comanda.date }}</td>
-                   </tr>
-            {% endfor %}
+{#            {% for link in contractes %}#}
+{#                   <tr>#}
+{#                            <td><a href="{% url 'contracte_detail' link.pk %}">[{{ link.producte.nom }}]</a></td>#}
+{#                            <td>{{ link.lloc_entrega }}</td>#}
+{#                            <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>#}
+{#                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }} &nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>#}
+{#                            <td>{{ link.franja_horaria}}</td>#}
+{#                            <td>{{ link.preu }}€</td>#}
+{#                            <td>{{ link.client.first_name }}</td>#}
+{#                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}</a></td>#}
+{#                            <td>{{ link.data_comanda.date }}</td>#}
+{#                   </tr>#}
+{#            {% endfor %}#}
          </tbody>
            </table>
     {% endif %}
 
-
+    {% if stockform.errors %}
+        <p>{{ form.non_field_errors }}</p>
+    {% endif %}
 {% endblock %}

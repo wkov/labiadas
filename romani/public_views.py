@@ -1,13 +1,13 @@
 __author__ = 'sergi'
 
 from django.shortcuts import render, get_object_or_404
-from romani.models import Producte, Productor, Comanda, Contracte, TipusProducte, Node, DiaEntrega, FranjaHoraria, Frequencia, DiaProduccio, Vote
+from romani.models import Producte, Productor, Comanda, TipusProducte, Node, DiaEntrega, FranjaHoraria, Frequencia, DiaProduccio, Vote, Entrega, Stock
 from django.db.models import Q
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
 from romani.models import UserProfile, Etiqueta, Adjunt
-from romani.forms import ComandaForm,ContracteForm, VoteForm
-from romani.views import stock_check, stock_calc
+from romani.forms import ComandaForm, VoteForm
+# from romani.views import stock_calc
 
 from django.http import HttpResponse
 
@@ -50,10 +50,26 @@ def buskadorProducte(request):
 
 
     if not searchString == 0:
-        posts = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
-                                        esgotat=False, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
 
-        productes = sorted(posts, key=lambda a: a.karma(user_p.lloc_entrega_perfil), reverse=True)
+
+
+
+        prod_aux = set()
+
+        for d in dies_node_entrega:
+            for t in TipusProducte.objects.filter(dies_entrega__dia=d):
+                date = datetime.datetime.now() + timedelta(hours=t.productor.hores_limit)
+                aux = d.franja_inici()
+                daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+                if daytime > date:
+                    stock_result = stock_check_cant(t, d, 1)
+                    if stock_result:
+                        prod_aux.add(t.producte.pk)
+
+        p = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
+                                        esgotat=False, pk__in=prod_aux).distinct()
+
+        productes = sorted(p, key=lambda a: a.karma(user_p.lloc_entrega_perfil), reverse=True)
 
         return render(request, "buscador.html", {
             'posts': productes,
@@ -68,9 +84,9 @@ def coopeView(request):
 
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    date = datetime.date.today()
+    today = datetime.date.today()
 
-    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = date)
+    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = today)
 
     etiquetes_pre = Etiqueta.objects.all()
 
@@ -84,28 +100,22 @@ def coopeView(request):
                         etiquetes.add(e)
                         break
 
-    # nodes = Node.objects.all()
+    nodes = Node.objects.all()
 
-
-    # productes = Producte.objects.filter(nodes__id__exact=user_p.lloc_entrega_perfil.pk, esgotat=False).order_by(karma descending)
 
     prod_aux = set()
+
     for d in dies_node_entrega:
         for t in TipusProducte.objects.filter(dies_entrega__dia=d):
-            date = datetime.date.today() + timedelta(hours=t.productor.hores_limit)
-            if date <= d.date:
-                stock_result = stock_check(t, d)
+            date = datetime.datetime.now() + timedelta(hours=t.productor.hores_limit)
+            aux = d.franja_inici()
+            daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                stock_result = stock_check_cant(t, d, 1)
                 if stock_result:
                     prod_aux.add(t.producte.pk)
 
-    p = Producte.objects.filter(esgotat=False, pk__in=prod_aux ).distinct()
-
-
-
-    # for aux in p:
-    #     for f in aux.formats.all():
-    #         if f.in_stock == True:
-    #             break
+    p = Producte.objects.filter(esgotat=False, pk__in=prod_aux).distinct()
 
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
@@ -123,7 +133,7 @@ def coopeView(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    return render(request, "productes.html", {'productes':products,'etiquetes': etiquetes, 'up': user_p})
+    return render(request, "productes.html", {'productes':products, 'etiquetes': etiquetes, 'nodes':nodes, 'up': user_p})
 
 
 def producteView(request,pk):
@@ -157,7 +167,23 @@ def etiquetaView(request,pk):
                         etiquetes.add(e)
                         break
 
-    p = Producte.objects.filter(etiqueta=etiqueta, esgotat=False, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
+
+    prod_aux = set()
+
+    for d in dies_node_entrega:
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d, producte__etiqueta=etiqueta):
+            date = datetime.datetime.now() + timedelta(hours=t.productor.hores_limit)
+            aux = d.franja_inici()
+            daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                stock_result = stock_check_cant(t, d, 1)
+                if stock_result:
+                    prod_aux.add(t.producte.pk)
+
+
+
+    p = Producte.objects.filter(esgotat=False, pk__in=prod_aux).distinct()
+
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
 
@@ -199,46 +225,47 @@ def productorView(request,pk):
 def comandesView(request):
 
     now = datetime.datetime.now()
-    comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=now)|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
-    contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
+    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
+    comandes = Comanda.objects.filter(entregas=entregas).distinct()
+    # contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
 
-    nodes = Node.objects.all()
+    # nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    return render(request, "comandes.html",{'comandes': comandes, 'nodes': nodes,'contractes':contractes, 'up': user_p })
+    return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
 
 
 def entregasView(request):
 
     now = datetime.datetime.now()
-    entregas = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('dia_entrega__date')
-    contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__lte=now) & Q(data_fi__isnull=False)).order_by('data_fi')
+    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('dia_entrega__date')
+    # contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__lte=now) & Q(data_fi__isnull=False)).order_by('data_fi')
 
 
     voted = Vote.objects.filter(voter=request.user)
 
     comandes_in_page = [comanda.pk for comanda in entregas]
-    upvoted_comandes = voted.filter(comanda_id__in=comandes_in_page, positiu = True)
+    upvoted_comandes = voted.filter(entrega_id__in=comandes_in_page, positiu = True)
     if upvoted_comandes:
-        upvoted_comandes = upvoted_comandes.values_list('comanda_id', flat=True)
-    downvoted_comandes = voted.filter(comanda_id__in=comandes_in_page, positiu = False)
+        upvoted_comandes = upvoted_comandes.values_list('entrega_id', flat=True)
+    downvoted_comandes = voted.filter(entrega_id__in=comandes_in_page, positiu = False)
     if downvoted_comandes:
-        downvoted_comandes = downvoted_comandes.values_list('comanda_id', flat=True)
+        downvoted_comandes = downvoted_comandes.values_list('entrega_id', flat=True)
 
-    contractes_in_page = [contracte.pk for contracte in contractes]
-    upvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=True)
-    if upvoted_contractes:
-        upvoted_contractes = upvoted_contractes.values_list('contracte_id', flat=True)
-    downvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=False)
-    if downvoted_contractes:
-        downvoted_contractes = downvoted_contractes.values_list('contracte_id', flat=True)
+    # contractes_in_page = [contracte.pk for contracte in contractes]
+    # upvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=True)
+    # if upvoted_contractes:
+    #     upvoted_contractes = upvoted_contractes.values_list('contracte_id', flat=True)
+    # downvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=False)
+    # if downvoted_contractes:
+    #     downvoted_contractes = downvoted_contractes.values_list('contracte_id', flat=True)
 
 
-    nodes = Node.objects.all()
+    # nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    return render(request, "entregas.html",{'comandes': entregas, 'contractes': contractes, 'nodes': nodes, 'up': user_p, 'upvoted_comandes': upvoted_comandes,
-                                            'downvoted_comandes': downvoted_comandes, 'upvoted_contractes': upvoted_contractes, 'downvoted_contractes': downvoted_contractes })
+    return render(request, "entregas.html",{'comandes': entregas, 'up': user_p, 'upvoted_comandes': upvoted_comandes,
+                                            'downvoted_comandes': downvoted_comandes })
 
 
 
@@ -250,108 +277,129 @@ def comandaDelete(request, pk):
     comandaDel = Comanda.objects.filter(pk=pk).first()
     message = ""
 
-    time = timedelta(hours=48)
-    tt = comandaDel.dia_entrega.date - time
-    if datetime.datetime.date(datetime.datetime.now()) < tt:
+
+            #
+            # date = datetime.datetime.now() + timedelta(hours=comandaDel.format.productor.hores_limit)
+            # # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
+            # for dia in Coformat.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date):
+            #     aux = dia.dia.franja_inici()
+            #     daytime = datetime.datetime(dia.dia.date.year, dia.dia.date.month, dia.dia.date.day, aux.inici.hour, aux.inici.minute)
+            #     if daytime > date:
+
+
+
+
+    dia = datetime.datetime.now() + timedelta(hours=comandaDel.format.productor.hores_limit)
+    aux = comandaDel.dia_entrega.franja_inici()
+    daytime = datetime.datetime(dia.year, dia.month, dia.day, aux.inici.hour, aux.inici.minute)
+    # tt = comandaDel.dia_entrega.date - time
+    if daytime > dia:
         notify.send(comandaDel.format.producte, recipient = request.user,  verb="Has tret ",
             description="de la cistella" , url=comandaDel.format.producte.foto.url, timestamp=timezone.now())
         comandaDel.delete()
     else:
 
-        message = u"Falten menys de 48h, no podem treure el producte de la cistella"
+        message = u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"
 
     comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
     now = datetime.datetime.now()
-    contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
+    # contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
 
     nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
 
 
-    return render(request, "comandes.html",{'comandes': comandes, 'message': message, 'contractes': contractes, 'nodes': nodes, 'up': user_p})
+    return render(request, "comandes.html",{'comandes': comandes, 'message': message, 'nodes': nodes, 'up': user_p})
 
-def contracteDelete(request, pk):
-
-
-    contracteDel = Contracte.objects.filter(pk=pk).first()
-    time = timedelta(hours=contracteDel.producte.productor.hores_limit)
-    message = ""
-    if contracteDel.prox_entrega():
-        t = contracteDel.prox_entrega()
-        tt = t.date - time
-
-        if datetime.datetime.date(datetime.datetime.now()) < tt:
-            notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
-                  description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
-            contracteDel.data_fi = datetime.datetime.now()
-            contracteDel.save()
-        else:
-            message = u"Falten menys de 48h per el proper dia d'entrega, ja estem preparant la comanda i no podem treure el producte de la cistella. Quan hagis rebut aquesta entrega podràs anul·lar el vincle"
-    else:
-        notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
-              description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
-        contracteDel.data_fi = datetime.datetime.now()
-        contracteDel.save()
-
-
-
-    comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
-    now = datetime.datetime.now()
-    contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
-
-    nodes = Node.objects.all()
-    user_p = UserProfile.objects.filter(user=request.user).first()
-
-
-    return render(request, "comandes.html",{'comandes': comandes, 'contractes': contractes, 'nodes': nodes, 'up': user_p, 'message': message})
-
-
-class ContracteUpdateView(UpdateView):
-    model = Contracte
-    form_class = ContracteForm
-    success_url="/comandes/"
-    template_name = "romani/consumidors/contracte_form.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(ContracteUpdateView, self).get_context_data(**kwargs)
-        contracte = Contracte.objects.get(pk=self.kwargs['pk'])
-        context['producte']=contracte.producte
-        return context
+# def contracteDelete(request, pk):
+#
+#
+#     contracteDel = Contracte.objects.filter(pk=pk).first()
+#     # time = timedelta(hours=contracteDel.producte.productor.hores_limit)
+#     message = ""
+#     if contracteDel.prox_entrega():
+#
+#         dia = datetime.datetime.now() + timedelta(hours=contracteDel.format.productor.hores_limit)
+#         aux = contracteDel.dia_entrega.franja_inici()
+#         daytime = datetime.datetime(dia.year, dia.month, dia.day, aux.inici.hour, aux.inici.minute)
+#
+#
+#
+#         # t = contracteDel.prox_entrega()
+#         # tt = t.date - time
+#
+#         if daytime > dia:
+#             notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
+#                   description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
+#             contracteDel.data_fi = datetime.datetime.now()
+#             contracteDel.save()
+#         else:
+#             message = u"El productor ja està preparant la comanda i no podem treure el producte de la cistella. Quan hagis rebut aquesta entrega podràs anul·lar el vincle."
+#     else:
+#         notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
+#               description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
+#         contracteDel.data_fi = datetime.datetime.now()
+#         contracteDel.save()
+#
+#
+#
+#     comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
+#     now = datetime.datetime.now()
+#     contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
+#
+#     nodes = Node.objects.all()
+#     user_p = UserProfile.objects.filter(user=request.user).first()
+#
+#
+#     return render(request, "comandes.html",{'comandes': comandes, 'contractes': contractes, 'nodes': nodes, 'up': user_p, 'message': message})
 
 
-    def form_valid(self, form):
-
-        if form.has_changed():
-            s = form.cleaned_data["dies_entrega"]
-            error = 0
-            for r in s:
-
-                if r not in form.instance.dies_entrega.all():
-                    stock_result = stock_calc(form.instance.format, r, form.instance.cantitat)
-
-                    if not stock_result == True:
-                        form.cleaned_data["dies_entrega"].remove(r)
-                        error = error + 1
-
-            for x in form.instance.dies_entrega.all():
-
-                if x not in s:
-                    d = int(form.instance.cantitat)
-                    cant = -1*d
-                    stock_result = stock_calc(form.instance.format, x, cant)
-
-                    if not stock_result == True:
-                        error = error + 1
-
-
-
-            if error > 0:
-                messages.error(self.request, (u"S'ha esgotat el producte per algun dels dies seleccionats"))
-            else:
-                messages.success(self.request, (u"Comanda grabada correctament"))
-
-        return super(ContracteUpdateView, self).form_valid(form)
+# class ContracteUpdateView(UpdateView):
+#     model = Contracte
+#     form_class = ContracteForm
+#     success_url="/comandes/"
+#     template_name = "romani/consumidors/contracte_form.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(ContracteUpdateView, self).get_context_data(**kwargs)
+#         contracte = Contracte.objects.get(pk=self.kwargs['pk'])
+#         context['producte']=contracte.producte
+#         return context
+#
+#
+#     def form_valid(self, form):
+#
+#         if form.has_changed():
+#             s = form.cleaned_data["dies_entrega"]
+#             error = 0
+#             for r in s:
+#
+#                 if r not in form.instance.dies_entrega.all():
+#                     stock_result = stock_calc(form.instance.format, r, form.instance.cantitat)
+#
+#                     if not stock_result == True:
+#                         form.cleaned_data["dies_entrega"].remove(r)
+#                         error = error + 1
+#
+#             for x in form.instance.dies_entrega.all():
+#
+#                 if x not in s:
+#                     d = int(form.instance.cantitat)
+#                     cant = -1*d
+#                     stock_result = stock_calc(form.instance.format, x, cant)
+#
+#                     if not stock_result == True:
+#                         error = error + 1
+#
+#
+#
+#             if error > 0:
+#                 messages.error(self.request, (u"S'ha esgotat el producte per algun dels dies seleccionats"))
+#             else:
+#                 messages.success(self.request, (u"Comanda grabada correctament"))
+#
+#         return super(ContracteUpdateView, self).form_valid(form)
 
 
 
@@ -474,8 +522,12 @@ class ComandaFormBaseView(FormView):
             stock_result = stock_calc(format, data_entrega, cantitat)
             # format.stock_fix = format.stock_fix - int(cantitat)
             # format.save()
-            if stock_result == True:
-                v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, dia_entrega=data_entrega, franja_horaria=franja, preu=preu)
+            if stock_result['result'] == True:
+                v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
+                if stock_result['dia_prod'] == '':
+                    e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja)
+                else:
+                    e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
                 ret = {"contracte": 0, "success": 1}
                 notify.send(format, recipient= user, verb="Has afegit ", action_object=v,
                 description="a la cistella" , timestamp=timezone.now())
@@ -490,22 +542,23 @@ class ComandaFormBaseView(FormView):
 
             error = 0
 
-            v = Contracte.objects.create(client=user, producte=producte, cantitat=cantitat, format=format, franja_horaria=franja, lloc_entrega=lloc_obj, preu=preu, frequencia=freq)
+            v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
 
             for d in dies_entrega:
                 stock_result = stock_calc(format, d, cantitat)
-                if stock_result == True:
-                    # d_inst = DiaEntrega.objects.get(pk=d.pk)
-                    v.dies_entrega.add(d)
-                    # v.save()
+                if stock_result['result'] == True:
+                    if stock_result['dia_prod'] == '':
+                        e = Entrega.objects.create(dia_entrega=d, comanda=v, franja_horaria=franja)
+                    else:
+                        e = Entrega.objects.create(dia_entrega=d, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
                 else:
                     error = error + 1
 
             if error > 0:
-                # messages.error(self.request, (u"Disculpa, en algun dels dies seleccionats s'ha esgotat el estoc disponible del producte"))
+                messages.error(self.request, (u"Disculpa, en algun dels dies seleccionats s'acaba d'esgotar el estoc disponible del producte"))
                 ret = {"contracte": 0, "success": 0}
             else:
-                # messages.success(self.request, (u"Comanda realitzada correctament"))
+                messages.success(self.request, (u"Comanda realitzada correctament"))
                 ret = {"contracte": 1, "success": 1, "pk": v.pk}
                 notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
                 description="a la cistella" , timestamp=timezone.now())
@@ -523,77 +576,168 @@ class ComandaFormView(JSONFormMixin, ComandaFormBaseView):
     pass
 
 
+def diesEntregaView(request, pk, pro):
+
+    now = datetime.datetime.now()
+    comanda = Comanda.objects.get(pk=pk)
+    user_p = UserProfile.objects.filter(user=request.user).first()
+    date = datetime.datetime.now() + timedelta(hours=int(comanda.format.productor.hores_limit))
+
+    # Llistat de dies futurs en que es posible demanar noves entregues de la comanda
+    pk_lst = set()
+    for d in DiaEntrega.objects.filter(date__gte=date, formats__format__id__exact=comanda.format.id, node=comanda.node).order_by('date'):
+        aux = d.franja_inici()
+        daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+        if daytime > date:
+            stock_result = stock_check_cant(comanda.format, d, comanda.cantitat)
+            if stock_result:
+                pk_lst.add(d.pk)
+
+    # Llistat de dies futurs en que ja ha demanat rebre producte
+    pk2_lst = set()
+    for d in Entrega.objects.filter(comanda=comanda, dia_entrega__node=comanda.node, dia_entrega__date__gte=date).order_by('dia_entrega__date'):
+        aux = d.dia_entrega.franja_inici()
+        daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day, aux.inici.hour, aux.inici.minute)
+        if daytime > date:
+            pk2_lst.add(d.dia_entrega.pk)
+
+    dies_entrega_possibles = DiaEntrega.objects.filter((Q(pk__in=pk_lst)|Q(pk__in=pk2_lst))).order_by('date')
+
+    dies_entrega_ini = DiaEntrega.objects.filter(pk__in=pk2_lst)
+
+
+    # Llistat de dies passats en que te entregues de la mateixa comanda
+    pk3_lst = set()
+    for d in Entrega.objects.filter(comanda=comanda, dia_entrega__node=comanda.node, dia_entrega__date__lte=date).order_by('dia_entrega__date'):
+        aux = d.dia_entrega.franja_inici()
+        daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day, aux.inici.hour, aux.inici.minute)
+        if daytime < date:
+            pk3_lst.add(d.dia_entrega.pk)
+
+    dies_entrega_pas = DiaEntrega.objects.filter(pk__in=pk3_lst).exclude(pk__in=pk_lst)
+
+
+    if request.POST:
+        try:
+            dies_pk = request.POST.getlist('dies')
+            for d in dies_pk:
+                dia = DiaEntrega.objects.get(pk=d)
+                if dia in dies_entrega_ini:
+                    pass
+                else:
+                    stock_result = stock_calc(comanda.format, dia, comanda.cantitat)
+                    if stock_result['result'] == True:
+                        franja_pk = request.POST.get(str(dia.pk))
+                        franja = FranjaHoraria.objects.get(pk=franja_pk)
+                        if stock_result['dia_prod'] == '':
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
+                        else:
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
+
+            for d in dies_entrega_ini:
+                if str(d.pk) not in dies_pk:
+                    entrega = Entrega.objects.get(comanda=comanda, dia_entrega=d)
+                    entrega.delete()
+
+            if pro == '0':   #si el usuari es consumidor i prove de la pantalla de comanda principal
+
+                entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
+                comandes = Comanda.objects.filter(entregas=entregas).distinct()
+
+                return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
+
+            elif pro == '1':  #si el usuari es productor i esta introduint comandes que li han arribat de fora la web
+
+                productes = Producte.objects.filter(productor=comanda.format.productor)
+                object_list = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=now)
+
+                return render(request, "romani/productors/comanda_list.html", {'object_list': object_list, 'productor': comanda.format.productor})
+
+        except:
+            pass
+
+    return render(request, "dies_comanda.html",{'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles, 'dies_entrega_ini': dies_entrega_ini, 'dies_entrega_pas': dies_entrega_pas })
+
+
+
 
 class VoteFormView(FormView):
     form_class = VoteForm
     success_url="/entregas/"
-    # def create_response(self, vdict=dict(), valid_form=True):
-    #     response = HttpResponse(json.dumps(vdict))
-    #     response.status = 200 if valid_form else 500
-    #     return response
 
     def form_valid(self, form):
 
         user = self.request.user
 
-        if form.data["contracte"]!="":
-            contracte = get_object_or_404(Contracte, pk=int(form.data["contracte"]))
-            # prev_votes = Vote.objects.filter(voter=user, comanda=comanda)
+        if form.data["entrega"]!="":
+            entrega = get_object_or_404(Entrega, pk=int(form.data["entrega"]))
             if self.request.POST.get("Up"):
-                v = Vote.objects.get(voter=user, contracte=contracte)
+                v = Vote.objects.get(voter=user, entrega=entrega)
                 v.positiu = True
                 v.save()
             elif self.request.POST.get("Down"):
-                v = Vote.objects.get(voter=user, contracte=contracte)
+                v = Vote.objects.get(voter=user, entrega=entrega)
                 v.positiu = False
                 v.save()
             elif self.request.POST.get("NewUp"):
-                v = Vote.objects.get_or_create(voter=user, contracte=contracte, positiu=True)
+                v = Vote.objects.create(voter=user, entrega=entrega, positiu=True)
             elif self.request.POST.get("NewDown"):
-                v = Vote.objects.get_or_create(voter=user, contracte=contracte, positiu=False)
+                v = Vote.objects.create(voter=user, entrega=entrega, positiu=False)
             else:
                 pass
-
-        if form.data["comanda"]!="":
-            comanda = get_object_or_404(Comanda, pk=int(form.data["comanda"]))
-            # prev_votes = Vote.objects.filter(voter=user, comanda=comanda)
-            if self.request.POST.get("Up"):
-                v = Vote.objects.get(voter=user, comanda=comanda)
-                v.positiu = True
-                v.save()
-            elif self.request.POST.get("Down"):
-                v = Vote.objects.get(voter=user, comanda=comanda)
-                v.positiu = False
-                v.save()
-            elif self.request.POST.get("NewUp"):
-                v = Vote.objects.create(voter=user, comanda=comanda, positiu=True)
-            elif self.request.POST.get("NewDown"):
-                v = Vote.objects.create(voter=user, comanda=comanda, positiu=False)
-            else:
-                pass
-
-        # link = get_object_or_404(Link, pk=form.data["link"])
-        # has_voted = (len(prev_votes) > 0)
 
         ret = {"success": 1}
-        # if not has_voted:
-        #     # add vote
-        #     v = Vote.objects.create(voter=user, link=link)
-        #     ret["voteobj"] = v.id
-        # else:
-        #     # delete vote
-        #     prev_votes[0].delete()
-        #     ret["unvoted"] = 1
-        # return self.create_response(ret, True)
         return super(VoteFormView, self).form_valid(form)
 
 
 
-    # def form_invalid(self, form):
-    #     ret = {"success": 0, "form_errors": form.errors }
-    #     return self.create_response(ret, False)
+def stock_check_cant(format, dia, cantitat):
+     # Comprova que hi hagi stock per a una quantitat determinada
+     d = format.dies_entrega.get(dia=dia)
+     if d.tipus_stock == '0':
+            try:
+                stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__caducitat','dia_prod__date')
+                for s in stocks:
+                    diaproduccio = s.dia_prod
+                    # if((diaproduccio.node==dia.node)or(diaproduccio.node==None)):
+                    s = format.stocks.get(dia_prod=diaproduccio)
+                    num = int(s.stock()) - int(cantitat)
+                    if num >= 0:
+                        return True
+                return False
 
-#
-# class VoteFormView(JSONFormMixin, VoteFormBaseView):
-#     pass
+            except:
+                    return False
+
+     elif d.tipus_stock == '2':
+            return True
+
+
+
+def stock_calc(format, dia, cantitat):
+     # Comproba que hi hagi stock i resta les unitats corresponents
+     d = format.dies_entrega.get(dia=dia)
+     if d.tipus_stock == '0':
+            try:
+                stocks = Stock.objects.filter(dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__caducitat','dia_prod__date')
+                for s in stocks:
+                    diaproduccio = s.dia_prod
+                    s = format.stocks.get(dia_prod=diaproduccio)
+                    num = int(s.stock()) - int(cantitat)
+                    if num >= 0:
+                       dict = {'result': True, 'dia_prod': diaproduccio}
+                       return dict
+
+                dict = {'result': False, 'dia_prod': ''}
+                return dict
+
+            except:
+                dict = {'result': False, 'dia_prod': ''}
+                return dict
+
+     elif d.tipus_stock == '2':
+            dict = {'result': True, 'dia_prod': ''}
+            return dict
+
+
 

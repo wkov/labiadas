@@ -27,3 +27,18 @@ def node_user(request):
         return { 'node_user' : 'la massa'}
     except:
         return { 'node_user' : up.lloc_entrega_perfil.nom}
+
+
+def foto_user(request):
+    if not request.user.is_authenticated():
+        return { 'foto_user' : ''}
+
+    if request.user.is_anonymous():
+        return { 'foto_user' : ''}
+
+    up = UserProfile.objects.get(user=request.user)
+
+    try:
+        return { 'foto_user' : up.avatar.url}
+    except:
+        return { 'foto_user' : ''}

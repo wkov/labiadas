@@ -1,5 +1,5 @@
 from django.contrib import admin
-from romani.models import Producte, Productor, TipusProducte, Comanda, Contracte, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock, DiaFormatStock, Vote
+from romani.models import Producte, Productor, TipusProducte, Comanda, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock, DiaFormatStock, Vote, Entrega
 
 class producteAdmin(admin.ModelAdmin):
     list_display = ('nom', 'productor', 'descripcio', 'text_curt', 'karma_date', 'karma_value')
@@ -7,9 +7,9 @@ class producteAdmin(admin.ModelAdmin):
     list_filter = ['nom', 'productor']
 
 class voteAdmin(admin.ModelAdmin):
-    list_display = ('voter', 'contracte', 'comanda')
-    search_fields = ['voter', 'contracte', 'comanda']
-    list_filter = ['voter', 'contracte', 'comanda']
+    list_display = ('voter', 'entrega')
+    search_fields = ['voter', 'entrega']
+    list_filter = ['voter', 'entrega']
 
 class productorAdmin(admin.ModelAdmin):
     list_display = ('nom','text')
@@ -22,14 +22,20 @@ class tipusproducteAdmin(admin.ModelAdmin):
     list_filter = ['nom','preu', 'productor']
 
 class comandaAdmin(admin.ModelAdmin):
-    list_display = ('data_comanda','format','externa','client','dia_entrega')
-    search_fields = ['format__producte', 'data_comanda','format','externa','client','dia_entrega']
-    list_filter = ['format__producte','data_comanda','format','externa','client','dia_entrega']
+    list_display = ('data_comanda','format','externa','client')
+    search_fields = ['format__producte', 'data_comanda','format','externa','client']
+    list_filter = ['format__producte','data_comanda','format','externa','client',]
 
-class contracteAdmin(admin.ModelAdmin):
-    list_display = ('producte','data_comanda','format', 'client','lloc_entrega' )
-    search_fields = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
-    list_filter = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
+
+class entregaAdmin(admin.ModelAdmin):
+    list_display = ('dia_entrega','comanda','data_comanda', 'dia_produccio', 'franja_horaria')
+    search_fields = ['comanda__format__producte', 'data_comanda','comanda__format','comanda__client']
+    list_filter = ['comanda__format','data_comanda','comanda__externa','comanda__client',]
+
+# class contracteAdmin(admin.ModelAdmin):
+#     list_display = ('producte','data_comanda','format', 'client','lloc_entrega' )
+#     search_fields = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
+#     list_filter = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
 
 class userprofileAdmin(admin.ModelAdmin):
     list_display = ('user','bio','lloc_entrega_perfil')
@@ -81,9 +87,9 @@ class diaProduccioAdmin(admin.ModelAdmin):
     list_filter = ['date','productor', 'node']
 
 class stockAdmin(admin.ModelAdmin):
-    list_display = ['dia_prod','format', 'stock']
-    search_fields = ['dia_prod','format', 'stock']
-    list_filter = ['dia_prod','format', 'stock']
+    list_display = ['dia_prod','format']
+    search_fields = ['dia_prod','format']
+    list_filter = ['dia_prod','format']
 
 admin.site.register(DiaFormatStock, diaFormatStockAdmin)
 admin.site.register(Stock, stockAdmin)
@@ -98,7 +104,7 @@ admin.site.register(Adjunt, adjuntAdmin)
 admin.site.register(Etiqueta, etiquetaAdmin)
 admin.site.register(DiaEntrega,  diaentregaAdmin)
 admin.site.register(FranjaHoraria, franjahorariaAdmin)
-admin.site.register(Contracte, contracteAdmin)
+admin.site.register(Entrega, entregaAdmin)
 admin.site.register(Key, keyAdmin)
 admin.site.register(Frequencia, frequenciaAdmin)
 admin.site.register(Vote, voteAdmin)

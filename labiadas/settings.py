@@ -84,6 +84,7 @@ TEMPLATES = [
                 'django_messages.context_processors.inbox',
                 'labiadas.context_processors.notifications_user',
                 'labiadas.context_processors.node_user',
+                'labiadas.context_processors.foto_user',
             ],
         },
     },
@@ -125,7 +126,7 @@ LANGUAGES = (
 
 
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Madrid'
 
 USE_I18N = True
 

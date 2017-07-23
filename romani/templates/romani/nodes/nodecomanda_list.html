@@ -6,25 +6,16 @@
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar Node</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_nodesdates' node.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'nodeproductors_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
-{#                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Escollir Productors</b>
                                  </a>
                         </div>
@@ -34,96 +25,50 @@
     <a href="{% url 'export_comandes_xls' diaentrega.pk %}">Exportar comandes</a>
 
     <br/>
-    {% if object_list %}<br/>
-        Comandes: <br/>
-     <table border="1" id="myTable" class="tablesorter" style="width: 100%; text-align: center; ">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Client</th>
-     <th>Data de comanda</th>
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in object_list %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
-               <tr>
-                        <td>[{{ link.format.producte.nom }}]</td>
-                        <td>{{ link.dia_entrega.node }}</td>
-                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td>{{ link.dia_entrega.date }}</td>
-                        <td>{{ link.franja_horaria}}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-                        <td>{{ link.data_comanda.date }}</td>
-                    </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-     </tbody>
-       </table>
-     {% endif %}
-    {% if contractes %}
-        <br/>
-        Contractes: <br/>
-     <table border="1" id="myTable2" class="tablesorter" style="width: 100%; text-align: center; ">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Client</th>
-     <th>Data de comanda</th>
-     <th>Freqüència</th>
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in contractes %}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-
-               <tr>
-                        <td>[{{ link.producte.nom }}]</td>
-                        <td>{{ link.lloc_entrega }}</td>
-                        <td>[{{ link.cantitat }} &nbsp; {{ link.format.nom }}]</td>
-                        <td>{{ diaentrega.date }}</td>
-                        <td>{{ diaentrega.franja_inici.inici}}-{{ diaentrega.franja_final.final }}</td>
-                        <td>{{ link.preu }}€</td>
-                        <td>{{ link.client.first_name }}</td>
-                        <td>{{ link.data_comanda.date }}</td>
-                        <td>{{ link.frequencia }}</td>
-                    </tr>
-
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-        {% endfor %}
-     </tbody>
-       </table>
+{% if object_list%}
+         <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
+         <thead>
+             <tr>
+             <th>Producte</th>
+             <th>Productor</th>
+             <th>Lloc d'entrega</th>
+             <th>Cant</th>
+             <th>Format</th>
+             <th>Data d'entrega</th>
+             <th>Franja horària</th>
+             <th>Preu</th>
+             <th>Usuari</th>
+             <th>Freqüència</th>
+             <th>Data de comanda</th>
+             </tr>
+         </thead>
+         <tbody>
+            {% for link in object_list %}
+                   <tr>
+                            <td>{{ link.comanda.format.producte.nom }}</td>
+                            <td>{{ link.comanda.format.productor.nom }}</td>
+                            <td>{{ link.dia_entrega.node }}</td>
+                            <td>{{ link.comanda.cantitat }}</td>
+                            <td>{{ link.comanda.format.nom }}</td>
+                            <td>{{ link.dia_entrega.date }}</td>
+                            <td>{{ link.franja_horaria }}</td>
+                            <td>{{ link.comanda.preu }}€</td>
+                            <td>{{ link.comanda.client.first_name }}</td>
+                            <td>{{ link.comanda.frequencia.nom }}</td>
+                            <td>{{ link.data_comanda.date }}</td>
+                        </tr>
+            {% endfor %}
+         </tbody>
+           </table>
     {% endif %}
     {% if not object_list %}
-        {% if not contractes %}
             Encara no hi ha comandes fetes per aquest dia d'entrega
             {% if not formats %}
                 ni productes confirmats pels productors
                 <br/><br/><a href="{% url 'diaentrega_update' diaentrega.pk  %}">Modificar dia d'entrega</a>
             {% endif %}
-        {% endif %}
     {% endif %}
 
-    {% if productes %}
         <br/><br/>
      <p>Els següents productes i formats estan disponibles el dia d'entrega seleccionat:</p>
         <table border="1">
@@ -132,10 +77,9 @@
         <th>Productor</th>
         <th>Etiqueta</th>
     {% for p in formats %}
-        <tr><td>{{ p.producte.nom }}</td><td>{{ p.nom }}</td><td>{{ p.productor }}</td><td>{{ p.producte.etiqueta }}</td></tr>
+        <tr><td>{{ p.format.producte.nom }}</td><td>{{ p.format.nom }}</td><td>{{ p.format.productor }}</td><td>{{ p.format.producte.etiqueta }}</td></tr>
     {% endfor %}
         </table>
     <br/>
-    {% endif %}
 
 {% endblock %}

@@ -39,9 +39,9 @@
               <li style="display: inline;">
                  &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">
                     [{{ link.nom }}]
-                 <span id="notification_count">
-                        {{ link.comandes_count }}
-                </span>
+{#                 <span id="notification_count">#}
+{#                        {{ link.comandes_count }}#}
+{#                </span>#}
                 </a>
                   <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
                       <span id="notification_count">
@@ -52,6 +52,7 @@
             <br/>
         {% endfor %}
     {% else %}
+            <br/>
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
     {% endif %}
     </div>

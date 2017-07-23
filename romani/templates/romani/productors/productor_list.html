@@ -8,9 +8,9 @@
               <li style="display: inline">
                  &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor"  id="pro_menu">
                     {{ link.nom }}
-                 <span id="notification_count">
-                        {{ link.comandes_count }}
-                </span>
+{#                 <span id="notification_count">#}
+{#                        {{ link.comandes_count }}#}
+{#                </span>#}
                 </a>
                   <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
                       <span id="notification_count">
@@ -20,7 +20,7 @@
               </li>
             <br/>
         {% endfor %}
-    {% else %}
+    {% else %}<br/>
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
     {% endif %}
     </div>
@@ -43,12 +43,12 @@
     </div>
 
     <br/>
-    <div id="dialog" title="Benvingut">
-    <p>A la secció dels productors pots gestionar els teus perfils de productor ja existents o crear-ne de nous.</p>
+    <div id="dialog" title="Recepció de comandes">
+    <p>Consulta totes les comandes que t'arriben</p>
     </div>
     <br/><br/>
 
-    {% if comandes or contractes%}
+    {% if comandes%}
          <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
          <thead>
              <tr>
@@ -68,35 +68,22 @@
          <tbody>
             {% for link in comandes %}
                    <tr>
-                            <td>{{ link.format.producte.nom }}</td>
-                            <td>{{ link.format.productor.nom }}</td>
+                            <td>{{ link.comanda.format.producte.nom }}</td>
+                            <td>{{ link.comanda.format.productor.nom }}</td>
                             <td>{{ link.dia_entrega.node }}</td>
-                            <td>{{ link.cantitat }}</td>
-                            <td>{{ link.format.nom }}</td>
+                            <td>{{ link.comanda.cantitat }}</td>
+                            <td>{{ link.comanda.format.nom }}</td>
                             <td>{{ link.dia_entrega.date }}</td>
-                            <td>{{ link.franja_horaria}}</td>
-                            <td>{{ link.preu }}€</td>
-                            <td>{{ link.client.first_name }}</td>
-                            <td> una sola vegada</td>
+                            {% if link.franja_horaria %}
+                                <td>{{ link.franja_horaria }}</td>
+                            {% else %}
+                                <td>{{ link.dia_entrega.inici }}-{{ link.dia_entrega.final }}</td>
+                            {% endif %}
+                            <td>{{ link.comanda.preu }}€</td>
+                            <td>{{ link.comanda.client.first_name }}</td>
+                            <td> {{ link.comanda.frequencia.nom }}</td>
                             <td>{{ link.data_comanda.date }}</td>
                         </tr>
-            {% endfor %}
-            {% for link in contractes %}
-                {% if link.prox_entrega %}
-                   <tr>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.producte.nom }}</a></td>
-                            <td>{{ link.producte.productor.nom }}</td>
-                            <td>{{ link.lloc_entrega }}</td>
-                            <td>{{ link.cantitat }}</td>
-                            <td>{{ link.format.nom }}</td>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.prox_entrega.date }}</a></td>
-                            <td>{{ link.franja_horaria}}</td>
-                            <td>{{ link.preu }}€</td>
-                            <td>{{ link.client.first_name }}</td>
-                            <td><a href="{% url 'contracte_detail' link.pk %}">{{ link.frequencia }}&nbsp; <span class="glyphicon glyphicon-calendar"></span></a></td>
-                            <td>{{ link.data_comanda.date }}</td>
-                   </tr>
-                {% endif %}
             {% endfor %}
          </tbody>
            </table>
