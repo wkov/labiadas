@@ -11,7 +11,7 @@
 {##}
 {#    })#}
 {##}
-{#});#}
+{#{);#}
 {##}
 {#</script>#}
 {#{% endblock %}#}
@@ -19,27 +19,82 @@
 
 <form method="post" action="">
   {% csrf_token %}
-<p>A continuació pots veure tots els dies d'entrega en que pots demanar {{ producte }}. T'hem preseleccionat els dies que coincideixen
+<p>A continuació pots veure tots els dies d'entrega en que pots demanar. T'hem preseleccionat els dies que coincideixen
     amb la teva elecció. Ara pots marcar o desmarcar els dies en que rebràs la comanda segons desitjis. </p><br/>
+<div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
+            <div class="thumbnail" >
+              <div class="caption">
+                      {% if comanda.format.producte.foto %}
+                        <a href="{{ MEDIA_URL }}{{ comanda.format.producte.foto.url }}" title="veure imatge">
+                        <div class="g-item" style="background-image:url('{{ comanda.format.producte.foto.url }}');background-position: center;
+            background-size: cover; " >
+                            </div>
+                        </a>
+                      {% endif %}
+                    <div class="prodxx" style="    font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF;   display: inline-block" >
+                    <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte' comanda.format.producte.pk  %}" title="Visualitzar en detall el producte">
+                        <b id="l_prod" name="l_prod">{{ comanda.format.producte }}</b></a></div><br/><br/>
+                     <div class="prodxx" style="background-color:#FFFFFF;  display: inline-block; ">
+                        <p>Autor: &nbsp;
+                        <a href="{% url 'productor'  comanda.format.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                                {{ comanda.format.productor.nom }}</a>
+                          <a href="{% url 'messages_compose_to' comanda.format.productor.responsable %}" title="Enviar missatge al productor">
+                         <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+                      </div>
+                    <br/><br/>
+                    <div class="xxent" style="background-color:#FFFFFF; width: auto">
+                        <label for="l_cant" style="font-size: medium; font-weight: 500"> Cant:  </label><b id="l_cant" name="l_cant">{{ comanda.cantitat }}</b><br/>
+                        <label for="l_form" style="font-size: medium; font-weight: 500"> Format:</label> <b id="l_form" name="l_form">{{ comanda.format.nom }}</b><br/>
+                        <label for="l_preu" style="font-size: medium; font-weight: 500"> Preu: </label> <b id="l_preu" name="l_preu">{{ comanda.preu }}€</b> <br/>
+                        <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>
+                        <a id="xb_lloc" name="xb_lloc" href="{% url 'node_detail' comanda.node.pk %}" title="Visualitzar punt de trobada">{{ comanda.node.nom  }} <span class="glyphicon glyphicon-map-marker" >
+                        </span> </a><br/>
+                        <label for="l_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="l_hora" name="l_hora">  {{ comanda.prox_entrega.franja_horaria.inici }} - {{ comanda.prox_entrega.franja_horaria.final }}</b><br/>
+                    </div>
+                 <div style="width:100%; display: inline-block">
+                    <label for="l_entr" style="font-size: medium; font-weight: 500"> Entrega: </label> <b id="l_entr" name="l_entr">{{ comanda.prox_entrega.dia_entrega.dia }}, {{ comanda.prox_entrega.dia_entrega.date }}</b>
+                     <a type="button" class="glyphicon glyphicon-calendar" href="{% url 'diesEntrega' comanda.pk '0' %}" title="Triar dies d'entrega"></a>
+                 </div><br/>
+                  <div style="width:100%; display: inline-block">
+                    <label for="l_com" style="font-size: medium; font-weight: 500"> Comanda: </label> <b id="l_com" name="l_com">{{ comanda.prox_entrega.data_comanda.date }}</b>
+                  </div><br/>
+                  <div style="width:100%; display: inline-block">
+                    <label for="l_com" style="font-size: medium; font-weight: 500"> Freqüència: </label> <b id="l_com" name="l_com">{{ comanda.frequencia.nom }}</b>
+                  </div>
+            </div>
+            </div>
+    </div>
 
-    {% for dia in dies_entrega_pas %}
+
+    {% for ent in entregas_pas %}
+        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
             <br>
-            <input type="checkbox" name="dies" value="{{ dia.pk }}" checked disabled> {{ dia.dia }}, {{ dia.date }} <br/>
-            {% for f in dia.franjes_horaries.all %}
-                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked disabled> {{ f.inici }} - {{ f.final }} <br>
+            <input type="checkbox" name="dies" value="{{ ent.dia_entrega.pk }}" checked disabled> {{ ent.dia_entrega.dia }}, {{ ent.dia_entrega.date }} <br/>
+            {% for f in ent.dia_entrega.franjes_horaries.all %}
+                {% if f == ent.franja_horaria %}
+                    <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" checked disabled> {{ f.inici }} - {{ f.final }} <br>
+                {% else %}
+                    <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" disabled> {{ f.inici }} - {{ f.final }} <br>
+                {% endif %}
             {% endfor %}
-
-
-{#          <input type="radio" name="{{ dia.pk }}" value="female"> Female<br>#}
-{#          <input type="radio" name="{{ dia.pk }}" value="other"> Other<br>#}
+        </div>
     {% endfor %}
 
     {% for dia in dies_entrega_pos %}
+        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
         <br>
         {% if dia in dies_entrega_ini %}
-            <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }} <br/>
-            {% for f in dia.franjes_horaries.all %}
-                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }} <br>
+            {% for d in comanda.entregas.all %}
+                {% if dia == d.dia_entrega %}
+                    <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }} <br/>
+                    {% for f in dia.franjes_horaries.all %}
+                        {% if f == d.franja_horaria %}
+                                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }} <br>
+                        {% else %}
+                                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }} <br>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
         {% else %}
           <input type="checkbox" name="dies" value="{{ dia.pk }}"> {{ dia.dia }}, {{ dia.date }} <br/>
@@ -48,25 +103,9 @@
             {% endfor %}
         {% endif %}
 
-{#          <input type="radio" name="{{ dia.pk }}" value="female"> Female<br>#}
-{#          <input type="radio" name="{{ dia.pk }}" value="other"> Other<br>#}
+        </div>
     {% endfor %}
-
-{#    {% for dia in dies_entrega_fut %}#}
-{#            Esgotats:<br>#}
-{#            <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }} <br/>#}
-{#            {% for f in dia.franjes_horaries.all %}#}
-{#                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }} <br>#}
-{#            {% endfor %}#}
-{##}
-{##}
-{#          <input type="radio" name="{{ dia.pk }}" value="female"> Female<br>#}
-{#          <input type="radio" name="{{ dia.pk }}" value="other"> Other<br>#}
-{#    {% endfor %}#}
-
-{#  <input type="text" id="datepicker" size="30">#}
-  <input type="submit" value="Grabar">
-</form>
     <br/><br/>
-{#    <div id='calendar'></div>#}
+      <input type="submit" value="Grabar" style="position: relative; float: left">
+    </form>
 {% endblock %}

@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
-import datetime
-
+import datetime, random
 
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
@@ -53,19 +52,19 @@ class Frequencia(models.Model):
         return "%s" % (self.nom)
 
     def freq_list(self):
-        if self.num == 0:  #una sola vegada
-            return Frequencia.objects.filter(pk=self.pk)
-        if self.num == 5:  #més d'una vegada
-            return Frequencia.objects.filter(num__in = [0, 5])
-        if self.num == 1:  #cada setmana
-            return Frequencia.objects.filter(num__in = [0, 1, 2, 3, 4, 5])
-        if self.num == 2:  #cada 2 setmanes
-            return Frequencia.objects.filter(num__in = [0, 2, 4, 5])
-        if self.num == 3:  #cada 3 setmanes
-            return Frequencia.objects.filter(num__in = [0, 3, 5])
-        if self.num == 4:  #cada 4 setmanes
-            return Frequencia.objects.filter(num__in = [0, 4, 5])
 
+        if self.num == 1:  #cada setmana
+            return Frequencia.objects.filter(num__in = [1, 2, 3, 4, 5, 6])
+        if self.num == 2:  #cada 2 setmanes
+            return Frequencia.objects.filter(num__in = [2, 4, 5, 6])
+        if self.num == 3:  #cada 3 setmanes
+            return Frequencia.objects.filter(num__in = [3, 5, 6])
+        if self.num == 4:  #cada 4 setmanes
+            return Frequencia.objects.filter(num__in = [4, 5, 6])
+        if self.num == 5:  #més d'una vegada
+            return Frequencia.objects.filter(num__in = [5, 6])
+        if self.num == 6:  #una sola vegada
+            return Frequencia.objects.filter(num = 6)
 
 
 
@@ -83,7 +82,7 @@ class Node(models.Model):
     text = models.TextField(max_length=1000)
     frequencia = models.ForeignKey(Frequencia)
     productors = models.ManyToManyField(Productor, blank=True, related_name='nodes')
-    privat = models.NullBooleanField()
+    # privat = models.NullBooleanField()
 
     def __str__(self):
         return "%s %s" % (self.nom, self.poblacio)
@@ -92,16 +91,7 @@ class Node(models.Model):
         return self.dies_entrega.filter(date__gte=datetime.datetime.now()).order_by('date')[0:6]
 
     def get_frequencia(self):
-        if self.frequencia.num == 0:
-            return self.frequencia.freq_list().order_by('num').first()
-        else:
-            return self.frequencia.freq_list().filter(num__gt=0).order_by('num').first()
-    #
-    # def dies_entrega_passats(self):
-    #     return self.dies_entrega.filter(date__lte=datetime.datetime.today())
-    #
-    # def dies_entrega_futurs(self):
-    #     return self.dies_entrega.filter(date__gte=datetime.datetime.today())
+        return self.frequencia.freq_list().order_by('num').first()
 
 
 
@@ -149,9 +139,6 @@ class DiaEntrega(models.Model):
     def franja_inici(self):
         return self.franjes_horaries.order_by("inici").first()
 
-    # def franja_final(self):
-    #     return self.franjes_horaries.order_by("-final").first()
-
 
 
 class Etiqueta(models.Model):
@@ -161,9 +148,6 @@ class Etiqueta(models.Model):
     def __str__(self):
         return self.nom
 
-
-
-import random
 
 class Producte(models.Model):
 
@@ -323,7 +307,7 @@ class Comanda(models.Model):
 
 class Entrega(models.Model):
 
-    dia_entrega = models.ForeignKey(DiaEntrega, related_name='entrega') #inclou el node
+    dia_entrega = models.ForeignKey(DiaEntrega, related_name='entregas') #inclou el node
     comanda = models.ForeignKey(Comanda, related_name='entregas')
     data_comanda = models.DateTimeField(auto_now_add=True)
 

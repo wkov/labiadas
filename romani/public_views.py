@@ -395,7 +395,7 @@ class ComandaFormBaseView(FormView):
 
 
 
-        if frequencia == '0':
+        if frequencia == '6':   #freqüència: una sola vegada
             stock_result = stock_calc(format, data_entrega, cantitat)
             # format.stock_fix = format.stock_fix - int(cantitat)
             # format.save()
@@ -413,7 +413,7 @@ class ComandaFormBaseView(FormView):
                 ret = {"contracte": 0, "success": 0}
                 messages.error(self.request, (u"Disculpa, NO disposem de la cantitat sol·licitada."))
 
-        else:
+        else:     #freqüència: més d'una vegada o periòdic
 
             dies_entrega = prox_calc(format, lloc_obj, data_entrega, franja, freq)
 
@@ -435,7 +435,7 @@ class ComandaFormBaseView(FormView):
                 messages.error(self.request, (u"Disculpa, en algun dels dies seleccionats s'acaba d'esgotar el estoc disponible del producte"))
                 ret = {"contracte": 0, "success": 0}
             else:
-                messages.success(self.request, (u"Comanda realitzada correctament"))
+                # messages.success(self.request, (u"Comanda realitzada correctament"))
                 ret = {"contracte": 1, "success": 1, "pk": v.pk}
                 notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
                 description="a la cistella" , timestamp=timezone.now())
@@ -483,15 +483,15 @@ def diesEntregaView(request, pk, pro):
     dies_entrega_ini = DiaEntrega.objects.filter(pk__in=pk2_lst)
 
 
-    # Llistat de dies passats en que te entregues de la mateixa comanda
+    # Llistat de dies passats en que té entregues de la mateixa comanda
     pk3_lst = set()
     for d in Entrega.objects.filter(comanda=comanda, dia_entrega__node=comanda.node, dia_entrega__date__lte=date).order_by('dia_entrega__date'):
         aux = d.dia_entrega.franja_inici()
         daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day, aux.inici.hour, aux.inici.minute)
         if daytime < date:
-            pk3_lst.add(d.dia_entrega.pk)
+            pk3_lst.add(d.pk)
 
-    dies_entrega_pas = DiaEntrega.objects.filter(pk__in=pk3_lst).exclude(pk__in=pk_lst)
+    entregas_pas = Entrega.objects.filter(pk__in=pk3_lst).exclude(dia_entrega__pk__in=pk_lst)
 
 
     if request.POST:
@@ -533,7 +533,7 @@ def diesEntregaView(request, pk, pro):
         except:
             pass
 
-    return render(request, "dies_comanda.html",{'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles, 'dies_entrega_ini': dies_entrega_ini, 'dies_entrega_pas': dies_entrega_pas })
+    return render(request, "dies_comanda.html",{'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles, 'dies_entrega_ini': dies_entrega_ini, 'entregas_pas': entregas_pas })
 
 
 

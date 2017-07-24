@@ -22,9 +22,9 @@ class tipusproducteAdmin(admin.ModelAdmin):
     list_filter = ['nom','preu', 'productor']
 
 class comandaAdmin(admin.ModelAdmin):
-    list_display = ('data_comanda','format','externa','client')
-    search_fields = ['format__producte', 'data_comanda','format','externa','client']
-    list_filter = ['format__producte','data_comanda','format','externa','client',]
+    list_display = ('pk', 'data_comanda','format','cantitat','externa','client', 'frequencia')
+    search_fields = ['format__producte', 'data_comanda','format','externa','client', 'frequencia']
+    list_filter = ['format__producte','data_comanda','format','externa','client','frequencia']
 
 
 class entregaAdmin(admin.ModelAdmin):
