@@ -173,11 +173,9 @@ def ConvidarView(request):
     if request.POST:
 
         if up.invitacions > 0:
-            # a = request
-            #
+
             email = request.POST.get('email')
 
-            # ret = {}
             if email:
                 #comprobem que els mails no estiguin donats de alta a la xarxa
                 alta = User.objects.filter(email = email).first()
@@ -187,28 +185,17 @@ def ConvidarView(request):
                             k = generate_key(request)
                             enviarInvitacio(email, up.user.get_full_name(), k)
                             up.invitacions = up.invitacions - 1
-
-                            # conv = Convidat.objects.create(mail = email)
-                            # conv.save()
-                            #
-                            # up.convidats.add(conv)
-
                             up.save()
 
                             notify.send(up, recipient=up.user, verb="",
                                 description=", has convidat un nou usuari. " , timestamp=timezone.now())
                             message_email = "S'ha enviat la sol·licitud al correu electrònic correctament"
-                        # up = UserProfile.objects.get(user = request.user)
                         except:
                            message_email = "No s'ha pogut enviar la sol·licitud al correu electrònic"
                     else:
-                        # return HttpResponse(json.dumps(ret), content_type='application/json')
                         message_email = "No s'ha pogut enviar la sol·licitud al correu electrònic"
-                    # return HttpResponse(json.dumps(ret), content_type='application/json')
                 else:
                     message_email = "La direcció de correu electrònic ja té usuari a la xarxa"
-            # cantitat = request.POST.get('cantitat')
-            # lloc_entrega = request.POST.get('lloc_entrega')
             else:
                 k = generate_key(request)
                 up.invitacions = up.invitacions - 1
@@ -240,10 +227,10 @@ def DomiciliView(request):
 
             if node.a_domicili == True:
                 json_obj = dict(carrer = up.carrer, numero = up.numero, pis = up.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
-                                geopuntx_lat = up.punt_lat, geopuntx_lng = up.punt_lng, frequencia = nf.nom)
+                                frequencia = nf.nom)
             else:
                 json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
-                                geopuntx_lat = str(node.position.latitude), geopuntx_lng = str(node.position.longitude), frequencia = nf.nom )
+                                 frequencia = nf.nom )
 
             return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
@@ -271,7 +258,7 @@ def DomiciliView(request):
                 json_obj = dict(poblacio = node.poblacio, a_domicili = node.a_domicili, frequencia = nf.nom)
             else:
                 json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
-                                geopuntx_lat = str(node.position.latitude), geopuntx_lng = str(node.position.longitude), frequencia = nf.nom )
+                                frequencia = nf.nom )
 
             return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
@@ -333,6 +320,7 @@ def NodeDetailView(request, pk):
     return render(request, "node_detail.html", {'node': node})
 
 
+
 def CoordenadesView(request):
 
     if 'lloc_entrega_reg' in request.POST:
@@ -344,8 +332,6 @@ def CoordenadesView(request):
     else:
         l = request.POST.get('lloc_entrega_perfil')
 
-
-
     json_obj = dict(
         Lat = str(node.position.latitude),
         Lng = str(node.position.longitude)
@@ -353,9 +339,10 @@ def CoordenadesView(request):
 
     return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
+
+
+
 def AllCoordenadesView(request):
-
-
 
         nodes = Node.objects.all()
 
@@ -363,7 +350,6 @@ def AllCoordenadesView(request):
 
         for node in nodes:
             if node.position:
-            # if node.a_domicili == False:
                 json_obj = dict(
                 Lat = str(node.position.latitude),
                 Lng = str(node.position.longitude),
@@ -374,10 +360,12 @@ def AllCoordenadesView(request):
 
         return HttpResponse(json.dumps(json_res), content_type='application/json')
 
+
+
+
 def NodeSaveView(request):
 
     if request.POST:
-
 
         v = UserProfile.objects.get(user = request.user)
 
@@ -398,42 +386,17 @@ def NodeSaveView(request):
                         v.numero = request.POST.get('numerox')
                     if 'pisx' in request.POST:
                         v.pis = request.POST.get('pisx')
-                    if 'punt_latx' in request.POST:
-                        v.punt_lat = request.POST.get('punt_latx')
-                    if 'punt_lngx' in request.POST:
-                        v.punt_lng = request.POST.get('punt_lngx')
-                # if o != "":
-                #     v.nom_complet = o
+                    # if 'punt_latx' in request.POST:
+                    #     v.punt_lat = request.POST.get('punt_latx')
+                    # if 'punt_lngx' in request.POST:
+                    #     v.punt_lng = request.POST.get('punt_lngx')
                 v.save()
 
 
 
                 return HttpResponse(json.dumps("OK"), content_type='application/json')
 
-# def StockCheckView(request):
-#     if request.POST:
-#         if 'id_cantitat' in request.POST:
-#             l = request.POST.get('id_cantitat')
-#         if 'id_format' in request.POST:
-#             f = request.POST.get('id_format')
-#
-#         node = get_object_or_404(Node, pk=l)
-#         # producte = Producte.objects.filter(pk=g).first()
-#         format = TipusProducte.objects.get(pk=f)
-#         json_res = []
-#         date = datetime.date.today() + timedelta(hours=format.productor.hores_limit)
-#         # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
-#         for dia in format.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date)[:5]:
-#             stock_result = stock_check(format, dia.dia)
-#             if stock_result:
-#                 day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
-#                 a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
-#                 json_obj = dict(
-#                     dia = dia.dia.dia(),
-#                     date = a,
-#                     pk = dia.dia.pk)
-#                 json_res.append(json_obj)
-#         return HttpResponse(json.dumps(json_res), content_type='application/json')
+
 
 def NodeCalcView(request):
     if request.POST:
@@ -596,11 +559,6 @@ class UserProfileEditView(UpdateView):
         context = super(UserProfileEditView, self).get_context_data(**kwargs)
         nodes = Node.objects.exclude(pk=1)
         context['nodes'] = nodes
-        # now = datetime.datetime.now()
-        # comandes = Comanda.objects.filter(client=self.request.user).filter(Q(dia_entrega__date__gte=now)|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
-        # contractes = Contracte.objects.filter(client=self.request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
-        # context['comandes'] = comandes
-        # context['contractes']  = contractes
         u = UserProfile.objects.get(user=self.request.user)
         s = u.lloc_entrega_perfil.get_frequencia()
         if s:
@@ -630,31 +588,3 @@ class UserProfileEditView(UpdateView):
 
         messages.success(self.request, (u"S'han desat les modificacions realitzades"))
         return reverse("coope")
-
-#
-# def stock_check(format, dia):
-#      # Comprova que hi hagi stock
-#      d = format.dies_entrega.get(dia=dia)
-#      if d.tipus_stock == '0':
-#             try:
-#                 diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=format.productor, caducitat__gt=d.dia.date).order_by('caducitat').first()
-#                 if diaproduccio:
-#                    s = format.stocks.get(dia_prod=diaproduccio)
-#                    if s.stock() > 0:
-#                        return True
-#                    else:
-#                        return False
-#             except:
-#                 return False
-#
-#      # elif d.tipus_stock == '1':
-#      #     if format.stock_fix:
-#      #        if format.stock_fix > 0:
-#      #            return True
-#      #        else:
-#      #            return False
-#      #     else:
-#      #         return False
-#
-#      elif d.tipus_stock == '2':
-#             return True

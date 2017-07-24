@@ -336,7 +336,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
 
     productor = Productor.objects.get(pk=pk)
     diaentrega = DiaEntrega.objects.get(pk=dataentrega)
-    diaproduccio = DiaProduccio.objects.filter(date__lte=diaentrega.date, productor=productor).order_by('-date').first()
+    # diaproduccio = DiaProduccio.objects.filter(date__lte=diaentrega.date, productor=productor).order_by('-date').first()
     formats = TipusProducte.objects.filter(producte__productor=productor)
     diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor=productor)
     productes = Producte.objects.filter(productor=productor)
@@ -402,7 +402,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
     # contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
 
     return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'productes': productes, 'formatstockform': formatstockform,
-                                                                 'formats_sel': formats_sel, 'comandes': comandes, 'dia_prod': diaproduccio})
+                                                                 'formats_sel': formats_sel, 'comandes': comandes})
 
 
 from django.forms import formset_factory, modelformset_factory

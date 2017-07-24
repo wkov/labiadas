@@ -8,133 +8,127 @@
       <script>
   $( function() {
     $( "#tabs" ).tabs();
-{#    $('#tabs-2').bind('click', function() {#}
-{#                coord();#}
-{#            });#}
+
     $('#id_tabs2').bind('click', function() {
             coord2();
         });
 
   } );
 
-
-
-
-
-           </script>
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUirWAP7iFxFp7W1jmhoTrOYzZ-Z2sYZ8&callback=initMap"
     async defer></script>
 
 <script>
-      var map;
-      var marker_d;
-      function initMap() {
-          var loc;
-          loc = new google.maps.LatLng(41.539064, 2.2130028);
-          map = new google.maps.Map(document.getElementById('map'), {
-              center: loc,
-              zoom: 12,
+{#      var map;#}
+{#      var marker_d;#}
+{#      function initMap() {#}
+{#          var loc;#}
+{#          loc = new google.maps.LatLng(41.539064, 2.2130028);#}
+{#          map = new google.maps.Map(document.getElementById('map'), {#}
+{#              center: loc,#}
+{#              zoom: 12,#}
               {#          mapTypeId: 'satellite'#}
-          });
+{#          });#}
+{##}
+{##}
+{#          $.post("/allcoordenades/", function (data) {#}
+{#              var i = 0;#}
+{#              var marker = [];#}
+{#              var image = '/static/img/u-pick_stand.png'#}
+{#              var img_domicili = '/static/img/vespa.png'#}
+{#              data.forEach(function (arrayItem) {#}
+{#                  var contentString = '<div id="content">' +#}
+{#                          '<div id="siteNotice">' +#}
+{#                          '</div>' +#}
+{#                          '<h1 id="firstHeading" class="firstHeading">' +#}
+{#                          arrayItem.nom +#}
+{#                          '</h1>' +#}
+{#                          '<div id="bodyContent">' +#}
+{#                          '<p><b>' +#}
+{#                          arrayItem.nom +#}
+{#                          '</b>,' +#}
+{#                          arrayItem.text +#}
+{#                          '</p>' +#}
+{#                          '</div>' +#}
+{#                          '</div>';#}
+{##}
+{#                  var infowindow = new google.maps.InfoWindow({#}
+{#                      content: contentString#}
+{#                  });#}
+{##}
+{#                  var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);#}
+{#                  if (arrayItem.a_domicili == "True") {#}
+{#                      marker[i] = new google.maps.Marker({#}
+{#                          position: place,#}
+{#                          title: "A Domicili",#}
+{#                          map: map,#}
+{#                          icon: img_domicili#}
+{#                      });#}
+{#                  } else {#}
+{#                      marker[i] = new google.maps.Marker({#}
+{#                          position: place,#}
+{#                          title: arrayItem.nom,#}
+{#                          map: map,#}
+{#                          icon: image#}
+{#                      });#}
+{#                  }#}
+{#                  marker[i].addListener('click', function () {#}
+{#                      infowindow.open(map, marker[i]);#}
+{#                  });#}
+{##}
+{#                  i++;#}
+{#              });#}
+{##}
+{#          });#}
+{##}
+{##}
+{#          $.post("/horari/", function (data) {#}
+{#              var acc = document.getElementById('accordion');#}
+{#              var j;#}
+{#              var h;#}
+{#              var b;#}
+{#              var t = "";#}
+{#              var g;#}
+{#              data.forEach(function (arrayItemx) {#}
+{##}
+{#                  h = "<a>" + arrayItemx.dia + "</a>";#}
+{#                  g = "<div>";#}
+{##}
+{#                  arrayItemx.franjes.forEach(function (arrayItem) {#}
+{#                      g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";#}
+{#                  });#}
+{#                  t = t + h + g + "</div>";#}
+{##}
+{#              });#}
+{##}
+{#              t = t + "</div>";#}
+{##}
+{#              acc.innerHTML = t;#}
+{##}
+{##}
+{#              $("#accordion").accordion("refresh");#}
+{##}
+{#          });#}
+{##}
+{#      }#}
 
-
-          $.post("/allcoordenades/", function (data) {
-              var i = 0;
-              var marker = [];
-              var image = '/static/img/u-pick_stand.png'
-              var img_domicili = '/static/img/vespa.png'
-              data.forEach(function (arrayItem) {
-                  var contentString = '<div id="content">' +
-                          '<div id="siteNotice">' +
-                          '</div>' +
-                          '<h1 id="firstHeading" class="firstHeading">' +
-                          arrayItem.nom +
-                          '</h1>' +
-                          '<div id="bodyContent">' +
-                          '<p><b>' +
-                          arrayItem.nom +
-                          '</b>,' +
-                          arrayItem.text +
-                          '</p>' +
-                          '</div>' +
-                          '</div>';
-
-                  var infowindow = new google.maps.InfoWindow({
-                      content: contentString
-                  });
-
-                  var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
-                  if (arrayItem.a_domicili == "True") {
-                      marker[i] = new google.maps.Marker({
-                          position: place,
-                          title: "A Domicili",
-                          map: map,
-                          icon: img_domicili
-                      });
-                  } else {
-                      marker[i] = new google.maps.Marker({
-                          position: place,
-                          title: arrayItem.nom,
-                          map: map,
-                          icon: image
-                      });
-                  }
-                  marker[i].addListener('click', function () {
-                      infowindow.open(map, marker[i]);
-                  });
-
-                  i++;
-              });
-
-          });
-
-
-          $.post("/horari/", function (data) {
-              var acc = document.getElementById('accordion');
-              var j;
-              var h;
-              var b;
-              var t = "";
-              var g;
-              data.forEach(function (arrayItemx) {
-
-                  h = "<a>" + arrayItemx.dia + "</a>";
-                  g = "<div>";
-
-                  arrayItemx.franjes.forEach(function (arrayItem) {
-                      g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";
-                  });
-                  t = t + h + g + "</div>";
-
-              });
-
-              t = t + "</div>";
-
-              acc.innerHTML = t;
-
-
-              $("#accordion").accordion("refresh");
-
-          });
-
-      }
-
-          function coord() {
-
-              $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function (data) {
-
-                  var Lat = data["Lat"];
-                  var Lng = data["Lng"];
-                  var location = new google.maps.LatLng(Lat, Lng);
-
-                  map.setZoom(15);
-
-                  google.maps.event.trigger(map, 'resize');
-                  map.setCenter(location);
-
-
-              });
-          }
+{#          function coord() {#}
+{##}
+{#              $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function (data) {#}
+{##}
+{#                  var Lat = data["Lat"];#}
+{#                  var Lng = data["Lng"];#}
+{#                  var location = new google.maps.LatLng(Lat, Lng);#}
+{##}
+{#                  map.setZoom(15);#}
+{##}
+{#                  google.maps.event.trigger(map, 'resize');#}
+{#                  map.setCenter(location);#}
+{##}
+{##}
+{#              });#}
+{#          }#}
 
 
 
@@ -187,8 +181,6 @@
                         marker[i] = new google.maps.Marker({
                           position: place,
                           title: "A Domicili",
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
                           map: map,
                           icon: img_domicili
                     });
@@ -196,8 +188,6 @@
 					    marker[i] = new google.maps.Marker({
                           position: place,
                           title: arrayItem.nom,
-{#                          style: {float: left},#}
-{#                          labelStyle: {opacity: 0.8, padding: 20px},#}
                           map: map,
                           icon: image
                     });
@@ -234,15 +224,9 @@
 
 					t = t + "</div>";
 
-
-                    //$('#accordion').innerHTML = t;
-    				//$('#accordion').accordion("refresh");
-
 					acc.innerHTML = t;
 
 					$( "#accordion" ).accordion( "refresh" );
-                    //
-					//acc.accordion("refresh");
 
 				});
 
@@ -289,18 +273,18 @@ jQuery(document).ready(function($) {
                     numero.value = data["numero"];
                     pis.value = data["pis"];
                     poblacio.value = data["poblacio"];
-                    lat = data["geopuntx_lat"];
-                    punt_lat.value = lat;
-                    if (data["geopuntx_lat"]) {
-                    } else {
-                        punt_lat.placeholder = "clica en el mapa (opcional)";
-                    }
-                    lng = data["geopuntx_lng"];
-                    punt_lng.value = lng;
-                    if (data["geopuntx_lng"]) {
-                    } else {
-                        punt_lng.placeholder = "clica en el mapa (opcional)";
-                    }
+{#                    lat = data["geopuntx_lat"];#}
+{#                    punt_lat.value = lat;#}
+{#                    if (data["geopuntx_lat"]) {#}
+{#                    } else {#}
+{#                        punt_lat.placeholder = "clica en el mapa (opcional)";#}
+{#                    }#}
+{#                    lng = data["geopuntx_lng"];#}
+{#                    punt_lng.value = lng;#}
+{#                    if (data["geopuntx_lng"]) {#}
+{#                    } else {#}
+{#                        punt_lng.placeholder = "clica en el mapa (opcional)";#}
+{#                    }#}
                 });
         var acc = document.getElementById('accordion');
         $.post("/horari/", $(this).serializeArray(),
@@ -330,6 +314,20 @@ jQuery(document).ready(function($) {
                     //acc.accordion("refresh");
 
                 });
+
+        $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function (data) {
+
+                  var Lat = data["Lat"];
+                  var Lng = data["Lng"];
+                  var location = new google.maps.LatLng(Lat, Lng);
+
+                  map.setZoom(15);
+
+                  google.maps.event.trigger(map, 'resize');
+                  map.setCenter(location);
+
+
+              });
     });
 
 
@@ -399,7 +397,7 @@ jQuery(document).ready(function($) {
             <div id="tabs-2">
                 <span class="glyphicon glyphicon-flag"></span>
                 <label for="lloc_entrega_perfil">Lloc d'entrega:</label> </br>
-                        <select id="lloc_entrega_perfil" name="lloc_entrega_perfil" class="lloc_entrega_perfil form-control" onchange="coord()">
+                        <select id="lloc_entrega_perfil" name="lloc_entrega_perfil" class="lloc_entrega_perfil form-control">
                        {% for lloc in nodes %}
                         {%  if lloc.pk == object.lloc_entrega_perfil.pk %}
                                 <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
@@ -413,22 +411,22 @@ jQuery(document).ready(function($) {
                     </div>
 
                     {% if object.lloc_entrega_perfil.a_domicili == True %}
-                                {% if object.punt_lat %}
+{#                                {% if object.punt_lat %}#}
+{#                                    <div id="geodiv" name="geodiv">#}
+{#                                        <div id="map"></div><br/>#}
+{#                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"#}
+{#                                                   value="{{ object.punt_lat }}"  placeholder="clica en el mapa" />#}
+{#                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" id="punt_lng" name="punt_lng"  value="{{ object.punt_lng }}" class="form-control" placeholder="(opcional)" />#}
+{#                                    </div>#}
+{#                                {% else %}#}
                                     <div id="geodiv" name="geodiv">
                                         <div id="map"></div><br/>
-                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"
-                                                   value="{{ object.punt_lat }}"  placeholder="clica en el mapa" />
-                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" id="punt_lng" name="punt_lng"  value="{{ object.punt_lng }}" class="form-control" placeholder="(opcional)" />
+{#                                        <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">#}
+{#                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />#}
+{#                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lng" name="punt_lng"  placeholder="(opcional)" />#}
+{#                                        </span>#}
                                     </div>
-                                {% else %}
-                                    <div id="geodiv" name="geodiv">
-                                        <div id="map"></div><br/>
-                                        <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">
-                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />
-                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lng" name="punt_lng"  placeholder="(opcional)" />
-                                        </span>
-                                    </div>
-                                {% endif %}
+{#                                {% endif %}#}
                                 <br/><br/><br/><br/>
                                 <div >
                                 <label style="float: left" for="carrer">Carrer: </label>

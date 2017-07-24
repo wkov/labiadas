@@ -22,29 +22,9 @@ class ComandaProForm(forms.ModelForm):
     def __init__(self, productor, *args, **kwargs):
 
         super(ComandaProForm, self).__init__(*args, **kwargs)
-        # self.fields["producte"].queryset = Producte.objects.filter(productor=productor)
         self.fields["format"].queryset = TipusProducte.objects.filter(productor=productor)
         self.fields["format"].label = "Producte"
-        # self.fields["client"].queryset = TipusProducte.objects.filter(productor=productor)
-        eventList = set()
-        # productes = Producte.objects.filter(productor=productor)
-        formats = TipusProducte.objects.filter(productor=productor)
-
-        # for p in formats:
-        #     for d in DiaEntrega.objects.filter(formats__format__id__exact=p.id):
-        #         if d:
-        #             eventList.add(d.pk)
-
-        # self.fields["dia_entrega"].queryset = DiaEntrega.objects.filter(pk__in=eventList)
-        # self.fields["franja_horaria"].queryset = FranjaHoraria.objects.filter(node__productors=productor)
         self.fields["client"].queryset = User.objects.filter(user_profile__lloc_entrega_perfil__in=productor.nodes.all())
-        # self.fields["lloc_entrega"].queryset = Node.objects.filter(productors=productor)
-
-    # def save(self, *args, **kwargs):
-    #     comanda = En.objects
-    #
-    #     comanda_form = super(ComandaProForm, self).save(*args,**kwargs)
-    #     return comanda_form
 
 
 class InfoForm(forms.ModelForm):
@@ -114,7 +94,6 @@ class ProductorForm(forms.ModelForm):
         self.fields["responsable"].widget = CheckboxSelectMultiple()
         g = Group.objects.get(name='Productors')
         self.fields["responsable"].queryset = g.user_set.all()
-        # self.fields["responsable"].queryset = User.objects.filter(pk=user.pk)
         # self.fields["responsable"].initial = user
 
 class AdjuntForm(forms.ModelForm):
@@ -128,20 +107,16 @@ class AdjuntForm(forms.ModelForm):
         super(AdjuntForm, self).__init__(*args, **kwargs)
         self.fields["productor"].queryset = Productor.objects.filter(pk=productor.pk)
         self.fields["productor"].initial = productor
-        # self.fields["adjunts"].queryset = Adjunt.objects.filter(pk=productor.pk)
 
 
 class DiaEntregaForm(forms.ModelForm):
 
     date = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'}),
                                  input_formats=('%d/%m/%Y',))
-    # date = forms.DateField(input_formats='%d/%m/%Y')
 
     class Meta:
         model = DiaEntrega
         fields = ("date", "franjes_horaries", "node")
-    #     # exclude = ("")
-    #     widgets = {'date': forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'})}
 
     def __init__(self, node, *args, **kwargs):
 
@@ -191,13 +166,6 @@ class StockForm(forms.ModelForm):
         super(StockForm, self).__init__(*args, **kwargs)
         self.fields["stock_ini"].initial = self.instance.stock_ini
         self.fields['format'].widget = forms.HiddenInput()
-        # self.fields["format"].
-        # self.fields['format'].queryset = TipusProducte.objects.filter(pk__lte=10)
-        # self.fields['format'].queryset = TipusP
-
-# class ProductorDiaEntregaForm(forms.Form):
-#
-#     productes = forms.MultipleChoiceField(widget=CheckboxSelectMultiple())
 
 
 class FranjaHorariaForm(forms.ModelForm):
@@ -205,7 +173,6 @@ class FranjaHorariaForm(forms.ModelForm):
     class Meta:
         model = FranjaHoraria
         fields = ("inici", "final", "node")
-        # exclude = ("node", )
 
     def __init__(self, node, *args, **kwargs):
         super(FranjaHorariaForm, self).__init__(*args, **kwargs)
@@ -225,7 +192,6 @@ class NodeForm(forms.ModelForm):
         self.fields["responsable"].widget=CheckboxSelectMultiple()
         g = Group.objects.get(name='Nodes')
         self.fields["responsable"].queryset = g.user_set.all()
-        # self.fields["frequencies"].widget=CheckboxSelectMultiple()
         self.fields["frequencia"].queryset = Frequencia.objects.all()
 
 
@@ -236,63 +202,6 @@ class ProducteForm(forms.ModelForm):
         fields = ("nom", "etiqueta", "foto", "text_curt", "descripcio", "frequencies", "keywords")
         exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega", "nodes")
 
-    # def __init__(self, productor, *args, **kwargs):
-    #     super(ProducteForm, self).__init__(*args, **kwargs)
-    #     self.fields["formats"].widget = CheckboxSelectMultiple()
-    #     self.fields["formats"].queryset = TipusProducte.objects.filter(productor=productor)
-
-
-
-
-
-#
-# def stock_check_cant(format, dia, cantitat):
-#      # Comprova que hi hagi stock per a una quantitat determinada
-#      d = format.dies_entrega.get(dia=dia)
-#      if d.tipus_stock == '0':
-#             try:
-#                 diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=format.productor).order_by('-date').first()
-#                 if diaproduccio:
-#                    s = format.stocks.get(dia_prod=diaproduccio)
-#                    num = int(s.stock) - int(cantitat)
-#                    if num >= 0:
-#                        return True
-#                    else:
-#                        return False
-#             except:
-#                 return False
-#
-#      elif d.tipus_stock == '1':
-#             num = int(format.stock_fix) - int(cantitat)
-#             if num >= 0:
-#                 return True
-#             else:
-#                 return False
-#
-#      elif d.tipus_stock == '2':
-#             return True
-
-
-
-# class ContracteForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Contracte
-#         fields = ("dies_entrega", )
-#         labels = {"dies_entrega": "Dies d'entrega"}
-#
-#     def __init__(self, *args, **kwargs):
-#         super(ContracteForm, self).__init__(*args, **kwargs)
-#         self.fields["dies_entrega"].widget = CheckboxSelectMultiple()
-#         pk_lst = set()
-#
-#         date = datetime.date.today() + timedelta(hours=int(self.instance.format.productor.hores_limit))
-#         for d in DiaEntrega.objects.filter(formats__format__id__exact=self.instance.format.id, node=self.instance.lloc_entrega, date__gt=date).order_by('date'):
-#             stock_result = stock_check_cant(self.instance.format, d, self.instance.cantitat)
-#             if stock_result:
-#                 pk_lst.add(d.pk)
-#
-#         self.fields["dies_entrega"].queryset = DiaEntrega.objects.filter(pk__in=pk_lst)
 
 
 class NodeProductorsForm(forms.ModelForm):

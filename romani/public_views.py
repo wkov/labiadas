@@ -115,7 +115,7 @@ def coopeView(request):
                 if stock_result:
                     prod_aux.add(t.producte.pk)
 
-    p = Producte.objects.filter(esgotat=False, pk__in=prod_aux).distinct()
+    p = Producte.objects.filter(pk__in=prod_aux).distinct()
 
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
@@ -182,7 +182,7 @@ def etiquetaView(request,pk):
 
 
 
-    p = Producte.objects.filter(esgotat=False, pk__in=prod_aux).distinct()
+    p = Producte.objects.filter(pk__in=prod_aux).distinct()
 
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
@@ -206,19 +206,11 @@ def etiquetaView(request,pk):
 def productorView(request,pk):
 
     productor = Productor.objects.filter(pk=pk).first()
-    # productes = Producte.objects.filter(productor=productor)
-
-
     user_p = UserProfile.objects.filter(user=request.user).first()
-
     dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
-
-    p = Producte.objects.filter(productor=productor, esgotat=False, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
-
+    p = Producte.objects.filter(productor=productor, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
     adjunts = Adjunt.objects.filter(productor=productor)
-
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
-
 
     return render(request, "productor.html",{'productor': productor, 'productes': productes, 'adjunts': adjunts, 'up': user_p})
 
@@ -227,9 +219,6 @@ def comandesView(request):
     now = datetime.datetime.now()
     entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
     comandes = Comanda.objects.filter(entregas=entregas).distinct()
-    # contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
-
-    # nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
     return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
@@ -239,29 +228,20 @@ def entregasView(request):
 
     now = datetime.datetime.now()
     entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('dia_entrega__date')
-    # contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__lte=now) & Q(data_fi__isnull=False)).order_by('data_fi')
-
-
     voted = Vote.objects.filter(voter=request.user)
 
     comandes_in_page = [comanda.pk for comanda in entregas]
+
     upvoted_comandes = voted.filter(entrega_id__in=comandes_in_page, positiu = True)
+
     if upvoted_comandes:
         upvoted_comandes = upvoted_comandes.values_list('entrega_id', flat=True)
+
     downvoted_comandes = voted.filter(entrega_id__in=comandes_in_page, positiu = False)
+
     if downvoted_comandes:
         downvoted_comandes = downvoted_comandes.values_list('entrega_id', flat=True)
 
-    # contractes_in_page = [contracte.pk for contracte in contractes]
-    # upvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=True)
-    # if upvoted_contractes:
-    #     upvoted_contractes = upvoted_contractes.values_list('contracte_id', flat=True)
-    # downvoted_contractes = voted.filter(contracte_id__in=contractes_in_page, positiu=False)
-    # if downvoted_contractes:
-    #     downvoted_contractes = downvoted_contractes.values_list('contracte_id', flat=True)
-
-
-    # nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
     return render(request, "entregas.html",{'comandes': entregas, 'up': user_p, 'upvoted_comandes': upvoted_comandes,
@@ -277,21 +257,11 @@ def comandaDelete(request, pk):
     comandaDel = Comanda.objects.filter(pk=pk).first()
     message = ""
 
-
-            #
-            # date = datetime.datetime.now() + timedelta(hours=comandaDel.format.productor.hores_limit)
-            # # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
-            # for dia in Coformat.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date):
-            #     aux = dia.dia.franja_inici()
-            #     daytime = datetime.datetime(dia.dia.date.year, dia.dia.date.month, dia.dia.date.day, aux.inici.hour, aux.inici.minute)
-            #     if daytime > date:
-
-
-
-
     dia = datetime.datetime.now() + timedelta(hours=comandaDel.format.productor.hores_limit)
-    aux = comandaDel.dia_entrega.franja_inici()
-    daytime = datetime.datetime(dia.year, dia.month, dia.day, aux.inici.hour, aux.inici.minute)
+    prox_entrega = comandaDel.prox_entrega()
+    dia_prox_entrega = prox_entrega.dia_entrega
+    aux = dia_prox_entrega.franja_inici()
+    daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
     # tt = comandaDel.dia_entrega.date - time
     if daytime > dia:
         notify.send(comandaDel.format.producte, recipient = request.user,  verb="Has tret ",
@@ -301,105 +271,12 @@ def comandaDelete(request, pk):
 
         message = u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"
 
-    comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
     now = datetime.datetime.now()
-    # contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
-
-    nodes = Node.objects.all()
+    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
+    comandes = Comanda.objects.filter(entregas=entregas).distinct()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-
-
-    return render(request, "comandes.html",{'comandes': comandes, 'message': message, 'nodes': nodes, 'up': user_p})
-
-# def contracteDelete(request, pk):
-#
-#
-#     contracteDel = Contracte.objects.filter(pk=pk).first()
-#     # time = timedelta(hours=contracteDel.producte.productor.hores_limit)
-#     message = ""
-#     if contracteDel.prox_entrega():
-#
-#         dia = datetime.datetime.now() + timedelta(hours=contracteDel.format.productor.hores_limit)
-#         aux = contracteDel.dia_entrega.franja_inici()
-#         daytime = datetime.datetime(dia.year, dia.month, dia.day, aux.inici.hour, aux.inici.minute)
-#
-#
-#
-#         # t = contracteDel.prox_entrega()
-#         # tt = t.date - time
-#
-#         if daytime > dia:
-#             notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
-#                   description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
-#             contracteDel.data_fi = datetime.datetime.now()
-#             contracteDel.save()
-#         else:
-#             message = u"El productor ja està preparant la comanda i no podem treure el producte de la cistella. Quan hagis rebut aquesta entrega podràs anul·lar el vincle."
-#     else:
-#         notify.send(contracteDel.producte, recipient = request.user,  verb="Has tret ",
-#               description="de la cistella" , url=contracteDel.producte.foto.url, timestamp=timezone.now())
-#         contracteDel.data_fi = datetime.datetime.now()
-#         contracteDel.save()
-#
-#
-#
-#     comandes = Comanda.objects.filter(client=request.user).filter(Q(dia_entrega__date__gte=datetime.datetime.now())|Q(dia_entrega__date__isnull=True)).order_by('-data_comanda')
-#     now = datetime.datetime.now()
-#     contractes = Contracte.objects.filter(client=request.user).filter(Q(data_comanda__gte=now)|Q(data_fi__isnull=True)).order_by('-data_comanda')
-#
-#     nodes = Node.objects.all()
-#     user_p = UserProfile.objects.filter(user=request.user).first()
-#
-#
-#     return render(request, "comandes.html",{'comandes': comandes, 'contractes': contractes, 'nodes': nodes, 'up': user_p, 'message': message})
-
-
-# class ContracteUpdateView(UpdateView):
-#     model = Contracte
-#     form_class = ContracteForm
-#     success_url="/comandes/"
-#     template_name = "romani/consumidors/contracte_form.html"
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(ContracteUpdateView, self).get_context_data(**kwargs)
-#         contracte = Contracte.objects.get(pk=self.kwargs['pk'])
-#         context['producte']=contracte.producte
-#         return context
-#
-#
-#     def form_valid(self, form):
-#
-#         if form.has_changed():
-#             s = form.cleaned_data["dies_entrega"]
-#             error = 0
-#             for r in s:
-#
-#                 if r not in form.instance.dies_entrega.all():
-#                     stock_result = stock_calc(form.instance.format, r, form.instance.cantitat)
-#
-#                     if not stock_result == True:
-#                         form.cleaned_data["dies_entrega"].remove(r)
-#                         error = error + 1
-#
-#             for x in form.instance.dies_entrega.all():
-#
-#                 if x not in s:
-#                     d = int(form.instance.cantitat)
-#                     cant = -1*d
-#                     stock_result = stock_calc(form.instance.format, x, cant)
-#
-#                     if not stock_result == True:
-#                         error = error + 1
-#
-#
-#
-#             if error > 0:
-#                 messages.error(self.request, (u"S'ha esgotat el producte per algun dels dies seleccionats"))
-#             else:
-#                 messages.success(self.request, (u"Comanda grabada correctament"))
-#
-#         return super(ContracteUpdateView, self).form_valid(form)
+    return render(request, "comandes.html",{'comandes': comandes, 'up': user_p , 'message': message})
 
 
 
@@ -696,10 +573,9 @@ def stock_check_cant(format, dia, cantitat):
      d = format.dies_entrega.get(dia=dia)
      if d.tipus_stock == '0':
             try:
-                stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__caducitat','dia_prod__date')
+                stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__node','dia_prod__caducitat','dia_prod__date')
                 for s in stocks:
                     diaproduccio = s.dia_prod
-                    # if((diaproduccio.node==dia.node)or(diaproduccio.node==None)):
                     s = format.stocks.get(dia_prod=diaproduccio)
                     num = int(s.stock()) - int(cantitat)
                     if num >= 0:

@@ -78,7 +78,7 @@ def next_day_calc(producte, node):
         a = datetime.datetime.now()
         c = b - a
         d = divmod(c.total_seconds(),86400)
-        if d[0] > 3:
+        if d[0] > 1:
             return str(int(d[0])) + " dies"
         else:
             return str(int(divmod(c.total_seconds(),3600)[0])) + " hores"

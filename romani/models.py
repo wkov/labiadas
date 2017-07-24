@@ -3,11 +3,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
-# from romani.public_views import stock_check_cant
 import datetime
 
-from django.db.models import Q
-# from romani.views import stock_check
 
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
@@ -16,12 +13,6 @@ from datetime import timedelta
 
 class Productor(models.Model):
 
-    # def validate_file(fieldfile_obj):
-    #     filesize = fieldfile_obj.file.size
-    #     megabyte_limit = 5.0
-    #     if filesize > megabyte_limit*1024*1024:
-    #         raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
-
     nom = models.CharField(max_length=20)
     responsable = models.ManyToManyField(User)
     text = models.TextField(blank=True)
@@ -29,11 +20,10 @@ class Productor(models.Model):
 
     def __str__(self):
         return self.nom
-    #
+
     def comandes_count(self):
         now=datetime.datetime.now()
         cm = Entrega.objects.filter(comanda__format__producte__productor=self).filter(dia_entrega__date__gte=now).count()
-        # ct = Contracte.objects.filter(producte__productor=self).filter(data_fi__isnull=True).count()
         return cm
 
 
@@ -53,27 +43,6 @@ class Adjunt(models.Model):
 
     def __str__(self):
         return self.arxiu.url
-
-
-# S'ha de crear un botó al calendari de productors que faciliti crear un dia de producció. en aquest el productor indica
-# els productes i formats que produirà i el stock que generarà de cada format. Després quan visita un posible dia d'entrega, a l'hora de confirmar
-# els productes i formats que porta, podrà triar entre tirar de l'stock permanent o associar el format a un dia de producció. amb lo qual
-# ja tindrem el stock que podem oferir als usuaris consumidors
-# quan portes un format d'un producte a un dia d'entrega tens 3 opcions: sense límit, límit permanent o límit de dia de produccio
-#
-# class Stock(models.Model):
-#
-#     dies_entrega = models.ManyToManyField(DiaEntrega)
-#     format = models.ForeignKey(TipusProducte)
-#     stock = models.IntegerField(blank=True, null=True)
-
-
-
-#
-
-
-
-
 
 
 class Frequencia(models.Model):
@@ -127,12 +96,12 @@ class Node(models.Model):
             return self.frequencia.freq_list().order_by('num').first()
         else:
             return self.frequencia.freq_list().filter(num__gt=0).order_by('num').first()
-
-    def dies_entrega_passats(self):
-        return self.dies_entrega.filter(date__lte=datetime.datetime.today())
-
-    def dies_entrega_futurs(self):
-        return self.dies_entrega.filter(date__gte=datetime.datetime.today())
+    #
+    # def dies_entrega_passats(self):
+    #     return self.dies_entrega.filter(date__lte=datetime.datetime.today())
+    #
+    # def dies_entrega_futurs(self):
+    #     return self.dies_entrega.filter(date__gte=datetime.datetime.today())
 
 
 
@@ -180,13 +149,8 @@ class DiaEntrega(models.Model):
     def franja_inici(self):
         return self.franjes_horaries.order_by("inici").first()
 
-    def franja_final(self):
-        return self.franjes_horaries.order_by("-final").first()
-
-
-#
-
-
+    # def franja_final(self):
+    #     return self.franjes_horaries.order_by("-final").first()
 
 
 
@@ -211,16 +175,12 @@ class Producte(models.Model):
 
     nom = models.CharField(max_length=20)
     etiqueta = models.ForeignKey(Etiqueta)
-    # formats = models.ManyToManyField(TipusProducte, related_name='producte')
-    esgotat = models.BooleanField(default=False)
-    # nodes = models.ManyToManyField(Node, blank=True)
     text_curt = models.TextField(blank=False, max_length=75)
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True)
-    # dies_entrega = models.ManyToManyField(DiaEntrega, blank=True, related_name='productes')
     frequencies = models.ForeignKey(Frequencia)
     karma_date = models.DateTimeField(blank=True, null=True)
     karma_value = models.IntegerField(blank=True, null=True)
@@ -228,94 +188,20 @@ class Producte(models.Model):
     def __str__(self):
         return self.nom
 
-    # def votes_count(self):
-    #     total = 0
-    #     for vote in Vote.objects.filter(comanda__producte=self):
-    #         if vote.positiu == True:
-    #             total = total + 1
-    #         elif vote.positiu == False:
-    #             total = total - 1
-    #     for vote in Vote.objects.filter(contracte__producte=self):
-    #         num_dies = vote.contracte.dies_entrega.count()
-    #         if vote.positiu == True:
-    #             total = total + num_dies
-    #         elif vote.positiu == False:
-    #             total = total - num_dies
-    #     return total
-
     def positive_votes(self):
         return Vote.objects.filter(entrega__comanda__format__producte=self).filter(positiu=True).count()
 
     def negative_votes(self):
         return Vote.objects.filter(entrega__comanda__format__producte=self).filter(positiu=False).count()
 
-
-    # def dies_entrega_futurs(self):
-    #     # set = set()
-    #     return DiaEntrega.objects.filter(date__gt=datetime.datetime.today(), formats__format=self.formats.all())
-    #     # for s in self.formats.all():
-    #     #     for d in s.dies_entrega.filter(date__gt=datetime.datetime.today()):
-    #     #         set.add(d)
-    #     # return set
-    #
-    # def nodes(self):
-    #     return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
-
-
     def karma(self, node):
-        # try:
-        #     if not self.karma_date.date() == datetime.datetime.today().date():
-        #         com = self.comanda_set.filter(lloc_entrega=node).count()
-        #         con = self.contracte_set.filter(lloc_entrega=node).count()
-        #         rnd = random.randint(0, 5)
-        #         self.karma_value = com + con + rnd
-        #         self.karma_date = datetime.datetime.today()
-        # except:
         com = 0
         for f in self.formats.all():
             com = com + f.comanda_set.filter(entregas__dia_entrega__node=node).count()
-        # con = self.contracte_set.filter(lloc_entrega=node).count()
         rnd = random.randint(0, 5)
         self.karma_value = com +  rnd + self.positive_votes() - self.negative_votes()
-        # self.karma_date = datetime.datetime.today()
         self.save()
         return self.karma_value
-
-
-
-
-
-    # def next_day(self, node):
-    #
-    #     date = datetime.datetime.now() + timedelta(hours=self.productor.hores_limit)
-    #     list = []
-    #     for f in self.formats.all():
-    #         for s in f.dies_entrega.filter(dia__date__gte=date.date(), dia__node=node).order_by('dia__date'):
-    #
-    #             aux = s.dia.franja_inici()
-    #             daytime = datetime.datetime(s.dia.date.year, s.dia.date.month, s.dia.date.day, aux.inici.hour, aux.inici.minute)
-    #             # daytime.replace(day=s.dia.date.day, month=s.dia.date.month, year=s.dia.date.year, hour=aux.inici.hour, minute=aux.inici.minute)
-    #             # daytime.replace()
-    #
-    #             if daytime > date:
-    #
-    #                 res = stock_check_cant(s.format, s.dia, 1)
-    #                 if res:
-    #                     list.append(daytime)
-    #                     break
-    #     if list:
-    #         list.sort(key=lambda r: r)
-    #         b = list[0]
-    #         a = datetime.datetime.now()
-    #         c = b - a
-    #         d = divmod(c.total_seconds(),86400)
-    #         if d[0] > 3:
-    #             return str(int(d[0])) + " dies"
-    #         else:
-    #             return str(int(divmod(c.total_seconds(),3600)[0])) + " hores"
-    #     else:
-    #         return False
-
 
 
 
@@ -479,7 +365,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, related_name='user_profile')
     bio = models.TextField(null=True, blank=True)
     lloc_entrega_perfil = models.ForeignKey(Node, blank=True, null=True)
-    invitacions = models.IntegerField(default=10, blank=True, null=True)
+    invitacions = models.IntegerField(default=4, blank=True, null=True)
     avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
 
     carrer = models.CharField(max_length=30, blank=True, null=True)
