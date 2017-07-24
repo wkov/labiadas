@@ -373,9 +373,9 @@ class UserProfile(models.Model):
     pis = models.CharField(max_length=10, blank=True, null=True)
     poblacio = models.CharField(max_length=30, blank=True, null=True)
 
-
-    punt_lat = models.CharField(max_length=25, null=True, blank=True)
-    punt_lng = models.CharField(max_length=25, null=True, blank=True)
+    #
+    # punt_lat = models.CharField(max_length=25, null=True, blank=True)
+    # punt_lng = models.CharField(max_length=25, null=True, blank=True)
 
     def __unicode__(self):
         return  self.user.first_name

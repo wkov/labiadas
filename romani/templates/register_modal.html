@@ -142,8 +142,8 @@ jQuery(document).ready(function($) {
     var pis = document.getElementById('pisx')
     var poblacio = document.getElementById('poblaciox');
     //var geopuntx = document.getElementById('geo_punt');
-    var punt_lat = document.getElementById('punt_latx');
-    var punt_lng = document.getElementById('punt_lngx');
+{#    var punt_lat = document.getElementById('punt_latx');#}
+{#    var punt_lng = document.getElementById('punt_lngx');#}
     var j = 0;
     data.forEach(function(arrayItem)
     {   if(arrayItem.selected=="True"){
@@ -166,16 +166,16 @@ jQuery(document).ready(function($) {
                         numero.value = arrayItem.numero;
                         pis.value = arrayItem.pis;
                         poblacio.value = arrayItem.poblacio;
-                        lat = arrayItem.punt_lat;
-                        lng = arrayItem.punt_lng;
-                        punt_lat.value = lat;
-                        punt_lng.value = lng;
+{#                        lat = arrayItem.punt_lat;#}
+{#                        lng = arrayItem.punt_lng;#}
+{#                        punt_lat.value = lat;#}
+{#                        punt_lng.value = lng;#}
                         carrer.readOnly = true;
                         numero.readOnly = true;
                         pis.readOnly = true;
                         poblacio.readOnly = true;
-                        punt_lat.readOnly = true;
-                        punt_lng.readOnly = true;
+{#                        punt_lat.readOnly = true;#}
+{#                        punt_lng.readOnly = true;#}
                 }
         }else{
             s = arrayItem.nom + "/" + arrayItem.poblacio;
@@ -222,29 +222,29 @@ jQuery(document).ready(function($) {
                     numero.readOnly = false;
                     pis.readOnly = false;
                     poblacio.readOnly = true;
-                    punt_lat.readOnly = false;
-                    punt_lng.readOnly = false;
+{#                    punt_lat.readOnly = false;#}
+{#                    punt_lng.readOnly = false;#}
                     poblacio.value = data["poblacio"];
                     carrer.value = "";
                     numero.value = "";
                     pis.value = "";
-                    punt_lat.value = "";
-                    punt_lng.value = "";
+{#                    punt_lat.value = "";#}
+{#                    punt_lng.value = "";#}
                 }else{
                     carrer.value = data["carrer"];
                     numero.value = data["numero"];
                     pis.value = data["pis"];
                     poblacio.value = data["poblacio"];
-                    lat = data["geopuntx_lat"];
-                    lng = data["geopuntx_lng"];
-                    punt_lat.value = lat;
-                    punt_lng.value = lng;
+{#                    lat = data["geopuntx_lat"];#}
+{#                    lng = data["geopuntx_lng"];#}
+{#                    punt_lat.value = lat;#}
+{#                    punt_lng.value = lng;#}
                     carrer.readOnly = true;
                     numero.readOnly = true;
                     pis.readOnly = true;
                     poblacio.readOnly = true;
-                    punt_lat.readOnly = true;
-                    punt_lng.readOnly = true;
+{#                    punt_lat.readOnly = true;#}
+{#                    punt_lng.readOnly = true;#}
                 }
                 freq.innerHTML = "(" + data["frequencia"] + ")";
             });
@@ -306,10 +306,10 @@ jQuery(document).ready(function($) {
                     <div id="geodiv" name="geodiv" position="relative" style="float: right; ">
                             <div id="map"></div>
                             <br/>
-                            <span class="glyphicon glyphicon-map-marker" style="float: right; position:relative;" >
-                                Coord:<input type="text" id="punt_latx" style="max-width: 150px; float: right; position: relative" name="punt_latx" class="punt_lat"  placeholder="clica en el mapa (opcional)" />
-                                <input type="text" id="punt_lngx" name="punt_lngx" style="max-width: 150px; float: right; position: relative" class="punt_lng" placeholder="clica en el mapa (opcional)" />
-                            </span>
+{#                            <span class="glyphicon glyphicon-map-marker" style="float: right; position:relative;" >#}
+{#                                Coord:<input type="text" id="punt_latx" style="max-width: 150px; float: right; position: relative" name="punt_latx" class="punt_lat"  placeholder="clica en el mapa (opcional)" />#}
+{#                                <input type="text" id="punt_lngx" name="punt_lngx" style="max-width: 150px; float: right; position: relative" class="punt_lng" placeholder="clica en el mapa (opcional)" />#}
+{#                            </span>#}
                     </div>
                     <b>Horari:</b>
                     <div id="freq" name="freq">({{ frequencia }})</div>
