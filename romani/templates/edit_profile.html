@@ -3,7 +3,7 @@
 {% load staticfiles %}
 {% block headers %}
 
-    <script src="{% static 'js/comanda.js' %}"></script>
+{#    <script src="{% static 'js/comanda.js' %}"></script>#}
 
       <script>
   $( function() {
@@ -14,6 +14,45 @@
         });
 
   } );
+
+
+
+//CSRF TOKEN FOR JS
+
+
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+
 
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUirWAP7iFxFp7W1jmhoTrOYzZ-Z2sYZ8&callback=initMap"
@@ -135,7 +174,7 @@
 
     function coord2() {
 
-		$.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function(data) {
+		$.post("/coordenades/", $("#lloc_entrega").serializeArray(), function(data) {
 
             var Lat = data["Lat"];
             var Lng = data["Lng"];
@@ -238,14 +277,22 @@
 jQuery(document).ready(function($) {
 
 
-    $('.lloc_entrega_perfil').change(function (e) {
+
+{#    $('#avatar').change(function(e){#}
+{#		var fotoavatar = document.getElementById('fotoavatar');#}
+{#		fotoavatar.src = this.value;#}
+{#	})#}
+
+
+
+    $('.lloc_entrega').change(function (e) {
         //Aqui filtrem les opcions a domicili. s'han d'afegir totes les noves
         var carrer = document.getElementById('carrer');
         var numero = document.getElementById('numero');
         var pis = document.getElementById('pis')
         var poblacio = document.getElementById('poblacio');
-        var punt_lat = document.getElementById('punt_lat');
-        var punt_lng = document.getElementById('punt_lng');
+{#        var punt_lat = document.getElementById('punt_lat');#}
+{#        var punt_lng = document.getElementById('punt_lng');#}
         var freq = document.getElementById('freq');
         $.post("/domicili/", $(this).serializeArray(),
                 function (data) {
@@ -315,7 +362,7 @@ jQuery(document).ready(function($) {
 
                 });
 
-        $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function (data) {
+        $.post("/coordenades/", $("#lloc_entrega").serializeArray(), function (data) {
 
                   var Lat = data["Lat"];
                   var Lng = data["Lng"];
@@ -396,21 +443,21 @@ jQuery(document).ready(function($) {
             </div>
             <div id="tabs-2">
                 <span class="glyphicon glyphicon-flag"></span>
-                <label for="lloc_entrega_perfil">Lloc d'entrega:</label> </br>
-                        <select id="lloc_entrega_perfil" name="lloc_entrega_perfil" class="lloc_entrega_perfil form-control">
+                <label for="lloc_entrega">Lloc d'entrega:</label> </br>
+                        <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control">
                        {% for lloc in nodes %}
-                        {%  if lloc.pk == object.lloc_entrega_perfil.pk %}
+                        {%  if lloc.pk == object.lloc_entrega.pk %}
                                 <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
                             {% else %}
                                 <option value="{{ lloc.pk }}">{{ lloc.nom }} / {{ lloc.poblacio }} </option>
                             {% endif %}
                        {% endfor %}
                         </select> </br>
-                     <b>Horari:</b><div id="freq" name="freq"> {{ object.lloc_entrega_perfil.get_frequencia.nom }} </div>
+                     <b>Horari:</b><div id="freq" name="freq"> {{ object.lloc_entrega.get_frequencia.nom }} </div>
                     <div id="accordion" name="accordion" style="font-family: 'Special Elite', cursive; font-size: medium; ">
                     </div>
 
-                    {% if object.lloc_entrega_perfil.a_domicili == True %}
+                    {% if object.lloc_entrega.a_domicili == True %}
 {#                                {% if object.punt_lat %}#}
 {#                                    <div id="geodiv" name="geodiv">#}
 {#                                        <div id="map"></div><br/>#}
@@ -444,23 +491,23 @@ jQuery(document).ready(function($) {
 
                                 <div id="geodiv" name="geodiv">
                                     <div id="map"></div><br/>
-                                    <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">
-                                        <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative; visibility: hidden" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>
-                                        <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative; visibility: hidden"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>
-                                    </span>
+{#                                    <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">#}
+{#                                        <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative; visibility: hidden" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>#}
+{#                                        <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative; visibility: hidden"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>#}
+{#                                    </span>#}
                                 </div><br/><br/><br/><br/><br/>
                                                         <div>
                                 <label style="float: left" for="carrer">Carrer: </label>
-                                <input type="text"  id="carrer" style="max-width: 300px" class="form-control"  name="carrer" value="{{ object.lloc_entrega_perfil.carrer }}" readonly/></div>
+                                <input type="text"  id="carrer" style="max-width: 300px" class="form-control"  name="carrer" value="{{ object.lloc_entrega.carrer }}" readonly/></div>
                                 <div class="form-group">
                                 <label style="float: left" for="numero">Número:</label>
-                                <input type="text"  id="numero" style="max-width: 300px" class="form-control" name="numero" value="{{ object.lloc_entrega_perfil.numero }}" readonly/></div>
+                                <input type="text"  id="numero" style="max-width: 300px" class="form-control" name="numero" value="{{ object.lloc_entrega.numero }}" readonly/></div>
                                 <div class="form-group">
                                 <label style="float: left" for="pis">Pis:</label>
-                                <input type="text"  id="pis" style="max-width: 300px" class="form-control" name="pis" value="{{ object.lloc_entrega_perfil.pis }}" readonly/></div>
+                                <input type="text"  id="pis" style="max-width: 300px" class="form-control" name="pis" value="{{ object.lloc_entrega.pis }}" readonly/></div>
                                 <div class="form-group">
                                 <label style="float: left" for="poblacio">Població:</label>
-                                <input id="poblacio"  name="poblacio" style="max-width: 300px" class="form-control" value="{{ object.lloc_entrega_perfil.poblacio }}" readonly/></div>
+                                <input id="poblacio"  name="poblacio" style="max-width: 300px" class="form-control" value="{{ object.lloc_entrega.poblacio }}" readonly/></div>
                     {% endif %}
                     <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span>
 {#                        <div class="loader"></div> #}

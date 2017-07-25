@@ -26,7 +26,7 @@ def node_user(request):
         pro = Productor.objects.filter(responsable=request.user)
         return { 'node_user' : 'la massa'}
     except:
-        return { 'node_user' : up.lloc_entrega_perfil.nom}
+        return { 'node_user' : up.lloc_entrega.nom}
 
 
 def foto_user(request):

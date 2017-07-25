@@ -127,11 +127,11 @@ jQuery(document).ready(function($)
 
 
 
-	    $(".register_user_form").submit(function(e){
-        e.preventDefault();
-        $.post("/nodesave/", $(this).serializeArray(), function(data) {
-        });
-    });
+	 //   $(".register_user_form").submit(function(e){
+    //    e.preventDefault();
+    //    $.post("/nodesave/", $(this).serializeArray(), function(data) {
+    //    });
+    //});
 
 
 
@@ -224,10 +224,7 @@ jQuery(document).ready(function($)
 
 	});
 
-	$('#avatar').change(function(e){
-		var fotoavatar = document.getElementById('fotoavatar');
-		fotoavatar.src = this.value;
-	})
+
 
 	$('#cancelar').click(function(e){
 		var modal = document.getElementById('myModal');

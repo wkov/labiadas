@@ -85,7 +85,7 @@ class Node(models.Model):
     # privat = models.NullBooleanField()
 
     def __str__(self):
-        return "%s %s" % (self.nom, self.poblacio)
+        return "%s, %s" % (self.nom, self.poblacio)
 
     def prox_dias(self):
         return self.dies_entrega.filter(date__gte=datetime.datetime.now()).order_by('date')[0:6]
@@ -348,7 +348,7 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User, unique=True, related_name='user_profile')
     bio = models.TextField(null=True, blank=True)
-    lloc_entrega_perfil = models.ForeignKey(Node, blank=True, null=True)
+    lloc_entrega = models.ForeignKey(Node, blank=True, null=True)
     invitacions = models.IntegerField(default=4, blank=True, null=True)
     avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
 
@@ -367,12 +367,12 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.first_name
 
-    def comandes_cistella(self):
+    def comandes_cistella(self):  #per informar a l'usuari des del left_menu del num de comandes vigents que té a la cistella
         now = datetime.datetime.now()
         return Comanda.objects.filter(client=self.user).filter(entregas__dia_entrega__date__gte=now)
 
 
-    def pro_entregas(self):
+    def pro_entregas(self):  #per informar a l'usuari distribuidor en el boto en el left menu, del total d'entregues que sumen els seus productors
         now = datetime.datetime.now()
         return Entrega.objects.filter(comanda__format__producte__productor__responsable=self.user).filter(dia_entrega__date__gte=now)
 
@@ -397,7 +397,7 @@ def create_profile(sender, instance, created, **kwargs):
         # try:
         send_mail("Benvingut a La Massa", text, 'lamassaxarxa@gmail.com', [instance.email] ,fail_silently=True )
 
-        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="", lloc_entrega_perfil=node )
+        profile, created = UserProfile.objects.get_or_create(user=instance, carrer="", numero="", poblacio="", pis="", lloc_entrega=node )
 
 
 

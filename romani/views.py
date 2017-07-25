@@ -76,9 +76,9 @@ def nouUsuariView(request):
 
     u_key = Key.objects.get(nou_usuari=request.user)
     u = UserProfile.objects.get(user=u_key.usuari)
-    s = u.lloc_entrega_perfil.get_frequencia()
+    s = u.lloc_entrega.get_frequencia()
 
-    user_p.lloc_entrega_perfil = u.lloc_entrega_perfil
+    user_p.lloc_entrega = u.lloc_entrega
     user_p.save()
 
     return render(request, "nouUsuari.html", {'up': user_p, 'nodes': nodes, 'frequencia': s.nom})
@@ -112,7 +112,7 @@ def nodesNouUsuariView(request):
     json_res = []
     for i in Node.objects.all():
 
-        if i == u.lloc_entrega_perfil:
+        if i == u.lloc_entrega:
             json_obj = dict(
                         nom = i.nom,
                         carrer = i.carrer,
@@ -218,67 +218,68 @@ def DomiciliView(request):
 
     if request.POST:
 
-        if 'lloc_entrega_perfil' in request.POST:
-
-            l = request.POST.get('lloc_entrega_perfil')
-            node = get_object_or_404(Node, pk=l)
-            up = UserProfile.objects.get(user=request.user)
-            nf = node.get_frequencia()
-
-            if node.a_domicili == True:
-                json_obj = dict(carrer = up.carrer, numero = up.numero, pis = up.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
-                                frequencia = nf.nom)
-            else:
-                json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
-                                 frequencia = nf.nom )
-
-            return HttpResponse(json.dumps(json_obj), content_type='application/json')
+        # if 'lloc_entrega_perfil' in request.POST:
+        #
+        #     l = request.POST.get('lloc_entrega_perfil')
+        #     node = get_object_or_404(Node, pk=l)
+        #     up = UserProfile.objects.get(user=request.user)
+        #     nf = node.get_frequencia()
+        #
+        #     if node.a_domicili == True:
+        #         json_obj = dict(carrer = up.carrer, numero = up.numero, pis = up.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
+        #                         frequencia = nf.nom)
+        #     else:
+        #         json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
+        #                          frequencia = nf.nom )
+        #
+        #     return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
         if 'lloc_entrega' in request.POST:
 
             l = request.POST.get('lloc_entrega')
             node = get_object_or_404(Node, pk=l)
             up = UserProfile.objects.get(user=request.user)
+            nf = node.get_frequencia()
             # json_obj = []
             if node.a_domicili == True:
-                json_obj = dict(carrer = up.carrer, numero = up.numero, pis = up.pis, poblacio = node.poblacio, a_domicili = node.a_domicili)
+                json_obj = dict(carrer = up.carrer, numero = up.numero, pis = up.pis, poblacio = node.poblacio, a_domicili = node.a_domicili, frequencia=nf.nom)
             else:
-                json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili)
+                json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili, frequencia=nf.nom)
 
             return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
-        if 'lloc_entrega_reg' in request.POST:
-
-            l = request.POST.get('lloc_entrega_reg')
-            node = get_object_or_404(Node, pk=l)
-            up = UserProfile.objects.get(user=request.user)
-            nf = node.get_frequencia()
-
-            if node.a_domicili == True:
-                json_obj = dict(poblacio = node.poblacio, a_domicili = node.a_domicili, frequencia = nf.nom)
-            else:
-                json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
-                                frequencia = nf.nom )
-
-            return HttpResponse(json.dumps(json_obj), content_type='application/json')
+        # if 'lloc_entrega_reg' in request.POST:
+        #
+        #     l = request.POST.get('lloc_entrega_reg')
+        #     node = get_object_or_404(Node, pk=l)
+        #     up = UserProfile.objects.get(user=request.user)
+        #     nf = node.get_frequencia()
+        #
+        #     if node.a_domicili == True:
+        #         json_obj = dict(poblacio = node.poblacio, a_domicili = node.a_domicili, frequencia = nf.nom)
+        #     else:
+        #         json_obj = dict(carrer = node.carrer, numero = node.numero, pis = node.pis, poblacio = node.poblacio, a_domicili = node.a_domicili,
+        #                         frequencia = nf.nom )
+        #
+        #     return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
 
 def NodeHorariView(request):
 
     if request.POST:
-        if 'lloc_entrega_perfil' in request.POST:
-                l = request.POST.get('lloc_entrega_perfil')
-        elif 'lloc_entrega_reg' in request.POST:
-                l = request.POST.get('lloc_entrega_reg')
-        node = get_object_or_404(Node, pk=l)
+        if 'lloc_entrega' in request.POST:
+            l = request.POST.get('lloc_entrega')
+        # elif 'lloc_entrega_reg' in request.POST:
+        #         l = request.POST.get('lloc_entrega_reg')
+            node = get_object_or_404(Node, pk=l)
     else:
         up = UserProfile.objects.filter(user = request.user).first()
-        if up.lloc_entrega_perfil:
-            node = up.lloc_entrega_perfil
+        if up.lloc_entrega:
+            node = up.lloc_entrega
         else:
             k = Key.objects.filter(nou_usuari = request.user).first()
             up2 = UserProfile.objects.filter(user = k.usuari).first()
-            node = up2.lloc_entrega_perfil
+            node = up2.lloc_entrega
 
     v_query = node.dies_entrega.filter(date__gt = datetime.datetime.today())
 
@@ -323,23 +324,23 @@ def NodeDetailView(request, pk):
 
 def CoordenadesView(request):
 
-    if 'lloc_entrega_reg' in request.POST:
-        l = request.POST.get('lloc_entrega_reg')
+    if 'lloc_entrega' in request.POST:
+        l = request.POST.get('lloc_entrega')
         node = get_object_or_404(Node, pk=l)
-    elif 'lloc_entrega_perfil' in request.POST:
-        l = request.POST.get('lloc_entrega_perfil')
-        node = get_object_or_404(Node, pk=l)
-    else:
-        l = request.POST.get('lloc_entrega_perfil')
+    # elif 'lloc_entrega_perfil' in request.POST:
+    #     l = request.POST.get('lloc_entrega_perfil')
+    #     node = get_object_or_404(Node, pk=l)
+    # else:
+    #     l = request.POST.get('lloc_entrega_perfil')
+        if node:
+            json_obj = dict(
+                Lat = str(node.position.latitude),
+                Lng = str(node.position.longitude)
+            )
 
-    json_obj = dict(
-        Lat = str(node.position.latitude),
-        Lng = str(node.position.longitude)
-    )
+            return HttpResponse(json.dumps(json_obj), content_type='application/json')
 
-    return HttpResponse(json.dumps(json_obj), content_type='application/json')
-
-
+    return HttpResponse("Fail")
 
 
 def AllCoordenadesView(request):
@@ -369,12 +370,12 @@ def NodeSaveView(request):
 
         v = UserProfile.objects.get(user = request.user)
 
-        if 'lloc_entrega_reg' in request.POST:
+        if 'lloc_entrega' in request.POST:
             # if 'nom_complet' in request.POST:
             #     o = request.POST.get('nom_complet')
-                l = request.POST.get('lloc_entrega_reg')
+                l = request.POST.get('lloc_entrega')
                 node = get_object_or_404(Node, pk=l)
-                v.lloc_entrega_perfil = node
+                v.lloc_entrega = node
 
                 if 'poblaciox' in request.POST:
                     v.poblacio = request.POST.get('poblaciox')
@@ -391,8 +392,6 @@ def NodeSaveView(request):
                     # if 'punt_lngx' in request.POST:
                     #     v.punt_lng = request.POST.get('punt_lngx')
                 v.save()
-
-
 
                 return HttpResponse(json.dumps("OK"), content_type='application/json')
 
@@ -502,7 +501,7 @@ class InfoFormBaseView(FormView):
 
         # Carreguem els possibles nodes on l-usuari pot trobar el producte concret
         for i in format.nodes().all():
-            if i == user_profile.lloc_entrega_perfil:
+            if i == user_profile.lloc_entrega:
                 # Guardem les frequencies del node per informar a l-usuari en el modal
                 for d in i.frequencia.freq_list():
                     if d in producte.frequencies.freq_list():
@@ -560,7 +559,7 @@ class UserProfileEditView(UpdateView):
         nodes = Node.objects.exclude(pk=1)
         context['nodes'] = nodes
         u = UserProfile.objects.get(user=self.request.user)
-        s = u.lloc_entrega_perfil.get_frequencia()
+        s = u.lloc_entrega.get_frequencia()
         if s:
             context['frequencia'] = s.nom
         else:
@@ -570,7 +569,7 @@ class UserProfileEditView(UpdateView):
 
     def form_valid(self, form):
 
-        lloc = get_object_or_404(Node, pk=form.data["lloc_entrega_perfil"])
+        lloc = get_object_or_404(Node, pk=form.data["lloc_entrega"])
 
         if lloc.a_domicili == False:
 

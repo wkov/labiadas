@@ -25,50 +25,34 @@
 <br/>
    <a href="{% url 'coope' %}"> 1) Com comprar ? </a>
 <br/>
-    A la pantalla principal trobaràs tots els productes. Allà mateix pots triar el format, la quantitat i començar la compra
-    <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>
+    Ves a la pantalla principal clicant <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>, allà trobaràs tots els productes disponibles. Pots triar el format, la quantitat i començar la compra
 <br/></br>
     <a href="{% url 'comandes' %}">2) Com gestiono els encàrrecs ?</a> <br/>
-    A la gestió de comandes pots accedir sempre des del menu de l'esquerra a traves del boto <a href="{% url 'comandes' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a><br/>
-    Permet borrar les comandes que ja no desitjis(minim 2 dies abans de l'entrega).
-    També pots consultar les entregues rebudes en el passat. Aixi com consultar els detalls de cada una d'elles
+    A la gestió de comandes pots accedir sempre des del menú de l'esquerra a través del botó <a href="{% url 'comandes' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a><br/>
+    Permet borrar les comandes que ja no desitjis.
+    També pots consultar les entregues rebudes en el passat, així com consultar els detalls de cada una d'elles
 <br/></br>
     <a href=""> 3) A on arriba la comanda ? </a><br/>
-                Al punt de trobada que escullis entre els espais que han creat les Cooperatives de consum, els grups, les families, els consumidors i els productors.<br/> Actualment:
+                Al punt de trobada que escullis entre els espais que han creat les cooperatives de consum, els grups, les families i els consumidors<br/>
                 <br/>
-
-
-{% for n in nodes %}
-    {% if forloop.last %}
-     i &nbsp; {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}. &nbsp;
-    {% else %}
-        {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
-    {% endif %}
-{% endfor %}
-
-
-                <br/><br/>
-
     <a href=""> 4) Com es fa el pagament ?</a><br/>
     En el punt de trobada escollit, quan es fa l'intercanvi de productes
             <br/> <br/>
 
     <a href="{% url 'convidar' %}"> 5) Com puc convidar nous usuaris a la xarxa ?</a><br/>
-    Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-globe collapsed-element'></span></a>
+    Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-bullhorn collapsed-element'></span></a>
     que sempre trobaràs en el menú esquerra
             <br/> <br/>
 
     <a href="{% url 'productor_list' %}"> 6) Sóc <b>productor</b>, què haig de fer per oferir els meus productes?</a><br/>
-    Els productors teniu una secció de la web dedicada especialment a vosaltres. Registra't com a productor:
+    Els productors teniu una secció de la web dedicada especialment a vosaltres. Clica el botó
         <a href="{% url 'productor_list' %}">
             <span class='glyphicon glyphicon-folder-open collapsed-element'></span></a>
             <br/> <br/>
-
-
-    <a href="{% url 'vista_nodes' %}"> 7) Sóc responsable d'un <b>Lloc d'entrega</b> de productes, com puc fer servir la web?</a><br/>
-    Els responsables de llocs d'entrega teniu una secció de la web dedicada. Registra't com a responsable de Lloc d'entrega:
+    <a href="{% url 'vista_nodes' %}"> 7) Sóc responsable d'un <b>lloc d'entrega</b> de productes, com puc fer servir la web?</a><br/>
+    Els responsables de llocs d'entrega teniu una secció de la web dedicada. Clica el botó
         <a href="{% url 'vista_nodes' %}">
-            <span class='glyphicon glyphicon-heart-empty collapsed-element'></span></a>
+            <span class='glyphicon glyphicon-map-marker collapsed-element'></span></a>
             <br/> <br/>
 
 

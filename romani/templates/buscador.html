@@ -39,7 +39,7 @@
         <div class="thumbnail" >
             <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
                 <div style="background-color: #f6a828; float: right " title="Próxima entrega">
-                <span class="glyphicon glyphicon-time" ></span> {%  next_day producte up.lloc_entrega_perfil %}</div>
+                <span class="glyphicon glyphicon-time" ></span> {%  next_day producte up.lloc_entrega %}</div>
                 <div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">
                 <span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>
                 <div style="background-color: #8ae090; color: white; float: right" title="Vots positius">
@@ -48,7 +48,7 @@
             <div class="caption">
                  {% if producte.foto %}
                     <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
-                    <div class="g-item" style="background-image:url('{{ producte.foto.url }}');float: right; position:relative; z-index: 10" >
+                    <div class="g-item" style="background-image:url('{{ producte.foto.url }}');float: right; position:relative" >
                         </div>
                     </a>
                   {% endif %}
@@ -66,7 +66,7 @@
                 </div>
                 <br/><br/>
                 <div class="xxent" style="background-color:#FFFFFF; display: block">
-                <p id="entradilla" name="entradilla" >{{ producte.entradilla }}</p>
+                <p id="entradilla" name="entradilla" >{{ producte.text_curt }}</p>
                 </div>
                  <br />
                  <form method="post"  class="comanda_form">{% csrf_token %}
@@ -85,8 +85,8 @@
                              <select id="id_format" name="format" class="hidden_id" style="width: 100% float:right" >
 
                                  {% for tipusproducte in producte.formats.all %}
-                                    {% if tipusproducte.stock > 0 %}
-                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.nom }}{{ tipusproducte.preu }}€</option>
+                                    {% if tipusproducte.in_stock == True %}
+                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
                                     {% endif %}
                                  {% endfor %}
                             </select>

@@ -34,7 +34,7 @@ def buskadorProducte(request):
 
     etiquetes_pre = Etiqueta.objects.all()
 
-    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
 
     etiquetes = set()
 
@@ -67,9 +67,9 @@ def buskadorProducte(request):
                         prod_aux.add(t.producte.pk)
 
         p = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
-                                        esgotat=False, pk__in=prod_aux).distinct()
+                                        pk__in=prod_aux).distinct()
 
-        productes = sorted(p, key=lambda a: a.karma(user_p.lloc_entrega_perfil), reverse=True)
+        productes = sorted(p, key=lambda a: a.karma(user_p.lloc_entrega), reverse=True)
 
         return render(request, "buscador.html", {
             'posts': productes,
@@ -86,7 +86,7 @@ def coopeView(request):
 
     today = datetime.date.today()
 
-    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = today)
+    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = today)
 
     etiquetes_pre = Etiqueta.objects.all()
 
@@ -118,7 +118,7 @@ def coopeView(request):
     p = Producte.objects.filter(pk__in=prod_aux).distinct()
 
 
-    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
 
@@ -152,7 +152,7 @@ def etiquetaView(request,pk):
     user_p = UserProfile.objects.filter(user=request.user).first()
 
 
-    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
 
 
     etiquetes_pre = Etiqueta.objects.all()
@@ -185,7 +185,7 @@ def etiquetaView(request,pk):
     p = Producte.objects.filter(pk__in=prod_aux).distinct()
 
 
-    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
 
     paginator = Paginator(productes, 12) # Show 24 productes per page
 
@@ -207,10 +207,10 @@ def productorView(request,pk):
 
     productor = Productor.objects.filter(pk=pk).first()
     user_p = UserProfile.objects.filter(user=request.user).first()
-    dies_node_entrega = user_p.lloc_entrega_perfil.dies_entrega.filter(date__gt = datetime.datetime.now())
+    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
     p = Producte.objects.filter(productor=productor, formats__dies_entrega__dia__in = dies_node_entrega ).distinct()
     adjunts = Adjunt.objects.filter(productor=productor)
-    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega_perfil), reverse=True)
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
 
     return render(request, "productor.html",{'productor': productor, 'productes': productes, 'adjunts': adjunts, 'up': user_p})
 
@@ -267,6 +267,7 @@ def comandaDelete(request, pk):
         notify.send(comandaDel.format.producte, recipient = request.user,  verb="Has tret ",
             description="de la cistella" , url=comandaDel.format.producte.foto.url, timestamp=timezone.now())
         comandaDel.delete()
+        message = u"Has anulat la comanda i hem tret el producte de la teva cistella"
     else:
 
         message = u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"

@@ -83,8 +83,7 @@
 
 
 
-        Quan entris a la xarxa trobaràs tots els productes . Allà mateix pots triar el format i la quantitat que necessitis i adquirir-ho clicant el carret de la compra.
-      Per cada producte hi pot haver diferents formats. Pica el desplegable i descobreix-ho. Recorda fer la comanda almenys 2 dies abans del dia que vulguis rebre-ho.
+        Ves a la pantalla principal clicant <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>, allà trobaràs tots els productes disponibles. Pots triar el format, la quantitat i començar la compra
         <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>
         </br><br/></br>
 {#        <div class="img-responsive">#}
@@ -103,8 +102,9 @@
   <h3><a href="{% url 'comandes' %}"><span class="glyphicon glyphicon-shopping-cart"></span> Com gestiono els encàrrecs ?</a></h3>
   <div>
     <p>
-        A la visualitzacio de comandes i entregues pots borrar les comandes que ja no desitjis (minim 2 dies abans de l'entrega). També
-    pots consultar les entregues rebudes en el passat. Així com consultar tots els detalls de cada una d'elles  <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a>
+        A la gestió de comandes pots accedir sempre des del menú de l'esquerra a través del botó <a href="{% url 'comandes' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a><br/>
+    Permet borrar les comandes que ja no desitjis.
+    També pots consultar les entregues rebudes en el passat, així com consultar els detalls de cada una d'elles
     </p>
 {#      <div class="img-responsive" >#}
 {#             <a href="{% url 'comandes' %}">#}
@@ -118,17 +118,7 @@
   <h3><a href=""> <span class="glyphicon glyphicon-road"></span> A on arriba la comanda ? </a></h3>
   <div>
 
-    Pots triar entre els diferents espais que han anat creant les Cooperatives de consum, els grups, les families, els consumidors i els productors.<br/> Actualment:
-                <br/>
-
-
-{% for n in nodes %}
-    {% if forloop.last %}
-     i &nbsp; {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}. &nbsp;
-    {% else %}
-        {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;
-    {% endif %}
-{% endfor %}
+    Al punt de trobada que escullis entre els espais que han creat les cooperatives de consum, els grups, les families i els consumidors<br/>
 
                 <br/><br/>
 {#  <div class="img-responsive">#}
@@ -144,7 +134,7 @@
   <div>
     <p>
 
-    El pagament es fa quan s'entrega el producte en el punt de trobada, directament als productors.
+    En el punt de trobada escollit, quan es fa l'intercanvi de productes
     </p> </br>
 {#            <div class="img-responsive">#}
 {#             <a href="{% url 'convidar' %}">#}
@@ -158,14 +148,10 @@
   <h3><a href="{% url 'convidar' %}"> <span class='glyphicon glyphicon-globe collapsed-element'></span> Com puc convidar nous usuaris a la xarxa ? </a></h3>
   <div>
     <p>
-        Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-globe collapsed-element'></span></a>
+        Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-bullhorn collapsed-element'></span></a>
     que sempre trobaràs en el menú esquerra
 
     </p> </br>
-{#            <div class="img-responsive">#}
-{#             <a href="{% url 'convidar' %}">#}
-{#        <img src="{% static "img/convida.png" %}" width="550px" height="300px"  ></a>#}
-{#      </div> #}
       </br>
           <form action="{% url 'coope' %}">
           <button><span class="glyphicon glyphicon-grain"><input type="submit" value="Entrar a la xarxa"></span></button>

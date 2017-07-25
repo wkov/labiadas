@@ -185,7 +185,7 @@ class NodeForm(forms.ModelForm):
 
     class Meta:
         model = Node
-        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "text", "frequencia", "a_domicili", "responsable")
+        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "position", "text", "frequencia", "a_domicili", "responsable")
 
     def __init__(self, user, *args, **kwargs):
         super(NodeForm, self).__init__(*args, **kwargs)
@@ -193,6 +193,7 @@ class NodeForm(forms.ModelForm):
         g = Group.objects.get(name='Nodes')
         self.fields["responsable"].queryset = g.user_set.all()
         self.fields["frequencia"].queryset = Frequencia.objects.all()
+        self.fields["position"].label = 'Coordenades'
 
 
 class ProducteForm(forms.ModelForm):

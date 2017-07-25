@@ -1,6 +1,6 @@
 
 {% load staticfiles %}
-<script src="{% static 'js/comanda.js' %}"></script>
+{#<script src="{% static 'js/comanda.js' %}"></script>#}
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUirWAP7iFxFp7W1jmhoTrOYzZ-Z2sYZ8&callback=initMap"
 async defer></script>
 <script>
@@ -59,43 +59,27 @@ async defer></script>
                             i++;
 				});
           });
-        map.addListener('click', function(e) {
-        placeMarker(e.latLng, map);
-    });
+{#        map.addListener('click', function(e) {#}
+{#        placeMarker(e.latLng, map);#}
+{#    });#}
     }
 
-    function coord() {
-
-
-        $.post("/coordenades/", $("#lloc_entrega_reg").serializeArray(), function (data) {
-
-            var Lat = data["Lat"];
-            var Lng = data["Lng"];
-            LatLng = Lat + "," + Lng
-            var location = new google.maps.LatLng(Lat, Lng);
-
-            map.setCenter(location);
-            map.setZoom(15);
-
-        });
-    }
-
-    function placeMarker(location) {
-
-     var punt_lat = document.getElementById("punt_latx");
-     var punt_lng = document.getElementById("punt_lngx");
-
-     if (marker_d == null)
-     {
-       marker_d = new google.maps.Marker({
-          position: location,
-          map: map
-      }); } else {   marker_d.setPosition(location); }
-
-
-     punt_lat.value = location.lat();
-     punt_lng.value = location.lng();
-    }
+{#    function placeMarker(location) {#}
+{##}
+{#     var punt_lat = document.getElementById("punt_latx");#}
+{#     var punt_lng = document.getElementById("punt_lngx");#}
+{##}
+{#     if (marker_d == null)#}
+{#     {#}
+{#       marker_d = new google.maps.Marker({#}
+{#          position: location,#}
+{#          map: map#}
+{#      }); } else {   marker_d.setPosition(location); }#}
+{##}
+{##}
+{#     punt_lat.value = location.lat();#}
+{#     punt_lng.value = location.lng();#}
+{#    }#}
 
 //CSRF TOKEN FOR JS
 
@@ -136,7 +120,7 @@ jQuery(document).ready(function($) {
 
     var llocpk;
     $.post("/nodes_nou_usuari/",function(data){
-    var llocentrega = document.getElementById("lloc_entrega_reg");
+    var llocentrega = document.getElementById("lloc_entrega");
     var carrer = document.getElementById('carrerx');
     var numero = document.getElementById('numerox');
     var pis = document.getElementById('pisx')
@@ -206,7 +190,7 @@ jQuery(document).ready(function($) {
 
 
 
-    $(".lloc_entrega_reg").change(function(e){
+    $(".lloc_entrega").change(function(e){
 
         var carrer = document.getElementById('carrerx');
         var numero = document.getElementById('numerox');
@@ -274,15 +258,18 @@ jQuery(document).ready(function($) {
                     acc.innerHTML = t;
 					$( "#accordion" ).accordion( "refresh" );
             })
+        $.post("/coordenades/", $("#lloc_entrega").serializeArray(), function (data) {
+
+            var Lat = data["Lat"];
+            var Lng = data["Lng"];
+            LatLng = Lat + "," + Lng
+            var location = new google.maps.LatLng(Lat, Lng);
+
+            map.setCenter(location);
+            map.setZoom(15);
+
+        });
     });
-
-
-
-
-
-
-
-
 
 });
 </script>
@@ -299,8 +286,8 @@ jQuery(document).ready(function($) {
 
        <form method="post" class="register_user_form">{% csrf_token %}
             <div class="thumbnail" >
-                <label  for="lloc_entrega_reg">Punt de trobada:</label>
-                    <select id="lloc_entrega_reg" name="lloc_entrega_reg" class="lloc_entrega_reg form-control" onchange="coord()">
+                <label  for="lloc_entrega">Punt de trobada:</label>
+                    <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control">
                                 <option></option>
                     </select> </br>
                     <div id="geodiv" name="geodiv" position="relative" style="float: right; ">

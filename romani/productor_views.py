@@ -22,7 +22,7 @@ class ComandesListView(ListView):
     def get_queryset(self):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         productes = Producte.objects.filter(productor=productor)
-        return Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
+        return Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today()).order_by('-data_comanda')
 
     def get_context_data(self, **kwargs):
         context = super(ComandesListView, self).get_context_data(**kwargs)
@@ -195,7 +195,7 @@ class ProductorsListView(ListView):
         productors = Productor.objects.filter(responsable=self.request.user)
         productes = Producte.objects.filter(productor__in=productors)
         # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
-        context["comandes"] = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
+        context["comandes"] = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today()).order_by('-data_comanda')
         return context
 
 

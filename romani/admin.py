@@ -32,15 +32,10 @@ class entregaAdmin(admin.ModelAdmin):
     search_fields = ['comanda__format__producte', 'data_comanda','comanda__format','comanda__client']
     list_filter = ['comanda__format','data_comanda','comanda__externa','comanda__client',]
 
-# class contracteAdmin(admin.ModelAdmin):
-#     list_display = ('producte','data_comanda','format', 'client','lloc_entrega' )
-#     search_fields = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
-#     list_filter = ['producte','data_comanda','format', 'client','dies_entrega','lloc_entrega' ]
-
 class userprofileAdmin(admin.ModelAdmin):
-    list_display = ('user','bio','lloc_entrega_perfil')
-    search_fields = ['user','bio','lloc_entrega_perfil']
-    list_filter = ['user','bio','lloc_entrega_perfil']
+    list_display = ('user','bio','lloc_entrega')
+    search_fields = ['user','bio','lloc_entrega']
+    list_filter = ['user','bio','lloc_entrega']
 
 class adjuntAdmin(admin.ModelAdmin):
     list_display = ('arxiu', 'productor')
