@@ -13,8 +13,8 @@ class voteAdmin(admin.ModelAdmin):
 
 class productorAdmin(admin.ModelAdmin):
     list_display = ('nom','text')
-    search_fields = ['nom']
-    list_filter = ['nom']
+    search_fields = ['nom', 'text']
+    list_filter = ['nom', 'responsable']
 
 class tipusproducteAdmin(admin.ModelAdmin):
     # list_display = ('nom', 'producte_nom','preu','pk','stock')

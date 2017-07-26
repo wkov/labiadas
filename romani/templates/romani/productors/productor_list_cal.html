@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block content %}
-    <div style="float: left; position:absolute">
+    <div style="float:left; position:relative">
         <a href="{% url 'productor_create' %}" id="pro_menu"> Crear Nou Productor</a> <br/>
         {% if object_list %}
         {% for link in object_list %}
@@ -56,7 +56,7 @@
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
     {% endif %}
     </div>
-    <div style="margin: 0 auto; text-align:center;">
+    <div style="margin: 0 auto; text-align:center; ">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
                                     <b id="pato" name="pato" class="pato">Comandes rebudes</b>
@@ -83,7 +83,7 @@
 
 
 
-    <div id='calendar' style="position: relative"></div>
+    <div id='calendar' style="float:left; position: relative"></div>
 
 
 

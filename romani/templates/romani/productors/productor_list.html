@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% csrf_token %}
 {% block content %}
-    <div style="float: left; position:absolute">
+    <div style="float: left; position:relative">
         <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>
         {% if object_list %}
         {% for link in object_list %}
