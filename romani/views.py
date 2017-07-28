@@ -186,8 +186,8 @@ def ConvidarView(request):
                             enviarInvitacio(email, up.user.get_full_name(), k)
                             up.invitacions = up.invitacions - 1
                             up.save()
-
-                            notify.send(up, recipient=up.user, verb="",
+                            key = Key.objects.get(key=k)
+                            notify.send(key, recipient=up.user, verb="",
                                 description=", has convidat un nou usuari. " , timestamp=timezone.now())
                             message_email = "S'ha enviat la sol·licitud al correu electrònic correctament"
                         except:
@@ -200,8 +200,8 @@ def ConvidarView(request):
                 k = generate_key(request)
                 up.invitacions = up.invitacions - 1
                 up.save()
-
-                notify.send(up, recipient=up.user, verb="",
+                key = Key.objects.get(key=k)
+                notify.send(key, recipient=up.user, verb="",
                                 description=", has generat una nova invitació " , timestamp=timezone.now())
 
                 s = "http://lamassa.org/register/" + str(k)

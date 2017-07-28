@@ -2,7 +2,7 @@
 from django.core.urlresolvers import reverse
 from django.template import Library
 from django.utils.html import format_html
-from romani.models import UserProfile, Producte
+from romani.models import UserProfile, Producte, TipusProducte, Key
 from django.contrib.auth.models import Group
 from romani.public_views import stock_check_cant
 
@@ -48,6 +48,21 @@ def user_context(context):
 def has_group(user, group_name):
     group =  Group.objects.get(name=group_name)
     return group in user.groups.all()
+
+@register.filter(name='model_object')
+def model_object(object, object_name):
+    if object_name == 'Producte':
+        if isinstance(object, TipusProducte):
+            return True
+    if object_name == 'UserProfile':
+        if isinstance(object, UserProfile):
+            return True
+    if object_name == 'Key':
+        if isinstance(object, Key):
+            return True
+
+    return False
+
 
 @register.simple_tag(name='next_day')
 def next_day(producte, node):

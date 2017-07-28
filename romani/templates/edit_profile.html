@@ -59,117 +59,6 @@ $.ajaxSetup({
     async defer></script>
 
 <script>
-{#      var map;#}
-{#      var marker_d;#}
-{#      function initMap() {#}
-{#          var loc;#}
-{#          loc = new google.maps.LatLng(41.539064, 2.2130028);#}
-{#          map = new google.maps.Map(document.getElementById('map'), {#}
-{#              center: loc,#}
-{#              zoom: 12,#}
-              {#          mapTypeId: 'satellite'#}
-{#          });#}
-{##}
-{##}
-{#          $.post("/allcoordenades/", function (data) {#}
-{#              var i = 0;#}
-{#              var marker = [];#}
-{#              var image = '/static/img/u-pick_stand.png'#}
-{#              var img_domicili = '/static/img/vespa.png'#}
-{#              data.forEach(function (arrayItem) {#}
-{#                  var contentString = '<div id="content">' +#}
-{#                          '<div id="siteNotice">' +#}
-{#                          '</div>' +#}
-{#                          '<h1 id="firstHeading" class="firstHeading">' +#}
-{#                          arrayItem.nom +#}
-{#                          '</h1>' +#}
-{#                          '<div id="bodyContent">' +#}
-{#                          '<p><b>' +#}
-{#                          arrayItem.nom +#}
-{#                          '</b>,' +#}
-{#                          arrayItem.text +#}
-{#                          '</p>' +#}
-{#                          '</div>' +#}
-{#                          '</div>';#}
-{##}
-{#                  var infowindow = new google.maps.InfoWindow({#}
-{#                      content: contentString#}
-{#                  });#}
-{##}
-{#                  var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);#}
-{#                  if (arrayItem.a_domicili == "True") {#}
-{#                      marker[i] = new google.maps.Marker({#}
-{#                          position: place,#}
-{#                          title: "A Domicili",#}
-{#                          map: map,#}
-{#                          icon: img_domicili#}
-{#                      });#}
-{#                  } else {#}
-{#                      marker[i] = new google.maps.Marker({#}
-{#                          position: place,#}
-{#                          title: arrayItem.nom,#}
-{#                          map: map,#}
-{#                          icon: image#}
-{#                      });#}
-{#                  }#}
-{#                  marker[i].addListener('click', function () {#}
-{#                      infowindow.open(map, marker[i]);#}
-{#                  });#}
-{##}
-{#                  i++;#}
-{#              });#}
-{##}
-{#          });#}
-{##}
-{##}
-{#          $.post("/horari/", function (data) {#}
-{#              var acc = document.getElementById('accordion');#}
-{#              var j;#}
-{#              var h;#}
-{#              var b;#}
-{#              var t = "";#}
-{#              var g;#}
-{#              data.forEach(function (arrayItemx) {#}
-{##}
-{#                  h = "<a>" + arrayItemx.dia + "</a>";#}
-{#                  g = "<div>";#}
-{##}
-{#                  arrayItemx.franjes.forEach(function (arrayItem) {#}
-{#                      g = g + "&nbsp;" + arrayItem.inici + "-" + arrayItem.final + "<br/>";#}
-{#                  });#}
-{#                  t = t + h + g + "</div>";#}
-{##}
-{#              });#}
-{##}
-{#              t = t + "</div>";#}
-{##}
-{#              acc.innerHTML = t;#}
-{##}
-{##}
-{#              $("#accordion").accordion("refresh");#}
-{##}
-{#          });#}
-{##}
-{#      }#}
-
-{#          function coord() {#}
-{##}
-{#              $.post("/coordenades/", $("#lloc_entrega_perfil").serializeArray(), function (data) {#}
-{##}
-{#                  var Lat = data["Lat"];#}
-{#                  var Lng = data["Lng"];#}
-{#                  var location = new google.maps.LatLng(Lat, Lng);#}
-{##}
-{#                  map.setZoom(15);#}
-{##}
-{#                  google.maps.event.trigger(map, 'resize');#}
-{#                  map.setCenter(location);#}
-{##}
-{##}
-{#              });#}
-{#          }#}
-
-
 
 
     function coord2() {
@@ -277,14 +166,6 @@ $.ajaxSetup({
 jQuery(document).ready(function($) {
 
 
-
-{#    $('#avatar').change(function(e){#}
-{#		var fotoavatar = document.getElementById('fotoavatar');#}
-{#		fotoavatar.src = this.value;#}
-{#	})#}
-
-
-
     $('.lloc_entrega').change(function (e) {
         //Aqui filtrem les opcions a domicili. s'han d'afegir totes les noves
         var carrer = document.getElementById('carrer');
@@ -300,38 +181,16 @@ jQuery(document).ready(function($) {
                         carrer.readOnly = false;
                         numero.readOnly = false;
                         pis.readOnly = false;
-{#                        poblacio.readOnly = true;#}
-{#                        punt_lat.readOnly = false;#}
-{#                        punt_lng.readOnly = false;#}
-{#                        carrer.disabled = false;#}
-{#                        numero.disabled = false;#}
-{#                        pis.disabled = false;#}
-{#                        punt_lat.disabled = false;#}
-{#                        punt_lng.disabled = false;#}
                     } else {
                         carrer.readOnly = true;
                         numero.readOnly = true;
                         pis.readOnly = true;
-{#                        punt_lat.disabled = true;#}
-{#                        punt_lng.disabled = true;#}
                     }
                     freq.innerHTML = data["frequencia"];
                     carrer.value = data["carrer"];
                     numero.value = data["numero"];
                     pis.value = data["pis"];
                     poblacio.value = data["poblacio"];
-{#                    lat = data["geopuntx_lat"];#}
-{#                    punt_lat.value = lat;#}
-{#                    if (data["geopuntx_lat"]) {#}
-{#                    } else {#}
-{#                        punt_lat.placeholder = "clica en el mapa (opcional)";#}
-{#                    }#}
-{#                    lng = data["geopuntx_lng"];#}
-{#                    punt_lng.value = lng;#}
-{#                    if (data["geopuntx_lng"]) {#}
-{#                    } else {#}
-{#                        punt_lng.placeholder = "clica en el mapa (opcional)";#}
-{#                    }#}
                 });
         var acc = document.getElementById('accordion');
         $.post("/horari/", $(this).serializeArray(),
@@ -357,8 +216,6 @@ jQuery(document).ready(function($) {
                     acc.innerHTML = t;
 
                     $("#accordion").accordion("refresh");
-                    //
-                    //acc.accordion("refresh");
 
                 });
 
@@ -372,14 +229,9 @@ jQuery(document).ready(function($) {
 
                   google.maps.event.trigger(map, 'resize');
                   map.setCenter(location);
-
-
               });
     });
-
-
 });
-
 
   </script>
 {% endblock %}
@@ -391,131 +243,105 @@ jQuery(document).ready(function($) {
 
   $( function() {
     $( "#accordion" ).accordion();
-
-
-
-
   } );
 
   </script>
 
-
 <p style="background-color: #508a4c; color: white; font-family: 'Satisfy', cursive; font-size: xx-large"> &nbsp; {{ object.user.get_full_name }}</p>
 
 <div id="tabs">
-  <ul id="tabx" name="tabx" style="background-color: #389c41">
-    <li style="background-color: #389c41"><a id="id_tabs1" href="#tabs-1">Configuració</a></li>
-    <li style="background-color: #389c41"><a id="id_tabs2" href="#tabs-2">Punt de trobada</a></li>
-  </ul>
-  </br>
 
-<form method="post" enctype="multipart/form-data" action="">{% csrf_token %}
-            <div id="tabs-1">
-                {% if object.avatar  %}
-                            <a href="{{ MEDIA_URL }}{{ object.avatar.url }}" >
-                                <div class="g-item" style="background-image:url('{{ object.avatar.url }}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >
-                                </div>
-                            </a>
-{#                            <img src="{{ object.avatar.url }}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200"/>#}
-                        {% else %}
-                            <a href="{{ MEDIA_URL }}{% static "img/fusta.jpg" %}" >
-                                <div class="g-item" style="background-image:url('{% static "img/fusta.jpg" %}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >
-                                </div>
-                            </a>
-{#                            <img src="{% static "img/fusta.jpg" %}" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" height="200" width="200">#}
-                {% endif %}
-                    <br/><br/>
-            <div style="display: block">
+      <ul id="tabx" name="tabx" style="background-color: #389c41">
+        <li style="background-color: #389c41"><a id="id_tabs1" href="#tabs-1">Configuració</a></li>
+        <li style="background-color: #389c41"><a id="id_tabs2" href="#tabs-2">Punt de trobada</a></li>
+      </ul>
+      </br>
 
-                    <label for="avatar"><span class="glyphicon glyphicon-picture"></span>Nova foto de perfil: </label>
-                        {% if object.avatar  %}
-                            <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
-                        {% else %}
-                            <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "img/fusta.jpg" %}"/> </br>
-                        {% endif %}
-            </div>
-                  <label>Email: </label> {{ object.user.email }}  <br/>
-                  <label>Nom d'usuari: </label>   {{ object.user.username }} <br/>
-                  <label>Nom: </label>     {{ form.first_name }} <br/>
-                  <label>Cognoms: </label>     {{ form.last_name }}  <br/>
-                <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
-{#                <div class="loader"></div>#}
-            </div>
-            <div id="tabs-2">
-                <span class="glyphicon glyphicon-flag"></span>
-                <label for="lloc_entrega">Lloc d'entrega:</label> </br>
-                        <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control">
-                       {% for lloc in nodes %}
-                        {%  if lloc.pk == object.lloc_entrega.pk %}
-                                <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
+    <form method="post" enctype="multipart/form-data" action="">{% csrf_token %}
+                <div id="tabs-1">
+                    {% if object.avatar  %}
+                                <a href="{{ MEDIA_URL }}{{ object.avatar.url }}" >
+                                    <div class="g-item" style="background-image:url('{{ object.avatar.url }}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >
+                                    </div>
+                                </a>
+                    {% else %}
+                                <a href="{{ MEDIA_URL }}{% static "img/fusta.jpg" %}" >
+                                    <div class="g-item" style="background-image:url('{% static "img/fusta.jpg" %}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >
+                                    </div>
+                                </a>
+                    {% endif %}<br/><br/>
+                    <div style="display: block">
+
+                            <label for="avatar"><span class="glyphicon glyphicon-picture"></span>Nova foto de perfil: </label>
+                            {% if object.avatar  %}
+                                <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
                             {% else %}
-                                <option value="{{ lloc.pk }}">{{ lloc.nom }} / {{ lloc.poblacio }} </option>
+                                <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "img/fusta.jpg" %}"/> </br>
                             {% endif %}
-                       {% endfor %}
-                        </select> </br>
-                     <b>Horari:</b><div id="freq" name="freq"> {{ object.lloc_entrega.get_frequencia.nom }} </div>
-                    <div id="accordion" name="accordion" style="font-family: 'Special Elite', cursive; font-size: medium; ">
                     </div>
+                      <label>Email: </label> {{ object.user.email }}  <br/>
+                      <label>Nom d'usuari: </label>   {{ object.user.username }} <br/>
+                      <label>Nom: </label>     {{ form.first_name }} <br/>
+                      <label>Cognoms: </label>     {{ form.last_name }}  <br/>
+                      <button type="submit" > <span class="glyphicon glyphicon-floppy-disk"> Desar</span> </button>
+                </div>
+                <div id="tabs-2">
+                    <span class="glyphicon glyphicon-flag"></span>
+                    <label for="lloc_entrega">Lloc d'entrega:</label> </br>
+                            <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control">
+                           {% for lloc in nodes %}
+                            {%  if lloc.pk == object.lloc_entrega.pk %}
+                                    <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
+                                {% else %}
+                                    <option value="{{ lloc.pk }}">{{ lloc.nom }} / {{ lloc.poblacio }} </option>
+                                {% endif %}
+                           {% endfor %}
+                            </select> </br>
+                         <b>Horari:</b><div id="freq" name="freq"> {{ object.lloc_entrega.get_frequencia.nom }} </div>
+                        <div id="accordion" name="accordion" style="font-family: 'Special Elite', cursive; font-size: medium; ">
+                        </div>
 
-                    {% if object.lloc_entrega.a_domicili == True %}
-{#                                {% if object.punt_lat %}#}
-{#                                    <div id="geodiv" name="geodiv">#}
-{#                                        <div id="map"></div><br/>#}
-{#                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"#}
-{#                                                   value="{{ object.punt_lat }}"  placeholder="clica en el mapa" />#}
-{#                                        <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" id="punt_lng" name="punt_lng"  value="{{ object.punt_lng }}" class="form-control" placeholder="(opcional)" />#}
-{#                                    </div>#}
-{#                                {% else %}#}
+                        {% if object.lloc_entrega.a_domicili == True %}
                                     <div id="geodiv" name="geodiv">
                                         <div id="map"></div><br/>
-{#                                        <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">#}
-{#                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lat" name="punt_lat"  placeholder="clica en el mapa" />#}
-{#                                            <input type="text" style="max-width: 185px; float: right; position: relative; visibility: hidden" class="form-control" id="punt_lng" name="punt_lng"  placeholder="(opcional)" />#}
-{#                                        </span>#}
                                     </div>
-{#                                {% endif %}#}
-                                <br/><br/><br/><br/>
-                                <div >
-                                <label style="float: left" for="carrer">Carrer: </label>
-                                <input type="text" class="form-control" id="carrer" name="carrer" style="padding-right: 1px; max-width: 300px" value="{{ object.carrer }}"/></div>
-                                <div class="form-group">
-                                <label style="float: left" for="numero">Número:</label>
-                                <input type="text" class="form-control"  id="numero" name="numero" style="max-width: 300px; padding-right: 1px" value="{{ object.numero }}"/></div>
-                                <div class="form-group">
-                                <label style="float: left" for="pis">Pis:</label>
-                                <input type="text" class="form-control" style="max-width: 300px"  id="pis" name="pis" value="{{ object.pis }}" /></div>
-                                <div class="form-group">
-                                <label style="float: left" for="poblacio">Població:</label>
-                                <input id="poblacio" class="form-control" style="max-width: 300px"  name="poblacio" value="{{ object.poblacio }}"  readonly/></div>
-                    {% else %}
+                                    <br/><br/><br/><br/>
+                                    <div >
+                                    <label style="float: left" for="carrer">Carrer: </label>
+                                    <input type="text" class="form-control" id="carrer" name="carrer" style="padding-right: 1px; max-width: 300px" value="{{ object.carrer }}"/></div>
+                                    <div class="form-group">
+                                    <label style="float: left" for="numero">Número:</label>
+                                    <input type="text" class="form-control"  id="numero" name="numero" style="max-width: 300px; padding-right: 1px" value="{{ object.numero }}"/></div>
+                                    <div class="form-group">
+                                    <label style="float: left" for="pis">Pis:</label>
+                                    <input type="text" class="form-control" style="max-width: 300px"  id="pis" name="pis" value="{{ object.pis }}" /></div>
+                                    <div class="form-group">
+                                    <label style="float: left" for="poblacio">Població:</label>
+                                    <input id="poblacio" class="form-control" style="max-width: 300px"  name="poblacio" value="{{ object.poblacio }}"  readonly/></div>
+                        {% else %}
 
-                                <div id="geodiv" name="geodiv">
-                                    <div id="map"></div><br/>
-{#                                    <span class="glyphicon glyphicon-map-marker" style="float:right;; visibility: hidden">#}
-{#                                        <input type="text" id="punt_lng" class="form-control" style="max-width: 150px; float: right; position: relative; visibility: hidden" placeholder="opcional"  name="punt_lng" value="{{ object.lloc_entrega_perfil.position.longitude }}" readonly/>#}
-{#                                        <input type="text" id="punt_lat" class="form-control" style="max-width: 150px; float: right;  position: relative; visibility: hidden"  name="punt_lat" placeholder="clica en el mapa" value="{{ object.lloc_entrega_perfil.position.latitude }}" readonly/>#}
-{#                                    </span>#}
-                                </div><br/><br/><br/><br/><br/>
-                                                        <div>
-                                <label style="float: left" for="carrer">Carrer: </label>
-                                <input type="text"  id="carrer" style="max-width: 300px" class="form-control"  name="carrer" value="{{ object.lloc_entrega.carrer }}" readonly/></div>
-                                <div class="form-group">
-                                <label style="float: left" for="numero">Número:</label>
-                                <input type="text"  id="numero" style="max-width: 300px" class="form-control" name="numero" value="{{ object.lloc_entrega.numero }}" readonly/></div>
-                                <div class="form-group">
-                                <label style="float: left" for="pis">Pis:</label>
-                                <input type="text"  id="pis" style="max-width: 300px" class="form-control" name="pis" value="{{ object.lloc_entrega.pis }}" readonly/></div>
-                                <div class="form-group">
-                                <label style="float: left" for="poblacio">Població:</label>
-                                <input id="poblacio"  name="poblacio" style="max-width: 300px" class="form-control" value="{{ object.lloc_entrega.poblacio }}" readonly/></div>
-                    {% endif %}
-                    <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span>
-{#                        <div class="loader"></div> #}
-                    </button> <br/><br/><br/>
-            </div>
+                                    <div id="geodiv" name="geodiv">
+                                        <div id="map"></div><br/>
+                                    </div><br/><br/><br/><br/><br/>
+                                    <div>
+                                    <label style="float: left" for="carrer">Carrer: </label>
+                                    <input type="text"  id="carrer" style="max-width: 300px" class="form-control"  name="carrer" value="{{ object.lloc_entrega.carrer }}" readonly/></div>
+                                    <div class="form-group">
+                                    <label style="float: left" for="numero">Número:</label>
+                                    <input type="text"  id="numero" style="max-width: 300px" class="form-control" name="numero" value="{{ object.lloc_entrega.numero }}" readonly/></div>
+                                    <div class="form-group">
+                                    <label style="float: left" for="pis">Pis:</label>
+                                    <input type="text"  id="pis" style="max-width: 300px" class="form-control" name="pis" value="{{ object.lloc_entrega.pis }}" readonly/></div>
+                                    <div class="form-group">
+                                    <label style="float: left" for="poblacio">Població:</label>
+                                    <input id="poblacio"  name="poblacio" style="max-width: 300px" class="form-control" value="{{ object.lloc_entrega.poblacio }}" readonly/></div>
+                        {% endif %}
+
+                        <button type="submit" style="float: left"> <span class="glyphicon glyphicon-floppy-disk"> Desar</span></button> <br/><br/><br/>
+                </div>
 
 
-</form>
+    </form>
 
 </div>
 

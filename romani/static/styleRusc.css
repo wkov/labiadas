@@ -3,37 +3,25 @@
 @import url(https://fonts.googleapis.com/css?family=Special+Elite);
 @import url(https://fonts.googleapis.com/css?family=Merienda+One);
 @import url(https://fonts.googleapis.com/css?family=Barrio);
-
-
 html {
     overflow-y: scroll;
     height: 100%;
 }
-
-
-
-
 body {
     padding: 0px;
     min-height: 100%;
     min-width: 100%;
     opacity: 1;
     background-color: #f7ecb5;
-    /*background-image: url("/static/images/blat.jpg");*/
     background-position: center center;
     background-attachment: fixed;
     font-family: 'Special Elite', cursive;
     font-size: medium;
 }
-
-
-
-
-#back_img{
-
-    min-height: 100%;
-    min-width: 100%;
-}
+/*#back_img{*/
+    /*min-height: 100%;*/
+    /*min-width: 100%;*/
+/*}*/
 
 header {
   background: #f5b335;
@@ -109,6 +97,7 @@ header {
 
     .prodxx {
         position: relative;
+        opacity: 0.7;
 
     }
 

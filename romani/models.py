@@ -335,7 +335,7 @@ class Key(models.Model):
     data = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "%s - %s - %s - %s" % (self.key, self.usuari.username, self.nou_usuari, self.data.date())
+        return "%s" % (self.usuari.username)
 
 
 class UserProfile(models.Model):

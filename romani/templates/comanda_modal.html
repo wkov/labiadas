@@ -36,14 +36,14 @@ window.onclick = function(event) {
            <label for="lloc_entrega" class="lloc_entrega_lbl"  >Lloc d'entrega:</label>
             <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control" >
                  {% for lloc in nodes %}
-                {%  if lloc.pk == up.lloc_entrega_perfil.pk %}
+                {%  if lloc.pk == up.lloc_entrega.pk %}
                         <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
                     {% else %}
                         <option value="{{ lloc.pk }}">{{ lloc.nom }} / {{ lloc.poblacio }} </option>
                     {% endif %}
                {% endfor %}
            </select>
-            {% if up.lloc_entrega_perfil.a_domicili == True %}
+            {% if up.lloc_entrega.a_domicili == True %}
                     <div id="effect" style="display: block" class="ui-widget-content ui-corner-all">
                     <label style="float: left; position: absolute" for="carrer">Carrer: </label>
                     <input type="text" id="carrer" style="float: right; max-width: 300px" class="form-control" name="carrer" value="{{ up.carrer }}"/><br/><br/>

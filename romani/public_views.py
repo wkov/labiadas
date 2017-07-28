@@ -438,7 +438,7 @@ class ComandaFormBaseView(FormView):
             else:
                 # messages.success(self.request, (u"Comanda realitzada correctament"))
                 ret = {"contracte": 1, "success": 1, "pk": v.pk}
-                notify.send(producte, recipient= user, verb="Has afegit ", action_object=v,
+                notify.send(format, recipient= user, verb="Has afegit ", action_object=v,
                 description="a la cistella" , timestamp=timezone.now())
 
         return self.create_response(ret, True)
@@ -596,7 +596,7 @@ def stock_calc(format, dia, cantitat):
      d = format.dies_entrega.get(dia=dia)
      if d.tipus_stock == '0':
             try:
-                stocks = Stock.objects.filter(dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__caducitat','dia_prod__date')
+                stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
                 for s in stocks:
                     diaproduccio = s.dia_prod
                     s = format.stocks.get(dia_prod=diaproduccio)

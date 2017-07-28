@@ -6,219 +6,67 @@
 {% block headers %}
     <script src="{% static 'js/comanda.js' %}"></script>
 {% endblock %}
-
-
-
 {% block modals %}
-
-
         {% include 'comanda_modal.html' %}
-
 {% endblock %}
-
 {% block content %}
-
-
-
-
     <div id="recurs_wraper" style="display: inline-block; margin:0px; width: 100%">
-
         <div id="div_recurs"  style="display: block ">
             <div     class="thumbnail">
-            <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
-                <div style="background-color: #f6a828; float: right " title="Próxima entrega">
-                <span class="glyphicon glyphicon-time" ></span> {% next_day producte up.lloc_entrega_perfil %}</div>
-                <div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">
-                <span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>
-                <div style="background-color: #8ae090; color: white; float: right" title="Vots positius">
-                <span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>
-            </div>
+                <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
+                    <div style="background-color: #f6a828; float: right " title="Próxima entrega">
+                    <span class="glyphicon glyphicon-time" ></span> {% next_day producte up.lloc_entrega %}</div>
+                    <div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">
+                    <span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>
+                    <div style="background-color: #8ae090; color: white; float: right" title="Vots positius">
+                    <span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>
+                </div>
                 {% if producte.foto %}
-
-                <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
-                <div class="foto-producte" style="background-image:url('{{ producte.foto.url }}');" >
-                        </div></a>
-            {% endif %}
-            <h2 >{{ producte.nom }} </h2>
-
-                        <a href="{% url 'productor' producte.productor.pk %}" > &nbsp; <h3>{{ producte.productor }}</h3></a>
-
-            <a href="{% url 'messages_compose_to' producte.productor.responsable.first %}" title="Enviar missatge al productor">
-                 Enviar missatge al productor <span class="glyphicon glyphicon-comment" style="color: #f6a828"></span>
-                </a>
-{#            <div style="float: right">#}
-
-
-{#            </div>#}
-{#            <div style="float:left;">#}<br /><br />
-
-                        <div >
-                        {{ producte.text_curt }}</div><br />
-                        <div class="thumbnail">
-
-                            <form method="post"  class="comanda_form">{% csrf_token %}
-
-                                     <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ producte.pk }}" />
-                                    <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ producte.nom }}" />
-                                     <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
-
-                                     <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega.pk }}" />
-
-                                <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega.pk }}"/>
-
-                                <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ tipusproducte.preu }}" />
-
-
-
-                                     Cant:
-                                     <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 45px"/>
-
-
-
-
-
-                                de
-                                    <select id="id_format" name="format" class="hidden_id">
-
-                                    {% for tipusproducte in producte.formats.all %}
-                                    {% if tipusproducte.in_stock == True %}
-                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
-                                    {% endif %}
-{#                                    {% if tipusproducte.stock == "None" %}#}
-{#                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>#}
-{#                                    {% endif %}#}
-                                {% endfor %}
-                                    </select>
-
-            {#            <label id="id_total_preu" name="total_preu" class="hidden_id" text="567"></label>#}
-                              {% if not user.is_authenticated %}
-                                             <button class="glyphicon glyphicon-shopping-cart" id="id_carro" style=" ">
-                                            </button>
-
-
-                                         {% else %}
-                                             <button class="glyphicon glyphicon-shopping-cart" id="id_carro" style=" ">
-                                             </button>
-
-                                         {% endif %}
-                                 </form>
-
-                        </div>
-{#            </div>#}
-            {{ producte.descripcio|linebreaks }}<br />
-            <br />
-            {% if producte.keywords %}
-            <b>Paraules clau: &nbsp; </b> {{ producte.keywords }} <br/><br/>
-            {% endif %}
-{#            {% for etiqueta in recurs.etiquetes.all %}#}
-{#                 <a href="{% url 'nom_etiqueta' etiqueta.nom|slugify %}" class="btn btn-default btn-group-xs"> <span class='glyphicon glyphicon-tag'>#}
-{#                {{ etiqueta.nom}}#}
-{#                </span> </a>#}
-{#            {% endfor %}#}
-
-            <a href="{% url 'coope' %}"> Tornar a la botiga </a>
-            </div>
-
-         <br />
-         <br />
+                    <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
+                        <div class="foto-producte" style="background-image:url('{{ producte.foto.url }}');" ></div>
+                    </a>
+                {% endif %}
+                <h2 >{{ producte.nom }} </h2>
+                <a href="{% url 'productor' producte.productor.pk %}" > <h3>{{ producte.productor }}</h3></a>
+                <a href="{% url 'messages_compose_to' producte.productor.responsable.first %}" title="Enviar missatge al productor">
+                Enviar missatge al productor <span class="glyphicon glyphicon-comment" style="color: #f6a828"></span></a><br/><br/>
+                <div >
+                            {{ producte.text_curt }}
+                </div><br />
+                <div class="thumbnail">
+                    <form method="post"  class="comanda_form">{% csrf_token %}
+                         <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ producte.pk }}" />
+                         <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ producte.nom }}" />
+                         <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
+                         <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega.pk }}" />
+                         <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega.pk }}"/>
+                         <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ tipusproducte.preu }}" />
+                        Cant:
+                             <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 45px"/>
+                        de
+                        <select id="id_format" name="format" class="hidden_id">
+                            {% for tipusproducte in producte.formats.all %}
+                                {% if tipusproducte.in_stock == True %}
+                                    <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                         {% if not user.is_authenticated %}
+                             <button class="glyphicon glyphicon-shopping-cart" id="id_carro" style=" ">
+                            </button>
+                         {% else %}
+                             <button class="glyphicon glyphicon-shopping-cart" id="id_carro" style=" ">
+                             </button>
+                         {% endif %}
+                    </form>
+                </div>
+                {{ producte.descripcio|linebreaks }}<br />
+                <br />
+                {% if producte.keywords %}
+                    <b>Paraules clau: &nbsp; </b> {{ producte.keywords }} <br/><br/>
+                {% endif %}
+                <a href="{% url 'coope' %}"> Tornar a la botiga </a>
+            </div><br/><br/>
         </div>
-
-
-{#        <table class="table table-striped">#}
-{#        {% for post in posts_relacionats %}#}
-{#            {% if post != recurs.post_debat %}#}
-{#        <tr>#}
-{#            <td>#}
-{#                    <form method="post" action="{% url 'vote' %}" class="vote_form">#}
-{##}
-{#                         [{{ post.votes }}]#}
-{##}
-{#                        {% csrf_token %}#}
-{#                         <input type="hidden" id="id_post" name="post" class="hidden_id" value="{{ post.pk }}" />#}
-{#                         <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                         {% if not user.is_authenticated %}#}
-{#                            <button disabled title="Identificat per votar">+</button>#}
-{#                         {% elif post.pk not in voted %}#}
-{#                            <button>+</button>#}
-{#                         {% else %}#}
-{#                            <button>-</button>#}
-{#                         {% endif %}#}
-{#                    </form>#}
-{##}
-{#            </td>#}
-{#            <td>#}
-{#                <a href="{% url 'post' post.pk  %}"> ({{ post.pk }}) </a>#}
-{#                <b><a href="{% url 'post' post.pk  %}"> {{ post.titol }}</a></b> {{ post.autor }}#}
-{##}
-{#                <a class="button" href="{% url 'post_respon' post.pk  %}">Comentar</a>#}
-{#            </td>#}
-{#            <td>#}
-{#                {{ post.text|slice:":60" }}#}
-{#            </td>#}
-{#            <td>#}
-{#                {% for etiqueta in post.etiquetes.all %}#}
-{#                    {{ etiqueta.nom}}/{{etiqueta.descripcio}}#}
-{#                {% endfor %}#}
-{#            </td>#}
-{#        </tr>#}
-{#            {% endif %}#}
-{#        {% endfor %}#}
-{#        </table>#}
-
-{#        <div id="div_debat_recurs"  style="float: left;  margin-left: 30px;" >#}
-{#           <div style="margin: 30px">#}
-{#              <ul style=" margin-left: -51px; ">#}
-{##}
-{#                {% for branch, obj in posts_debat.as_tree %}#}
-{#                    {% if obj %}#}
-{#                        <div class="div_coment">#}
-{#                            <form method="post" action="{% url 'vote' %}" class="vote_form">#}
-{##}
-{#                                 [{{ obj.votes }}]#}
-{##}
-{#                                {% csrf_token %}#}
-{#                                 <input type="hidden" id="id_post" name="post" class="hidden_id" value="{{ obj.pk }}" />#}
-{#                                 <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                                 {% if not user.is_authenticated %}#}
-{#                                    <button disabled title="Please login to vote">+</button>#}
-{#                                 {% elif obj.pk not in voted %}#}
-{#                                    <button>+</button>#}
-{#                                 {% else %}#}
-{#                                    <button>-</button>#}
-{#                                 {% endif %}#}
-{##}
-{#                            ({{ obj.pk }}) <b><a href="{% url 'post' obj.pk %}">{{ obj.titol }}</b></a> {{ obj.pare_id }}#}
-{#                            <a href="{% url 'perfil' obj.autor.pk %}"> {{ obj.autor }}</a>)<br />#}
-{#                            {% for etiqueta in obj.etiquetes.all %}#}
-{#                                {{ etiqueta.nom}}/{{etiqueta.descripcio}}#}
-{#                            {% endfor %}#}
-{#                            <a href="{% url 'post_respon' obj.pk  %}">Re</a>#}
-{#                             {{ obj.text  }}#}
-{##}
-{#                            {% for recurs in obj.recursos.all %}#}
-{#                                <br /><a href="http://{{ recurs.url}}"> {{ recurs.url}} </a> /#}
-{#                                <a href="{% url 'recurs' recurs.pk %}"> {{recurs.descripcio}} </a>#}
-{#                            {% endfor %}#}
-{#                            </form>#}
-{#                        </div>#}
-{#                        {% if branch %}#}
-{#                            <div class="div_coment">#}
-{#                        {% else %}#}
-{#                        {% endif %}#}
-{#                    {% else %}#}
-{#                        {% if branch %}#}
-{#                             </div >#}
-{#                        {% endif %}#}
-{#                    {% endif %}#}
-{#                {% endfor %}#}
-{#              </ul>#}
-{#           </div>#}
-{#        </div>#}
-    </div>
-
-     <br />
-     <br />
-
-
-
+    </div><br/><br/>
 {% endblock %}
