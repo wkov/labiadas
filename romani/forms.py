@@ -24,7 +24,7 @@ class ComandaProForm(forms.ModelForm):
         super(ComandaProForm, self).__init__(*args, **kwargs)
         self.fields["format"].queryset = TipusProducte.objects.filter(productor=productor)
         self.fields["format"].label = "Producte"
-        self.fields["client"].queryset = User.objects.filter(user_profile__lloc_entrega_perfil__in=productor.nodes.all())
+        self.fields["client"].queryset = User.objects.filter(user_profile__lloc_entrega__in=productor.nodes.all())
 
 
 class InfoForm(forms.ModelForm):
