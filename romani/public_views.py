@@ -501,7 +501,19 @@ def diesEntregaView(request, pk, pro):
             for d in dies_pk:
                 dia = DiaEntrega.objects.get(pk=d)
                 if dia in dies_entrega_ini:
-                    pass
+                    franja_pk = request.POST.get(str(dia.pk))
+                    franja = FranjaHoraria.objects.get(pk=franja_pk)
+                    entrega = Entrega.objects.get(comanda=comanda, dia_entrega=d)
+                    if entrega.franja_horaria == franja:
+                        pass
+                    else:
+                        # Aquí processem les entregues quan ja existien i simplement l'usuari modifica l'hora d'entrega dins el mateix dia en que ja havia demanat
+                        entrega.delete() #1r borrem l'anterior entrega pq al canviar la hora ja no és vàlida
+                        stock_result = stock_calc(comanda.format, dia, comanda.cantitat)
+                        if stock_result['dia_prod'] == '':
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
+                        else:
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
                 else:
                     stock_result = stock_calc(comanda.format, dia, comanda.cantitat)
                     if stock_result['result'] == True:

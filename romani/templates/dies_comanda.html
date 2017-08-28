@@ -1,20 +1,22 @@
 {% extends "base.html" %}
-{#{% block headers %}#}
-{#<script>#}
-{##}
-{#$(document).ready(function() {#}
-{##}
-{#    // page is now ready, initialize the calendar...#}
-{##}
-{#    $('#calendar').fullCalendar({#}
-{#       aspectRatio: 4,#}
-{##}
-{#    })#}
-{##}
-{#{);#}
-{##}
-{#</script>#}
-{#{% endblock %}#}
+{% block headers %}
+<script>
+
+$(document).ready(function() {
+
+    $('input[name=dies]').click(function(){
+
+        if($(this).is(":checked")){
+            $(this).next("ul").children("li").show();
+        }else{
+            $(this).next("ul").children("li").hide();
+        }
+    })
+
+});
+
+</script>
+{% endblock %}
 {% block content %}
 
 <form method="post" action="">
@@ -68,39 +70,49 @@
 
     {% for ent in entregas_pas %}
         <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
-            <br>
-            <input type="checkbox" name="dies" value="{{ ent.dia_entrega.pk }}" checked disabled> {{ ent.dia_entrega.dia }}, {{ ent.dia_entrega.date }} <br/>
+            <input type="checkbox" name="dies" value="{{ ent.dia_entrega.pk }}" checked disabled> {{ ent.dia_entrega.dia }}, {{ ent.dia_entrega.date }}
+            <ul>
             {% for f in ent.dia_entrega.franjes_horaries.all %}
-                {% if f == ent.franja_horaria %}
-                    <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" checked disabled> {{ f.inici }} - {{ f.final }} <br>
-                {% else %}
-                    <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" disabled> {{ f.inici }} - {{ f.final }} <br>
-                {% endif %}
+                <li>
+                    {% if f == ent.franja_horaria %}
+                        <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" checked disabled> {{ f.inici }} - {{ f.final }}
+                    {% else %}
+                        <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" disabled> {{ f.inici }} - {{ f.final }}
+                    {% endif %}
+                </li>
             {% endfor %}
+            </ul>
         </div>
     {% endfor %}
 
     {% for dia in dies_entrega_pos %}
         <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
-        <br>
         {% if dia in dies_entrega_ini %}
             {% for d in comanda.entregas.all %}
                 {% if dia == d.dia_entrega %}
-                    <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }} <br/>
+                    <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }}
+                    <ul>
                     {% for f in dia.franjes_horaries.all %}
-                        {% if f == d.franja_horaria %}
-                                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }} <br>
-                        {% else %}
-                                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }} <br>
-                        {% endif %}
+                        <li>
+                            {% if f == d.franja_horaria %}
+                                    <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }}
+                            {% else %}
+                                    <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }}
+                            {% endif %}
+                        </li>
                     {% endfor %}
+                    </ul>
                 {% endif %}
             {% endfor %}
         {% else %}
-          <input type="checkbox" name="dies" value="{{ dia.pk }}"> {{ dia.dia }}, {{ dia.date }} <br/>
-            {% for f in dia.franjes_horaries.all %}
-                <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }} <br>
-            {% endfor %}
+          <input type="checkbox" name="dies" value="{{ dia.pk }}"> {{ dia.dia }}, {{ dia.date }}
+            <ul>
+                {% for f in dia.franjes_horaries.all %}
+                    <li>
+                        <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }}
+                    </li>
+                {% endfor %}
+            </ul>
         {% endif %}
 
         </div>

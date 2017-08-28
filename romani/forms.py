@@ -1,8 +1,6 @@
 
 from django import forms
-# from .models import Comanda
 from romani.models import UserProfile, Comanda, Productor, Producte, DiaEntrega, Node, TipusProducte, FranjaHoraria,Adjunt, Frequencia, DiaProduccio, Stock, DiaFormatStock, Vote
-# from romani.views import stock_check_cant
 from django.contrib.auth.models import  User, Group
 from django.forms.widgets import CheckboxSelectMultiple
 from romani.widgets import SelectTimeWidget

@@ -12,7 +12,7 @@
             <a href="{% url 'messages_compose_to' productor.responsable.first %}" title="Enviar missatge al productor">
                  Enviar missatge al productor <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828"></span>
                 </a>
-            <br />
+            <br /> <br/>
             {{ productor.text|linebreaks }}<br />
             {% if adjunts %}
                 <br />
