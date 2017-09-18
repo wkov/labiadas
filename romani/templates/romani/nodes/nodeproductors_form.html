@@ -1,68 +1,26 @@
 {% extends "base.html" %}
 
-{#{% block headers %}#}
-{#<script>#}
-{##}
-{##}
-{#    $( "#dialog" ).dialog();#}
-{##}
-{##}
-{#$(document).ready(function() {#}
-{##}
-{##}
-{##}
-{#    // page is now ready, initialize the calendar...#}
-{#    $( "#dialog" ).dialog({#}
-{#  position: { my: "right top", at: "right top+75", of: "#page-content-wrapper"},#}
-{#        maxWidth: 800#}
-{##}
-{#});#}
-{##}
-{#});#}
-{##}
-{#</script>#}
-{#{% endblock %}#}
-
 {% block content %}
 <div style="float: left; position:relative;     font-family: 'Satisfy', cursive;
     font-size: 3em"> {{ node.nom }} </div>
-{#<form method="post" action="">#}
-{#  {% csrf_token %}#}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'node_update' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-{#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Editar Node</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'vista_nodesdates' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-{#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Dates d'entrega</b>
                                  </a>
                         </div>
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'nodeproductors_update' object.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
-{#                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
-{#                                    </span>#}
-{#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
                                     <b id="pato" name="pato" class="pato">Escollir Productors</b>
                                  </a>
                         </div>
     </div>
     <br/><br/>
-{#  {{ form.as_p }}#}
-{#  <input type="text" id="datepicker" size="30">#}
-{#  <input type="submit" value="Add">#}
-{##}
-{##}
-{##}
-{##}
-{#</form>#}
 
     <div id="dialog" title="Tria els productors afins">
         <p>Selecciona els productors que vols que portin productes al teu Lloc d'entrega. Una vegada hagis triat els productors,
@@ -73,18 +31,7 @@
 {% csrf_token %}
 {% for field in form %}
     <p>
-{#        {{ field.errors }}#}
-{#        {{ field.label_tag }} {{ field }}#}
         {% if field.name == "productors" %}
-{#          {% for productor in form.productors.field.queryset %}#}
-{#              {% if productor in node.productors.all %}#}
-{#                <input type="checkbox" id="{{ productor.pk }}" checked="checked">  <a href="{% url 'productor' productor.pk %}">{{ productor.nom }} </a> </input> <br/>#}
-{#              {% else %}#}
-{#                <input type="checkbox" id="{{ productor.pk }}">  <a href="{% url 'productor' productor.pk %}">{{ productor.nom }} </a> </input> <br/>#}
-{#              {% endif %}#}
-{#              {{ field.label_tag }}{{ field. }}#}
-{#          {% endfor %}#}
-{#        {% else %}#}
             {{ field.errors }}
             {{ field.label_tag }} {{ field }}
         {% endif %}
@@ -92,9 +39,5 @@
 {% endfor %}
 <p><input type="submit" value="Confirmar" /></p>
 </form>
-
-
-
-
 
 {% endblock %}

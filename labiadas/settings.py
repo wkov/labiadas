@@ -28,7 +28,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['0.0.0.0','*',
                  '79.137.39.201']
 
-
 STATIC_ROOT = os.path.join(BASE_DIR, "romani/static/")
 
 # Application definition
@@ -49,11 +48,7 @@ INSTALLED_APPS = (
     'xlwt',
 )
 
-
-
-
 SITE_ID = 1
-
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -96,17 +91,12 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'romani/templates'),
 )
 
-# APPEND_SLASH = False
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 LOCALE_PATHS = ( "locale/",)
 
@@ -125,7 +115,6 @@ LANGUAGES = (
 )
 
 
-
 TIME_ZONE = 'Europe/Madrid'
 
 USE_I18N = True
@@ -135,13 +124,9 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
 # STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, 'static').replace('\\','/'),]
-
-
 
 SEND_EMAIL = True
 ACCOUNT_ACTIVATION_DAYS = 30
@@ -158,9 +143,8 @@ MEDIA_URL = '/media/'
 from django.core.urlresolvers import reverse_lazy
 LOGIN_URL=reverse_lazy("login")
 LOGIN_REDIRECT_URL=reverse_lazy("coope")
-LOGOUT_URL=reverse_lazy("coope")
+# LOGOUT_URL=reverse_lazy("coope")
 # REGISTRATION_OPEN = False
-
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ' AIzaSyA6f7rjDkdoQZFH3uy9UTOF7r8xxyOTAcE '
 

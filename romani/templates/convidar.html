@@ -50,29 +50,16 @@
 
         </div>
     {% endif %}
-{#<br/>#}
-{#Actualment som desenes de persones al voltant dels diferents punts:#}
-{#{% for n in nodes %}#}
-{#    {% if forloop.last %}#}
-{#     i &nbsp; {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}. &nbsp;#}
-{#    {% else %}#}
-{#        {{ n.nom }}&nbsp; a &nbsp; {{ n.poblacio }}, &nbsp;#}
-{#    {% endif %}#}
-{#{% endfor %}#}
-
-
 
     Encara disposes de <b>{{ invitacions }}</b> invitacions a la xarxa. Tens 2 opcions:<br/><br/>
     <li>Pots convidar introduïnt el email de la persona: <br/>
     <form action="/convidar/" method="post">
                         {% csrf_token %}
-                            <input type="text" class="form-control"  name="email" width="40px" placeholder="Introdueix email si vols"/>
+                            <input type="text" class="form-control"  name="email" width="40px" placeholder="Introdueix email si vols" value="{{ email }}"/>
                               <button type="submit" class="btn btn-default"  style="font-size: medium"><b>Convidar per email</b></button>
     </form>
         </li>
     <br/>
-
-
 
     <li>També pots convidar a traves de watsapp, messenger o qualsevol plataforma enviant la url que pots generar clicant el seguent botó:
 
@@ -86,8 +73,5 @@
                         </div>
     </form>
     <br/>
-
-
-
 
 {% endblock %}

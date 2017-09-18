@@ -17,7 +17,7 @@
             });
         });
     </script>
-    {% notifications_unread as unread_count %}
+{#    {% notifications_unread as unread_count %}#}
     <div style="float: left">
         <a href="{% url 'edit_profile' %}" title="Perfil d'usuari">
             {% if foto_user  %}
@@ -32,7 +32,7 @@
             <a href="{% url 'edit_profile' %}" title="Perfil d'usuari"><span class='glyphicon glyphicon-user'></span> &nbsp;{{ user.username }}</a>
             <a href="{% url 'logout' %}" title="Tancar sessio"><span class="glyphicon glyphicon-log-out"></span></a><br />
             {% inbox_count as unread_mes_count %}
-            {% if unread_mes_count > 0 %}
+            {% if inbox_count > 0 %}
                 <span id="unread_mes_count">{{ unread_mes_count }}</span>
             {% endif %}
             <a href="{% url 'messages_inbox' %}" title="Missatgeria">
@@ -69,21 +69,8 @@
                                                 {% elif notif.actor|model_object:"Key"  %}
                                                     <a href="{% url 'convidar' %}">
                                                     <img src="{{ notif.actor.usuari.user_profile.avatar.url }}" alt="avatar" height="42" width="42"></a>
-{#                                                {% else %}#}
-{#                                                    <img src="{% static "img/fusta.jpg" %}" alt="avatar" height="42" width="42">#}
                                                 {% endif %}
 
-
-
-{#                                                {% if notif.actor.foto %}#}
-{#                                                    <a href="{% url 'producte' notif.actor.pk %}">#}
-{#                                                    <img src="{{ notif.actor.foto.url }}" alt="avatar" height="42" width="42">#}
-{#                                                {% elif notif.actor.avatar %}#}
-{#                                                    <a href="{% url 'edit_profile' %}">#}
-{#                                                    <img src="{{ notif.actor.avatar.url }}" alt="avatar" height="42" width="42">#}
-{#                                                {% else %}#}
-{#                                                    <img src="{% static "img/fusta.jpg" %}" alt="avatar" height="42" width="42">#}
-{#                                                {% endif %}#}
 
                                         </div>
                                       </td>
@@ -94,9 +81,6 @@
                                                     <a href="{% url 'edit_profile' %}">
                                             {% elif notif.actor|model_object:"Key" %}
                                                     <a href="{% url 'convidar' %}">
-{#                                                {% else %}#}
-{#                                                    <a href="{% url 'edit_profile' %}">#}
-{#                                                {% endif %}#}
                                             {% endif %}
 
                                             <div class="div_notification_text inline">

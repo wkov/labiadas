@@ -31,7 +31,7 @@
                         </div>
     </div>
 
-    <div id="dialog" title="Bústia de comandes"><p>Aquí pots veure totes les comandes que t'han arribat</p></div>
+{#    <div id="dialog" title="Bústia de comandes"><p>Aquí pots veure totes les comandes que t'han arribat</p></div>#}
 
     <br/><br/>
 
@@ -45,12 +45,12 @@
      <tr>
      <th>Producte</th>
      <th>Lloc d'entrega</th>
-     <th>[Cant Format]</th>
+     <th>Cant</th>
+     <th>Format</th>
      <th>Data d'entrega</th>
      <th>Franja horària</th>
      <th>Preu</th>
      <th>Usuari</th>
-{#     <th>Freqüència</th>#}
      <th>Data de comanda</th>
      </tr>
      </thead>
@@ -58,15 +58,16 @@
         {% for link in object_list %}
 
                <tr>
-                        <td>[{{ link.comanda.format.producte.nom }}]</td>
+                        <td>{{ link.comanda.format.producte.nom }}</td>
                         <td>{{ link.dia_entrega.node }}</td>
-                        <td>[{{ link.comanda.cantitat }} &nbsp; {{ link.comanda.format.nom }}]</td>
-                        <td>{{ link.dia_entrega.date }}</td>
+                        <td>{{ link.comanda.cantitat }}</td>
+                        <td>{{ link.comanda.format.nom }}</td>
+                        <td>{{ link.dia_entrega.date|date:"d/m/Y" }}</td>
                         <td>{{ link.franja_horaria }}</td>
                         <td>{{ link.comanda.preu }}€</td>
                         <td>{{ link.comanda.client.first_name }}</td>
 {#                        <td>{{ link.comanda.frequencia.nom }}</td>#}
-                        <td>{{ link.data_comanda.date }}</td>
+                        <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
                </tr>
 
         {% endfor %}

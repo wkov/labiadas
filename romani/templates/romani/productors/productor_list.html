@@ -8,9 +8,6 @@
               <li style="display: inline">
                  &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor"  id="pro_menu">
                     {{ link.nom }}
-{#                 <span id="notification_count">#}
-{#                        {{ link.comandes_count }}#}
-{#                </span>#}
                 </a>
                   <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
                       <span id="notification_count">
@@ -43,9 +40,9 @@
     </div>
 
     <br/>
-    <div id="dialog" title="Recepció de comandes">
-    <p>Consulta totes les comandes que t'arriben</p>
-    </div>
+{#    <div id="dialog" title="Recepció de comandes">#}
+{#    <p>Consulta totes les comandes que t'arriben</p>#}
+{#    </div>#}
     <br/><br/>
 
     {% if comandes%}
@@ -73,7 +70,7 @@
                             <td>{{ link.dia_entrega.node }}</td>
                             <td>{{ link.comanda.cantitat }}</td>
                             <td>{{ link.comanda.format.nom }}</td>
-                            <td>{{ link.dia_entrega.date }}</td>
+                            <td>{{ link.dia_entrega.date|date:"d/m/Y" }}</td>
                             {% if link.franja_horaria %}
                                 <td>{{ link.franja_horaria }}</td>
                             {% else %}
@@ -81,8 +78,7 @@
                             {% endif %}
                             <td>{{ link.comanda.preu }}€</td>
                             <td>{{ link.comanda.client.first_name }}</td>
-{#                            <td> {{ link.comanda.frequencia.nom }}</td>#}
-                            <td>{{ link.data_comanda.date }}</td>
+                            <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
                         </tr>
             {% endfor %}
          </tbody>

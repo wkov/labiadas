@@ -59,27 +59,6 @@ async defer></script>
                             i++;
 				});
           });
-{#        map.addListener('click', function(e) {#}
-{#        placeMarker(e.latLng, map);#}
-{#    });#}
-    }
-
-{#    function placeMarker(location) {#}
-{##}
-{#     var punt_lat = document.getElementById("punt_latx");#}
-{#     var punt_lng = document.getElementById("punt_lngx");#}
-{##}
-{#     if (marker_d == null)#}
-{#     {#}
-{#       marker_d = new google.maps.Marker({#}
-{#          position: location,#}
-{#          map: map#}
-{#      }); } else {   marker_d.setPosition(location); }#}
-{##}
-{##}
-{#     punt_lat.value = location.lat();#}
-{#     punt_lng.value = location.lng();#}
-{#    }#}
 
 //CSRF TOKEN FOR JS
 

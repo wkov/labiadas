@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.core.urlresolvers import reverse
 from django.template import Library
-from django.utils.html import format_html
-from romani.models import UserProfile, Producte, TipusProducte, Key
+from romani.models import UserProfile,TipusProducte, Key
 from django.contrib.auth.models import Group
 from romani.public_views import stock_check_cant
 
@@ -11,29 +9,28 @@ register = Library()
 import datetime
 from datetime import timedelta
 
+
+# usuari_comandes s'utilitza al left_menu.html per a informar de les comandes pendents d'efectuar per part del productor
 @register.assignment_tag(takes_context=True)
-def comandes_unread(context):
+def usuari_comandes(context):
     user = user_context(context)
     if not user:
         return ''
     up = UserProfile.objects.get(user=user)
     num_comandes = up.comandes_cistella().count()
-    # dos = up.contractes_cistella().count()
-    # total = uno + dos
     return num_comandes
 
+# productor_comandes s'utilitza al left_menu.html per a informar de les comandes pendents d'efectuar per part del productor
 @register.assignment_tag(takes_context=True)
-def productor_comandes_unread(context):
+def productor_comandes(context):
     user = user_context(context)
     if not user:
         return ''
     up = UserProfile.objects.get(user=user)
     entregas_num = up.pro_entregas().count()
-    # dos = up.pro_contractes().count()
-    # total = uno + dos
     return entregas_num
 
-
+# Funció utilitzada per els 2 assignment_tags anteriors
 def user_context(context):
     if 'user' not in context:
         return None
@@ -44,11 +41,13 @@ def user_context(context):
         return None
     return user
 
+# has_group s'utilitza a left_menu.html per a saber els rols de l'usuari a l'hora de mostrarli opcions de node o de productor
 @register.filter(name='has_group')
 def has_group(user, group_name):
     group =  Group.objects.get(name=group_name)
     return group in user.groups.all()
 
+#"model_object" s'utilitza al "user_menu.html" per saber en la mateixa template a quin objecte respresenta cada notificacio per a saber a quin camp de la variable notificació cal anar a buscar la foto que es mostra
 @register.filter(name='model_object')
 def model_object(object, object_name):
     if object_name == 'Producte':
@@ -63,7 +62,7 @@ def model_object(object, object_name):
 
     return False
 
-
+# "next_day" s'utilitza a "productes.html", "producte.html", "etiqueta.html" i "buscador.html" per a informar el proper dia en que l'usuari pot rebre el producte
 @register.simple_tag(name='next_day')
 def next_day(producte, node):
     ret = next_day_calc(producte, node)
@@ -71,6 +70,7 @@ def next_day(producte, node):
         return ret
     return None
 
+# Funció utilitzada per el simple_tag anterior que calcula quant queda per a la próxima possible entrega del producte en un node determinat
 def next_day_calc(producte, node):
 
     date = datetime.datetime.now() + timedelta(hours=producte.productor.hores_limit)

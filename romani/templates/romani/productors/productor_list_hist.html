@@ -43,9 +43,9 @@
 
 
     <br/>
-    <div id="dialog" title="Historial">
-    <p>Consulta el teu historial des de l'entrada a la xarxa</p>
-    </div>
+{#    <div id="dialog" title="Historial">#}
+{#    <p>Consulta el teu historial des de l'entrada a la xarxa</p>#}
+{#    </div>#}
 
         <br/><br/><br/>
     {% if comandes %}
@@ -61,7 +61,8 @@
              <th>Franja horària</th>
              <th>Preu</th>
              <th>Usuari</th>
-             <th>Freqüència</th>
+{#             <th>Freqüència</th>#}
+             <th>Data Comanda</th>
              </tr>
              </thead>
              <tbody>
@@ -72,11 +73,12 @@
                                 <td>{{ link.dia_entrega.node }}</td>
                                 <td>{{ link.comanda.cantitat }}</td>
                                 <td>{{ link.comanda.format.nom }}</td>
-                                <td>{{ link.dia_entrega.date }}</td>
+                                <td>{{ link.dia_entrega.date|date:"d/m/Y" }}</td>
                                 <td>{{ link.franja_horaria }}</td>
                                 <td>{{ link.comanda.preu }}€</td>
                                 <td>{{ link.comanda.client.first_name }}</td>
-                                <td>{{ link.comanda.frequencia.nom }}</td>
+{#                                <td>{{ link.comanda.frequencia.nom }}</td>#}
+                                <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
                             </tr>
                 {% endfor %}
              </tbody>

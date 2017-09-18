@@ -210,7 +210,7 @@ def ConvidarView(request):
         else:
             message_email = "Ja has utilitzat totes les invitacions. De moment no pots convidar més gent. Gràcies"
 
-    return render(request, "convidar.html", {'invitacions':up.invitacions, 'message':message, 'message_email': message_email, 'nodes': nodes})
+    return render(request, "convidar.html", {'invitacions':up.invitacions, 'email':email, 'message':message, 'message_email': message_email, 'nodes': nodes})
 
 
 

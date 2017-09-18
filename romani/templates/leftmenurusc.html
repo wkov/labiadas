@@ -191,7 +191,7 @@ nav.sidebar ul.level1 ul.level2 li a {
             <li class=''>
               <a class='expandable' href="{% url 'busk' %}" title='Cercar'>
                 <span id="cercar" name="cercar" class='glyphicon glyphicon-search collapsed-element'></span>
-                <span class='expanded-element'>Cercar</span>
+                <span class='expanded-element'>Buscador</span>
               </a>
             </li>
         </ul>
@@ -206,19 +206,17 @@ nav.sidebar ul.level1 ul.level2 li a {
          <ul class='level1'>
             <li class=''>
               <a class='expandable' href="{% url 'comandes' %}" title='Veure historial de comandes'>
-                {% comandes_unread as unread_com %}
-
 
         <span id="notification_count">
-{#            <label id="id_notifnum">#}
-                {{ unread_com }}
-{#            </label>#}
+{#              usuari_comandes prove de "romani_tags.py"                      #}
+            {% usuari_comandes as usuari_comandes %}
+                {{ usuari_comandes }}
         </span>
 
                   <span class='glyphicon glyphicon-shopping-cart collapsed-element'>
 
                 </span>
-                <span class='expanded-element'>Comandes</span>
+                &nbsp;<span class='expanded-element'>Cistella</span>
               </a>
             </li>
         </ul>
@@ -234,31 +232,34 @@ nav.sidebar ul.level1 ul.level2 li a {
             <li class=''>
               <a class='expandable' href="{% url 'convidar' %}" title='Convidar nous usuaris a la xarxa'>
                 <span id="convidar" name="convidar" class='glyphicon glyphicon-bullhorn collapsed-element'></span>
-                <span class='expanded-element'>Convidar</span>
+                <span class='expanded-element'>Convidar amics</span>
               </a>
             </li>
         </ul>
+{#                   "has_group" es un custom_filter que es pot trobar a "romani_tags.py"#}
          {% if request.user|has_group:"Productors" %}
         <ul class='level1'>
             <li class=''>
-              <a class='expandable' href="{% url 'productor_list' %}" title='Zona de Productors'>
-              {% productor_comandes_unread as pro_unread_com %}
+              <a class='expandable' href="{% url 'productor_list' %}" title='Zona Productor'>
                 <span id="notification_count">
-                        {{ pro_unread_com }}
+{#                   productor_comandes prove de "romani_tags.py"                      #}
+                    {% productor_comandes as productor_comandes %}
+                        {{ productor_comandes }}
                 </span>
 
                 <span id="zonaproductors" name="zonaproductors" class='glyphicon glyphicon-folder-open collapsed-element'></span>
-                <span class='expanded-element'>Zona Productor</span>
+                &nbsp; <span class='expanded-element'>Zona Productor</span>
               </a>
             </li>
         </ul>
         {% endif %}
+{#      "has_group" es un custom_filter que es pot trobar a "romani_tags.py"#}
         {% if request.user|has_group:"Nodes" %}
         <ul class='level1'>
             <li class=''>
-              <a class='expandable' href="{% url 'vista_nodes' %}" title='Zona de Nodes'>
+              <a class='expandable' href="{% url 'vista_nodes' %}" title='Zona Coop Consum'>
                 <span id="zonanodes" name="zonanodes" class='glyphicon glyphicon-map-marker collapsed-element'></span>
-                <span class='expanded-element'>Zona Lloc d'entrega</span>
+                <span class='expanded-element'>Zona Coop Consum</span>
               </a>
             </li>
         </ul>

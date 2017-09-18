@@ -24,104 +24,6 @@
         </div>
     </div>
     <br/>
-{#{% if contractes %}#}
-{##}
-{##}
-{#                {% for contracte in contractes %}#}
-{#                    {% for s in contracte.old_entregas %}#}
-{##}
-{#    <div class="col-md-6 col-xs-12 col-sm-12 col-lg-4">#}
-{#        <div class="thumbnail">#}
-{##}
-{#        <form method="post" action="{% url 'vote' %}">#}
-{##}
-{#          <div style="background-color: #f6a828; float: right; position: absolute; z-index: 10000000; top: 0px; right: 0px; font-family: 'Barrio';">#}
-{#                    <div style="float: left">#}
-{#              <div style="margin: 0 auto; text-align:center">#}
-{#          Valoració: &nbsp; <br/>#}
-{#          {{ contracte.producte.votes_count }} vots#}
-{#                  </div>#}
-{#          </div>#}
-{#              [{{ comanda.votes }}]#}
-{#            {% csrf_token %}#}
-{#            <input type="hidden" id="id_contracte" name="contracte" class="hidden_id" value="{{ contracte.pk }}" />#}
-{#            <input type="hidden" id="id_comanda" name="comanda" class="hidden_id" value="" />#}
-{#            <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />#}
-{#            {% if contracte.pk in upvoted_contractes %}#}
-{#            <button>+</button>#}
-{#                <button type="submit" name="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; float: right" class="arrow-upvoted hidden_id" value="Nothing" title="Ha anat bé"></button><br/>#}
-{#                <button type="submit" name="Down" value="Down"  style="width: 16px; height: 16px; padding: 0; border: none; float: right"#}
-{#                        class="arrow-downvote hidden_id" title="He tingut problemes">#}
-{#                </button>#}
-{#            {% elif contracte.pk in downvoted_contractes %}#}
-{#                <button type="submit" name="Up" value="Up" style="width: 16px; height: 16px; padding: 0; border: none; float: right" class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>#}
-{#                <button type="submit" name="Nothing" value="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; float: right " class="arrow-downvoted hidden_id" title="He tingut problemes"></button>#}
-{#            {% else %}#}
-{#            <button>-</button>#}
-{#                <button type="submit" name="NewUp" value="NewUp" style="width: 16px; height: 16px; padding: 0; border: none; float:right " class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>#}
-{#                <button type="submit" name="NewDown" value="NewDown" style="width: 16px; height: 16px; padding: 0; border: none; float:right" class="arrow-downvote hidden_id" title="He tingut problemes"></button>#}
-{#            {% endif %}#}
-{#          </div>#}
-{#        </form>#}
-{##}
-{##}
-{##}
-{#            <div class="caption">#}
-{##}
-{##}
-{##}
-{#             {% if contracte.producte.foto %}#}
-{#                    <a href="{{ MEDIA_URL }}{{ contracte.producte.foto.url }}" style="float: right" >#}
-{#                        <div class="g-item" style="background-image:url('{{ contracte.producte.foto.url }}');float: right; position:relative; z-index: 10" >#}
-{#                        </div>#}
-{#                    </a>#}
-{#             {% endif %}#}
-{##}
-{#                <div class="prodxx" style="    font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF;  display: inline-block" >#}
-{#                    <label for="x_prod" style="font-size: medium; font-weight: 500">Producte: </label><a href="{% url 'producte'  contracte.producte.pk  %}" title="Visualitzar en detall el producte">#}
-{#                        <b id="x_prod" name="x_prod"> {{ contracte.producte }} </b> </a>#}
-{#                </div> <br/><br/>#}
-{##}
-{#             <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">#}
-{#                <p>Autor: &nbsp;#}
-{#                <a href="{% url 'productor'  contracte.producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">#}
-{#                        {{ contracte.producte.productor.nom }}</a>#}
-{#                  <a href="{% url 'messages_compose_to' contracte.producte.productor.responsable %}" title="Enviar missatge al productor">#}
-{#                 <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>#}
-{#             </div>#}
-{#             <br/><br/>#}
-{#             <div class="xxent" style="background-color:#FFFFFF; width: auto">#}
-{#                Cant: <b>{{ contracte.cantitat }}</b> &nbsp;#}
-{#                Preu: <b>{{ contracte.preu }}€</b><br/>#}
-{#                Format: <b>{{ contracte.format.nom }}</b><br/>#}
-{#                Hora:   <b> {{ contracte.franja_horaria.inici }} - {{ contracte.franja_horaria.final }}</b><br/>#}
-{#                Dia: <b>{{s.date}}</b><br/>#}
-{#                Lloc:<a href="{% url 'node_detail' contracte.lloc_entrega.pk %}"> <b> {{ contracte.lloc_entrega.nom }} </b></a><br/>#}
-{#                </div>#}
-{#                <div style="width:100%; display: inline-block">#}
-{#                    Inici:   <b> {{ contracte.data_comanda.date }} </b> <br/>#}
-{#                </div><br/>#}
-{#                <div style="width:100%; display: inline-block">#}
-{#                    Fi: <b> {{ contracte.data_fi.date }} </b> <br/>#}
-{#                </div><br/>#}
-{#                    <form method="post"  class="comanda_form">{% csrf_token %}#}
-{#                        <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ contracte.producte.pk }}" />#}
-{#                        <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ contracte.producte.nom }}" />#}
-{#                        <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />#}
-{#                        <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}" />#}
-{#                        <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id" value="{{ up.lloc_entrega_perfil.pk }}"/>#}
-{#                        <input type="hidden" id="id_preu" name="preu" class="hidden_id" value="{{ contracte.preu }}" />#}
-{#                        <input type="hidden" id="id_cantitat" name="cantitat" class="hidden_id"  value="{{ contracte.cantitat }}" style="width: 29px"/>#}
-{#                        <input type="hidden" id="id_format" name="format" class="hidden_id" value="{{ contracte.format.pk }}"/>#}
-{#                         <button class="glyphicon glyphicon-duplicate" id="id_carro" style=" "></button>#}
-{#                     </form>#}
-{#    </div>#}
-{#    </div>#}
-{#    </div>#}
-{#                        {% endfor %}#}
-{#        {%  endfor %}#}
-{#        {% endif %}#}
-
 </br>
 
 {% if comandes %}
@@ -136,17 +38,13 @@
           <div style="float: left">
               <div style="margin: 0 auto; text-align:center">
           Valoració: &nbsp; <br/>
-{#          {{ comanda.producte.votes_count }} vots#}
                   </div>
           </div>
           <div style="float: right">
-{#              [{{ comanda.votes }}]#}
             {% csrf_token %}
-{#            <input type="hidden" id="id_entrega" name="contracte" class="hidden_id" value="" />#}
             <input type="hidden" id="id_entrega" name="entrega" class="hidden_id" value="{{ comanda.pk }}" />
             <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />
             {% if comanda.pk in upvoted_comandes %}
-{#            <button>+</button>#}
                 <button type="submit" name="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; float:right" class="arrow-upvoted hidden_id" value="Nothing" title="Ha anat bé"></button><br/>
                 <button type="submit" name="Down" value="Down"  style="width: 16px; height: 16px; padding: 0; border: none; float:right"
                         class="arrow-downvote hidden_id" title="He tingut problemes">
@@ -155,7 +53,6 @@
                 <button type="submit" name="Up" value="Up" style="width: 16px; height: 16px; padding: 0; border: none; float:right" class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>
                 <button type="submit" name="Nothing" value="Nothing"  style="width: 16px; height: 16px; padding: 0; border: none; float:right" class="arrow-downvoted hidden_id" title="He tingut problemes"></button>
             {% else %}
-{#            <button>-</button>#}
                 <button type="submit" name="NewUp" value="NewUp" style="width: 16px; height: 16px; padding: 0; border: none; float:right" class="arrow-upvote hidden_id" title="Ha anat bé"></button><br/>
                 <button type="submit" name="NewDown" value="NewDown" style="width: 16px; height: 16px; padding: 0; border: none;float:right " class="arrow-downvote hidden_id" title="He tingut problemes"></button>
             {% endif %}

@@ -4,9 +4,9 @@
 <div style="float: left; position: relative;     font-family: 'Satisfy', cursive;
     font-size: 3em"> {{ node.nom }} </div>
     <br/>
-    <div id="dialog" title="Benvingut">
-    <p>A la secció dels Llocs d'entrega pots gestionar els punts dels quals ets responsable o crear-ne de nous.</p>
-    </div>
+{#    <div id="dialog" title="Benvingut">#}
+{#    <p>A la secció dels Llocs d'entrega pots gestionar els punts dels quals ets responsable o crear-ne de nous.</p>#}
+{#    </div>#}
     <a href="{% url 'node_create' %}" id="pro_menu">Crear Nou Lloc d'Entrega </a> <br/><br/>
 
         {% for link in object_list %}

@@ -83,6 +83,10 @@ class TipusProducteCreateView(CreateView):
         context["productor"] = productor
         return context
 
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(TipusProducteCreateView, self).form_invalid(form)
+
     def get_success_url(self):
         messages.success(self.request, (u"S'ha desat el nou format"))
         productor = Productor.objects.get(pk=self.kwargs['pro'])
@@ -105,6 +109,10 @@ class TipusProducteUpdateView(UpdateView):
         tipusproducte = TipusProducte.objects.get(pk=self.kwargs['pk'])
         context["productor"] = tipusproducte.productor
         return context
+
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(TipusProducteUpdateView, self).form_invalid(form)
 
     def get_success_url(self):
         # messages.success(self.request, (u"S'han desat les modificacions en el format"))
@@ -132,10 +140,14 @@ class AdjuntCreateView(CreateView):
         context["productor"] = productor
         return context
 
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(AdjuntCreateView, self).form_invalid(form)
+
     def get_success_url(self):
         # messages.success(self.request, (u"S'ha carregat la nova foto a l'àlbum del productor"))
         productor = Productor.objects.get(pk=self.kwargs['pro'])
-        messages.success(self.request, (u"Fotografia carregada 100%"))
+        messages.success(self.request, (u"Fotografia afegida a l'àlbum del productor"))
         return "/productor/update/" + str(productor.pk)
 
 
@@ -158,6 +170,10 @@ class ComandaCreateView(CreateView):
         context["productor"] = productor
         return context
 
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(ComandaCreateView, self).form_invalid(form)
+
     def form_valid(self, form):
         form_valid = super(ComandaCreateView, self).form_valid(form)
         obj = form.save(commit=False)
@@ -168,8 +184,6 @@ class ComandaCreateView(CreateView):
         return form_valid
 
     def get_success_url(self):
-
-        # messages.success(self.request, (u"S'ha carregat la nova foto a l'àlbum del productor"))
         # if self.object.frequencia.num > 0:
         # messages.success(self.request, (u"Comanda creada correctament"))
         return "/dies_entrega/" + str(self.object.pk) + "/1"
@@ -295,17 +309,17 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                            if not ((Entrega.objects.filter(comanda__format=format, dia_entrega=diaentrega))):
                                        s.delete()
                            else:
-                                   message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
+                                   messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
+                                   # message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
                                    formats_sel = TipusProducte.objects.filter(dies_entrega__dia__id__exact=diaentrega.id)
                                    comandes = Entrega.objects.filter(comanda__format__in=formats, dia_entrega=diaentrega)
                                    # contractes = Contracte.objects.filter(format__in=formats, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
                                    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'formatstockform': formatstockform,
-                                                                     'formats_sel': formats_sel, 'comandes': comandes, 'message': message})
+                                                                     'formats_sel': formats_sel, 'comandes': comandes})
                        except:
                            pass
 
                 messages.success(request, (u"Dia d'entrega guardat correctament"))
-
                 return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
         except:
                productes = Producte.objects.filter(productor__in=productors)
@@ -314,9 +328,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                        s = DiaFormatStock.objects.filter(dia=diaentrega, format=f)
                        if s:
                            s.delete()
-
                messages.success(request, (u"Dia d'entrega guardat correctament"))
-
                return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
 
     productes = Producte.objects.filter(productor__in=productors)
@@ -374,12 +386,13 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                            if not (Entrega.objects.filter(comanda__format=format, dia_entrega=diaentrega)):
                                        s.delete()
                            else:
-                                   message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
+                                   # message = (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega")
+                                   messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
                                    formats_sel = TipusProducte.objects.filter(dies_entrega__dia__id__exact=diaentrega.id)
                                    comandes = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega=diaentrega)
                                    # contractes = Contracte.objects.filter(format__in=formats, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
                                    return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform,
-                                                                     'formats_sel': formats_sel, 'comandes': comandes, 'message': message})
+                                                                     'formats_sel': formats_sel, 'comandes': comandes})
                        except:
                            pass
                 messages.success(request, (u"Dia d'entrega guardat correctament"))
@@ -398,8 +411,6 @@ def DiaEntregaProductorView(request, pk, dataentrega):
     formats_sel = DiaFormatStock.objects.filter(dia=diaentrega)
 
     comandes = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega=diaentrega)
-
-    # contractes = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True, dies_entrega__id__exact=diaentrega.id)
 
     return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'productes': productes, 'formatstockform': formatstockform,
                                                                  'formats_sel': formats_sel, 'comandes': comandes})
@@ -445,7 +456,7 @@ def DiaProduccioCreateView(request, pro):
                            else:
                                 dp = DiaProduccio.objects.create(date=a, productor=productor)
                except:
-
+                   messages.warning(request, (u"Hem trobat errors en el formulari"))
                    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes})
 
 
@@ -456,14 +467,12 @@ def DiaProduccioCreateView(request, pro):
                    format = cd.get('format')
                    stock_ini = cd.get('stock_ini')
                    s = Stock.objects.create(dia_prod=dia_prod, format=format, stock_ini=stock_ini )
-
                messages.success(request, (u"S'ha creat el dia de producció"))
-
                return render(request, "romani/productors/dates_list.html", {'productor': productor})
+
            else:
 
-               messages.success(request, (u"S'ha creat el dia de producció"))
-
+               messages.warning(request, (u"Hem trobat errors en el formulari"))
                return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes})
 
 
@@ -510,6 +519,7 @@ def DiaProduccioUpdateView(request, pro, pk):
                    dp_obj.caducitat = b
                    dp_obj.save()
                except:
+                   messages.warning(request, (u"Hem trobat errors en el formulari"))
                    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'comandes': entregas})
 
                for f in formset:
@@ -526,6 +536,7 @@ def DiaProduccioUpdateView(request, pro, pk):
                messages.success(request, (u"S'ha desat el dia de producció"))
                return render(request, "romani/productors/dates_list.html", {'productor': productor})
            else:
+               messages.warning(request, (u"Hem trobat errors en el formulari"))
                return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'comandes': entregas})
 
 
@@ -558,8 +569,12 @@ class ProducteUpdateView(UpdateView):
         context["productor"] = producte.productor
         return context
 
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(ProducteUpdateView, self).form_invalid(form)
+
     def get_success_url(self):
-        messages.success(self.request, (u"S'ha desat el producte"))
+        messages.success(self.request, (u"S'ha desat el producte correctament"))
         p = Producte.objects.get(pk=self.kwargs['pk'])
         pro_id = p.productor_id
         return "/pro/" + str(pro_id) + "/vista_productes/"
@@ -577,6 +592,10 @@ class ProductorCreateView(CreateView):
         kwargs["user"] = user
         return kwargs
 
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(ProductorCreateView, self).form_invalid(form)
+
     def form_valid(self, form):
         messages.success(self.request, (u"S'ha desat el productor"))
         return super(ProductorCreateView, self).form_valid(form)
@@ -591,6 +610,10 @@ class ProducteCreateView(CreateView):
         context["productor"] = Productor.objects.get(pk=self.kwargs['pro'])
         return context
 
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(ProducteCreateView, self).form_invalid(form)
+
     def get_success_url(self):
         messages.success(self.request, (u"S'ha creat el producte"))
         p = Productor.objects.get(pk=self.kwargs['pro'])
@@ -602,8 +625,6 @@ class ProductorUpdateView(UpdateView):
     form_class = ProductorForm
     # success_url="/vista_productors/"
     template_name = "romani/productors/productor_form.html"
-
-
 
     def get_form_kwargs(self):
         kwargs = super(ProductorUpdateView, self).get_form_kwargs()
@@ -618,6 +639,10 @@ class ProductorUpdateView(UpdateView):
         adjunts = Adjunt.objects.filter(productor=productor)
         context["adjunts"] = adjunts
         return context
+
+    def form_invalid(self, form):
+        messages.warning(self.request, (u"Hem trobat errors en el formulari"))
+        return super(ProductorUpdateView, self).form_invalid(form)
 
     def get_success_url(self):
         messages.success(self.request, (u"S'ha desat el productor"))
@@ -634,7 +659,6 @@ def eventsProductor(productor):
         for d in DiaEntrega.objects.filter(formats__format__id__exact=p.id):
             if d:
                 eventList.add(d)
-
     return eventList
 
 
@@ -680,8 +704,8 @@ def diaProdEvents(request, pro):
     eventList = DiaProduccio.objects.filter(productor=p)
     events = []
     for event in eventList:
-        day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " 12:00"
-        dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " 12:00"
+        day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " 11:00"
+        dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " 11:00"
         url = "/pro/" + str(pro) + "/diaproduccio_update/" +  str(event.pk)
         events.append({'title': 'produccio', 'start': day_str, 'end': dayend
                           , 'url': url, 'allDay': 'true'

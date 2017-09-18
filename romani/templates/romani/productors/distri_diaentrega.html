@@ -44,16 +44,16 @@
         })
     </script>
 
-    <div>
-    {% if message %}
-
-            <div class="thumbnail" >
-            <span class="glyphicon glyphicon-info-sign"></span>
-                {{ message }}
-            </br>
-        </div>
-    {% endif %}
-    </div>
+{#    <div>#}
+{#    {% if message %}#}
+{##}
+{#            <div class="thumbnail" >#}
+{#            <span class="glyphicon glyphicon-info-sign"></span>#}
+{#                {{ message }}#}
+{#            </br>#}
+{#        </div>#}
+{#    {% endif %}#}
+{#    </div>#}
 
 
      <div style="margin: 0 auto; text-align:center;">
@@ -73,15 +73,16 @@
                                  </a>
                         </div>
     </div>
-    <div id="dialog" title="Dia d'entrega"><p>
-        Una vegada seleccionis els productes que portaràs el {{ dia.date }}, et podran fer comandes per aquest dia tots els usuaris de {{ dia.node.nom }}
-    </p>
-    <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>
+{#    <div id="dialog" title="Dia d'entrega"><p>#}
+{#        Una vegada seleccionis els productes que portaràs el {{ dia.date }}, et podran fer comandes per aquest dia tots els usuaris de {{ dia.node.nom }}#}
+{#    </p>#}
+{#    <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>#}
     <br/>
 
 <form method="post" action="">
-  {% csrf_token %}<br/><br/>
-<p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
+  {% csrf_token %}
+{#    <br/><br/>#}
+<p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b> {{ dia.node }} </b>:</p>
 <p> &nbsp; &nbsp;
 {{ formatstockform.management_form }}
 
@@ -126,10 +127,10 @@
              <tr>
              <th>Producte</th>
              <th>Productor</th>
-             <th>Lloc d'entrega</th>
+{#             <th>Lloc d'entrega</th>#}
              <th>Cant</th>
              <th>Format</th>
-             <th>Data d'entrega</th>
+{#             <th>Data d'entrega</th>#}
              <th>Franja horària</th>
              <th>Preu</th>
              <th>Usuari</th>
@@ -142,15 +143,15 @@
                    <tr>
                             <td>{{ link.comanda.format.producte.nom }}</td>
                             <td>{{ link.comanda.format.productor.nom }}</td>
-                            <td>{{ link.dia_entrega.node }}</td>
+{#                            <td>{{ link.dia_entrega.node }}</td>#}
                             <td>{{ link.comanda.cantitat }}</td>
                             <td>{{ link.comanda.format.nom }}</td>
-                            <td>{{ link.dia_entrega.date }}</td>
+{#                            <td>{{ link.dia_entrega.date }}</td>#}
                             <td>{{ link.franja_horaria }}</td>
                             <td>{{ link.comanda.preu }}€</td>
                             <td>{{ link.comanda.client.first_name }}</td>
                             <td> {{ link.comanda.frequencia.nom }}</td>
-                            <td>{{ link.data_comanda.date }}</td>
+                            <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
                         </tr>
             {% endfor %}
          </tbody>

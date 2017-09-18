@@ -8,6 +8,7 @@ $(document).ready(function() {
 
         if($(this).is(":checked")){
             $(this).next("ul").children("li").show();
+            $(this).next("ul").find("input").first().prop("checked", true)
         }else{
             $(this).next("ul").children("li").hide();
         }
@@ -55,7 +56,7 @@ $(document).ready(function() {
                     </div>
                  <div style="width:100%; display: inline-block">
                     <label for="l_entr" style="font-size: medium; font-weight: 500"> Entrega: </label> <b id="l_entr" name="l_entr">{{ comanda.prox_entrega.dia_entrega.dia }}, {{ comanda.prox_entrega.dia_entrega.date }}</b>
-                     <a type="button" class="glyphicon glyphicon-calendar" href="{% url 'diesEntrega' comanda.pk '0' %}" title="Triar dies d'entrega"></a>
+{#                     <a type="button" class="glyphicon glyphicon-calendar" href="{% url 'diesEntrega' comanda.pk '0' %}" title="Triar dies d'entrega"></a>#}
                  </div><br/>
                   <div style="width:100%; display: inline-block">
                     <label for="l_com" style="font-size: medium; font-weight: 500"> Comanda: </label> <b id="l_com" name="l_com">{{ comanda.prox_entrega.data_comanda.date }}</b>

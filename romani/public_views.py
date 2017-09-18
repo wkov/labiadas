@@ -217,8 +217,12 @@ def productorView(request,pk):
 def comandesView(request):
 
     now = datetime.datetime.now()
-    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
-    comandes = Comanda.objects.filter(entregas=entregas).distinct()
+    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now))
+
+    com = Comanda.objects.filter(entregas=entregas).distinct()
+
+    comandes = sorted(com, key=lambda a: (a.prox_entrega().dia_entrega.date, a.prox_entrega().franja_horaria.inici))
+
     user_p = UserProfile.objects.filter(user=request.user).first()
 
     return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
@@ -227,7 +231,7 @@ def comandesView(request):
 def entregasView(request):
 
     now = datetime.datetime.now()
-    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('dia_entrega__date')
+    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('dia_entrega__date', 'franja_horaria__inici')
     voted = Vote.objects.filter(voter=request.user)
 
     comandes_in_page = [comanda.pk for comanda in entregas]
@@ -251,37 +255,36 @@ def entregasView(request):
 
 
 
-
+# Funció per borrar comandes per part de l'usuari. Comprovem que el productor no hagi començat a elaborar el producte solicitat
 def comandaDelete(request, pk):
 
     comandaDel = Comanda.objects.filter(pk=pk).first()
-    message = ""
+
 
     dia = datetime.datetime.now() + timedelta(hours=comandaDel.format.productor.hores_limit)
     prox_entrega = comandaDel.prox_entrega()
     dia_prox_entrega = prox_entrega.dia_entrega
     aux = dia_prox_entrega.franja_inici()
     daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
-    # tt = comandaDel.dia_entrega.date - time
+
     if daytime > dia:
         notify.send(comandaDel.format.producte, recipient = request.user,  verb="Has tret ",
             description="de la cistella" , url=comandaDel.format.producte.foto.url, timestamp=timezone.now())
         comandaDel.delete()
-        message = u"Has anulat la comanda i hem tret el producte de la teva cistella"
+        messages.info(request, (u"Has anulat la comanda i hem tret el producte de la cistella"))
     else:
-
-        message = u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"
+        messages.error(request, (u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"))
 
     now = datetime.datetime.now()
     entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
     comandes = Comanda.objects.filter(entregas=entregas).distinct()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    return render(request, "comandes.html",{'comandes': comandes, 'up': user_p , 'message': message})
+    return render(request, "comandes.html",{'comandes': comandes, 'up': user_p})
 
 
 
-
+# Funció que donat un dia d i un dia de la setmana calcula el pròxim dia en que serà el dia de la setmana indicat
 def next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
     if days_ahead <= 0: # Target day already happened this week
@@ -290,7 +293,8 @@ def next_weekday(d, weekday):
 
 
 
-
+# Aquesta funció calcula els dies d'entrega d'un producte donats els paràmetres inicials de freqüència, 1r dia d'entrega, franja horària desitjada i el node
+# on el recollirà. Escull tots els dies en que es cumpleixen les condicions fins a trobar el 1r cas en que no és possible i allà s'atura
 def prox_calc(format, node, dia_entrega, franja, frequencia):
 
         d = dia_entrega.date
@@ -338,18 +342,18 @@ def prox_calc(format, node, dia_entrega, franja, frequencia):
                     d_list.append(s)
                 except:
                     return d_list
-
         return d_list
 
 
+
+# Complement de ComandaFormBaseView per a permetre la comunicació amb "comanda.js"
 class JSONFormMixin(object):
     def create_response(self, vdict=dict(), valid_form=True):
         response = HttpResponse(json.dumps(vdict), content_type='application/json')
         response.status = 200 if valid_form else 500
         return response
 
-
-
+# Vista del Formulari que confirma una comanda després que l'usuari ratifiqui el que demana en la finestra modal. Lligat a "comanda.js"
 class ComandaFormBaseView(FormView):
     form_class = ComandaForm
 
@@ -358,9 +362,6 @@ class ComandaFormBaseView(FormView):
         response = HttpResponse(json.dumps(vdict))
         response.status = 200 if valid_form else 500
         return response
-
-    # def get_success_url(self):
-    #     return reverse("comandes")
 
     def form_valid(self, form):
         producte = get_object_or_404(Producte, pk=form.data["producte_pk"])
@@ -374,18 +375,12 @@ class ComandaFormBaseView(FormView):
         frequencia = form.data["frequencia"]
         freq = Frequencia.objects.filter(num=frequencia).first()
         data_entrega = DiaEntrega.objects.get(pk=data)
-        # DiaEntrega.objects.filter(date__gt=data_entrega.date)
-        # data_entrega_txt = data_entrega.dia()
-        # data_entrega_num = data_entrega.dia_num()
         franja_pk = form.data["franjes"]
         franja = FranjaHoraria.objects.get(pk=franja_pk)
 
-
-
         lloc = form.data["lloc_entrega"]
         lloc_obj = get_object_or_404(Node, pk = lloc)
-        # user_profile.lloc_entrega_perfil = lloc_obj
-        # Aqui esta hardcodejat els llocs que son "a domicili", s'ha d'introduir el pk en el if de qualsevol node nou "a domicili"
+
         if (lloc_obj.a_domicili == True):
 
             user_profile.carrer = form.data["carrer"]
@@ -398,8 +393,6 @@ class ComandaFormBaseView(FormView):
 
         if frequencia == '6':   #freqüència: una sola vegada
             stock_result = stock_calc(format, data_entrega, cantitat)
-            # format.stock_fix = format.stock_fix - int(cantitat)
-            # format.save()
             if stock_result['result'] == True:
                 v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
                 if stock_result['dia_prod'] == '':
@@ -436,7 +429,8 @@ class ComandaFormBaseView(FormView):
                 messages.error(self.request, (u"Disculpa, en algun dels dies seleccionats s'acaba d'esgotar el estoc disponible del producte"))
                 ret = {"contracte": 0, "success": 0}
             else:
-                # messages.success(self.request, (u"Comanda realitzada correctament"))
+                # En aquest cas al ser una comanda amb varies entregues, no donem encara pere finalitzat el procés. A l'usuari se li mostrarà
+                # "dies_comanda.html" per a que trii tots els dies d'entrega que desitji
                 ret = {"contracte": 1, "success": 1, "pk": v.pk}
                 notify.send(format, recipient= user, verb="Has afegit ", action_object=v,
                 description="a la cistella" , timestamp=timezone.now())
@@ -448,14 +442,13 @@ class ComandaFormBaseView(FormView):
         ret = {"success": 0, "form_errors": form.errors }
         return self.create_response(ret, False)
 
-
-
+# Fusió de les classes JSONFormMixin, ComandaFormBaseView.ñ Utilització per part de la URL "/comanda/" per a AJAX amb "comanda.js"
 class ComandaFormView(JSONFormMixin, ComandaFormBaseView):
     pass
 
 
+# Visualització que permet triar els dies d'entrega que conté una comanda al realitzarla
 def diesEntregaView(request, pk, pro):
-
     now = datetime.datetime.now()
     comanda = Comanda.objects.get(pk=pk)
     user_p = UserProfile.objects.filter(user=request.user).first()
@@ -482,7 +475,6 @@ def diesEntregaView(request, pk, pro):
     dies_entrega_possibles = DiaEntrega.objects.filter((Q(pk__in=pk_lst)|Q(pk__in=pk2_lst))).order_by('date')
 
     dies_entrega_ini = DiaEntrega.objects.filter(pk__in=pk2_lst)
-
 
     # Llistat de dies passats en que té entregues de la mateixa comanda
     pk3_lst = set()
@@ -534,6 +526,8 @@ def diesEntregaView(request, pk, pro):
                 entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
                 comandes = Comanda.objects.filter(entregas=entregas).distinct()
 
+                messages.success(request, (u"Comanda realitzada correctament"))
+
                 return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
 
             elif pro == '1':  #si el usuari es productor i esta introduint comandes que li han arribat de fora la web
@@ -541,24 +535,25 @@ def diesEntregaView(request, pk, pro):
                 productes = Producte.objects.filter(productor=comanda.format.productor)
                 object_list = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=now)
 
+                messages.success(request, (u"Comanda realitzada correctament"))
+
                 return render(request, "romani/productors/comanda_list.html", {'object_list': object_list, 'productor': comanda.format.productor})
 
         except:
+            messages.warning(request, (u"Hem trobat errors en el formulari"))
             pass
 
     return render(request, "dies_comanda.html",{'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles, 'dies_entrega_ini': dies_entrega_ini, 'entregas_pas': entregas_pas })
 
 
 
-
+# Formulari que permet votar les entregues rebudes per l'usuari a "entregas.html"
 class VoteFormView(FormView):
     form_class = VoteForm
     success_url="/entregas/"
 
     def form_valid(self, form):
-
         user = self.request.user
-
         if form.data["entrega"]!="":
             entrega = get_object_or_404(Entrega, pk=int(form.data["entrega"]))
             if self.request.POST.get("Up"):
@@ -575,14 +570,13 @@ class VoteFormView(FormView):
                 v = Vote.objects.create(voter=user, entrega=entrega, positiu=False)
             else:
                 pass
-
         ret = {"success": 1}
         return super(VoteFormView, self).form_valid(form)
 
 
 
+# Comprova que hi hagi stock per a una quantitat determinada
 def stock_check_cant(format, dia, cantitat):
-     # Comprova que hi hagi stock per a una quantitat determinada
      d = format.dies_entrega.get(dia=dia)
      if d.tipus_stock == '0':
             try:
@@ -603,8 +597,8 @@ def stock_check_cant(format, dia, cantitat):
 
 
 
+# Comproba que hi hagi stock i resta les unitats corresponents
 def stock_calc(format, dia, cantitat):
-     # Comproba que hi hagi stock i resta les unitats corresponents
      d = format.dies_entrega.get(dia=dia)
      if d.tipus_stock == '0':
             try:

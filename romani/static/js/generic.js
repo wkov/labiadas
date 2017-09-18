@@ -72,7 +72,7 @@ function CallNotification(msg,type, position,width,height, multiline, time){
     position = position || "center";
     type = type || "info";
     multiline = multiline || "true";
-    time = time || 10000;
+    time = time || 9000000;
     //width = width || "all";
     height = height || 80;
 

@@ -59,7 +59,7 @@ def export_comandes_xls(request, pk):
     row_num += 1
     ws.write(row_num, col_num, total, font_style)
 
-    messages.success(request, (u"S'ha descarregat el arxiu correctament"))
+    # messages.success(request, (u"S'ha descarregat el arxiu correctament"))
     wb.save(response)
     return response
 
@@ -177,12 +177,6 @@ class DiaEntregaUpdateView(UpdateView):
         messages.success(self.request, (u"S'han desat les modificacions"))
         d = DiaEntrega.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(d.node.pk) + "/node_comandes/" + str(d.pk)
-
-    # def form_valid(self, form):
-    #     f = form.save(commit=False)
-    #     f.save()
-    #     return super(DiaEntregaCreateView, self).form_valid(form)
-
 
 
 class NodeCreateView(CreateView):

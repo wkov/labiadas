@@ -1,20 +1,21 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 {% load staticfiles %}
+
 <head>
-   {% block PREheaders %}{% endblock %}
+    {% block PREheaders %}{% endblock %}
     {% include 'headers.html' %}
     {% block headers %}{% endblock %}
 
-
-    <title>{% block title %}{% endblock %}</title>
+    <title>
+        {% block title %}{% endblock %}
+    </title>
 </head>
 
 <body onload="endLoading()">
 
-
-
-{#<div id="back_img">#}
     <header class="nav-down">
     <div id="div_header">
         <div id="div_menu1">
@@ -33,49 +34,37 @@
 			{% include "leftmenurusc.html" %}
 	</div>
 
-
-
-
     <div id="page-content-wrapper" style="visibility: hidden">
         <div class="container-fluid">
            <div class="row">
-
-
                 <div class="col-lg-12">
 
                     {% block sidebar %}{% endblock %}
 
-
                     {% block content %}{% endblock %}
+
                 </div>
             </div>
         </div>
     </div>
 
-
-
-
     {% block modals %}  {% endblock %}
 
-<script>
+    <script>
+    {#                    Seguent block nomes per fer funcionar el paket django_messages correctament#}
+        {% if messages %}
+            {% for message in messages %}
+    {#            Level_tag indica el tipus de missatge. I extra_tags valors customitzables del missatge. Per a més detall sobre CallNotification consultar "generic.js" #}
+                CallNotification('{{ message }}', '{{ message.level_tag }}' , '{{ message.extra_tags }}');
+            {% endfor %}
+        {% endif %}
 
-    {#                Seguent block nomes per fer funcionar el paket django_messages correctament#}
-    {% if messages %}
+    </script>
 
-        {% for message in messages %}
-            CallNotification('{{ message }}', '{{ message.extra_tags }}');
-        {% endfor %}
+    <div id="div_footer">
+         {% block footer %}  {% endblock %}
+    </div>
 
-    {% endif %}
-</script>
-
-
-
-
-		<div id="div_footer">
-             {% block footer %}  {% endblock %}
-        </div>
-{#</div>#}
 </body>
 
 </html>

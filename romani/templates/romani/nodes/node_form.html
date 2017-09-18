@@ -33,16 +33,15 @@
                         </div>
     </div>
     {% endif %}
-    <div id="dialog" title="Lloc d'entrega">
-        <p>Edita la informació que es mostrarà al teu perfil i als usuaris que hagin de vindre a recollir la cistella</p>
-        <p>Indica la <b>freqüència</b> amb que obrireu el Lloc d'entrega, la freqüència que indiquis és orientativa, serveix per facilitar les comandes periòdiques dels usuaris.</p>
-        <p>Marcar "Sí" en el camp "<b>A Domicili</b>" indica que el Lloc d'entrega que s'està editant treballa únicament a domicili i que els usuaris hauran d'introduir la seva direcció per a rebre la comanda</p>
-        <p>Escull els <b>responsables</b> del Lloc d'entrega entre els usuaris de la xarxa amb aquest rol. Si trobes a faltar algú, digue-li que visiti la secció d'Ajuda de la xarxa i segueixi les instruccions.
-        Una vegada hagi seguit els passos t'apareixerà a la llista i el podràs incorporar com a responsable</p>
-    </div>
+{#    <div id="dialog" title="Lloc d'entrega">#}
+{#        <p>Edita la informació que es mostrarà al teu perfil i als usuaris que hagin de vindre a recollir la cistella</p>#}
+{#        <p>Indica la <b>freqüència</b> amb que obrireu el Lloc d'entrega, la freqüència que indiquis és orientativa, serveix per facilitar les comandes periòdiques dels usuaris.</p>#}
+{#        <p>Marcar "Sí" en el camp "<b>A Domicili</b>" indica que el Lloc d'entrega que s'està editant treballa únicament a domicili i que els usuaris hauran d'introduir la seva direcció per a rebre la comanda</p>#}
+{#        <p>Escull els <b>responsables</b> del Lloc d'entrega entre els usuaris de la xarxa amb aquest rol. Si trobes a faltar algú, digue-li que visiti la secció d'Ajuda de la xarxa i segueixi les instruccions.#}
+{#        Una vegada hagi seguit els passos t'apareixerà a la llista i el podràs incorporar com a responsable</p>#}
+{#    </div>#}
     <br/><br/>
   {{ form.as_p }}
-{#  <input type="text" id="datepicker" size="30">#}
   <input type="submit" value="Grabar">
 </form>
 {% endblock %}
