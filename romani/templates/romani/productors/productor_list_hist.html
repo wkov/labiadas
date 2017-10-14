@@ -81,6 +81,9 @@
                                 <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
                             </tr>
                 {% endfor %}
+                 <tr>
+                     <td>TOTAL</td><td></td><td></td><td>{{ cant_total }}</td><td></td><td></td><td></td><td>{{ preu_total }}€</td>
+                 </tr>
              </tbody>
                </table>
     {% endif %}

@@ -17,7 +17,7 @@ def export_comandes_xls(request, pk):
     response = HttpResponse(content_type='application/ms-excel')
 
     dia = DiaEntrega.objects.get(pk=pk)
-    nom = dia.node.__str__() + str(dia.date)
+    nom = str(dia.node.nom) + str(dia.date)
 
     # aux =  'attachment; filename="' +   nom + nom
     response['Content-Disposition'] = 'attachment; filename="comandes.xls"'

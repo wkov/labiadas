@@ -405,7 +405,7 @@ class ComandaFormBaseView(FormView):
                 messages.success(self.request, (u"Comanda realitzada correctament"))
             else:
                 ret = {"contracte": 0, "success": 0}
-                messages.error(self.request, (u"Disculpa, NO disposem de la cantitat sol·licitada."))
+                messages.error(self.request, (u"Disculpa, NO disposem de la cantitat sol·licitada, s'acaba d'esgotar"))
 
         else:     #freqüència: més d'una vegada o periòdic
 
@@ -426,7 +426,7 @@ class ComandaFormBaseView(FormView):
                     error = error + 1
 
             if error > 0:
-                messages.error(self.request, (u"Disculpa, en algun dels dies seleccionats s'acaba d'esgotar el estoc disponible del producte"))
+                messages.error(self.request, (u"Disculpa, en algun dels dies en què volies producte s'acaba d'esgotar el estoc disponible"))
                 ret = {"contracte": 0, "success": 0}
             else:
                 # En aquest cas al ser una comanda amb varies entregues, no donem encara pere finalitzat el procés. A l'usuari se li mostrarà

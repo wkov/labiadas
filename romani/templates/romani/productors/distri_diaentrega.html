@@ -43,19 +43,6 @@
 });
         })
     </script>
-
-{#    <div>#}
-{#    {% if message %}#}
-{##}
-{#            <div class="thumbnail" >#}
-{#            <span class="glyphicon glyphicon-info-sign"></span>#}
-{#                {{ message }}#}
-{#            </br>#}
-{#        </div>#}
-{#    {% endif %}#}
-{#    </div>#}
-
-
      <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -73,17 +60,12 @@
                                  </a>
                         </div>
     </div>
-{#    <div id="dialog" title="Dia d'entrega"><p>#}
-{#        Una vegada seleccionis els productes que portaràs el {{ dia.date }}, et podran fer comandes per aquest dia tots els usuaris de {{ dia.node.nom }}#}
-{#    </p>#}
-{#    <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>#}
     <br/>
-
 <form method="post" action="">
   {% csrf_token %}
-{#    <br/><br/>#}
 <p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b> {{ dia.node }} </b>:</p>
 <p> &nbsp; &nbsp;
+
 {{ formatstockform.management_form }}
 
 <table border="1">
@@ -92,7 +74,6 @@
 <tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot &nbsp;
     <select name="speed" id="speed">
       <option value="0">Límit per stock</option>
-{#      <option value="1">Límit per stock fix</option>#}
       <option value="2" selected="selected">Sense Límit</option>
     </select></td>
     </tr>
@@ -127,14 +108,11 @@
              <tr>
              <th>Producte</th>
              <th>Productor</th>
-{#             <th>Lloc d'entrega</th>#}
              <th>Cant</th>
              <th>Format</th>
-{#             <th>Data d'entrega</th>#}
              <th>Franja horària</th>
              <th>Preu</th>
              <th>Usuari</th>
-             <th>Freqüència</th>
              <th>Data de comanda</th>
              </tr>
          </thead>
@@ -143,17 +121,17 @@
                    <tr>
                             <td>{{ link.comanda.format.producte.nom }}</td>
                             <td>{{ link.comanda.format.productor.nom }}</td>
-{#                            <td>{{ link.dia_entrega.node }}</td>#}
                             <td>{{ link.comanda.cantitat }}</td>
                             <td>{{ link.comanda.format.nom }}</td>
-{#                            <td>{{ link.dia_entrega.date }}</td>#}
                             <td>{{ link.franja_horaria }}</td>
                             <td>{{ link.comanda.preu }}€</td>
                             <td>{{ link.comanda.client.first_name }}</td>
-                            <td> {{ link.comanda.frequencia.nom }}</td>
                             <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
                         </tr>
             {% endfor %}
+             <tr>
+                 <td>TOTAL</td><td></td><td>{{ cant_total }}</td><td></td><td></td><td>{{ preu_total }}€</td>
+             </tr>
          </tbody>
            </table>
     {% endif %}

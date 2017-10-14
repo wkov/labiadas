@@ -169,6 +169,7 @@ def ConvidarView(request):
     message_email = ""
     message = ""
     nodes = Node.objects.all()
+    email = ""
 
     if request.POST:
 

@@ -98,12 +98,13 @@ Introdueix els stocks que crees el dia de producció:
          <tr>
          <th>Producte</th>
          <th>Lloc d'entrega</th>
-         <th>[Cant Format]</th>
+         <th>Cant</th>
+         <th>Format</th>
          <th>Data d'entrega</th>
          <th>Franja horària</th>
          <th>Preu</th>
          <th>Client</th>
-         <th>Freqüència</th>
+{#         <th>Freqüència</th>#}
          <th>Data de comanda</th>
          </tr>
          </thead>
@@ -112,15 +113,19 @@ Introdueix els stocks que crees el dia de producció:
                    <tr>
                             <td>[{{ link.comanda.format.producte.nom }}]</td>
                             <td>{{ link.dia_entrega.node }}</td>
-                            <td>[{{ link.comanda.cantitat }} &nbsp; {{ link.comanda.format.nom }}]</td>
+                            <td>{{ link.comanda.cantitat }}</td>
+                            <td>{{ link.comanda.format.nom }}</td>
                             <td>{{ link.dia_entrega.date }}</td>
                             <td>{{ link.franja_horaria }}</td>
                             <td>{{ link.comanda.preu }}€</td>
                             <td>{{ link.comanda.client.first_name }}</td>
-                            <td>{{ link.comanda.frequencia }}</td>
+{#                            <td>{{ link.comanda.frequencia }}</td>#}
                             <td>{{ link.data_comanda.date }}</td>
                         </tr>
             {% endfor %}
+         <tr>
+             <td>TOTAL</td><td></td><td>{{ cant_total }}</td><td></td><td></td><td></td><td>{{ preu_total }}€</td>
+         </tr>
          </tbody>
            </table>
     {% endif %}
