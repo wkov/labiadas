@@ -581,6 +581,10 @@ class UserProfileEditView(UpdateView):
 
         return super(UserProfileEditView, self).form_valid(form)
 
+    # def form_invalid(self, form):
+
+
+
 
     def get_success_url(self):
         notify.send(self.object, recipient= self.object.user, verb="Has modificat les teves dades ", action_object=self.object,

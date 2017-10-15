@@ -73,7 +73,7 @@ class Node(models.Model):
     nom = models.CharField(max_length=20)
     position = GeopositionField(null=False, blank=False)
     carrer = models.CharField(max_length=50, blank=True, null=True)
-    numero = models.CharField(max_length=5, blank=True, null=True)
+    numero = models.CharField(max_length=10, blank=True, null=True)
     pis = models.CharField(max_length=15, blank=True, null=True)
     poblacio = models.CharField(max_length=40, blank=False, null=False)
     codi_postal = models.CharField(max_length=5, blank=True, null=True)
@@ -352,10 +352,10 @@ class UserProfile(models.Model):
     invitacions = models.IntegerField(default=4, blank=True, null=True)
     avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
 
-    carrer = models.CharField(max_length=30, blank=True, null=True)
-    numero = models.CharField(max_length=5, blank=True, null=True)
-    pis = models.CharField(max_length=10, blank=True, null=True)
-    poblacio = models.CharField(max_length=30, blank=True, null=True)
+    carrer = models.CharField(max_length=50, blank=True, null=True)
+    numero = models.CharField(max_length=10, blank=True, null=True)
+    pis = models.CharField(max_length=15, blank=True, null=True)
+    poblacio = models.CharField(max_length=40, blank=True, null=True)
 
     #
     # punt_lat = models.CharField(max_length=25, null=True, blank=True)
