@@ -164,7 +164,7 @@ class Producte(models.Model):
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
     productor = models.ForeignKey(Productor)
-    keywords = models.TextField(blank=True)
+    keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
     karma_date = models.DateTimeField(blank=True, null=True)
     karma_value = models.IntegerField(blank=True, null=True)
@@ -313,6 +313,9 @@ class Entrega(models.Model):
 
     dia_produccio = models.ForeignKey(DiaProduccio, related_name='entregas', blank=True, null=True) #Per el cas en que el estoc depèn d'un dia de producció concret
     franja_horaria = models.ForeignKey(FranjaHoraria, blank=True, null=True) #Per el cas en que és "a domicili!" obligat
+
+    def __str__(self):
+        return "%s %s" % (self.dia_entrega.date, self.franja_horaria)
 
 
 

@@ -54,11 +54,9 @@
          function endLoading() {
             document.getElementById( 'loading' ).style.display = 'none';
             document.getElementById('page-content-wrapper').style.visibility = 'visible'
-{#            document.getElementsByClassName( 'loader' ).style.display = 'none';#}
-{#            $("#back_img").style.display= "none";#}
-{#            $(".loader").style.display = 'none';#}
 
          }
+
 
          $(function () {
 
@@ -68,12 +66,23 @@
 
              $("#myTable2").tablesorter({dateFormat: "uk"});
 
-             $("#dialog").dialog({
-                 position: {my: "right top", at: "right top+75", of: "#page-content-wrapper"},
-                 width: "400px"
+{#             $("#dialog").dialog({#}
+{#                 position: {my: "right top", at: "right top+75", of: "#page-content-wrapper"},#}
+{#                 width: "400px"#}
+{##}
+{#             });#}
 
-             });
+                         // delete message
+            $('.del-msg').click(function(){
+                $('.del-msg').parent().attr('style', 'display:none;');
+            })
+
+             setTimeout(function() {
+            $('.message').fadeOut('slow');
+            }, 10000);
+
 
          });
+
 
     </script>

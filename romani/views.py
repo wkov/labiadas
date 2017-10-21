@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
 from romani.models import UserProfile, Key
 from romani.forms import UserProfileForm, InfoForm
-from romani.public_views import stock_check_cant
+from romani.public_views import stock_calc
 from django.http import HttpResponse
 
 from django.utils import timezone
@@ -20,6 +20,7 @@ from registration.forms import RegistrationForm
 import datetime
 from datetime import timedelta
 
+from romani.public_views import stock_calc
 
 class UserProfileRegistrationForm(RegistrationForm):
     first_name = forms.CharField(max_length=15, label='Nombre')
@@ -415,8 +416,8 @@ def NodeCalcView(request):
                 aux = dia.dia.franja_inici()
                 daytime = datetime.datetime(dia.dia.date.year, dia.dia.date.month, dia.dia.date.day, aux.inici.hour, aux.inici.minute)
                 if daytime > date:
-                    stock_result = stock_check_cant(format, dia.dia, cant)
-                    if stock_result == True:
+                    stock_result = stock_calc(format, dia.dia, cant)
+                    if stock_result['result'] == True:
                         day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
                         a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
                         json_obj = dict(

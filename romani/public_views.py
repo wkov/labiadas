@@ -62,8 +62,8 @@ def buskadorProducte(request):
                 aux = d.franja_inici()
                 daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
                 if daytime > date:
-                    stock_result = stock_check_cant(t, d, 1)
-                    if stock_result:
+                    stock_result = stock_calc(t, d, 1)
+                    if stock_result['result'] == True:
                         prod_aux.add(t.producte.pk)
 
         p = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
@@ -111,8 +111,8 @@ def coopeView(request):
             aux = d.franja_inici()
             daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
             if daytime > date:
-                stock_result = stock_check_cant(t, d, 1)
-                if stock_result:
+                stock_result = stock_calc(t, d, 1)
+                if stock_result['result'] == True:
                     prod_aux.add(t.producte.pk)
 
     p = Producte.objects.filter(pk__in=prod_aux).distinct()
@@ -176,8 +176,8 @@ def etiquetaView(request,pk):
             aux = d.franja_inici()
             daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
             if daytime > date:
-                stock_result = stock_check_cant(t, d, 1)
-                if stock_result:
+                stock_result = stock_calc(t, d, 1)
+                if stock_result['result'] == True:
                     prod_aux.add(t.producte.pk)
 
 
@@ -400,12 +400,12 @@ class ComandaFormBaseView(FormView):
                 else:
                     e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
                 ret = {"contracte": 0, "success": 1}
-                notify.send(format, recipient= user, verb="Has afegit ", action_object=v,
-                description="a la cistella" , timestamp=timezone.now())
+                notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
+                    description=e.dia_entrega.date , timestamp=timezone.now())
                 messages.success(self.request, (u"Comanda realitzada correctament"))
             else:
                 ret = {"contracte": 0, "success": 0}
-                messages.error(self.request, (u"Disculpa, NO disposem de la cantitat sol·licitada, s'acaba d'esgotar"))
+                messages.error(self.request, (u"Disculpa, NO està disponible la cantitat sol·licitada"))
 
         else:     #freqüència: més d'una vegada o periòdic
 
@@ -426,14 +426,15 @@ class ComandaFormBaseView(FormView):
                     error = error + 1
 
             if error > 0:
-                messages.error(self.request, (u"Disculpa, en algun dels dies en què volies producte s'acaba d'esgotar el estoc disponible"))
+                messages.error(self.request, (u"En algun dels dies en que volies producte, NO està disponible"))
                 ret = {"contracte": 0, "success": 0}
             else:
                 # En aquest cas al ser una comanda amb varies entregues, no donem encara pere finalitzat el procés. A l'usuari se li mostrarà
                 # "dies_comanda.html" per a que trii tots els dies d'entrega que desitji
                 ret = {"contracte": 1, "success": 1, "pk": v.pk}
-                notify.send(format, recipient= user, verb="Has afegit ", action_object=v,
-                description="a la cistella" , timestamp=timezone.now())
+
+            notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
+            description=v.frequencia , timestamp=timezone.now())
 
         return self.create_response(ret, True)
 
@@ -460,8 +461,8 @@ def diesEntregaView(request, pk, pro):
         aux = d.franja_inici()
         daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
         if daytime > date:
-            stock_result = stock_check_cant(comanda.format, d, comanda.cantitat)
-            if stock_result:
+            stock_result = stock_calc(comanda.format, d, comanda.cantitat)
+            if stock_result['result'] == True:
                 pk_lst.add(d.pk)
 
     # Llistat de dies futurs en que ja ha demanat rebre producte
@@ -506,7 +507,10 @@ def diesEntregaView(request, pk, pro):
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
                         else:
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
+                        notify.send(e.comanda.format, recipient= user_p.user, verb="Has modificat l'hora d'entrega de ", action_object=e.comanda,
+                        description=e.dia_entrega.date , timestamp=timezone.now())
                 else:
+                    # Aquí processem les entregues que encara no existien i que es creen noves
                     stock_result = stock_calc(comanda.format, dia, comanda.cantitat)
                     if stock_result['result'] == True:
                         franja_pk = request.POST.get(str(dia.pk))
@@ -515,18 +519,22 @@ def diesEntregaView(request, pk, pro):
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
                         else:
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
-
+                        notify.send(e.comanda.format, recipient= user_p.user, verb="Has afegit a la cistella", action_object=e.comanda,
+                        description=e.dia_entrega.date , timestamp=timezone.now())
             for d in dies_entrega_ini:
                 if str(d.pk) not in dies_pk:
+                    # Borrem les entregues que han deixat d'estar seleccionades
                     entrega = Entrega.objects.get(comanda=comanda, dia_entrega=d)
                     entrega.delete()
+                    notify.send(entrega.comanda.format, recipient= user_p.user, verb="Has tret de la cistella", action_object=entrega.comanda,
+                    description=entrega.dia_entrega.date , timestamp=timezone.now())
 
             if pro == '0':   #si el usuari es consumidor i prove de la pantalla de comanda principal
 
                 entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
                 comandes = Comanda.objects.filter(entregas=entregas).distinct()
 
-                messages.success(request, (u"Comanda realitzada correctament"))
+                messages.success(request, (u"Comanda desada correctament"))
 
                 return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
 
@@ -535,7 +543,7 @@ def diesEntregaView(request, pk, pro):
                 productes = Producte.objects.filter(productor=comanda.format.productor)
                 object_list = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=now)
 
-                messages.success(request, (u"Comanda realitzada correctament"))
+                messages.success(request, (u"Comanda desada correctament"))
 
                 return render(request, "romani/productors/comanda_list.html", {'object_list': object_list, 'productor': comanda.format.productor})
 
@@ -560,65 +568,76 @@ class VoteFormView(FormView):
                 v = Vote.objects.get(voter=user, entrega=entrega)
                 v.positiu = True
                 v.save()
+                messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
             elif self.request.POST.get("Down"):
                 v = Vote.objects.get(voter=user, entrega=entrega)
                 v.positiu = False
                 v.save()
+                messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
             elif self.request.POST.get("NewUp"):
                 v = Vote.objects.create(voter=user, entrega=entrega, positiu=True)
+                messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
             elif self.request.POST.get("NewDown"):
                 v = Vote.objects.create(voter=user, entrega=entrega, positiu=False)
+                messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
             else:
                 pass
         ret = {"success": 1}
         return super(VoteFormView, self).form_valid(form)
 
+#
+#
+# # Comprova que hi hagi stock disponible per a una quantitat determinada
+# def stock_check_cant(format, dia, cantitat):
+#      d = format.dies_entrega.get(dia=dia)
+#      # Segons el tipus d'stock..(pot ser "Limit per stock" o "Sense Límit")
+#      if d.tipus_stock == '0':
+#             try:
+#                 stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__node','dia_prod__caducitat','dia_prod__date')
+#                 for s in stocks:
+#                     diaproduccio = s.dia_prod
+#                     s = format.stocks.get(dia_prod=diaproduccio)
+#                     num = int(s.stock()) - int(cantitat)
+#                     if num >= 0:
+#                         return True
+#                 return False
+#
+#             except:
+#                     return False
+#
+#      elif d.tipus_stock == '2':
+#             return True
+#
 
 
-# Comprova que hi hagi stock per a una quantitat determinada
-def stock_check_cant(format, dia, cantitat):
-     d = format.dies_entrega.get(dia=dia)
-     if d.tipus_stock == '0':
-            try:
-                stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__node','dia_prod__caducitat','dia_prod__date')
-                for s in stocks:
-                    diaproduccio = s.dia_prod
-                    s = format.stocks.get(dia_prod=diaproduccio)
-                    num = int(s.stock()) - int(cantitat)
-                    if num >= 0:
-                        return True
-                return False
-
-            except:
-                    return False
-
-     elif d.tipus_stock == '2':
-            return True
-
-
-
-# Comproba que hi hagi stock i resta les unitats corresponents
+# Comprova que hi hagi stock disponible per a una quantitat determinada
 def stock_calc(format, dia, cantitat):
      d = format.dies_entrega.get(dia=dia)
+     # Segons el tipus d'stock..(pot ser "Limit per stock" o "Sense Límit")
      if d.tipus_stock == '0':
+            # Límit per stock...
             try:
                 stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
                 for s in stocks:
+                    # accedim al dia de producció en que es genera el estoc
                     diaproduccio = s.dia_prod
                     s = format.stocks.get(dia_prod=diaproduccio)
                     num = int(s.stock()) - int(cantitat)
                     if num >= 0:
+                       #  I si encara hi ha estoc disponible,confirmem existències
                        dict = {'result': True, 'dia_prod': diaproduccio}
                        return dict
-
+                # Si tots els estocs shan esgotat.Confirmem que no hi ha existències.
                 dict = {'result': False, 'dia_prod': ''}
                 return dict
 
             except:
+                # Si ni tan sols 'ha creat el estoc. Confirmem que no hi ha existències
                 dict = {'result': False, 'dia_prod': ''}
                 return dict
 
      elif d.tipus_stock == '2':
+            # Si el estoc és sense límit, aleshores confirmem que hi ha existències
             dict = {'result': True, 'dia_prod': ''}
             return dict
 

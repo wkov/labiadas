@@ -2,7 +2,7 @@
 from django.template import Library
 from romani.models import UserProfile,TipusProducte, Key
 from django.contrib.auth.models import Group
-from romani.public_views import stock_check_cant
+from romani.public_views import stock_calc
 
 register = Library()
 
@@ -83,8 +83,8 @@ def next_day_calc(producte, node):
 
             if daytime > date:
 
-                res = stock_check_cant(s.format, s.dia, 1)
-                if res:
+                res = stock_calc(s.format, s.dia, 1)
+                if res['result'] == True:
                     list.append(daytime)
                     break
     if list:
