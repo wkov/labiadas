@@ -5,9 +5,8 @@ from romani.models import Producte, Productor, Comanda, TipusProducte, Node, Dia
 from django.db.models import Q
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
-from romani.models import UserProfile, Etiqueta, Adjunt
+from romani.models import UserProfile, Etiqueta, Adjunt, DiaFormatStock
 from romani.forms import ComandaForm, VoteForm
-# from romani.views import stock_calc
 
 from django.http import HttpResponse
 
@@ -55,17 +54,19 @@ def buskadorProducte(request):
 
 
         prod_aux = set()
+        formats_aux = set()
 
         for d in dies_node_entrega:
             for t in TipusProducte.objects.filter(dies_entrega__dia=d):
-                date = datetime.datetime.now() + timedelta(hours=t.productor.hores_limit)
+                diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
+                date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
                 aux = d.franja_inici()
                 daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
                 if daytime > date:
-                    stock_result = stock_calc(t, d, 1)
+                    stock_result = t.stock_calc(d, 1)
                     if stock_result['result'] == True:
                         prod_aux.add(t.producte.pk)
-
+                        formats_aux.add(t)
         p = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
                                         pk__in=prod_aux).distinct()
 
@@ -73,6 +74,7 @@ def buskadorProducte(request):
 
         return render(request, "buscador.html", {
             'posts': productes,
+            'formats': formats_aux,
             'etiquetes': etiquetes, 'up': user_p})
     else:
         return render(request, "buscador.html", {
@@ -104,17 +106,19 @@ def coopeView(request):
 
 
     prod_aux = set()
+    formats_aux = set()
 
     for d in dies_node_entrega:
         for t in TipusProducte.objects.filter(dies_entrega__dia=d):
-            date = datetime.datetime.now() + timedelta(hours=t.productor.hores_limit)
+            diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
+            date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()
             daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
             if daytime > date:
-                stock_result = stock_calc(t, d, 1)
+                stock_result = t.stock_calc(d, 1)
                 if stock_result['result'] == True:
                     prod_aux.add(t.producte.pk)
-
+                    formats_aux.add(t)
     p = Producte.objects.filter(pk__in=prod_aux).distinct()
 
 
@@ -133,7 +137,7 @@ def coopeView(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    return render(request, "productes.html", {'productes':products, 'etiquetes': etiquetes, 'nodes':nodes, 'up': user_p})
+    return render(request, "productes.html", {'productes':products, 'formats':formats_aux, 'etiquetes': etiquetes, 'nodes':nodes, 'up': user_p})
 
 
 def producteView(request,pk):
@@ -141,7 +145,22 @@ def producteView(request,pk):
     producte = Producte.objects.filter(pk=pk).first()
     nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
-    return render(request, "producte.html",{'producte': producte, 'nodes': nodes, 'up': user_p})
+
+    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
+    formats_aux = set()
+
+    for d in dies_node_entrega:
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d, producte=producte):
+            diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
+            date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
+            aux = d.franja_inici()
+            daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                stock_result = t.stock_calc(d, 1)
+                if stock_result['result'] == True:
+                    formats_aux.add(t)
+
+    return render(request, "producte.html",{'producte': producte, 'formats': formats_aux, 'nodes': nodes, 'up': user_p})
 
 def etiquetaView(request,pk):
 
@@ -169,17 +188,19 @@ def etiquetaView(request,pk):
 
 
     prod_aux = set()
+    formats_aux = set()
 
     for d in dies_node_entrega:
         for t in TipusProducte.objects.filter(dies_entrega__dia=d, producte__etiqueta=etiqueta):
-            date = datetime.datetime.now() + timedelta(hours=t.productor.hores_limit)
+            diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
+            date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()
             daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
             if daytime > date:
-                stock_result = stock_calc(t, d, 1)
+                stock_result = t.stock_calc(d, 1)
                 if stock_result['result'] == True:
                     prod_aux.add(t.producte.pk)
-
+                    formats_aux.add(t)
 
 
     p = Producte.objects.filter(pk__in=prod_aux).distinct()
@@ -200,7 +221,7 @@ def etiquetaView(request,pk):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    return render(request, "etiqueta.html",{'productes': products, 'etiquetes': etiquetes, 'etiqueta': etiqueta, 'nodes': nodes, 'up': user_p})
+    return render(request, "etiqueta.html",{'productes': products, 'formats': formats_aux, 'etiquetes': etiquetes, 'etiqueta': etiqueta, 'nodes': nodes, 'up': user_p})
 
 
 def productorView(request,pk):
@@ -392,7 +413,7 @@ class ComandaFormBaseView(FormView):
 
 
         if frequencia == '6':   #freqüència: una sola vegada
-            stock_result = stock_calc(format, data_entrega, cantitat)
+            stock_result = format.stock_calc(data_entrega, cantitat)
             if stock_result['result'] == True:
                 v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
                 if stock_result['dia_prod'] == '':
@@ -416,7 +437,7 @@ class ComandaFormBaseView(FormView):
             v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
 
             for d in dies_entrega:
-                stock_result = stock_calc(format, d, cantitat)
+                stock_result = format.stock_calc(d, cantitat)
                 if stock_result['result'] == True:
                     if stock_result['dia_prod'] == '':
                         e = Entrega.objects.create(dia_entrega=d, comanda=v, franja_horaria=franja)
@@ -453,26 +474,34 @@ def diesEntregaView(request, pk, pro):
     now = datetime.datetime.now()
     comanda = Comanda.objects.get(pk=pk)
     user_p = UserProfile.objects.filter(user=request.user).first()
-    date = datetime.datetime.now() + timedelta(hours=int(comanda.format.productor.hores_limit))
+    # date = datetime.datetime.now() + timedelta(hours=int(comanda.format.productor.hores_limit))
 
     # Llistat de dies futurs en que es posible demanar noves entregues de la comanda
     pk_lst = set()
-    for d in DiaEntrega.objects.filter(date__gte=date, formats__format__id__exact=comanda.format.id, node=comanda.node).order_by('date'):
-        aux = d.franja_inici()
-        daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
-        if daytime > date:
-            stock_result = stock_calc(comanda.format, d, comanda.cantitat)
-            if stock_result['result'] == True:
-                pk_lst.add(d.pk)
-
+    for d in DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), formats__format__id__exact=comanda.format.id, node=comanda.node).order_by('date'):
+        try:
+            diaformatstock = DiaFormatStock.objects.get(dia=d, format=comanda.format)
+            date = datetime.datetime.now() + timedelta(hours=int(diaformatstock.hores_limit))
+            aux = d.franja_inici()
+            daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                stock_result = comanda.format.stock_calc(d, comanda.cantitat)
+                if stock_result['result'] == True:
+                    pk_lst.add(d.pk)
+        except:
+            pass
     # Llistat de dies futurs en que ja ha demanat rebre producte
     pk2_lst = set()
     for d in Entrega.objects.filter(comanda=comanda, dia_entrega__node=comanda.node, dia_entrega__date__gte=date).order_by('dia_entrega__date'):
-        aux = d.dia_entrega.franja_inici()
-        daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day, aux.inici.hour, aux.inici.minute)
-        if daytime > date:
-            pk2_lst.add(d.dia_entrega.pk)
-
+        try:
+            diaformatstock = DiaFormatStock.objects.get(dia=d.dia_entrega, format=comanda.format)
+            date = datetime.datetime.now() + timedelta(hours=int(diaformatstock.hores_limit))
+            aux = d.dia_entrega.franja_inici()
+            daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                pk2_lst.add(d.dia_entrega.pk)
+        except:
+            pass
     dies_entrega_possibles = DiaEntrega.objects.filter((Q(pk__in=pk_lst)|Q(pk__in=pk2_lst))).order_by('date')
 
     dies_entrega_ini = DiaEntrega.objects.filter(pk__in=pk2_lst)
@@ -480,10 +509,15 @@ def diesEntregaView(request, pk, pro):
     # Llistat de dies passats en que té entregues de la mateixa comanda
     pk3_lst = set()
     for d in Entrega.objects.filter(comanda=comanda, dia_entrega__node=comanda.node, dia_entrega__date__lte=date).order_by('dia_entrega__date'):
-        aux = d.dia_entrega.franja_inici()
-        daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day, aux.inici.hour, aux.inici.minute)
-        if daytime < date:
-            pk3_lst.add(d.pk)
+        try:
+            diaformatstock = DiaFormatStock.objects.get(dia=d.dia_entrega, format=comanda.format)
+            date = datetime.datetime.now() + timedelta(hours=int(diaformatstock.hores_limit))
+            aux = d.dia_entrega.franja_inici()
+            daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime < date:
+                pk3_lst.add(d.pk)
+        except:
+            pass
 
     entregas_pas = Entrega.objects.filter(pk__in=pk3_lst).exclude(dia_entrega__pk__in=pk_lst)
 
@@ -502,7 +536,7 @@ def diesEntregaView(request, pk, pro):
                     else:
                         # Aquí processem les entregues quan ja existien i simplement l'usuari modifica l'hora d'entrega dins el mateix dia en que ja havia demanat
                         entrega.delete() #1r borrem l'anterior entrega pq al canviar la hora ja no és vàlida
-                        stock_result = stock_calc(comanda.format, dia, comanda.cantitat)
+                        stock_result = comanda.format.stock_calc(dia, comanda.cantitat)
                         if stock_result['dia_prod'] == '':
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
                         else:
@@ -511,7 +545,7 @@ def diesEntregaView(request, pk, pro):
                         description=e.dia_entrega.date , timestamp=timezone.now())
                 else:
                     # Aquí processem les entregues que encara no existien i que es creen noves
-                    stock_result = stock_calc(comanda.format, dia, comanda.cantitat)
+                    stock_result = comanda.format.stock_calc(dia, comanda.cantitat)
                     if stock_result['result'] == True:
                         franja_pk = request.POST.get(str(dia.pk))
                         franja = FranjaHoraria.objects.get(pk=franja_pk)
@@ -585,61 +619,38 @@ class VoteFormView(FormView):
         ret = {"success": 1}
         return super(VoteFormView, self).form_valid(form)
 
-#
-#
-# # Comprova que hi hagi stock disponible per a una quantitat determinada
-# def stock_check_cant(format, dia, cantitat):
+
+
+# OBSOLET ara es un metode dins del model TipusProducte . Comprova que hi hagi stock disponible per a una quantitat determinada
+# def stock_calc(format, dia, cantitat):
 #      d = format.dies_entrega.get(dia=dia)
 #      # Segons el tipus d'stock..(pot ser "Limit per stock" o "Sense Límit")
 #      if d.tipus_stock == '0':
+#             # Límit per stock...
 #             try:
-#                 stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('dia_prod__node','dia_prod__caducitat','dia_prod__date')
+#                 stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
 #                 for s in stocks:
+#                     # accedim al dia de producció en que es genera el estoc
 #                     diaproduccio = s.dia_prod
 #                     s = format.stocks.get(dia_prod=diaproduccio)
 #                     num = int(s.stock()) - int(cantitat)
 #                     if num >= 0:
-#                         return True
-#                 return False
+#                        #  I si encara hi ha estoc disponible,confirmem existències
+#                        dict = {'result': True, 'dia_prod': diaproduccio}
+#                        return dict
+#                 # Si tots els estocs shan esgotat.Confirmem que no hi ha existències.
+#                 dict = {'result': False, 'dia_prod': ''}
+#                 return dict
 #
 #             except:
-#                     return False
+#                 # Si ni tan sols 'ha creat el estoc. Confirmem que no hi ha existències
+#                 dict = {'result': False, 'dia_prod': ''}
+#                 return dict
 #
 #      elif d.tipus_stock == '2':
-#             return True
-#
-
-
-# Comprova que hi hagi stock disponible per a una quantitat determinada
-def stock_calc(format, dia, cantitat):
-     d = format.dies_entrega.get(dia=dia)
-     # Segons el tipus d'stock..(pot ser "Limit per stock" o "Sense Límit")
-     if d.tipus_stock == '0':
-            # Límit per stock...
-            try:
-                stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
-                for s in stocks:
-                    # accedim al dia de producció en que es genera el estoc
-                    diaproduccio = s.dia_prod
-                    s = format.stocks.get(dia_prod=diaproduccio)
-                    num = int(s.stock()) - int(cantitat)
-                    if num >= 0:
-                       #  I si encara hi ha estoc disponible,confirmem existències
-                       dict = {'result': True, 'dia_prod': diaproduccio}
-                       return dict
-                # Si tots els estocs shan esgotat.Confirmem que no hi ha existències.
-                dict = {'result': False, 'dia_prod': ''}
-                return dict
-
-            except:
-                # Si ni tan sols 'ha creat el estoc. Confirmem que no hi ha existències
-                dict = {'result': False, 'dia_prod': ''}
-                return dict
-
-     elif d.tipus_stock == '2':
-            # Si el estoc és sense límit, aleshores confirmem que hi ha existències
-            dict = {'result': True, 'dia_prod': ''}
-            return dict
+#             # Si el estoc és sense límit, aleshores confirmem que hi ha existències
+#             dict = {'result': True, 'dia_prod': ''}
+#             return dict
 
 
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.template import Library
-from romani.models import UserProfile,TipusProducte, Key
+from romani.models import UserProfile,TipusProducte, Key, DiaFormatStock
 from django.contrib.auth.models import Group
-from romani.public_views import stock_calc
+# from romani.public_views import stock_calc
 
 register = Library()
 
@@ -47,6 +47,20 @@ def has_group(user, group_name):
     group =  Group.objects.get(name=group_name)
     return group in user.groups.all()
 
+# @register.filter(name='has_stock')
+# def has_stock(format, user_id):
+#     up = UserProfile.objects.get(user__pk=user_id)
+#     dies_node_entrega = up.lloc_entrega.dies_entrega.filter(date__gt = datetime.date.today)
+#     for d in dies_node_entrega:
+#         diaformatstock = DiaFormatStock.objects.get(dia=d, format=format)
+#         date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
+#         aux = d.franja_inici()
+#         daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+#         if daytime > date:
+#             stock_result = stock_calc(format, d, 1)
+#             if stock_result['result'] == True:
+#                 return True
+
 #"model_object" s'utilitza al "user_menu.html" per saber en la mateixa template a quin objecte respresenta cada notificacio per a saber a quin camp de la variable notificació cal anar a buscar la foto que es mostra
 @register.filter(name='model_object')
 def model_object(object, object_name):
@@ -73,29 +87,26 @@ def next_day(producte, node):
 # Funció utilitzada per el simple_tag anterior que calcula quant queda per a la próxima possible entrega del producte en un node determinat
 def next_day_calc(producte, node):
 
-    date = datetime.datetime.now() + timedelta(hours=producte.productor.hores_limit)
+    # date = datetime.datetime.now() + timedelta(hours=producte.productor.hores_limit)
     list = []
     for f in producte.formats.all():
-        for s in f.dies_entrega.filter(dia__date__gte=date.date(), dia__node=node).order_by('dia__date'):
-
+        for s in f.dies_entrega.filter(dia__date__gte=datetime.datetime.now(), dia__node=node).order_by('dia__date'):
+            date = datetime.datetime.now() + timedelta(hours=s.hores_limit)
             aux = s.dia.franja_inici()
             daytime = datetime.datetime(s.dia.date.year, s.dia.date.month, s.dia.date.day, aux.inici.hour, aux.inici.minute)
 
             if daytime > date:
 
-                res = stock_calc(s.format, s.dia, 1)
+                res = s.format.stock_calc(s.dia, 1)
                 if res['result'] == True:
                     list.append(daytime)
                     break
-    if list:
-        list.sort(key=lambda r: r)
-        b = list[0]
-        a = datetime.datetime.now()
-        c = b - a
-        d = divmod(c.total_seconds(),86400)
+    nes = producte.next_day_sec(node)
+    if nes['result'] == True:
+        d = divmod(nes['next_day'],86400)
         if d[0] > 1:
             return str(int(d[0])) + " dies"
         else:
-            return str(int(divmod(c.total_seconds(),3600)[0])) + " hores"
+            return str(int(divmod(nes['next_day'],3600)[0])) + " hores"
     else:
         return False

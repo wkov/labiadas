@@ -105,6 +105,11 @@ class NodeComandesListView(ListView):
         diaentrega = DiaEntrega.objects.get(pk=self.kwargs["pk"])
         context["diaentrega"] = diaentrega
         context['formats'] = diaentrega.formats.all()
+            # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
+        preu_total = 0
+        for c in self.get_queryset():
+            preu_total += c.comanda.preu
+        context["preu_total"] = preu_total
         return context
 
 

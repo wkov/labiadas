@@ -21,57 +21,60 @@ jQuery(document).ready(function($)
 			var frequencia = document.getElementById('frequencia');
 			//var primera_entrega = document.getElementById('primera_entrega')
 
-		$.post("/info/", $(this).serializeArray(),function(data){
-			modal.style.display = "block";
-			preu.value = data["preu"];
-			format.value = data["format"];
-			format_pk.value = data["format_pk"];
-			producte.value = data["producte"];
-			producte_pk.value = data["producte_pk"];
-			cantitat.value = data["cantitat"];
-			imatge.style.backgroundImage = 'url("' + data["imatge"] + '")';
-			var j = 0;
-			llocentrega.options.length=0;
+		$.post("/info/", $(this).serializeArray(),function(data) {
+			if ( data["success"] == 0) {
+				  url = "";
+				  location = url;
+				  //call = "Has fet la comanda correctament"
+				  //CallNotification(call,"success")
+			}else {
+					modal.style.display = "block";
+					preu.value = data["preu"];
+					format.value = data["format"];
+					format_pk.value = data["format_pk"];
+					producte.value = data["producte"];
+					producte_pk.value = data["producte_pk"];
+					cantitat.value = data["cantitat"];
+					imatge.style.backgroundImage = 'url("' + data["imatge"] + '")';
+					var j = 0;
+					llocentrega.options.length = 0;
 
-			data["nodes"].forEach(function(arrayItem)
-			{
-				if(arrayItem.selected=="True"){
-					s = arrayItem.nom + "/" + arrayItem.poblacio;
-					llocentrega.options[j] = new Option(s, arrayItem.pk, false, true);
-					//llocentrega.value = arrayItem.pk;
-				}else{
-					s = arrayItem.nom + "/" + arrayItem.poblacio;
-					llocentrega.options[j] = new Option(s, arrayItem.pk, false, false);
-					}
-				j++;
-			});
-			j = 0;
-			data["freqs"].forEach(function(arrayItem)
-			{
-					frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
-				j++;
+					data["nodes"].forEach(function (arrayItem) {
+						if (arrayItem.selected == "True") {
+							s = arrayItem.nom + "/" + arrayItem.poblacio;
+							llocentrega.options[j] = new Option(s, arrayItem.pk, false, true);
+							//llocentrega.value = arrayItem.pk;
+						} else {
+							s = arrayItem.nom + "/" + arrayItem.poblacio;
+							llocentrega.options[j] = new Option(s, arrayItem.pk, false, false);
+						}
+						j++;
+					});
+					j = 0;
+					data["freqs"].forEach(function (arrayItem) {
+						frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
+						j++;
 					});
 
 
-			$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function(data) {
-				var dataentrega = document.getElementById("dataentrega");
-				var franjes = document.getElementById("franjes");
+					$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function (data) {
+						var dataentrega = document.getElementById("dataentrega");
+						var franjes = document.getElementById("franjes");
 
-				var i = 1;
+						var i = 1;
 
-				dataentrega.options.length=0;
-				franjes.options.length=0;
+						dataentrega.options.length = 0;
+						franjes.options.length = 0;
 
-				var t;
+						var t;
 
-				data.forEach( function (arrayItem)
-				{
-					t = arrayItem.dia + " " + arrayItem.date
-					dataentrega.options[i] = new Option(t, arrayItem.pk, false, false)
-					i++;
-				});
-			});
-
+						data.forEach(function (arrayItem) {
+							t = arrayItem.dia + " " + arrayItem.date
+							dataentrega.options[i] = new Option(t, arrayItem.pk, false, false)
+							i++;
+						});
+					});
+		}
 		});
 	});
 

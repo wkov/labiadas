@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
 from romani.models import UserProfile, Key
 from romani.forms import UserProfileForm, InfoForm
-from romani.public_views import stock_calc
+# from romani.public_views import stock_calc
 from django.http import HttpResponse
 
 from django.utils import timezone
@@ -20,7 +20,7 @@ from registration.forms import RegistrationForm
 import datetime
 from datetime import timedelta
 
-from romani.public_views import stock_calc
+# from romani.public_views import stock_calc
 
 class UserProfileRegistrationForm(RegistrationForm):
     first_name = forms.CharField(max_length=15, label='Nombre')
@@ -410,13 +410,13 @@ def NodeCalcView(request):
             # producte = Producte.objects.filter(pk=g).first()
             format = TipusProducte.objects.get(pk=f)
             json_res = []
-            date = datetime.datetime.now() + timedelta(hours=format.productor.hores_limit)
-            # for dia in node.dies_entrega.order_by("date").filter(date__gt =date):
-            for dia in format.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=date):
+
+            for dia in format.dies_entrega.order_by("dia__date").filter(dia__node=node,dia__date__gte=datetime.datetime.now()):
                 aux = dia.dia.franja_inici()
                 daytime = datetime.datetime(dia.dia.date.year, dia.dia.date.month, dia.dia.date.day, aux.inici.hour, aux.inici.minute)
+                date = datetime.datetime.now() + timedelta(hours=dia.hores_limit)
                 if daytime > date:
-                    stock_result = stock_calc(format, dia.dia, cant)
+                    stock_result = format.stock_calc(dia.dia, cant)
                     if stock_result['result'] == True:
                         day_str = str(dia.dia.date.year) + "-" + str(dia.dia.date.month) + "-" + str(dia.dia.date.day)
                         a = datetime.datetime.strptime(day_str, '%Y-%m-%d').strftime('%d/%m/%Y')
@@ -502,29 +502,33 @@ class InfoFormBaseView(FormView):
         jfreq = []
 
         # Carreguem els possibles nodes on l-usuari pot trobar el producte concret
-        for i in format.nodes().all():
-            if i == user_profile.lloc_entrega:
-                # Guardem les frequencies del node per informar a l-usuari en el modal
-                for d in i.frequencia.freq_list():
-                    if d in producte.frequencies.freq_list():
-                        f_obj = dict(nom = d.nom,
-                                     num = d.num
-                                     )
-                        jfreq.append(f_obj)
-                json_obj = dict(
-                            nom = i.nom,
-                            poblacio = i.poblacio,
-                            pk = i.pk,
-                            selected = "True"
-                        )
-            else:
-                json_obj = dict(
-                            nom = i.nom,
-                            poblacio = i.poblacio,
-                            pk = i.pk,
-                            selected = "False"
-                        )
-            json_res.append(json_obj)
+        if format.en_stock(cantitat, user_profile.lloc_entrega):
+            for i in format.nodes(cantitat).all():
+                if i == user_profile.lloc_entrega:
+                    # Guardem les frequencies del node per informar a l-usuari en el modal
+                    for d in i.frequencia.freq_list():
+                        if d in producte.frequencies.freq_list():
+                            f_obj = dict(nom = d.nom,
+                                         num = d.num
+                                         )
+                            jfreq.append(f_obj)
+                    json_obj = dict(
+                                nom = i.nom,
+                                poblacio = i.poblacio,
+                                pk = i.pk,
+                                selected = "True"
+                            )
+                else:
+                    json_obj = dict(
+                                nom = i.nom,
+                                poblacio = i.poblacio,
+                                pk = i.pk,
+                                selected = "False"
+                            )
+                json_res.append(json_obj)
+        else:
+            ret = {"success": 0}
+            messages.error(self.request, (u"Disculpa, NO està disponible la cantitat sol·licitada"))
 
         ret["nodes"] = json_res
         ret["freqs"] = jfreq

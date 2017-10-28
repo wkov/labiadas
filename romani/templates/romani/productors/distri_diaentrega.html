@@ -71,11 +71,14 @@
 <table border="1">
 
 
-<tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot &nbsp;
-    <select name="speed" id="speed">
-      <option value="0">Límit per stock</option>
-      <option value="2" selected="selected">Sense Límit</option>
-    </select></td>
+<tr><td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot &nbsp;</td>
+    <td> Tipus Stock:
+        <select name="speed" id="speed">
+          <option value="0">Límit per stock</option>
+          <option value="2" selected="selected">Sense Límit</option>
+        </select>
+    </td>
+    <td>Hores límit:</td>
     </tr>
 
     {% for f in formatstockform %}
@@ -92,10 +95,11 @@
 
         {% endif %}
                     {{ f.id }}
-                    {{ f.tipus_stock }}
                     {{ f.dia.as_hidden }}
                     {{ f.format.as_hidden }}
                 </td>
+                <td>{{ f.tipus_stock }}</td>
+                <td>{{ f.hores_limit }}</td>
     </tr>
     {% endfor %}
 </table>

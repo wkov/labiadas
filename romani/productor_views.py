@@ -306,11 +306,11 @@ def DiaEntregaDistribuidorView(request, dataentrega):
         # Generem 1r el ModelFormSet indicant el objecte de referència, els camps extres que hi haurà a més dels que aporti el queryset i també li passem el formulari
         FormatStockFormset = modelformset_factory(DiaFormatStock, extra=len(formats), form=DiaFormatStockForm)
         # Ja creat el ModelFormSet li donem la queryset que omplirà els camps ordinaris, i a través d'un loop li passem els paràmetres que apareixeran en els camps extraordinaris
-        formatstockform = FormatStockFormset(queryset=diaformatstock, initial=[{'format': x, 'dia':diaentrega} for x in formats])
+        formatstockform = FormatStockFormset(queryset=diaformatstock, initial=[{'format': x, 'dia':diaentrega, 'hores_limit':x.productor.hores_limit} for x in formats])
     else:
         # Si cap stock de format havia estat seleccionat prèviament, 1r creem el ModelFormSet, i a continuació, a través d'un loop informem el FormSet dels paràmetres inicials a mostrar
         FormatStockFormset = formset_factory(DiaFormatStockForm, extra=0)
-        formatstockform = FormatStockFormset(initial=[{'format': x, 'dia':diaentrega} for x in formats])
+        formatstockform = FormatStockFormset(initial=[{'format': x, 'dia':diaentrega, 'hores_limit':x.productor.hores_limit} for x in formats])
 
     if request.POST:
         # Recollim els formats seleccionats afirmativament per l'usuari
@@ -327,6 +327,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                    cd = f.cleaned_data
                    format = cd.get('format')
                    tipus_stock = cd.get('tipus_stock')
+                   hores_limit = cd.get('hores_limit')
                    if str(format.pk) in formats_pk:
                        # Si s'ha seleccionat afirmativament el format...
                        try:
@@ -336,6 +337,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                            old_frmt['dia']=diaentrega
                            old_frmt['format']=format
                            old_frmt['tipus_stock']=tipus_stock
+                           old_frmt['hores_limit']=hores_limit
                            formats_mod.append(old_frmt)
                            # s[0].tipus_stock = tipus_stock
                            # s[0].save()
@@ -345,6 +347,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                            new_frmt['dia'] = diaentrega
                            new_frmt['format'] = format
                            new_frmt['tipus_stock'] = tipus_stock
+                           new_frmt['hores_limit']=hores_limit
                            formats_crt.append(new_frmt)
                    else:
                        # Si el format està deseleccionat...
@@ -367,10 +370,10 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                     f.delete()
 
                 for f in formats_crt:
-                    s = DiaFormatStock.objects.create(dia=f['dia'],format=f['format'], tipus_stock=f['tipus_stock'])
+                    s = DiaFormatStock.objects.create(dia=f['dia'],format=f['format'], tipus_stock=f['tipus_stock'], hores_limit=f['hores_limit'])
 
                 for f in formats_mod:
-                    s = DiaFormatStock.objects.filter(dia=f['dia'],format=f['format']).update(tipus_stock=f['tipus_stock'])
+                    s = DiaFormatStock.objects.filter(dia=f['dia'],format=f['format']).update(tipus_stock=f['tipus_stock'], hores_limit=f['hores_limit'])
 
                 messages.success(request, (u"Dia d'entrega guardat correctament"))
                 return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
@@ -412,11 +415,11 @@ def DiaEntregaProductorView(request, pk, dataentrega):
         # Generem 1r el ModelFormSet indicant el objecte de referència, els camps extres que hi haurà a més dels que aporti el queryset i també li passem el formulari
         FormatStockFormset = modelformset_factory(DiaFormatStock, extra=len(formats), form=DiaFormatStockForm)
         # Ja creat el ModelFormSet li donem la queryset que omplirà els camps ordinaris, i a través d'un loop li passem els paràmetres que apareixeran en els camps extraordinaris
-        formatstockform = FormatStockFormset(queryset=diaformatstock, initial=[{'format': x, 'dia':diaentrega} for x in formats])
+        formatstockform = FormatStockFormset(queryset=diaformatstock, initial=[{'format': x, 'dia':diaentrega,'hores_limit':x.productor.hores_limit} for x in formats])
     else:
         # Si cap stock de format havia estat seleccionat prèviament, 1r creem el ModelFormSet, i a continuació, a través d'un loop informem el FormSet dels paràmetres inicials a mostrar
         FormatStockFormset = formset_factory(DiaFormatStockForm, extra=0)
-        formatstockform = FormatStockFormset(initial=[{'format': x, 'dia':diaentrega} for x in formats])
+        formatstockform = FormatStockFormset(initial=[{'format': x, 'dia':diaentrega,'hores_limit':x.productor.hores_limit} for x in formats])
 
     if request.POST:
         # Recollim els formats seleccionats afirmativament per l'usuari
@@ -433,6 +436,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                    cd = f.cleaned_data
                    format = cd.get('format')
                    tipus_stock = cd.get('tipus_stock')
+                   hores_limit = cd.get('hores_limit')
                    if str(format.pk) in formats_pk:
                        # Si s'ha seleccionat afirmativament el format...
                        try:
@@ -442,6 +446,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                            old_frmt['dia']=diaentrega
                            old_frmt['format']=format
                            old_frmt['tipus_stock']=tipus_stock
+                           old_frmt['hores_limit']=hores_limit
                            formats_mod.append(old_frmt)
                            # s[0].tipus_stock = tipus_stock
                            # s[0].save()
@@ -451,6 +456,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                            new_frmt['dia'] = diaentrega
                            new_frmt['format'] = format
                            new_frmt['tipus_stock'] = tipus_stock
+                           new_frmt['hores_limit'] = hores_limit
                            formats_crt.append(new_frmt)
                    else:
                        # Si el format està deseleccionat...
@@ -473,10 +479,10 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                     f.delete()
 
                 for f in formats_crt:
-                    s = DiaFormatStock.objects.create(dia=f['dia'],format=f['format'], tipus_stock=f['tipus_stock'])
+                    s = DiaFormatStock.objects.create(dia=f['dia'],format=f['format'], tipus_stock=f['tipus_stock'], hores_limit=f['hores_limit'])
 
                 for f in formats_mod:
-                    s = DiaFormatStock.objects.filter(dia=f['dia'],format=f['format']).update(tipus_stock=f['tipus_stock'])
+                    s = DiaFormatStock.objects.filter(dia=f['dia'],format=f['format']).update(tipus_stock=f['tipus_stock'], hores_limit=f['hores_limit'])
 
                 messages.success(request, (u"Dia d'entrega guardat correctament"))
                 return render(request, "romani/productors/dates_list.html", {'productor': productor})
@@ -753,8 +759,8 @@ def diaEntregaEvents(request, pro):
     for event in eventList:
         if event not in productorAgenda:
             franja = event.franja_inici()
-            day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-            dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
+            day_str = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.inici)[:5]
+            dayend = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.final)[:5]
             url = "/pro/" + str(pro) + "/data_comandes/" + str(event.pk)
             events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
@@ -766,8 +772,8 @@ def diaEntregaSelected(request, pro):
     events = []
     for event in eventList:
         franja = event.franja_inici()
-        day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-        dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
+        day_str = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.inici)[:5]
+        dayend = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.final)[:5]
         url = "/pro/" + str(pro) + "/data_comandes/" +  str(event.pk)
         events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
@@ -778,8 +784,8 @@ def diaProdEvents(request, pro):
     eventList = DiaProduccio.objects.filter(productor=p)
     events = []
     for event in eventList:
-        day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " 11:00"
-        dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " 11:00"
+        day_str = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " 11:00"
+        dayend = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " 11:00"
         url = "/pro/" + str(pro) + "/diaproduccio_update/" +  str(event.pk)
         events.append({'title': 'produccio', 'start': day_str, 'end': dayend
                           , 'url': url, 'allDay': 'true'
@@ -792,7 +798,7 @@ def eventsProductors(user):
     formats = TipusProducte.objects.filter(productor__responsable=user)
 
     for p in formats:
-        for d in DiaEntrega.objects.filter(formats__format__id__exact=p.id):
+        for d in DiaEntrega.objects.filter(formats__format=p):
             if d:
                 eventList.add(d)
 
@@ -814,13 +820,12 @@ def distriCalendarEvents(request):
     for event in eventList:
         if event not in distribuidorAgenda:
             franja = event.franja_inici()
-            day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-            dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
+            day_str = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.inici)[:5]
+            dayend = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.final)[:5]
             url = "/pro/distri_dia/" + str(event.pk)
             events.append({'title': event.node.nom, 'start': day_str, 'end': dayend
                               , 'url': url
                            })
-    # something similar for owned events, maybe with a different className if you like
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
 
 
@@ -833,11 +838,10 @@ def distriCalendarSelected(request):
     events = []
     for event in eventList:
         franja = event.franja_inici()
-        day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-        dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
+        day_str = str(event.date.year) + "-" + str(event.date.month).zfill(2)  + "-" + str(event.date.day).zfill(2)  + " " + str(franja.inici)[:5]
+        dayend = str(event.date.year) + "-" + str(event.date.month).zfill(2)  + "-" + str(event.date.day).zfill(2)  + " " + str(franja.final)[:5]
         url = "/pro/distri_dia/" + str(event.pk)
         events.append({'title': event.node.nom, 'start': day_str, 'end': dayend
                           , 'url': url
                        })
-    # something similar for owned events, maybe with a different className if you like
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')

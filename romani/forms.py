@@ -143,7 +143,7 @@ class DiaFormatStockForm(forms.ModelForm):
 
     class Meta:
         model = DiaFormatStock
-        fields = ("tipus_stock","format", "dia")
+        fields = ("tipus_stock","format", "dia", "hores_limit")
 
 
 

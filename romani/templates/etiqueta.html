@@ -95,7 +95,7 @@
                             de <br/>
                             <select id="id_format" name="format" class="hidden_id form-control" style="width: 100% float:right" >
                                 {% for tipusproducte in producte.formats.all %}
-                                    {% if tipusproducte.in_stock == True %}
+                                    {% if tipusproducte in formats %}
                                         <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
                                     {% endif %}
                                 {% endfor %}

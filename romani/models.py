@@ -4,11 +4,11 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
 import datetime, random
-
+from django.db.models import Q
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from datetime import timedelta
-
+# from romani.public_views import stock_calc
 
 class Productor(models.Model):
 
@@ -166,8 +166,8 @@ class Producte(models.Model):
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
-    karma_date = models.DateTimeField(blank=True, null=True)
-    karma_value = models.IntegerField(blank=True, null=True)
+    # karma_date = models.DateTimeField(blank=True, null=True)
+    # karma_value = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.nom
@@ -183,10 +183,37 @@ class Producte(models.Model):
         for f in self.formats.all():
             com = com + f.comanda_set.filter(entregas__dia_entrega__node=node).count()
         rnd = random.randint(0, 5)
-        self.karma_value = com +  rnd + self.positive_votes() - self.negative_votes()
-        self.save()
-        return self.karma_value
+        next_day = self.next_day_sec(node)
+        if next_day['result'] == True:
+            karma_value = com +  rnd + self.positive_votes() - self.negative_votes() - next_day['next_day']
+        else:
+            karma_value = com +  rnd + self.positive_votes() - self.negative_votes()
+        # self.save()
+        return karma_value
 
+    def next_day_sec(self, node):
+        list = []
+        for f in self.formats.all():
+            for s in f.dies_entrega.filter(dia__date__gte=datetime.datetime.now(), dia__node=node).order_by('dia__date'):
+                date = datetime.datetime.now() + timedelta(hours=s.hores_limit)
+                aux = s.dia.franja_inici()
+                daytime = datetime.datetime(s.dia.date.year, s.dia.date.month, s.dia.date.day, aux.inici.hour, aux.inici.minute)
+
+                if daytime > date:
+                    res = s.format.stock_calc(s.dia, 1)
+                    if res['result'] == True:
+                        list.append(daytime)
+                        break
+        if list:
+            list.sort(key=lambda r: r)
+            b = list[0]
+            a = datetime.datetime.now()
+            c = b - a
+            dict = {'result': True, 'next_day': c.total_seconds()}
+            return dict
+        else:
+            dict = {'result': False}
+            return dict
 
 
 class TipusProducte(models.Model):
@@ -199,32 +226,96 @@ class TipusProducte(models.Model):
     def __str__(self):
         return "%s %s" % (self.producte, self.nom)
 
-    def in_stock(self):
-        try:
-            date = datetime.date.today() + timedelta(hours=self.productor.hores_limit)
-            diesformat = self.dies_entrega.filter(dia__date__gte=date)
-            for d in diesformat:
-                if d.tipus_stock == '0':
-                    try:
-                        diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=self.productor).order_by('-date').first()
-                        if diaproduccio:
-                           s = self.stocks.get(dia_prod=diaproduccio)
-                           if s.stock() > 0:
-                               return True
-                    except:
-                        pass
 
-                elif d.tipus_stock == '2':
-                    return True
-        except:
-            return False
+    def en_stock(self, cantitat, lloc_entrega):
+        diesformat = self.dies_entrega.filter(dia__date__gte=datetime.datetime.now(), dia__node=lloc_entrega)
+        for d in diesformat:
+            date = datetime.datetime.now() + timedelta(hours=d.hores_limit)
+            aux = d.dia.franja_inici()
+            daytime = datetime.datetime(d.dia.date.year, d.dia.date.month, d.dia.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                 if d.tipus_stock == '0':
+                        # Límit per stock...
+                        try:
+                            stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=d.dia.date, dia_prod__caducitat__gte=d.dia.date, format=self).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
+                            for s in stocks:
+                                # accedim al dia de producció en que es genera el estoc
+                                diaproduccio = s.dia_prod
+                                s = stocks.get(dia_prod=diaproduccio)
+                                num = int(s.stock()) - int(cantitat)
+                                if num >= 0:
+                                   #  I si encara hi ha estoc disponible,confirmem existències
+                                    return True
+                        except:
+                            # Si ni tan sols 'ha creat el estoc...
+                            pass
+                 elif d.tipus_stock == '2':
+                        # Si el estoc és sense límit, aleshores confirmem que hi ha existències
+                        return True
+        return False
 
-    def dies_entrega_futurs(self):
-        date = datetime.datetime.today() + timedelta(hours=self.productor.hores_limit)
-        return DiaEntrega.objects.filter(date__gt=date, formats__format=self)
+    def dies_entrega_futurs(self, cantitat):
+        d_lst = []
+        diesformat = self.dies_entrega.filter(dia__date__gte=datetime.datetime.now())
+        for d in diesformat:
+            date = datetime.datetime.now() + timedelta(hours=d.hores_limit)
+            aux = d.dia.franja_inici()
+            daytime = datetime.datetime(d.dia.date.year, d.dia.date.month, d.dia.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                 if d.tipus_stock == '0':
+                        # Límit per stock...
+                        try:
+                            stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=d.dia.date, dia_prod__caducitat__gte=d.dia.date, format=self).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
+                            for s in stocks:
+                                # accedim al dia de producció en que es genera el estoc
+                                diaproduccio = s.dia_prod
+                                s = stocks.get(dia_prod=diaproduccio)
+                                num = int(s.stock()) - int(cantitat)
+                                if num >= 0:
+                                   #  I si encara hi ha estoc disponible,confirmem existències
+                                    d_lst.append(d.dia.pk)
+                                    break
+                        except:
+                            # Si ni tan sols 'ha creat el estoc...
+                            pass
 
-    def nodes(self):
-        return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs()).distinct()
+                 elif d.tipus_stock == '2':
+                        # Si el estoc és sense límit, aleshores confirmem que hi ha existències
+                        d_lst.append(d.dia.pk)
+        return DiaEntrega.objects.filter(pk__in = d_lst)
+
+    def nodes(self, cantitat):
+        return Node.objects.filter(dies_entrega__in=self.dies_entrega_futurs(cantitat)).distinct()
+
+    def stock_calc(self, dia, cantitat):
+         d = self.dies_entrega.get(dia=dia)
+         # Segons el tipus d'stock..(pot ser "Limit per stock" o "Sense Límit")
+         if d.tipus_stock == '0':
+                # Límit per stock...
+                try:
+                    stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=self).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
+                    for s in stocks:
+                        # accedim al dia de producció en que es genera el estoc
+                        diaproduccio = s.dia_prod
+                        s = self.stocks.get(dia_prod=diaproduccio)
+                        num = int(s.stock()) - int(cantitat)
+                        if num >= 0:
+                           #  I si encara hi ha estoc disponible,confirmem existències
+                           dict = {'result': True, 'dia_prod': diaproduccio}
+                           return dict
+                    # Si tots els estocs shan esgotat.Confirmem que no hi ha existències.
+                    dict = {'result': False, 'dia_prod': ''}
+                    return dict
+
+                except:
+                    # Si ni tan sols 'ha creat el estoc. Confirmem que no hi ha existències
+                    dict = {'result': False, 'dia_prod': ''}
+                    return dict
+
+         elif d.tipus_stock == '2':
+                # Si el estoc és sense límit, aleshores confirmem que hi ha existències
+                dict = {'result': True, 'dia_prod': ''}
+                return dict
 
 class DiaFormatStock(models.Model):
     TIPUS_STOCK = (
@@ -236,23 +327,7 @@ class DiaFormatStock(models.Model):
     dia = models.ForeignKey(DiaEntrega, related_name='formats')
     tipus_stock = models.CharField(max_length=10, choices=TIPUS_STOCK, default='2')
     format = models.ForeignKey(TipusProducte, related_name='dies_entrega')
-
-    # def stock_check(self):
-    #      d = self.format.dies_entrega.get(dia=self.dia)
-    #      if d.tipus_stock == '0':
-    #             try:
-    #                 diaproduccio = DiaProduccio.objects.filter(date__lte=d.dia.date, productor=self.format.productor).order_by('-date').first()
-    #                 if diaproduccio:
-    #                    s = self.format.stocks.get(dia_prod=diaproduccio)
-    #                    if s.stock() > 0:
-    #                        return True
-    #                    else:
-    #                        return False
-    #             except:
-    #                 return False
-    #
-    #      elif d.tipus_stock == '2':
-    #             return True
+    hores_limit = models.IntegerField()
 
 
 

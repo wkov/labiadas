@@ -55,7 +55,11 @@
     <li>Pots convidar introduïnt el email de la persona: <br/>
     <form action="/convidar/" method="post">
                         {% csrf_token %}
-                            <input type="text" class="form-control"  name="email" width="40px" placeholder="Introdueix email si vols" value="{{ email }}"/>
+                            {% if email %}
+                                <input type="text" class="form-control"  name="email" width="40px" placeholder="Introdueix email si vols" value="{{ email }}"/>
+                            {% else %}
+                                <input type="text" class="form-control"  name="email" width="40px" placeholder="Introdueix email si vols"/>
+                            {% endif %}
                               <button type="submit" class="btn btn-default"  style="font-size: medium"><b>Convidar per email</b></button>
     </form>
         </li>
