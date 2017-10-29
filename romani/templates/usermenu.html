@@ -62,13 +62,30 @@
                                         <div class="div_notification_image inline">
                                                 {% if notif.actor|model_object:"Producte"  %}
                                                     <a href="{% url 'comandes' %}">
-                                                    <img src="{{ notif.actor.producte.foto.url }}" alt="avatar" height="42" width="42"></a>
+                                                    {% if notif.actor.producte.foto %}
+                                                        <img src="{{ notif.actor.producte.foto.url }}" alt="avatar" height="42" width="42">
+                                                    {% else %}
+                                                        <img src="{% static "img/fusta.jpg" %}" alt="avatar" height="42" width="42">
+                                                    {% endif %}
+{#                                                    <img src="{{ notif.actor.producte.foto.url }}" alt="avatar" height="42" width="42">#}
+                                                    </a>
                                                 {% elif notif.actor|model_object:"UserProfile"  %}
                                                     <a href="{% url 'edit_profile' %}">
-                                                    <img src="{{ notif.actor.avatar.url }}" alt="avatar" height="42" width="42"></a>
+                                                    {% if notif.actor.avatar %}
+                                                        <img src="{{ notif.actor.avatar.url }}" alt="avatar" height="42" width="42">
+                                                    {% else %}
+                                                        <img src="{% static "img/fusta.jpg" %}" alt="avatar" height="42" width="42">
+                                                    {% endif %}
+                                                    </a>
                                                 {% elif notif.actor|model_object:"Key"  %}
                                                     <a href="{% url 'convidar' %}">
-                                                    <img src="{{ notif.actor.usuari.user_profile.avatar.url }}" alt="avatar" height="42" width="42"></a>
+                                                    {% if notif.actor.avatar %}
+                                                        <img src="{{ notif.actor.avatar.url }}" alt="avatar" height="42" width="42">
+                                                    {% else %}
+                                                        <img src="{% static "img/fusta.jpg" %}" alt="avatar" height="42" width="42">
+                                                    {% endif %}
+{#                                                    <img src="{{ notif.actor.usuari.user_profile.avatar.url }}" alt="avatar" height="42" width="42">#}
+                                                    </a>
                                                 {% endif %}
 
 
