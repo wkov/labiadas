@@ -18,7 +18,7 @@ def node_user(request):
         return { 'node_user' : 'la massa'}
     up = UserProfile.objects.get(user=request.user)
     try:
-        pro = Productor.objects.filter(responsable=request.user)
+        pro = Productor.objects.get(responsable=request.user)
         return { 'node_user' : 'la massa'}
     except:
         return { 'node_user' : up.lloc_entrega.nom}
