@@ -16,11 +16,13 @@ def node_user(request):
         return { 'node_user' : 'la massa'}
     if request.user.is_anonymous():
         return { 'node_user' : 'la massa'}
+
     up = UserProfile.objects.get(user=request.user)
-    try:
-        pro = Productor.objects.get(responsable=request.user)
+    pro = Productor.objects.filter(responsable=request.user)
+
+    if pro:
         return { 'node_user' : 'la massa'}
-    except:
+    else:
         return { 'node_user' : up.lloc_entrega.nom}
 
 # Utilitzat permanentment en el user_menu.html per a visualitzar una miniatura de l'avatar de l'usuari
