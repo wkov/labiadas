@@ -1,6 +1,7 @@
 {# test template #}
 {% extends "base.html" %}
 {% block content %}
+    <h2>Restablir contrasenya</h2></br>
 <!-- code for displaying success or error message in template -->
 {#{% if messages %}#}
 {#<ul class="messages">#}
@@ -16,6 +17,6 @@
     {% csrf_token %}
     {{ form.as_p }}
 
-    <input type="submit" value="Submit" />
+    <input type="submit" value="Continuar" />
 </form>
 {% endblock %}
