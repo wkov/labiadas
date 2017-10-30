@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django_messages',
     'romani',
     'xlwt',
+    # 'registration',
 )
 
 SITE_ID = 1

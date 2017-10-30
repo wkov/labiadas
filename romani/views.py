@@ -63,16 +63,16 @@ class ResetPasswordRequestView(FormView):
                 for user in associated_users:
                         c = {
                             'email': user.email,
-                            'domain': request.META['HTTP_HOST'],
+                            'domain': 'https://lamassa.org',
                             'site_name': 'lamassa.org',
                             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                             'user': user,
                             'token': default_token_generator.make_token(user),
-                            'protocol': 'http',
+                            'protocol': 'https',
                             }
-                        subject_template_name='registration/password_reset_subject.txt'
+                        subject_template_name ='registration/password_reset_subj.txt'
                         # copied from django/contrib/admin/templates/registration/password_reset_subject.txt to templates directory
-                        email_template_name='registration/password_reset_email.html'
+                        email_template_name ='registration/password_reset_mail.html'
                         # copied from django/contrib/admin/templates/registration/password_reset_email.html to templates directory
                         subject = loader.render_to_string(subject_template_name, c)
                         # Email subject *must not* contain newlines
@@ -80,10 +80,10 @@ class ResetPasswordRequestView(FormView):
                         email = loader.render_to_string(email_template_name, c)
                         send_mail(subject, email, DEFAULT_FROM_EMAIL , [user.email], fail_silently=False)
                 result = self.form_valid(form)
-                messages.success(request, 'An email has been sent to ' + data +". Please check its inbox to continue reseting password.")
+                messages.success(request, 'Hem enviat un email a ' + data +". Si us plau, comprova el teu correu per a reiniciar la contrasenya.")
                 return result
             result = self.form_invalid(form)
-            messages.error(request, 'No user is associated with this email address')
+            messages.error(request, 'No hi ha usuari associat a aquest email')
             return result
         else:
             # If the input is an username, then the following code will lookup for users associated with that user. If found then an email will be sent to the user's address, else an error message will be printed on the screen.
@@ -92,27 +92,27 @@ class ResetPasswordRequestView(FormView):
                 for user in associated_users:
                     c = {
                         'email': user.email,
-                        'domain': 'lamassa.org', #or your domain
-                        'site_name': 'lamassa',
+                        'domain': 'https://lamassa.org', #or your domain
+                        'site_name': 'lamassa.org',
                         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                         'user': user,
                         'token': default_token_generator.make_token(user),
-                        'protocol': 'http',
+                        'protocol': 'https',
                         }
-                    subject_template_name='registration/password_reset_subject.txt'
-                    email_template_name='registration/password_reset_email.html'
+                    subject_template_name='registration/password_reset_subj.txt'
+                    email_template_name='registration/password_reset_mail.html'
                     subject = loader.render_to_string(subject_template_name, c)
                     # Email subject *must not* contain newlines
                     subject = ''.join(subject.splitlines())
                     email = loader.render_to_string(email_template_name, c)
                     send_mail(subject, email, DEFAULT_FROM_EMAIL , [user.email], fail_silently=False)
                 result = self.form_valid(form)
-                messages.success(request, 'Email has been sent to ' + data +"'s email address. Please check its inbox to continue reseting password.")
+                messages.success(request, 'Hem enviat un email a ' + data +". Si us plau, comprova el teu correu per a reiniciar la contrasenya.")
                 return result
             result = self.form_invalid(form)
-            messages.error(request, 'This username does not exist in the system.')
+            messages.error(request, 'Aquest usuari no existeix.')
             return result
-        messages.error(request, 'Invalid Input')
+        messages.error(request, 'Dades incorrectes')
         return self.form_invalid(form)
 
 from django.contrib.auth import (REDIRECT_FIELD_NAME, login as auth_login,
@@ -142,13 +142,13 @@ class PasswordResetConfirmView(FormView):
                 new_password= form.cleaned_data['new_password2']
                 user.set_password(new_password)
                 user.save()
-                messages.success(request, 'Password has been reset.')
+                messages.success(request, 'La contrasenya ha estat restablerta.')
                 return self.form_valid(form)
             else:
-                messages.error(request, 'Password reset has not been unsuccessful.')
+                messages.error(request, 'El reinici de la contrasenya no ha funcionat.')
                 return self.form_invalid(form)
         else:
-            messages.error(request,'The reset password link is no longer valid.')
+            messages.error(request,'El enllaç utilitzat per cambiar la contrasenya ja no és vàlid.')
             return self.form_invalid(form)
 
 class UserProfileRegistrationForm(RegistrationForm):

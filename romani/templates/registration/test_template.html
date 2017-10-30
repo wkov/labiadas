@@ -1,4 +1,6 @@
 {# test template #}
+{% extends "base.html" %}
+{% block content %}
 <!-- code for displaying success or error message in template -->
 {% if messages %}
 <ul class="messages">
@@ -16,3 +18,4 @@
 
     <input type="submit" value="Submit" />
 </form>
+{% endblock %}

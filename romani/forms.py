@@ -9,7 +9,7 @@ from datetime import timedelta
 
 
 class PasswordResetRequestForm(forms.Form):
-    email_or_username = forms.CharField(label=("Email Or Username"), max_length=254)
+    email_or_username = forms.CharField(label=("Email o Nom d'usuari"), max_length=254)
 
 class SetPasswordForm(forms.Form):
     """
@@ -17,11 +17,11 @@ class SetPasswordForm(forms.Form):
     password
     """
     error_messages = {
-        'password_mismatch': ("The two password fields didn't match."),
+        'password_mismatch': ("Les 2 contrassenyes NO coincideixen."),
         }
-    new_password1 = forms.CharField(label=("New password"),
+    new_password1 = forms.CharField(label=("Nova contrasenya"),
                                     widget=forms.PasswordInput)
-    new_password2 = forms.CharField(label=("New password confirmation"),
+    new_password2 = forms.CharField(label=("Confirmar Nova contrasenya"),
                                     widget=forms.PasswordInput)
 
     def clean_new_password2(self):

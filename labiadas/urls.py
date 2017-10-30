@@ -28,16 +28,19 @@ from django.views.generic import RedirectView, TemplateView
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls), name="admin"),
 
     url(r"^login/$", login,{"template_name": "login.html"}, name="login"),
     url(r"^logout/$", logout_then_login,name="logout"),
-
     url(r"^accounts/", include("registration.backends.simple.urls")),
     url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
     url(r'^account/reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
     url(r'^account/reset_password', ResetPasswordRequestView.as_view(), name="reset_password"),
+
+
+
+    url(r'^admin/', include(admin.site.urls), name="admin"),
+
 
     url(r'^vista_productors/', auth(ProductorsListView.as_view()), name="productor_list"),
     url(r'^distri_cal/', auth(ProductorsCalListView.as_view()), name="productor_cal_list"),
