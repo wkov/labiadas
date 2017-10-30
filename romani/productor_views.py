@@ -637,11 +637,11 @@ class ProducteUpdateView(UpdateView):
     template_name = "romani/productors/producte_form.html"
     # user = request.user
 
-    # def get_form_kwargs(self):
-    #     kwargs = super(ProducteUpdateView, self).get_form_kwargs()
-    #     producte = Producte.objects.get(pk=self.kwargs['pk'])
-    #     kwargs["productor"] = producte.productor
-    #     return kwargs
+    def get_form_kwargs(self):
+        kwargs = super(ProducteUpdateView, self).get_form_kwargs()
+        producte = Producte.objects.get(pk=self.kwargs['pk'])
+        kwargs["productor"] = producte.productor
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(ProducteUpdateView, self).get_context_data(**kwargs)
@@ -684,6 +684,12 @@ class ProducteCreateView(CreateView):
     model = Producte
     form_class = ProducteForm
     template_name = "romani/productors/producte_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super(ProducteCreateView, self).get_form_kwargs()
+        productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
+        kwargs["productor"] = productor
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(ProducteCreateView, self).get_context_data(**kwargs)

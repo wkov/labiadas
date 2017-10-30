@@ -226,10 +226,14 @@ class ProducteForm(forms.ModelForm):
 
     class Meta:
         model = Producte
-        fields = ("nom", "etiqueta", "foto", "text_curt", "descripcio", "frequencies", "keywords")
-        exclude = ("productor", "karma_value", "datahora", "karma_date", "dies_entrega", "nodes")
+        fields = ("nom",  "productor", "etiqueta", "foto", "text_curt", "descripcio", "frequencies", "keywords")
+        exclude = ("datahora",)
 
+    def __init__(self, productor, *args, **kwargs):
 
+        super(ProducteForm, self).__init__(*args, **kwargs)
+        self.fields["productor"].queryset = Productor.objects.filter(pk=productor.pk)
+        self.fields["productor"].initial = productor
 
 class NodeProductorsForm(forms.ModelForm):
 
