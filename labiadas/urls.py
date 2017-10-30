@@ -18,7 +18,7 @@ from romani.productor_views import ProductorsListView, ProductorUpdateView, Date
 from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
 from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
-from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView
+from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
 
 from django.contrib.auth.views import login, logout_then_login
@@ -36,7 +36,8 @@ urlpatterns = [
     url(r"^accounts/", include("registration.backends.simple.urls")),
     url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
-
+    url(r'^account/reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
+    url(r'^account/reset_password', ResetPasswordRequestView.as_view(), name="reset_password"),
 
     url(r'^vista_productors/', auth(ProductorsListView.as_view()), name="productor_list"),
     url(r'^distri_cal/', auth(ProductorsCalListView.as_view()), name="productor_cal_list"),
