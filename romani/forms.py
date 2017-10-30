@@ -226,7 +226,7 @@ class ProducteForm(forms.ModelForm):
 
     class Meta:
         model = Producte
-        fields = ("nom",  "productor", "etiqueta", "foto", "text_curt", "descripcio", "frequencies", "keywords")
+        # fields = ("nom",  "productor", "etiqueta", "foto", "text_curt", "descripcio", "frequencies", "keywords")
         exclude = ("datahora",)
 
     def __init__(self, productor, *args, **kwargs):
