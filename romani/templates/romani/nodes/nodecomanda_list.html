@@ -3,6 +3,7 @@
 {% block content %}
 <div style="float: left; position:relative;     font-family: 'Satisfy', cursive;
     font-size: 3em"> {{ node.nom }} </div>
+
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
@@ -20,11 +21,15 @@
                                  </a>
                         </div>
     </div>
-    <br/><br/><br/>
-
+    <br/><br/>
+    <h3>{{ diaentrega.date }}:
+    {% for d in diaentrega.franjes_horaries.all %}
+        de {{ d.inici }} a {{ d.final }},
+    {% endfor %}</h3>
     <a href="{% url 'export_comandes_xls' diaentrega.pk %}">Exportar comandes</a>
 
     <br/>
+
 {% if object_list%}
          <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
          <thead>

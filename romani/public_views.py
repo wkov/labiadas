@@ -621,36 +621,5 @@ class VoteFormView(FormView):
 
 
 
-# OBSOLET ara es un metode dins del model TipusProducte . Comprova que hi hagi stock disponible per a una quantitat determinada
-# def stock_calc(format, dia, cantitat):
-#      d = format.dies_entrega.get(dia=dia)
-#      # Segons el tipus d'stock..(pot ser "Limit per stock" o "Sense Límit")
-#      if d.tipus_stock == '0':
-#             # Límit per stock...
-#             try:
-#                 stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=format).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
-#                 for s in stocks:
-#                     # accedim al dia de producció en que es genera el estoc
-#                     diaproduccio = s.dia_prod
-#                     s = format.stocks.get(dia_prod=diaproduccio)
-#                     num = int(s.stock()) - int(cantitat)
-#                     if num >= 0:
-#                        #  I si encara hi ha estoc disponible,confirmem existències
-#                        dict = {'result': True, 'dia_prod': diaproduccio}
-#                        return dict
-#                 # Si tots els estocs shan esgotat.Confirmem que no hi ha existències.
-#                 dict = {'result': False, 'dia_prod': ''}
-#                 return dict
-#
-#             except:
-#                 # Si ni tan sols 'ha creat el estoc. Confirmem que no hi ha existències
-#                 dict = {'result': False, 'dia_prod': ''}
-#                 return dict
-#
-#      elif d.tipus_stock == '2':
-#             # Si el estoc és sense límit, aleshores confirmem que hi ha existències
-#             dict = {'result': True, 'dia_prod': ''}
-#             return dict
-
 
 
