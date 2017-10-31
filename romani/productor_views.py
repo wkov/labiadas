@@ -11,7 +11,7 @@ from django.contrib import messages
 
 from django.contrib.auth.models import Group
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 import datetime
 
@@ -375,8 +375,50 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                 for f in formats_mod:
                     s = DiaFormatStock.objects.filter(dia=f['dia'],format=f['format']).update(tipus_stock=f['tipus_stock'], hores_limit=f['hores_limit'])
 
-                messages.success(request, (u"Dia d'entrega guardat correctament"))
-                return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
+
+                if 'create' in request.POST:
+                    messages.success(request, (u"Dia d'entrega guardat correctament"))
+                    return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
+                else:
+                    next_d = DiaEntrega.objects.filter(date__gte=diaentrega.date).exclude(pk=diaentrega.pk).order_by('date')
+                    # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
+                    messages.success(request, (u"Dia d'entrega guardat correctament"))
+                        # Trobem el objecte DataEntrega a partir de l'identificador pk
+                    diaentrega = DiaEntrega.objects.get(pk=next_d.pk)
+                    # Calculem els productors lligats a l'usuari (distribuidor) per a informar la vista i la template quan surti del dia d'entrega
+                    productors_menu = Productor.objects.filter(responsable=request.user)
+                    # Calculem els productors controlats per l'usuari distribuidor que són acceptats en el dia d'entrega per a no mostrarli els que estan exclosos en el node del dia d'entrega seleccionat
+                    productors = Productor.objects.filter(responsable=request.user, nodes=diaentrega.node)
+                    # Seleccionem tots els possibles formats que podrien ser seleccionats pel productor per portarlos en el dia d'entrega seleccionat
+                    formats = TipusProducte.objects.filter(producte__productor__in=productors)
+                    # Filtrem les comandes lligades al dia d'entrega
+                    comandes = Entrega.objects.filter(comanda__format__in=formats, dia_entrega=diaentrega)
+                    # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
+                    preu_total = 0
+                    cant_total = 0
+                    for c in comandes:
+                        preu_total += c.comanda.preu
+                        cant_total += c.comanda.cantitat
+                    # Seleccionem tots els productes que ja estan confirmats pel productor o distribuidor com disponibles en el dia d'entrega
+                    diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor__in=productors)
+                    if diaformatstock:
+                        # Si anteriorment ja s'havia seleccionat afirmativament el tipus d'stock d'algun format del productor per a aquest dia d'entrega...                                                                                             SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+                        f_lst = []
+                        for d in diaformatstock:
+                            # Guardem tots els stocks de formats ja seleccionats afirmativament en sessions anteriors
+                            f_lst.append(d.format)
+                        for f in formats:
+                            if f in f_lst:
+                                # Si el stock del format ja ha estat introdüit, el treiem de la llista general. Per a així tenir 2 llistes: una amb els formats ja seleccionats i una altra amb els no seleccionats
+                                formats = formats.exclude(pk=f.pk)
+                        # Generem 1r el ModelFormSet indicant el objecte de referència, els camps extres que hi haurà a més dels que aporti el queryset i també li passem el formulari
+                        FormatStockFormset = modelformset_factory(DiaFormatStock, extra=len(formats), form=DiaFormatStockForm)
+                        # Ja creat el ModelFormSet li donem la queryset que omplirà els camps ordinaris, i a través d'un loop li passem els paràmetres que apareixeran en els camps extraordinaris
+                        formatstockform = FormatStockFormset(queryset=diaformatstock, initial=[{'format': x, 'dia':diaentrega, 'hores_limit':x.productor.hores_limit} for x in formats])
+                    else:
+                        # Si cap stock de format havia estat seleccionat prèviament, 1r creem el ModelFormSet, i a continuació, a través d'un loop informem el FormSet dels paràmetres inicials a mostrar
+                        FormatStockFormset = formset_factory(DiaFormatStockForm, extra=0)
+                        formatstockform = FormatStockFormset(initial=[{'format': x, 'dia':diaentrega, 'hores_limit':x.productor.hores_limit} for x in formats])
 
     return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'formatstockform': formatstockform,
                                                                         'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
@@ -679,6 +721,7 @@ class ProductorCreateView(CreateView):
     def form_valid(self, form):
         messages.success(self.request, (u"S'ha desat el productor"))
         return super(ProductorCreateView, self).form_valid(form)
+
 
 class ProducteCreateView(CreateView):
     model = Producte

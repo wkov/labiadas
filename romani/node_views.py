@@ -158,8 +158,10 @@ class DiaEntregaCreateView(CreateView):
     def get_success_url(self):
         messages.success(self.request, (u"S'ha creat correctament el dia d'entrega"))
         node = Node.objects.get(pk=self.kwargs['dis'])
-        return "/dis/" + str(node.pk) + "/vista_nodesdates/"
-
+        if 'create' in self.request.POST:
+            return "/dis/" + str(node.pk) + "/vista_nodesdates/"
+        else:
+            return "/dis/" + str(node.pk) + "/diaentrega/create/"
 
 class DiaEntregaUpdateView(UpdateView):
     model = DiaEntrega

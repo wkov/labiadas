@@ -28,6 +28,7 @@
     <a href="" id="pro_menu_selected">Editar dia d'entrega</a><br/>
     <a href="{% url 'franjahoraria_create' node.pk %}" id="pro_menu">Crear franja horària</a> <br/><br/>
   {{ form.as_p }}
-  <input type="submit" value="Confirmar">
+  <input type="submit" name="create" value="Confirmar">
+  <input type="submit" name="createagain" value="Confirmar i crear altre dia d'entrega">
 </form>
 {% endblock %}
