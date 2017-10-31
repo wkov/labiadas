@@ -3,7 +3,7 @@
 {% block content %}
 <div style="float: left; position:relative;     font-family: 'Satisfy', cursive;
     font-size: 3em"> {{ productor.nom }} </div>
-<form method="post" action="">
+<form method="post" action="" enctype="multipart/form-data">
   {% csrf_token %}
     <div style="margin: 0 auto; text-align:center;">
                         <div style=" position: relative; display: inline-block; ">
