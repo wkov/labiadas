@@ -290,7 +290,7 @@ def comandaDelete(request, pk):
 
     if daytime > dia:
         notify.send(comandaDel.format.producte, recipient = request.user,  verb="Has tret ",
-            description="de la cistella" , url=comandaDel.format.producte.foto.url, timestamp=timezone.now())
+            description="de la cistella" , timestamp=timezone.now())
         comandaDel.delete()
         messages.info(request, (u"Has anulat la comanda i hem tret el producte de la cistella"))
     else:
