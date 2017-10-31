@@ -380,7 +380,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
                     return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
                 else:
-                    next_d = DiaEntrega.objects.filter(date__gte=diaentrega.date).exclude(pk=diaentrega.pk).order_by('date')
+                    next_d = DiaEntrega.objects.filter(date__gte=diaentrega.date).exclude(pk=diaentrega.pk).order_by('date').first()
                     # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
                         # Trobem el objecte DataEntrega a partir de l'identificador pk
