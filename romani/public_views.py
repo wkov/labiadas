@@ -252,7 +252,7 @@ def comandesView(request):
 def entregasView(request):
 
     now = datetime.datetime.now()
-    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('dia_entrega__date', 'franja_horaria__inici')
+    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('-dia_entrega__date', 'franja_horaria__inici')
     voted = Vote.objects.filter(voter=request.user)
 
     comandes_in_page = [comanda.pk for comanda in entregas]
@@ -289,8 +289,9 @@ def comandaDelete(request, pk):
     daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
 
     if daytime > dia:
-        notify.send(comandaDel.format.producte, recipient = request.user,  verb="Has tret ",
+        notify.send(comandaDel.format, recipient = request.user,  verb="Has tret ", action_object=comandaDel,
             description="de la cistella" , timestamp=timezone.now())
+        # url=comandaDel.format.producte.foto.url,
         comandaDel.delete()
         messages.info(request, (u"Has anulat la comanda i hem tret el producte de la cistella"))
     else:

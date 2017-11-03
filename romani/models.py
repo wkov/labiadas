@@ -139,6 +139,13 @@ class DiaEntrega(models.Model):
     def franja_inici(self):
         return self.franjes_horaries.order_by("inici").first()
 
+    # def franja(self):
+    #     return self.franja_inici().inici
+
+    # def next(self, productor):
+    #     next_d_tab = DiaEntrega.objects.filter(date__gte=self.date, node__productors=productor).exclude(pk=diaentrega.pk).first()
+    #     sorted_results = sorted(next_d_tab, key= lambda t: t.thing_date())
+
 
 
 class Etiqueta(models.Model):
