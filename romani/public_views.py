@@ -239,7 +239,7 @@ def productorView(request,pk):
 def comandesView(request):
 
     now = datetime.datetime.now()
-    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now))
+    entregas = Entrega.objects.filter(comanda__client=request.user).filter(dia_entrega__date__gte=now)
 
     com = Comanda.objects.filter(entregas=entregas).distinct()
 
