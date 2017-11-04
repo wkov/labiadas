@@ -60,13 +60,24 @@
                          {% endif %}
                     </form>
                 </div>
-                {{ producte.descripcio|linebreaks }}<br />
+                {{ producte.descripcio|linebreaks }}
                 <br />
                 {% if producte.keywords %}
-                    <b>Paraules clau: &nbsp; </b> {{ producte.keywords }} <br/><br/>
+                    <b>Paraules clau: &nbsp; </b> {{ producte.keywords }}
                 {% endif %}
                 <a href="{% url 'coope' %}"> Tornar a la botiga </a>
-            </div><br/><br/>
+            </div>
         </div>
-    </div><br/><br/>
+    </div>
+    <h3>Opinions:</h3>
+    {% for v in votes %}
+            <div class="thumbnail">
+                {%  if v.positiu == True %}
+                    <span class="glyphicon glyphicon-thumbs-up" ></span>
+                {% else %}
+                    <span class="glyphicon glyphicon-thumbs-down" ></span>
+                {% endif %}
+                {{ v.text }}
+            </div>
+    {% endfor %}
 {% endblock %}

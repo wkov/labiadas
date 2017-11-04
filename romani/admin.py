@@ -7,9 +7,9 @@ class producteAdmin(admin.ModelAdmin):
     list_filter = ['nom', 'productor']
 
 class voteAdmin(admin.ModelAdmin):
-    list_display = ('voter', 'entrega')
-    search_fields = ['voter', 'entrega']
-    list_filter = ['voter', 'entrega']
+    list_display = ('voter', 'entrega', 'text')
+    search_fields = ['voter', 'entrega','entrega__dia_entrega', 'entrega__comanda']
+    list_filter = ['voter', 'entrega','entrega__dia_entrega', 'entrega__comanda']
 
 class productorAdmin(admin.ModelAdmin):
     list_display = ('nom','text')

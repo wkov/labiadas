@@ -1,0 +1,43 @@
+{% csrf_token %}
+{% load i18n %}
+{% load staticfiles %}
+<script>
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    var modal = document.getElementById('myModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+{#El div mymodal serveix per tancar comandes a traves d'un dialeg de javascript#}
+    <!-- The Modal -->
+<div id="comentariModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close_com" style="float: right">&times;</span>
+        <h5><b>Comentari:</b></h5>
+       <form method="post" class="comentari_form" action="{% url 'vote' %}">{% csrf_token %}
+{#           <img id="imatge" name="imatge" class="img-responsive" style="float: right; max-height: 300px "  >#}
+{#           <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >#}
+{#                <div class="g-item" id="imatge" style="float: right">#}
+{#                    </div>#}
+{#            </a>#}
+{#            <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">#}
+
+{#           <label for="producte">Producte:</label>  <input type="text" style="max-width: 200px; float: right" class="form-control"  id="producte" name="producte" readonly/>#}
+           <input type="hidden" id="entrega_pk" name="entrega" class="entrega"/>
+           <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />
+           <input type="hidden" id="id_vote" name="vote" class="vote"/>
+{#           <label for="format">Format:</label>   <input type="text" class="form-control"  id="format" style="max-width: 200px; float: right" name="format" readonly/>#}
+{#           <input type="hidden" id="format_pk" name="format_pk" style="max-width: 200px; float: right" class="form-control" />#}
+{#            </div>#}
+           Argumenta la teva valoració:
+
+           <textarea rows="20" id="id_text" name="text" cols="50"></textarea>
+           <br/>
+          <button id="aceptar" type="submit">Confirmar <span class="glyphicon glyphicon-ok"></span></button>
+{#          <button id="cancelar" type="button">Cancel·lar <span class="glyphicon glyphicon-remove"></span></button>#}
+      </form>
+</div>
+</div>

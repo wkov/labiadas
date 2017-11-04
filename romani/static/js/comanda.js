@@ -2,6 +2,25 @@ jQuery(document).ready(function($)
 
     {
 
+	$(".vote_form").submit(function(e)
+		{
+		    e.preventDefault();
+			var entrega = $(".hidden_id", this).val();
+			var modal = document.getElementById('comentariModal');
+			var vote = document.getElementById('id_vote');
+			modal.style.display = "block";
+			var entregados = document.getElementById('entrega_pk');
+			entregados.value = entrega;
+			vote.value = this.submited;
+	});
+	$(".close_com").click(function(e)
+	{
+		var modal = document.getElementById('comentariModal');
+    	modal.style.display = "none";
+	});
+
+
+
 
 	$(".comanda_form").submit(function(e)
 		{

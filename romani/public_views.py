@@ -145,6 +145,7 @@ def producteView(request,pk):
     producte = Producte.objects.filter(pk=pk).first()
     nodes = Node.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
+    votes = Vote.objects.filter(entrega__comanda__format__producte=producte).exclude(text='').order_by('-entrega__dia_entrega__date')
 
     dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
     formats_aux = set()
@@ -160,7 +161,7 @@ def producteView(request,pk):
                 if stock_result['result'] == True:
                     formats_aux.add(t)
 
-    return render(request, "producte.html",{'producte': producte, 'formats': formats_aux, 'nodes': nodes, 'up': user_p})
+    return render(request, "producte.html",{'producte': producte, 'formats': formats_aux, 'nodes': nodes, 'up': user_p, 'votes': votes})
 
 def etiquetaView(request,pk):
 
@@ -595,25 +596,32 @@ class VoteFormView(FormView):
     form_class = VoteForm
     success_url="/entregas/"
 
+    # def create_response(self, vdict=dict(), valid_form=True):
+    #     response = HttpResponse(json.dumps(vdict))
+    #     response.status = 200 if valid_form else 500
+    #     return response
+
     def form_valid(self, form):
         user = self.request.user
         if form.data["entrega"]!="":
             entrega = get_object_or_404(Entrega, pk=int(form.data["entrega"]))
-            if self.request.POST.get("Up"):
+            if form.data["vote"]=="Up":
                 v = Vote.objects.get(voter=user, entrega=entrega)
                 v.positiu = True
+                v.text = form.data["text"]
                 v.save()
                 messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
-            elif self.request.POST.get("Down"):
+            elif form.data["vote"]=="Down":
                 v = Vote.objects.get(voter=user, entrega=entrega)
                 v.positiu = False
+                v.text = form.data["text"]
                 v.save()
                 messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
-            elif self.request.POST.get("NewUp"):
-                v = Vote.objects.create(voter=user, entrega=entrega, positiu=True)
+            elif form.data["vote"]=="NewUp":
+                v = Vote.objects.create(voter=user, entrega=entrega, positiu=True, text=form.data["text"])
                 messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
-            elif self.request.POST.get("NewDown"):
-                v = Vote.objects.create(voter=user, entrega=entrega, positiu=False)
+            elif form.data["vote"]=="NewDown":
+                v = Vote.objects.create(voter=user, entrega=entrega, positiu=False, text=form.data["text"])
                 messages.success(self.request, (u"Hem rebut la teva valoració. Gràcies"))
             else:
                 pass

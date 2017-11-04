@@ -466,6 +466,7 @@ class Vote(models.Model):
     voter = models.ForeignKey(User)
     entrega = models.ForeignKey(Entrega, related_name='vote')
     positiu = models.BooleanField()
+    text = models.TextField(blank=True)
 
     def __unicode__(self):
         return "%s voted %s" % (self.voter.username, self.link.title)
