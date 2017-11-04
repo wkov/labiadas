@@ -247,7 +247,7 @@ def comandesView(request):
 
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
+    return render(request, "comandes.html", {'comandes': comandes, 'up': user_p })
 
 
 def entregasView(request):
