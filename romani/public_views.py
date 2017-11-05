@@ -241,7 +241,7 @@ def comandesView(request):
     now = datetime.datetime.now()
     entregas = Entrega.objects.filter(comanda__client=request.user, dia_entrega__date__gte=now)
 
-    com = Comanda.objects.all().filter(entregas=entregas).distinct()
+    com = Comanda.objects.filter(entregas__in=entregas).distinct()
 
     comandes = sorted(com, key=lambda a: (a.prox_entrega().dia_entrega.date, a.prox_entrega().franja_horaria.inici))
 
