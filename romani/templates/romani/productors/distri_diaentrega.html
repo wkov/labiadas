@@ -1,5 +1,13 @@
-{% extends "base.html" %}
 
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block headers %}
+
+{#    <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>#}
+{#    <link href="{% static 'js/fullcalendar-3.4.0/fullcalendar.css' %}" rel="stylesheet">#}
+{#    <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}"></script>#}
+
+{% endblock %}
 {% block content %}
     <div style="float: left; position:relative">
         <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>

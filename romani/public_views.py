@@ -300,7 +300,7 @@ def comandaDelete(request, pk):
 
     now = datetime.datetime.now()
     entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
-    comandes = Comanda.objects.filter(entregas=entregas).distinct()
+    comandes = Comanda.objects.filter(entregas__in=entregas).distinct()
     user_p = UserProfile.objects.filter(user=request.user).first()
 
     return render(request, "comandes.html",{'comandes': comandes, 'up': user_p})
@@ -568,7 +568,7 @@ def diesEntregaView(request, pk, pro):
             if pro == '0':   #si el usuari es consumidor i prove de la pantalla de comanda principal
 
                 entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
-                comandes = Comanda.objects.filter(entregas=entregas).distinct()
+                comandes = Comanda.objects.filter(entregas__in=entregas).distinct()
 
                 messages.success(request, (u"Comanda desada correctament"))
 

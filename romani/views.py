@@ -219,9 +219,8 @@ def AjudaView(request):
 
     webmaster = User.objects.filter(pk="37").first()
     user_p = UserProfile.objects.filter(user=request.user).first()
-    nodes = Node.objects.all()
 
-    return render(request, "ajuda.html",{'up': user_p, 'nodes': nodes, 'webmaster': webmaster})
+    return render(request, "ajuda.html",{'up': user_p, 'webmaster': webmaster})
 
 
 
