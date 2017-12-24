@@ -3,20 +3,20 @@
 {% load static %}
 {% load romani_tags %}
 {% if user.is_authenticated %}
-    <script type="text/javascript" >
-        $(document).ready(function()
-        {
-            $("#notificationLink").click(function() {
-                $("#notificationContainer").toggle();
-                $("#notification_count").fadeOut("slow");
-                return false;
-            });
-            //Document Click
-            $(document).click(function() {
-                $("#notificationContainer").hide();
-            });
-        });
-    </script>
+{#    <script type="text/javascript" >#}
+{#        $(document).ready(function()#}
+{#        {#}
+{#            $("#notificationLink").click(function() {#}
+{#                $("#notificationContainer").toggle();#}
+{#                $("#notification_count").fadeOut("slow");#}
+{#                return false;#}
+{#            });#}
+{#            //Document Click#}
+{#            $(document).click(function() {#}
+{#                $("#notificationContainer").hide();#}
+{#            });#}
+{#        });#}
+{#    </script>#}
 {#    {% notifications_unread as unread_count %}#}
     <div style="float: left">
         <a href="{% url 'edit_profile' %}" title="Perfil d'usuari">

@@ -30,6 +30,34 @@ function loadScript(src, callback) {
 }
 
 addEvent(window, 'load', function(){ loadScript(
-        'http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js',
-        function () { loadScript('js/global.js')} );
+        '/static/js/jquery-2.1.4.js',
+        function () { loadScript('/static/js/jquery-ui-1.11.4/jquery-ui.js',
+        function () { loadScript('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js',
+        function () { loadScript('/static/js/fullcalendar-3.4.0/fullcalendar.min.js',
+        function () { loadScript('/static/js/tablesorter-master/jquery.tablesorter.js',
+        function () { loadScript('/static/js/generic.js',
+        //function () {
+        //
+        //    $("#datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+        //
+        //     $("#datepicker2").datepicker({dateFormat: 'dd/mm/yy'});
+        //
+        //     $("#accordion").accordion();
+        //
+        //     $("#myTable").tablesorter({dateFormat: "uk"});
+        //
+        //     $("#myTable2").tablesorter({dateFormat: "uk"});
+        //
+        //
+        //                 // delete message
+        //    $('.del-msg').click(function(){
+        //        $('.del-msg').parent().attr('style', 'display:none;');
+        //    })
+        //
+        //     setTimeout(function() {
+        //    $('.message').fadeOut('slow');
+        //    }, 10000),
+        function () { loadScript('/static/js/comanda.js' )}
+        //}
+        )} )}  )} )} )} )
 });

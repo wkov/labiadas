@@ -36,7 +36,36 @@ function hasScrolled() {
     lastScrollTop = st;
 }
 
+
+
+//
+//$(function () {
+
+
+
+
+ //
+ //});
+
+
+
+
+
+
 $( document ).ready(function() {
+
+
+
+                         // delete message
+            $('.del-msg').click(function(){
+                $('.del-msg').parent().attr('style', 'display:none;');
+            })
+
+             setTimeout(function() {
+            $('.message').fadeOut('slow');
+            }, 10000);
+
+
 
     <!-- Script per oucultar el menu -->
     $("#menu-toggle").click(function(e) {
@@ -86,5 +115,4 @@ $( document ).ready(function() {
 //
 //    });
 //}
-
 

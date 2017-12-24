@@ -2,6 +2,129 @@ jQuery(document).ready(function($)
 
     {
 
+        $("#checkAll").click(function () {
+
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
+
+
+//        var selects = document.querySelectorAll('select');
+//
+//        selects[0].addEventListener('change', function () {
+//        for (var i = 0; i < selects.length; i++) {
+//            selects[i].value = selects[0].value;
+//        }
+//});
+
+
+             $("#datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+
+             $("#datepicker2").datepicker({dateFormat: 'dd/mm/yy'});
+
+             $("#accordion").accordion();
+
+             $("#myTable").tablesorter({dateFormat: "uk"});
+
+             $("#myTable2").tablesorter({dateFormat: "uk"});
+
+
+
+
+
+
+
+
+            $("#notificationLink").click(function() {
+                $("#notificationContainer").toggle();
+                $("#notification_count").fadeOut("slow");
+                return false;
+            });
+            //Document Click
+            $(document).click(function() {
+                $("#notificationContainer").hide();
+            });
+
+
+		(function () {
+    $(function () {
+        var SideBAR;
+        SideBAR = (function () {
+            function SideBAR() {}
+            SideBAR.prototype.expandMyMenu = function () {
+                return $("nav.sidebar").removeClass("sidebar-menu-collapsed").addClass("sidebar-menu-expanded");
+            };
+            SideBAR.prototype.collapseMyMenu = function () {
+                return $("nav.sidebar").removeClass("sidebar-menu-expanded").addClass("sidebar-menu-collapsed");
+            };
+            SideBAR.prototype.showMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").show();
+            };
+            SideBAR.prototype.hideMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").hide();
+            };
+            SideBAR.prototype.showActiveSubMenu = function () {
+                $("li.active ul.level2").show();
+                return $("li.active a.expandable").css({
+                    width: "100%"
+                });
+            };
+            SideBAR.prototype.hideActiveSubMenu = function () {
+                return $("li.active ul.level2").hide();
+            };
+            SideBAR.prototype.adjustPaddingOnExpand = function () {
+                $("ul.level1 li a.expandable").css({
+                    padding: "1px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "1px 4px 4px 4px"
+                });
+            };
+            SideBAR.prototype.resetOriginalPaddingOnCollapse = function () {
+                $("ul.nbs-level1 li a.expandable").css({
+                    padding: "4px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "4px"
+                });
+            };
+            SideBAR.prototype.ignite = function () {
+                return (function (instance) {
+                    return $("#justify-icon").click(function (e) {
+                        if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-collapsed")) {
+                            instance.adjustPaddingOnExpand();
+                            instance.expandMyMenu();
+                            instance.showMenuTexts();
+                            instance.showActiveSubMenu();
+                            $(this).css({
+                                color: "#000"
+                            });
+                        } else if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-expanded")) {
+                            instance.resetOriginalPaddingOnCollapse();
+                            instance.collapseMyMenu();
+                            instance.hideMenuTexts();
+                            instance.hideActiveSubMenu();
+                            $(this).css({
+                                color: "#FFF"
+                            });
+                        }
+                        return false;
+                    });
+                })(this);
+            };
+            return SideBAR;
+        })();
+        return (new SideBAR).ignite();
+    });
+}).call(this);
+
+
+
+
+
+
+
+
+
 	$(".vote_form").submit(function(e)
 		{
 		    e.preventDefault();
