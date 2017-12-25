@@ -385,7 +385,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                     next_d = DiaEntrega.objects.filter(date__gte=diaentrega.date, node__productors=productors_menu).distinct()
                     unsorted = next_d.all()
                     # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
-                    next_tab = sorted(unsorted, key = lambda obj: (obj.date, obj.franja_inici().inici, obj.node))
+                    next_tab = sorted(unsorted, key = lambda obj: (obj.date, obj.franja_inici().inici))
                     aux = False
 
                     for n in next_tab:
@@ -512,7 +512,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                     next_d = DiaEntrega.objects.filter(date__gte=diaentrega.date, node__productors=productor).distinct()
                     unsorted = next_d.all()
                     # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
-                    next_tab = sorted(unsorted, key = lambda obj: (obj.date, obj.franja_inici().inici, obj.node))
+                    next_tab = sorted(unsorted, key = lambda obj: (obj.date, obj.franja_inici().inici))
                     aux = False
 
                     for n in next_tab:
