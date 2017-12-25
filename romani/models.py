@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from datetime import timedelta
+from PIL import Image
 # from romani.public_views import stock_calc
 
 class Productor(models.Model):
@@ -170,6 +171,7 @@ class Producte(models.Model):
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='productes/%Y/%m/%d', null=True, validators=[validate_file])
+    thumb = models.FileField(upload_to='productes/%Y/%m/%d', null=True)
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
@@ -221,6 +223,13 @@ class Producte(models.Model):
         else:
             dict = {'result': False}
             return dict
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super(Producte, self).save()
+        image = Image.open(self.foto.path)
+        image = image.resize((250,250),Image.ANTIALIAS)
+        image.save(self.thumb.path,quality=20,optimize=True)
 
 
 class TipusProducte(models.Model):
@@ -490,6 +499,7 @@ def create_profile(sender, instance, created, **kwargs):
 
 from django.db.models.signals import post_save
 post_save.connect(create_profile, sender=User)
+
 
 
 

@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django_messages',
     'romani',
     'xlwt',
+    'PIL',
     # 'registration',
 )
 
