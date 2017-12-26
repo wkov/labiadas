@@ -9,6 +9,8 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from datetime import timedelta
 from PIL import Image
+import os
+from django.core.files import File
 # from romani.public_views import stock_calc
 
 class Productor(models.Model):
@@ -171,7 +173,7 @@ class Producte(models.Model):
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='productes/%Y/%m/%d', null=True, validators=[validate_file])
-    # thumb = models.FileField(null=True)
+    thumb = models.FileField(null=True)
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
@@ -230,7 +232,14 @@ class Producte(models.Model):
         size = 250, 250
         image = Image.open(self.foto.path)
         image.thumbnail(size)
-        image.save(self.foto.path)
+        image.save(self.foto.path + ".jpeg")
+        self.thumb.name = self.foto.name + ".jpeg"
+        super(Producte, self).save()
+        # quality = (20 / int(os.stat(self.thumb.path).st_size))*100
+        # if quality < 100:
+        #     image = Image.open(self.thumb.path)
+        #     image.save(self.thumb.path, optimize=True, quality=quality)
+
         # image.save("media/productes/temp/" + self.nom + ".jpeg")
         # image = image.resize((250,250),Image.ANTIALIAS)
         # image.save(self.thumb.path,quality=20,optimize=True)

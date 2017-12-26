@@ -63,13 +63,15 @@
                 {{ producte.descripcio|linebreaks }}
                 <br />
                 {% if producte.keywords %}
-                    <b>Paraules clau: &nbsp; </b> {{ producte.keywords }}
+                    <b>Paraules clau: &nbsp; </b> {{ producte.keywords }} <br/>
                 {% endif %}
                 <a href="{% url 'coope' %}"> Tornar a la botiga </a>
             </div>
         </div>
     </div>
+    {% if votes %}
     <h3>Opinions:</h3>
+    {% endif %}
     {% for v in votes %}
             <div class="thumbnail">
                 {%  if v.positiu == True %}

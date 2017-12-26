@@ -68,7 +68,7 @@
     <div class="caption">
              {% if comanda.producte.foto %}
                 <a href="{{ MEDIA_URL }}{{ comanda.comanda.producte.foto.url }}" style="float: right" >
-                   <div class="g-item" style="background-image:url('{{ comanda.producte.foto.url }}');float: right; position:relative; z-index: 10" >
+                   <div class="g-item" style="background-image:url('{{ comanda.producte.thumb.url }}');float: right; position:relative; z-index: 10" >
                    </div>
                 </a>
              {% endif %}

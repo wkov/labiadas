@@ -55,7 +55,7 @@
             <div class="caption">
                  {% if producte.foto %}
                     <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
-                    <div class="g-item" style="background-image:url('{{ producte.foto.url }}');" >
+                    <div class="g-item" style="background-image:url('{{ producte.thumb.url }}');" >
                         </div>
                     </a>
                  {% endif %}

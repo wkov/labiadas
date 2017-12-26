@@ -581,9 +581,27 @@ def DiaProduccioCreateView(request, pro):
                    format = cd.get('format')
                    stock_ini = cd.get('stock_ini')
                    s = Stock.objects.create(dia_prod=dia_prod, format=format, stock_ini=stock_ini )
-               messages.success(request, (u"S'ha creat el dia de producció"))
-               return render(request, "romani/productors/dates_list.html", {'productor': productor})
 
+               if 'create' in request.POST:
+                   messages.success(request, (u"S'ha creat el dia de producció"))
+                   return render(request, "romani/productors/dates_list.html", {'productor': productor})
+               else:
+
+                    messages.success(request, (u"S'ha creat el dia de producció"))
+                    # next_d = DiaProduccio.objects.filter(date__gte=dp.date, node__productors=productor).distinct()
+                    # unsorted = next_d.all()
+                    # # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
+                    # next_tab = sorted(unsorted, key = lambda obj: (obj.date))
+                    # aux = False
+                    #
+                    # for n in next_tab:
+                    #     if aux==False:
+                    #         if n == dp:
+                    #             aux=True
+                    #     elif aux==True:
+                    return redirect('diaproduccio_create', pro=productor.pk)
+
+                    # return render(request, "romani/productors/dates_list.html", {'productor': productor})
            else:
 
                messages.warning(request, (u"Hem trobat errors en el formulari"))
@@ -651,9 +669,26 @@ def DiaProduccioUpdateView(request, pro, pk):
                    s.format = format
                    s.stock_ini = stock_ini
                    s.save()
-
-               messages.success(request, (u"S'ha desat el dia de producció"))
-               return render(request, "romani/productors/dates_list.html", {'productor': productor})
+               if 'create' in request.POST:
+                    messages.success(request, (u"S'ha desat el dia de producció"))
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor})
+               else:
+                    messages.success(request, (u"S'ha desat el dia de producció"))
+                    # next_d = DiaProduccio.objects.filter(date__gte = dp_obj.date, node__productors=productor).distinct()
+                    # unsorted = next_d.all()
+                    # # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
+                    # next_tab = sorted(unsorted, key = lambda obj: (obj.date))
+                    # aux = False
+                    #
+                    # for n in next_tab:
+                    #     if aux==False:
+                    #         if n == dp_obj:
+                    #             aux=True
+                    #     elif aux==True:
+                    #         return redirect('diaproduccio_update', pro=productor.pk, pk=n.pk)
+                    #
+                    return redirect('diaproduccio_create', pro=productor.pk)
+                    # return render(request, "romani/productors/dates_list.html", {'productor': productor})
            else:
                messages.warning(request, (u"Hem trobat errors en el formulari"))
                return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})

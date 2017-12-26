@@ -2,7 +2,7 @@ from django.contrib import admin
 from romani.models import Producte, Productor, TipusProducte, Comanda, Node, UserProfile, Adjunt, Etiqueta, DiaEntrega, FranjaHoraria, Key, Frequencia, DiaProduccio, Stock, DiaFormatStock, Vote, Entrega
 
 class producteAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'productor', 'descripcio', 'text_curt')
+    list_display = ('nom', 'productor', 'descripcio', 'text_curt', 'foto', 'thumb')
     search_fields = ['nom']
     list_filter = ['nom', 'productor']
 

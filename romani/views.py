@@ -623,7 +623,7 @@ class InfoFormBaseView(FormView):
         ret["producte"] = producte.nom
         ret["producte_pk"] = producte.pk
         ret["cantitat"] = cantitat
-        ret["imatge"] = producte.foto.url
+        ret["imatge"] = producte.thumb.url
 
 
         json_res = []
