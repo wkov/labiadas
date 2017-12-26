@@ -171,7 +171,7 @@ class Producte(models.Model):
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='productes/%Y/%m/%d', null=True, validators=[validate_file])
-    thumb = models.FileField(upload_to='productes/%Y/%m/%d', null=True)
+    thumb = models.FileField(null=True)
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
@@ -227,9 +227,13 @@ class Producte(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         super(Producte, self).save()
+        size = 250, 250
         image = Image.open(self.foto.path)
-        image = image.resize((250,250),Image.ANTIALIAS)
-        image.save(self.thumb.path,quality=20,optimize=True)
+        image.thumbnail(size)
+        image.save(self.foto.path)
+        # image.save("media/productes/temp/" + self.nom + ".jpeg")
+        # image = image.resize((250,250),Image.ANTIALIAS)
+        # image.save(self.thumb.path,quality=20,optimize=True)
 
 
 class TipusProducte(models.Model):
