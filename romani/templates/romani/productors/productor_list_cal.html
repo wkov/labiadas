@@ -3,12 +3,9 @@
 {% load staticfiles %}
 
 {% block headers %}
+        <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
         <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
-{#    <link href="{% static 'js/fullcalendar-3.4.0/fullcalendar.css' %}" rel="stylesheet">#}
-{#    <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}"></script>#}
-    <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}" async="async"></script>
-
-
+        <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}" async="async"></script>
     <script>
 
         $(document).ready(function() {

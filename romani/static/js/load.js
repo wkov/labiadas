@@ -59,5 +59,6 @@ addEvent(window, 'load', function(){ loadScript(
         //    }, 10000),
         function () { loadScript('/static/js/comanda.js' )}
         //}
-        )} )}  )} )} )} )
+        )}
+        )}  )} )} )} )
 });
