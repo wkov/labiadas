@@ -239,7 +239,7 @@ def nodesNouUsuariView(request):
     u_key = Key.objects.get(nou_usuari=request.user)
     u = UserProfile.objects.get(user=u_key.usuari)
     json_res = []
-    for i in Node.objects.all():
+    for i in Node.objects.all().exclude(pk=1):
 
         if i == u.lloc_entrega:
             json_obj = dict(
