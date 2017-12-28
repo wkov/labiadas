@@ -120,6 +120,7 @@ class ProductorForm(forms.ModelForm):
         self.fields["responsable"].widget = CheckboxSelectMultiple()
         g = Group.objects.get(name='Productors')
         self.fields["responsable"].queryset = g.user_set.all()
+        self.fields["hores_limit"].label = 'Temps límit per a fer comandes en Hores'
         # self.fields["responsable"].initial = user
 
 class AdjuntForm(forms.ModelForm):
