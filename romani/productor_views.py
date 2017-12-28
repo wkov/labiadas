@@ -383,7 +383,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                 else:
 
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
-                    next_d = DiaEntrega.objects.filter(date__gte=diaentrega.date, node__productors=productors_menu).distinct()
+                    next_d = DiaEntrega.objects.filter(date__gte=diaentrega.date, node__productors__in=productors_menu).distinct()
                     unsorted = next_d.all()
                     # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
                     next_tab = sorted(unsorted, key = lambda obj: (obj.date, obj.franja_inici().inici))
