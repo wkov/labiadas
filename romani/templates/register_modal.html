@@ -8,10 +8,10 @@ async defer></script>
       var map;
       var marker_d;
       function initMap() {
-          var mollet = new google.maps.LatLng(41.539064, 2.2130028);
+          var mollet = new google.maps.LatLng(41.4, 2.14);
           map = new google.maps.Map(document.getElementById('map'), {
               center: mollet,
-              zoom: 12,
+              zoom: 10,
               {#          mapTypeId: 'satellite'#}
           });
           $.post("/allcoordenades/", function (data) {

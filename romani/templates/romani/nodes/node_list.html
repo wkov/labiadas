@@ -8,7 +8,7 @@
 {#    <p>A la secció dels Llocs d'entrega pots gestionar els punts dels quals ets responsable o crear-ne de nous.</p>#}
 {#    </div>#}
     <a href="{% url 'node_create' %}" id="pro_menu">Crear Nou Lloc d'Entrega </a> <br/><br/>
-
+        {% if object_list %}
         {% for link in object_list %}
             <form method="post" action="" class="vote_form">
               <li>
@@ -37,4 +37,7 @@
             </form>
             <br/>
         {% endfor %}
+        {% else %}<br/>
+        <p>Si ets responsable d'una cooperativa de consum que ja està creada a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
+    {% endif %}
 {% endblock %}
