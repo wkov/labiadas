@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block headers %}
+    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
     <script>
  jQuery(document).ready(function($) {
 	$(".register_user_form").submit(function(e){
