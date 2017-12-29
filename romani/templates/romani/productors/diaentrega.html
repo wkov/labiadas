@@ -111,7 +111,7 @@
 <form method="post" action="">
   {% csrf_token %}
 <br/>
-<p><b>Productes</b> que ofereixes:</p>
+<p><b>Productes</b> que ofereixes el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
 
 
 {{ formatstockform.management_form }}
