@@ -1,8 +1,9 @@
-
 {% extends "base.html" %}
+{% load i18n %}
 {% load staticfiles %}
 {% block headers %}
 
+    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
 {#    <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>#}
 {#    <link href="{% static 'js/fullcalendar-3.4.0/fullcalendar.css' %}" rel="stylesheet">#}
 {#    <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}"></script>#}
@@ -68,11 +69,51 @@
                                  </a>
                         </div>
     </div>
+
+
     <br/>
+    {% if comandes %}
+        <br/>
+        <p><b>Comandes</b> rebudes per el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b> {{ dia.node }} </b>:</p>
+         <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
+         <thead>
+             <tr>
+             <th>Producte</th>
+             <th>Productor</th>
+             <th>Cant</th>
+             <th>Format</th>
+             <th>Franja horària</th>
+             <th>Preu</th>
+             <th>Usuari</th>
+             <th>Data de comanda</th>
+             </tr>
+         </thead>
+         <tbody>
+            {% for link in comandes %}
+                   <tr>
+                            <td>{{ link.comanda.format.producte.nom }}</td>
+                            <td>{{ link.comanda.format.productor.nom }}</td>
+                            <td>{{ link.comanda.cantitat }}</td>
+                            <td>{{ link.comanda.format.nom }}</td>
+                            <td>{{ link.franja_horaria }}</td>
+                            <td>{{ link.comanda.preu }}€</td>
+                            <td>{{ link.comanda.client.first_name }}</td>
+                            <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
+                        </tr>
+            {% endfor %}
+             <tr>
+                 <td>TOTAL</td><td></td><td>{{ cant_total }}</td><td></td><td></td><td>{{ preu_total }}€</td>
+             </tr>
+         </tbody>
+           </table>
+    {% endif %}
+
+
+    <br/>
+
 <form method="post" action="">
   {% csrf_token %}
-<p><b>Productes</b> que portaràs el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b> {{ dia.node }} </b>:</p>
-<p> &nbsp; &nbsp;
+<p><b>Productes</b> que ofereixes:</p>
 
 {{ formatstockform.management_form }}
 
@@ -114,39 +155,6 @@
   <input type="submit" name="create" value="Grabar">
   <input type="submit" name="createagain" value="Grabar i editar següent dia d'entrega">
 </form>
-<br/>
-    {% if comandes %}
-         <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
-         <thead>
-             <tr>
-             <th>Producte</th>
-             <th>Productor</th>
-             <th>Cant</th>
-             <th>Format</th>
-             <th>Franja horària</th>
-             <th>Preu</th>
-             <th>Usuari</th>
-             <th>Data de comanda</th>
-             </tr>
-         </thead>
-         <tbody>
-            {% for link in comandes %}
-                   <tr>
-                            <td>{{ link.comanda.format.producte.nom }}</td>
-                            <td>{{ link.comanda.format.productor.nom }}</td>
-                            <td>{{ link.comanda.cantitat }}</td>
-                            <td>{{ link.comanda.format.nom }}</td>
-                            <td>{{ link.franja_horaria }}</td>
-                            <td>{{ link.comanda.preu }}€</td>
-                            <td>{{ link.comanda.client.first_name }}</td>
-                            <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
-                        </tr>
-            {% endfor %}
-             <tr>
-                 <td>TOTAL</td><td></td><td>{{ cant_total }}</td><td></td><td></td><td>{{ preu_total }}€</td>
-             </tr>
-         </tbody>
-           </table>
-    {% endif %}
+
 
 {% endblock %}
