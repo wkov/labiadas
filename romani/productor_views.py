@@ -378,7 +378,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                            else:
                                    #  Si trobem que algun dels formats que intenta deseleccionar el distribuidor ja té entregues per aquest dia, aleshores no deixem que es retiri el format del dia ,d'entrega
                                    messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
-                                   return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'formatstockform': formatstockform,
+                                   return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'object_list': productors_menu, 'formatstockform': formatstockform,
                                                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
                        except:
                            pass
@@ -414,7 +414,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
 
                     return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
 
-    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'productors': productors, 'formatstockform': formatstockform,
+    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'object_list': productors_menu, 'formatstockform': formatstockform,
                                                                         'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
 
 

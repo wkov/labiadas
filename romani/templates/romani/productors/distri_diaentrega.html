@@ -2,39 +2,37 @@
 {% load i18n %}
 {% load staticfiles %}
 {% block headers %}
-
+    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
     <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-{#    <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>#}
-{#    <link href="{% static 'js/fullcalendar-3.4.0/fullcalendar.css' %}" rel="stylesheet">#}
-{#    <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}"></script>#}
-
+    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
 {% block content %}
-    <div style="float: left; position:relative">
-        <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>
-        {% if productors %}
-        {% for link in productors %}
-              <li style="display: inline">
-                 &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">
-                    [{{ link.nom }}]
-                 <span id="notification_count">
-                        {{ link.comandes_count }}
-                </span>
-                </a>
-                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">
-                      <span id="notification_count">
-                        {{ link.comandes_count }}
-                      </span>
-                  </a>
-              </li>
-            <br/>
-        {% endfor %}
-    {% else %}
-            <br/>
-        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
-
-    {% endif %}
-    </div>
+{#    <div style="float: left; position:relative">#}
+{#        <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/>#}
+{#        {% if productors %}#}
+{#        {% for link in productors %}#}
+{#              <li style="display: inline">#}
+{#                 &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">#}
+{#                    [{{ link.nom }}]#}
+{#                 <span id="notification_count">#}
+{#                        {{ link.comandes_count }}#}
+{#                </span>#}
+{#                </a>#}
+{#                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">#}
+{#                      <span id="notification_count">#}
+{#                        {{ link.comandes_count }}#}
+{#                      </span>#}
+{#                  </a>#}
+{#              </li>#}
+{#            <br/>#}
+{#        {% endfor %}#}
+{#    {% else %}#}
+{#            <br/>#}
+{#        <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>#}
+{##}
+{#    {% endif %}#}
+{#    </div>#}
 
     <script>
     jQuery(document).ready(function($) {
@@ -52,23 +50,28 @@
 });
         })
     </script>
-     <div style="margin: 0 auto; text-align:center;">
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
-                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>
-                                 </a>
-                        </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
-                                    <b id="pato" name="pato" class="pato">Calendari</b>
-                                 </a>
-                        </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >
-                                    <b id="pato" name="pato" class="pato">Veure historial</b>
-                                 </a>
-                        </div>
-    </div>
+{#     <div style="margin: 0 auto; text-align:center;">#}
+{#                        <div style=" position: relative; display: inline-block; ">#}
+{#                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
+{#                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>#}
+{#                                 </a>#}
+{#                        </div>#}
+{#                        <div style=" position: relative; display: inline-block; ">#}
+{#                                <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
+{#                                    <b id="pato" name="pato" class="pato">Calendari</b>#}
+{#                                 </a>#}
+{#                        </div>#}
+{#                        <div style=" position: relative; display: inline-block; ">#}
+{#                                <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >#}
+{#                                    <b id="pato" name="pato" class="pato">Veure historial</b>#}
+{#                                 </a>#}
+{#                        </div>#}
+{#    </div>#}
+
+
+{% include 'romani/productors/menu_dis.html' %}
+    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
+    font-size: 2em">Dia d'entrega &nbsp;</div>
 
 
     <br/>
