@@ -32,6 +32,8 @@ class ComandesListView(ListView):
         # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
 class HistorialListView(ListView):
@@ -48,6 +50,8 @@ class HistorialListView(ListView):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
         productes = Producte.objects.filter(productor=productor)
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         # context["contractes"] = Contracte.objects.filter(producte__in=productes)
         return context
 
@@ -64,6 +68,8 @@ class ProductesListView(ListView):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
         context["formats"] = TipusProducte.objects.filter(productor=productor)
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
 
@@ -82,6 +88,8 @@ class TipusProducteCreateView(CreateView):
         context = super(TipusProducteCreateView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
     def form_invalid(self, form):
@@ -109,6 +117,8 @@ class TipusProducteUpdateView(UpdateView):
         context = super(TipusProducteUpdateView, self).get_context_data(**kwargs)
         tipusproducte = TipusProducte.objects.get(pk=self.kwargs['pk'])
         context["productor"] = tipusproducte.productor
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
     def form_invalid(self, form):
@@ -139,6 +149,8 @@ class AdjuntCreateView(CreateView):
         context = super(AdjuntCreateView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
         context["productor"] = productor
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
     def form_invalid(self, form):
@@ -169,6 +181,8 @@ class ComandaCreateView(CreateView):
         context = super(ComandaCreateView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(responsable=self.request.user, pk=self.kwargs['pro'])
         context["productor"] = productor
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
     def form_invalid(self, form):
@@ -272,6 +286,8 @@ class DatesListView(ListView):
         context = super(DatesListView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
 def DiaEntregaDistribuidorView(request, dataentrega):
@@ -405,7 +421,8 @@ def DiaEntregaDistribuidorView(request, dataentrega):
 
 
 def DiaEntregaProductorView(request, pk, dataentrega):
-
+    # Trobem els productors dels quals es responsable l'usuari per al menu
+    productors = Productor.objects.filter(responsable=request.user)
     # Trobem el objecte DataEntrega a partir de l'identificador pk
     diaentrega = DiaEntrega.objects.get(pk=dataentrega)
     # Calculem el productorgestionat per l'usuari
@@ -490,7 +507,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                            else:
                                    #  Si trobem que algun dels formats que intenta deseleccionar el distribuidor ja té entregues per aquest dia, aleshores no deixem que es retiri el format del dia ,d'entrega
                                    messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
-                                   return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform,
+                                   return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform, 'productors': productors,
                                                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
                        except:
                            pass
@@ -506,7 +523,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
 
                 if 'create' in request.POST:
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
-                    return render(request, "romani/productors/dates_list.html", {'productor': productor})
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
                 else:
 
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
@@ -523,9 +540,9 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                         elif aux==True:
                             return redirect('data_comandes', pk=productor.pk, dataentrega=n.pk)
 
-                    return render(request, "romani/productors/dates_list.html", {'productor': productor})
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
 
-    return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform,
+    return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform, 'productors':productors,
                                                                         'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
 
 
@@ -539,6 +556,7 @@ def DiaProduccioCreateView(request, pro):
     StockFormset = formset_factory(StockForm, extra=0)
     formats = TipusProducte.objects.filter(producte__in=productes)
     stockform = StockFormset(initial=[{'format': x} for x in formats])
+    productors = Productor.objects.filter(responsable=request.user)
 
     if request.POST:
 
@@ -571,7 +589,7 @@ def DiaProduccioCreateView(request, pro):
                                 dp = DiaProduccio.objects.create(date=a, productor=productor)
                except:
                    messages.warning(request, (u"Hem trobat errors en el formulari"))
-                   return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes})
+                   return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
 
 
        # if formset.is_valid():
@@ -584,7 +602,7 @@ def DiaProduccioCreateView(request, pro):
 
                if 'create' in request.POST:
                    messages.success(request, (u"S'ha creat el dia de producció"))
-                   return render(request, "romani/productors/dates_list.html", {'productor': productor})
+                   return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
                else:
 
                     messages.success(request, (u"S'ha creat el dia de producció"))
@@ -605,7 +623,7 @@ def DiaProduccioCreateView(request, pro):
            else:
 
                messages.warning(request, (u"Hem trobat errors en el formulari"))
-               return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes})
+               return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
 
 
     form = DiaProduccioForm()
@@ -615,13 +633,14 @@ def DiaProduccioCreateView(request, pro):
     # form.fields['node'].initial = ''
 
 
-    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes})
+    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes, 'productors': productors})
 
 
 
 def DiaProduccioUpdateView(request, pro, pk):
 
     productor = Productor.objects.get(pk=pro)
+    productors = Productor.objects.filter(responsable=self.request.user)
     productes = Producte.objects.filter(productor=productor)
     formats = TipusProducte.objects.filter(producte__in=productes)
     dp_obj = DiaProduccio.objects.get(pk=pk)
@@ -657,7 +676,8 @@ def DiaProduccioUpdateView(request, pro, pk):
                    dp_obj.save()
                except:
                    messages.warning(request, (u"Hem trobat errors en el formulari"))
-                   return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+                   return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes,
+                                                                                  'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total, 'productors': productors})
 
                for f in formset:
                    cd = f.cleaned_data
@@ -671,7 +691,7 @@ def DiaProduccioUpdateView(request, pro, pk):
                    s.save()
                if 'create' in request.POST:
                     messages.success(request, (u"S'ha desat el dia de producció"))
-                    return render(request, "romani/productors/dates_list.html", {'productor': productor})
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors':productors})
                else:
                     messages.success(request, (u"S'ha desat el dia de producció"))
                     # next_d = DiaProduccio.objects.filter(date__gte = dp_obj.date, node__productors=productor).distinct()
@@ -691,7 +711,8 @@ def DiaProduccioUpdateView(request, pro, pk):
                     # return render(request, "romani/productors/dates_list.html", {'productor': productor})
            else:
                messages.warning(request, (u"Hem trobat errors en el formulari"))
-               return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+               return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productors':productors,
+                                                                              'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
 
 
     form = DiaProduccioForm()
@@ -699,7 +720,8 @@ def DiaProduccioUpdateView(request, pro, pk):
     form.fields['node'].initial = dp_obj.node
     form.fields['caducitat'].initial = dp_obj.caducitat
 
-    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productors':productors,
+                                                                   'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
 
 
 
@@ -720,6 +742,8 @@ class ProducteUpdateView(UpdateView):
         context = super(ProducteUpdateView, self).get_context_data(**kwargs)
         producte = Producte.objects.get(pk=self.kwargs['pk'])
         context["productor"] = producte.productor
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
     def form_invalid(self, form):
@@ -745,6 +769,12 @@ class ProductorCreateView(CreateView):
         kwargs["user"] = user
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super(ProductorCreateView, self).get_context_data(**kwargs)
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
+        return context
+
     def form_invalid(self, form):
         messages.warning(self.request, (u"Hem trobat errors en el formulari"))
         return super(ProductorCreateView, self).form_invalid(form)
@@ -768,6 +798,8 @@ class ProducteCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(ProducteCreateView, self).get_context_data(**kwargs)
         context["productor"] = Productor.objects.get(pk=self.kwargs['pro'])
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
     def form_invalid(self, form):
@@ -798,6 +830,8 @@ class ProductorUpdateView(UpdateView):
         context["productor"] = productor
         adjunts = Adjunt.objects.filter(productor=productor)
         context["adjunts"] = adjunts
+        productors = Productor.objects.filter(responsable=self.request.user)
+        context["productors"] = productors
         return context
 
     def form_invalid(self, form):

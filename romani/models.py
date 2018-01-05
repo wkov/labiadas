@@ -173,7 +173,7 @@ class Producte(models.Model):
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='productes/%Y/%m/%d', null=True, validators=[validate_file])
-    thumb = models.FileField(null=True)
+    thumb = models.FileField(blank=True, null=True)
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
