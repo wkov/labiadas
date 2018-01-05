@@ -1,38 +1,49 @@
 {% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block headers %}
 
+    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
+    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
+    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/menubar.js' %}"></script>
+{% endblock %}
 {% block content %}
-<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;
-    font-size: 3em"> {{ node.nom }} </div>
+{#<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
+{#    font-size: 3em"> {{ node.nom }} </div>#}
 <form method="post" action="">
   {% csrf_token %}
-    {% if object %}
-    <div style="margin: 0 auto; text-align:center;">
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'node_update' object.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >
+{#    {% if object %}#}
+        {% include 'romani/nodes/menu_coops.html' %}
+    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
+    font-size: 2em">Editar Coop &nbsp;</div>
+{#    <div style="margin: 0 auto; text-align:center;">#}
+{#                        <div style=" position: relative; display: inline-block; ">#}
+{#                                <a href="{% url 'node_update' object.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
 {#                                    <span class="glyphicon glyphicon-folder-open" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Editar Coope</b>
-                                 </a>
-                        </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'vista_nodesdates' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >
+{#                                    <b id="pato" name="pato" class="pato">Editar Coope</b>#}
+{#                                 </a>#}
+{#                        </div>#}
+{#                        <div style=" position: relative; display: inline-block; ">#}
+{#                                <a href="{% url 'vista_nodesdates' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
 {#                                    <span class="glyphicon glyphicon-calendar" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>
-                                 </a>
-                        </div>
-                        <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'nodeproductors_update' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >
+{#                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>#}
+{#                                 </a>#}
+{#                        </div>#}
+{#                        <div style=" position: relative; display: inline-block; ">#}
+{#                                <a href="{% url 'nodeproductors_update' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >#}
 {#                                    <span class="glyphicon glyphicon-pencil" style="margin: 0 auto; margin-top: 20px; width:32px; height:32px;  position: absolute">#}
 {#                                    </span>#}
 {#                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>#}
-                                    <b id="pato" name="pato" class="pato">Escollir Productors</b>
-                                 </a>
-                        </div>
-    </div>
-    {% endif %}
+{#                                    <b id="pato" name="pato" class="pato">Escollir Productors</b>#}
+{#                                 </a>#}
+{#                        </div>#}
+{#    </div>#}
+{#    {% endif %}#}
 {#    <div id="dialog" title="Lloc d'entrega">#}
 {#        <p>Edita la informació que es mostrarà al teu perfil i als usuaris que hagin de vindre a recollir la cistella</p>#}
 {#        <p>Indica la <b>freqüència</b> amb que obrireu el Lloc d'entrega, la freqüència que indiquis és orientativa, serveix per facilitar les comandes periòdiques dels usuaris.</p>#}

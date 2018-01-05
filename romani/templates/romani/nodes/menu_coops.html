@@ -1,0 +1,31 @@
+    <ul id="menubar" style="font-family: 'Special Elite', cursive;">
+  <li><a href="{% url 'node_create' %}">Crear nova Coop</a>
+  </li>
+  {% if nodes %}
+        {% for link in nodes %}
+  {% if link == node %}
+  <li style="background-color: #000; color: #f6a828;">
+      {% else %}
+      <li>
+      {% endif %}
+      {{ link.nom }}
+    <ul>
+      <li><a href="{% url 'node_update' link.pk %}">Editar Coope</a>
+      </li>
+      <li><a href="{% url 'vista_nodesdates' link.pk %}">Calendari</a>
+          <ul>
+              <li><a href="{% url 'vista_nodesdates' link.pk %}">Editar Calendari</a></li>
+              <li><a href="{% url 'diaentrega_create' link.pk %}">Crear Dia d'entrega</a></li>
+              <li><a href="{% url 'franjahoraria_create' link.pk %}">Crear Franja Horària</a></li>
+          </ul>
+      </li>
+      <li><a href="{% url 'nodeproductors_update' link.pk %}">Escollir Productores</a>
+      </li>
+    </ul>
+  </li>
+        {% endfor %}
+    {% endif %}
+</ul>
+<script>
+$("#menubar").menubar();
+</script>

@@ -10,11 +10,12 @@
   {% if object_list %}
         {% for link in object_list %}
       <li>
-      {{ link.nom }} <span id="notification_count">
-                        {{ link.comandes_count }}
-                      </span>
+      {{ link.nom }}
     <ul>
-      <li><a href="{% url 'vista_comandes' link.pk %}">Comandes</a>
+      <li><a href="{% url 'vista_comandes' link.pk %}">Comandes
+                      <span id="notification_count">
+                        {{ link.comandes_count }}
+                      </span></a>
           <ul>
               <li><a href="{% url 'vista_comandes' link.pk %}">Consultar Comandes</a></li>
               <li><a href="{% url 'comanda_create' link.pk %}">Crear nova comanda</a></li>
@@ -29,7 +30,7 @@
       <li><a href="{% url 'productor_update' link.pk %}">Productora</a>
         <ul>
             <li><a href="{% url 'productor_update' link.pk %}">Editar Productora</a></li>
-            <li><a href="{% url 'adjunt_create' link.pk %}">Carregar més fotos</a></li>
+            <li><a href="{% url 'adjunt_create' link.pk %}">Carregar fotos</a></li>
         </ul>
       </li>
       <li><a href="{% url 'vista_productes' link.pk %}">Productes</a>

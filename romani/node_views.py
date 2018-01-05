@@ -68,12 +68,21 @@ class NodesListView(ListView):
     model = Node
     template_name = "romani/nodes/node_list.html"
 
-    def get_queryset(self):
+    # def get_queryset(self):
+    #     g = Group.objects.get(name='Nodes')
+    #     u = self.request.user
+    #     if not u in g.user_set.all():
+    #             g.user_set.add(u)
+    #     return Node.objects.filter(responsable=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(NodesListView, self).get_context_data(**kwargs)
         g = Group.objects.get(name='Nodes')
         u = self.request.user
         if not u in g.user_set.all():
                 g.user_set.add(u)
-        return Node.objects.filter(responsable=self.request.user)
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        return context
 
 
 class NodesDatesListView(ListView):
@@ -87,6 +96,7 @@ class NodesDatesListView(ListView):
         context = super(NodesDatesListView, self).get_context_data(**kwargs)
         node = Node.objects.get(pk=self.kwargs['dis'])
         context["node"] = node
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
         return context
 
 
@@ -110,6 +120,7 @@ class NodeComandesListView(ListView):
         for c in self.get_queryset():
             preu_total += c.comanda.preu
         context["preu_total"] = preu_total
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
         return context
 
 
@@ -129,6 +140,7 @@ class FranjaHorariaCreateView(CreateView):
         context = super(FranjaHorariaCreateView, self).get_context_data(**kwargs)
         node = Node.objects.get(pk=self.kwargs['dis'])
         context["node"] = node
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
         return context
 
     def get_success_url(self):
@@ -153,6 +165,7 @@ class DiaEntregaCreateView(CreateView):
         context = super(DiaEntregaCreateView, self).get_context_data(**kwargs)
         node = Node.objects.get(pk=self.kwargs['dis'])
         context["node"] = node
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
         return context
 
     def get_success_url(self):
@@ -178,6 +191,7 @@ class DiaEntregaUpdateView(UpdateView):
         context = super(DiaEntregaUpdateView, self).get_context_data(**kwargs)
         d = DiaEntrega.objects.get(pk=self.kwargs['pk'])
         context["node"] = d.node
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
         return context
 
     def get_success_url(self):
@@ -197,6 +211,12 @@ class NodeCreateView(CreateView):
         user = self.request.user
         kwargs["user"] = user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(NodeCreateView, self).get_context_data(**kwargs)
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        return context
+
 
     def form_valid(self, form):
         messages.success(self.request, (u"S'ha creat correctament el lloc d'entrega"))
@@ -222,6 +242,13 @@ class NodeUpdateView(UpdateView):
         user = self.request.user
         kwargs["user"] = user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(NodeUpdateView, self).get_context_data(**kwargs)
+        node = Node.objects.get(pk=self.kwargs['pk'])
+        context["node"] = node
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        return context
 
     def get_success_url(self):
         messages.success(self.request, (u"S'han desat les modificacions"))
@@ -251,7 +278,12 @@ class NodeProductorsUpdateView(UpdateView):
         node = Node.objects.get(pk=self.kwargs['pk'])
         return "/dis/" + str(node.pk) + "/vista_nodesdates/"
 
-
+    def get_context_data(self, **kwargs):
+        context = super(NodeProductorsUpdateView, self).get_context_data(**kwargs)
+        node = Node.objects.get(pk=self.kwargs['pk'])
+        context["node"] = node
+        context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        return context
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
