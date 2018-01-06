@@ -640,7 +640,7 @@ def DiaProduccioCreateView(request, pro):
 def DiaProduccioUpdateView(request, pro, pk):
 
     productor = Productor.objects.get(pk=pro)
-    productors = Productor.objects.filter(responsable=self.request.user)
+    productors = Productor.objects.filter(responsable=request.user)
     productes = Producte.objects.filter(productor=productor)
     formats = TipusProducte.objects.filter(producte__in=productes)
     dp_obj = DiaProduccio.objects.get(pk=pk)
