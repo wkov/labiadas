@@ -166,6 +166,10 @@ class DiaProduccioForm(forms.ModelForm):
         fields = ("date", "caducitat", "node")
         exclude = ("dies_entrega", "productor")
 
+    def __init__(self, *args, **kwargs):
+        super(DiaProduccioForm, self).__init__(*args, **kwargs)
+        self.fields["node"].label = "Cooperativa (OPCIONAL)"
+
 
 class DiaFormatStockForm(forms.ModelForm):
 

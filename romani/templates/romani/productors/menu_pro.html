@@ -16,35 +16,35 @@
       {% endif %}
       {{ link.nom }}
     <ul>
-      <li><a href="{% url 'vista_comandes' link.pk %}">Comandes
+      <li>Comandes
                       <span id="notification_count">
                         {{ link.comandes_count }}
-                      </span></a>
+                      </span>
           <ul>
               <li><a href="{% url 'vista_comandes' link.pk %}">Consultar Comandes</a></li>
               <li><a href="{% url 'comanda_create' link.pk %}">Crear nova comanda</a></li>
+              <li><a href="{% url 'vista_historial' link.pk %}">Historial</a></li>
           </ul>
       </li>
-      <li><a href="{% url 'vista_dates' link.pk %}">Calendari</a>
+      <li>Calendari
           <ul>
               <li><a href="{% url 'vista_dates' link.pk %}">Editar Calendari</a></li>
               <li><a href="{% url 'diaproduccio_create' link.pk %}">Crear nous stocks de producció</a></li>
           </ul>
       </li>
-      <li><a href="{% url 'productor_update' link.pk %}">Productora</a>
-        <ul>
-            <li><a href="{% url 'productor_update' link.pk %}">Editar Productora</a></li>
-            <li><a href="{% url 'adjunt_create' link.pk %}">Carregar fotos</a></li>
-        </ul>
-      </li>
-      <li><a href="{% url 'vista_productes' link.pk %}">Productes</a>
+      <li>Productes
           <ul>
               <li><a href="{% url 'vista_productes' link.pk %}">Editar Productes i Formats</a></li>
               <li><a href="{% url 'producte_create' link.pk %}">Crear nou producte</a></li>
               <li><a href="{% url 'format_create' link.pk %}">Crear nou format</a></li>
           </ul>
       </li>
-      <li><a href="{% url 'vista_historial' link.pk %}">Historial</a></li>
+      <li>Productora
+        <ul>
+            <li><a href="{% url 'productor_update' link.pk %}">Editar Productora</a></li>
+            <li><a href="{% url 'adjunt_create' link.pk %}">Carregar fotos</a></li>
+        </ul>
+      </li>
     </ul>
   </li>
         {% endfor %}
