@@ -298,8 +298,8 @@ def diaNodeEvents(request, dis):
     events = []
     for event in eventList:
             franja = event.franja_inici()
-            day_str = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.inici)[:5]
-            dayend = str(event.date.year) + "-" + str(event.date.month) + "-" + str(event.date.day) + " " + str(franja.final)[:5]
+            day_str = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.inici)[:5]
+            dayend = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.final)[:5]
             url = "/dis/" + str(dis) + "/node_comandes/" + str(event.pk)
             events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
     # something similar for owned events, maybe with a different className if you like
