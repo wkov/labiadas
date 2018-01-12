@@ -1,3 +1,4 @@
+from distutils.command.config import config
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -10,6 +11,8 @@ from django.contrib.auth.models import User
 from datetime import timedelta
 from PIL import Image
 import os
+from django.template.defaultfilters import filesizeformat
+import magic
 from django.core.files import File
 # from romani.public_views import stock_calc
 
@@ -37,6 +40,10 @@ class Adjunt(models.Model):
         megabyte_limit = 2.0
         if filesize > megabyte_limit*1024*1024:
             raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
+        content_type = magic.from_buffer(fieldfile_obj.file.read(), mime=True)
+        if content_type != 'image/jpeg':
+            # params = { 'content_type': content_type }
+            raise ValidationError("La foto ha de ser en format d'imatge")
 
 
     arxiu = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
@@ -163,9 +170,14 @@ class Producte(models.Model):
 
     def validate_file(fieldfile_obj):
         filesize = fieldfile_obj.file.size
+        # filetype = fieldfile_obj.file.content_typè
         megabyte_limit = 2.0
         if filesize > megabyte_limit*1024*1024:
             raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
+        content_type = magic.from_buffer(fieldfile_obj.file.read(), mime=True)
+        if content_type != 'image/jpeg':
+            # params = { 'content_type': content_type }
+            raise ValidationError("La foto ha de ser en format d'imatge")
 
     nom = models.CharField(max_length=20)
     etiqueta = models.ForeignKey(Etiqueta)
