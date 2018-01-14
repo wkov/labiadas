@@ -11,7 +11,7 @@ from django.views.generic.edit import UpdateView
 from django.views.generic import ListView
 
 import xlwt
-from itertools import chain
+# from itertools import chain
 
 def export_comandes_xls(request, pk):
     response = HttpResponse(content_type='application/ms-excel')

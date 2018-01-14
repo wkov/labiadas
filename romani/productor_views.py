@@ -14,7 +14,116 @@ from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404, redirect
 
 
+import xlwt
 import datetime
+
+
+def dis_export_comandes_xls(request, pk):
+    response = HttpResponse(content_type='application/ms-excel')
+
+    dia = DiaEntrega.objects.get(pk=pk)
+    nom = str(dia.node.nom) + str(dia.date)
+
+    productors = Productor.objects.filter(responsable=request.user)
+    productes = Producte.objects.filter(productor__in=productors)
+
+    # aux =  'attachment; filename="' +   nom + nom
+    response['Content-Disposition'] = 'attachment; filename="comandes.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+
+
+
+    ws = wb.add_sheet(nom)
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['Nom', 'Producte', 'Cantitat', 'Format', 'Preu', ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    old_row = ""
+    total = ""
+    rows = Entrega.objects.filter(dia_entrega__pk=pk, comanda__format__producte__in=productes).order_by('comanda__client').values_list('comanda__client__first_name', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
+    rows = list(rows)
+    rows.sort(key=lambda tup: tup[0])
+    for row in rows:
+        if row[0]!=old_row:
+            row_num += 1
+            ws.write(row_num, col_num, total, font_style)
+            total = 0
+        old_row=row[0]
+        total = row[4] + total
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    row_num += 1
+    ws.write(row_num, col_num, total, font_style)
+
+    # messages.success(request, (u"S'ha descarregat el arxiu correctament"))
+    wb.save(response)
+    return response
+
+def pro_export_comandes_xls(request, pro, pk):
+    response = HttpResponse(content_type='application/ms-excel')
+
+    dia = DiaEntrega.objects.get(pk=pk)
+    nom = str(dia.node.nom) + str(dia.date)
+
+    productor = Productor.objects.filter(pk=pro)
+    productes = Producte.objects.filter(productor=productor)
+
+    # aux =  'attachment; filename="' +   nom + nom
+    response['Content-Disposition'] = 'attachment; filename="comandes.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+
+
+
+    ws = wb.add_sheet(nom)
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['Nom', 'Producte', 'Cantitat', 'Format', 'Preu', ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    old_row = ""
+    total = ""
+    rows = Entrega.objects.filter(dia_entrega__pk=pk, comanda__format__producte__in=productes).order_by('comanda__client').values_list('comanda__client__first_name', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
+    rows = list(rows)
+    rows.sort(key=lambda tup: tup[0])
+    for row in rows:
+        if row[0]!=old_row:
+            row_num += 1
+            ws.write(row_num, col_num, total, font_style)
+            total = 0
+        old_row=row[0]
+        total = row[4] + total
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    row_num += 1
+    ws.write(row_num, col_num, total, font_style)
+
+    # messages.success(request, (u"S'ha descarregat el arxiu correctament"))
+    wb.save(response)
+    return response
+
 
 class ComandesListView(ListView):
     # model = Comanda

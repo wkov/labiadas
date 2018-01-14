@@ -16,7 +16,7 @@ from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
 from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
-from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView
+from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
@@ -42,6 +42,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls), name="admin"),
 
 
+    url(r'^dis/export/xls/(?P<pk>\d+)/$', auth(dis_export_comandes_xls), name='dis_export_comandes_xls'),
+    url(r'^pro/(?P<pro>\d+)/export/xls/(?P<pk>\d+)/$', auth(pro_export_comandes_xls), name='pro_export_comandes_xls'),
     url(r'^vista_productors/', auth(ProductorsListView.as_view()), name="productor_list"),
     url(r'^distri_cal/', auth(ProductorsCalListView.as_view()), name="productor_cal_list"),
     url(r'^distri_hist/', auth(ProductorsHistListView.as_view()), name="productor_hist_list"),

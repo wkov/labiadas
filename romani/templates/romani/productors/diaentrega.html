@@ -80,8 +80,10 @@
 {#        Una vegada seleccionis els productes que portaràs el {{ dia.date }}, et podran fer comandes per aquest dia tots els usuaris de {{ dia.node.nom }}#}
 {#    </p>#}
 {#    <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>#}
-    {% if comandes%}    <br/>
+    {% if comandes%}    <br/><br/>
         <p><b>Comandes</b> rebudes per al <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
+
+        <a href="{% url 'pro_export_comandes_xls' productor.pk dia.pk %}">Exportar comandes</a>
 
      <table border="1" id="myTable" class="tablesorter" style="width: 100%">
      <thead>

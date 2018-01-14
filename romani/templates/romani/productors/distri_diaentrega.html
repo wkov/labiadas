@@ -73,11 +73,11 @@
     <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
     font-size: 2em">Dia d'entrega &nbsp;</div>
 
-
     <br/>
     {% if comandes %}
         <br/>
         <p><b>Comandes</b> rebudes per el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b> {{ dia.node }} </b>:</p>
+            <a href="{% url 'dis_export_comandes_xls' dia.pk %}">Exportar comandes</a>
          <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
          <thead>
              <tr>
