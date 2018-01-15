@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'romani',
     'xlwt',
     'PIL',
+    'rest_framework',
     # 'registration',
 )
 

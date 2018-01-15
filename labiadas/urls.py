@@ -21,6 +21,8 @@ from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsua
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
 
+from romani import api
+
 from django.contrib.auth.views import login, logout_then_login
 
 from django.views.generic import RedirectView, TemplateView
@@ -95,6 +97,11 @@ urlpatterns = [
     #     name="contracte_update"),
     # url(r"^contracte/(?P<pk>\d+)/$", auth(ContracteDetailView.as_view()),
     #     name="contracte_detail"),
+
+
+
+    url(r'api/list', api.get_product_list, name='get_product_list'),
+
 
 
 

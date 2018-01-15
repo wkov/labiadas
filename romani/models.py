@@ -257,16 +257,32 @@ class Producte(models.Model):
         # image.save(self.thumb.path,quality=20,optimize=True)
 
 
+
+# class TipusProducteManager(models.Manager):
+#     def get_by_natural_key(self, nom, preu):
+#         return self.get(nom=nom, preu=preu)
+
+
 class TipusProducte(models.Model):
+
+    # objects = TipusProducteManager()
 
     nom = models.CharField(max_length=20)
     preu = models.FloatField(default=0.0)
     productor = models.ForeignKey(Productor)
     producte = models.ForeignKey(Producte, related_name='formats', blank=True, null=True)
 
+    # def natural_key(self):
+    #     return (self.nom, self.preu)
+    #
+    # class Meta:
+    #     unique_together = (('nom', 'preu'),)
+
+    # def __unicode__(self):
+    #     return '%d: %s' % (self.nom, self.preu)
+
     def __str__(self):
         return "%s %s" % (self.producte, self.nom)
-
 
     def en_stock(self, cantitat, lloc_entrega):
         diesformat = self.dies_entrega.filter(dia__date__gte=datetime.datetime.now(), dia__node=lloc_entrega)
