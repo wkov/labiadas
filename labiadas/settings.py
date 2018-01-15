@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'xlwt',
     'PIL',
     'rest_framework',
+    'corsheaders',
     # 'registration',
 )
 
@@ -62,6 +63,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'labiadas.urls'
@@ -125,6 +127,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 
 
