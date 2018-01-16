@@ -27,6 +27,12 @@ from django.contrib.auth.views import login, logout_then_login
 
 from django.views.generic import RedirectView, TemplateView
 
+from rest_framework.schemas import get_schema_view
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 admin.autodiscover()
 
 urlpatterns = [
@@ -101,7 +107,11 @@ urlpatterns = [
 
 
     url(r'api/list', api.get_product_list, name='get_product_list'),
-
+    url(r'^api/$', get_schema_view()),
+    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/auth/token/obtain/$', TokenObtainPairView.as_view()),
+    url(r'^api/auth/token/refresh/$', TokenRefreshView.as_view()),
+    url(r'^api/echo/$', api.EchoView.as_view()),
 
 
 
