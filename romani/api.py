@@ -10,7 +10,7 @@ def get_product_list(request):
     """
     List all restaurants
     """
-    product_list = Producte.objects.filter(productor__pk='1')
+    product_list = Producte.objects.filter(productor__pk='2')
     serializer = ProducteSerializer(product_list, many=True)
     return JsonResponse(serializer.data, safe=False)
 
