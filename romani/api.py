@@ -1,6 +1,6 @@
 from django.http import JsonResponse
-from .models import Producte
-from .serializers import ProducteSerializer
+from .models import Producte, UserProfile
+from .serializers import ProducteSerializer, UserProfileSerializer
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -14,6 +14,14 @@ def get_product_list(request):
     serializer = ProducteSerializer(product_list, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+@csrf_exempt
+def get_user(request):
+    """
+    List all restaurants
+    """
+    user = UserProfile.objects.filter(user=request.user)
+    serializer = UserProfileSerializer(user, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 
 
