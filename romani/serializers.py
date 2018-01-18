@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from romani.models import Producte, UserProfile, User
+from romani.models import Producte
+from django.contrib.auth.models import User
 
 
 class ProducteSerializer(serializers.ModelSerializer):

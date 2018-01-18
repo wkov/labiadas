@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'PIL',
     'rest_framework',
     'corsheaders',
+    # 'django_rest_framework_jwt',
     # 'registration',
 )
 
@@ -179,8 +180,10 @@ REST_FRAMEWORK = {
 
 
 
-JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER':
-        "romani.api.jwt_response_payload_handler",
-}
+# JWT_AUTH = {
+#     'JWT_RESPONSE_PAYLOAD_HANDLER':
+#         'romani.api.jwt_payload_handler',
+    # 'JWT_PAYLOAD_GET_USER_ID_HANDLER':
+    # 'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+# }
 
