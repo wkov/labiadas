@@ -172,18 +172,18 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }
 
 
 
-# JWT_AUTH = {
-#     'JWT_RESPONSE_PAYLOAD_HANDLER':
-#         'romani.api.jwt_payload_handler',
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'romani.api.jwt_payload_handler',
     # 'JWT_PAYLOAD_GET_USER_ID_HANDLER':
     # 'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
-# }
+}
 
