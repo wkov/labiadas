@@ -3,6 +3,8 @@ from .models import Producte, UserProfile
 from .serializers import ProducteSerializer, UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 
+
+@csrf_exempt
 def jwt_response_payload_handler(token, user=None, request=None):
     return {
         'token': token,

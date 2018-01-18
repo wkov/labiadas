@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from romani.models import Producte, UserProfile
+from romani.models import Producte, UserProfile, User
 
 
 class ProducteSerializer(serializers.ModelSerializer):
