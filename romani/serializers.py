@@ -23,7 +23,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        model = User
+        model = UserProfile
         depth = 1
         fields = "__all__"
             # ('pk', 'nom', 'etiqueta', 'foto', 'productor', 'thumb', 'text_curt', 'formats')
