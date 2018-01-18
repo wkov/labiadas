@@ -114,7 +114,7 @@ urlpatterns = [
     url(r'^api/auth/token/obtain/$', TokenObtainPairView.as_view()),
     url(r'^api/auth/token/refresh/$', TokenRefreshView.as_view()),
     url(r'^api/echo/$', api.EchoView.as_view()),
-    url(r'^authenticate/', api.CustomObtainAuthToken.as_view()),
+    url(r'^authenticate/', api.CustomObtainAuthToken),
 
 
 
