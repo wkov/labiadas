@@ -23,7 +23,7 @@ from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcVie
 
 from romani import api
 
-from romani.api import CustomObtainAuthToken
+from romani.api_views import CustomObtainAuthToken
 
 from django.contrib.auth.views import login, logout_then_login
 
