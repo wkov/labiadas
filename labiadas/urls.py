@@ -23,6 +23,8 @@ from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcVie
 
 from romani import api
 
+
+
 from django.contrib.auth.views import login, logout_then_login
 
 from django.views.generic import RedirectView, TemplateView
@@ -105,7 +107,6 @@ urlpatterns = [
     #     name="contracte_detail"),
 
 
-    url(r'^authenticate/', api.CustomObtainAuthToken.as_view()),
     url(r'api/list', api.get_product_list, name='get_product_list'),
     url(r'api/user', api.get_user, name='get_user'),
     url(r'^api/$', get_schema_view()),
@@ -113,7 +114,7 @@ urlpatterns = [
     url(r'^api/auth/token/obtain/$', TokenObtainPairView.as_view()),
     url(r'^api/auth/token/refresh/$', TokenRefreshView.as_view()),
     url(r'^api/echo/$', api.EchoView.as_view()),
-
+    url(r'^authenticate/', api.CustomObtainAuthToken.as_view()),
 
 
 
