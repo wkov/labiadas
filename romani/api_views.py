@@ -7,3 +7,10 @@ class CustomObtainAuthToken(ObtainAuthToken):
         response = super(CustomObtainAuthToken, self).post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
         return Response({'token': token.key, 'id': token.user_id})
+
+
+
+# from rest_framework.views import APIView
+#
+# class Authenticate(APIView):
+#     permission_classes = (AllowAny,)

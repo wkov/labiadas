@@ -1,9 +1,13 @@
 from django.http import JsonResponse
 from .models import Producte, UserProfile
-from .serializers import ProducteSerializer, UserProfileSerializer
+from .serializers import ProducteSerializer, UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 
-
+def jwt_response_payload_handler(token, user=None, request=None):
+    return {
+        'token': token,
+        'user': UserSerializer(user, context={'request': request}).data
+    }
 
 @csrf_exempt
 def get_product_list(request):
@@ -20,7 +24,7 @@ def get_user(request):
     List all restaurants
     """
     user = UserProfile.objects.filter(user=request.user)
-    serializer = UserProfileSerializer(user, many=True)
+    serializer = UserSerializer(user, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 

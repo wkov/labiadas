@@ -15,14 +15,14 @@ class ProducteSerializer(serializers.ModelSerializer):
 
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     # formats_nom = serializers.RelatedField(source='formats', read_only=True)
     # formats = serializers.StringRelatedField(many=True)
 
 
     class Meta:
-        model = UserProfile
+        model = User
         depth = 1
         fields = "__all__"
             # ('pk', 'nom', 'etiqueta', 'foto', 'productor', 'thumb', 'text_curt', 'formats')
