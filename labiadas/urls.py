@@ -23,7 +23,7 @@ from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcVie
 
 from romani import api
 
-
+from romani.api import CustomObtainAuthToken
 
 from django.contrib.auth.views import login, logout_then_login
 
@@ -114,7 +114,7 @@ urlpatterns = [
     url(r'^api/auth/token/obtain/$', TokenObtainPairView.as_view()),
     url(r'^api/auth/token/refresh/$', TokenRefreshView.as_view()),
     url(r'^api/echo/$', api.EchoView.as_view()),
-    url(r'^authenticate/', api.CustomObtainAuthToken),
+    url(r'^authenticate/', CustomObtainAuthToken.as_view()),
 
 
 
