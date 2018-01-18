@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from romani.models import Producte
+from romani.models import Producte, UserProfile
 from django.contrib.auth.models import User
 
 
@@ -16,7 +16,7 @@ class ProducteSerializer(serializers.ModelSerializer):
 
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
 
     # formats_nom = serializers.RelatedField(source='formats', read_only=True)
     # formats = serializers.StringRelatedField(many=True)
