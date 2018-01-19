@@ -107,7 +107,7 @@ urlpatterns = [
     #     name="contracte_detail"),
 
 
-    url(r'api/list', auth(api.get_product_list), name='get_product_list'),
+    url(r'api/list', api.get_product_list, name='get_product_list'),
     # url(r'api/user', api.get_user, name='get_user'),
     url(r'^api/$', get_schema_view()),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
