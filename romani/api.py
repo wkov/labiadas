@@ -12,7 +12,7 @@ def jwt_payload_handler(token, user=None, request=None):
         'user': UserProfileSerializer(up, context={'request': request}).data
     }
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_product_list(request):
     """
     List all restaurants
