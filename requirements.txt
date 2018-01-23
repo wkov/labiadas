@@ -1,0 +1,16 @@
+django==1.10.5
+django-geoposition==0.3.0
+captcha==0.2.1
+django-notifications-hq==1.2
+xlwt==1.2.0
+Pillow==4.0.0
+djangorestframework==3.7.7
+djangorestframework-jwt==1.11.0
+django-cors-headers==2.1.0
+python-magic==0.4.15
+django-registration==2.2
+django-tables2==1.4.1
+django-model-utils==2.6.1
+django-filter==1.0.1
+coreapi==2.3.3
+django-messages==0.5.3
