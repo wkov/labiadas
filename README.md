@@ -9,7 +9,9 @@ Python3.5, pip, virtualenv
 Obre el terminal en la carpeta en la que vulguis instal·lar i escriu:
 
 $ virtualenv lamassa
+
 $ cd lamassa
+
 $ source bin/activate
 $ git clone https://github.com/wkov/labiadas.git
 $ cd labiadas
