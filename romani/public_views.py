@@ -578,10 +578,11 @@ def diesEntregaView(request, pk, pro):
 
                 productes = Producte.objects.filter(productor=comanda.format.productor)
                 object_list = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=now)
-
+                productors = Productor.objects.filter(responsable=request.user)
+                
                 messages.success(request, (u"Comanda desada correctament"))
-
-                return render(request, "romani/productors/comanda_list.html", {'object_list': object_list, 'productor': comanda.format.productor})
+                
+                return render(request, "romani/productors/comanda_list.html", {'object_list': object_list, 'productor': comanda.format.productor, 'productors': productors})
 
         except:
             messages.warning(request, (u"Hem trobat errors en el formulari"))
