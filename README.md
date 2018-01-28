@@ -1,4 +1,4 @@
-# la massa
+# la massa networkc
 
 Web platform for exchange in cooperation.
 
