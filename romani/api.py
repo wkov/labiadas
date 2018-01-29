@@ -17,8 +17,48 @@ def get_product_list(request):
     """
     List all restaurants
     """
-    product_list = Producte.objects.filter(productor__pk='1')
-    serializer = ProducteSerializer(product_list, many=True)
+    user_p = UserProfile.objects.filter(user=request.user).first()
+
+    today = datetime.date.today()
+
+    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt=today)
+
+    etiquetes_pre = Etiqueta.objects.all()
+
+    etiquetes = set()
+
+    for e in etiquetes_pre:
+        for p in e.producte_set.all():
+            for f in p.formats.all():
+                for p2 in f.dies_entrega.all():
+                    if p2.dia in dies_node_entrega:
+                        etiquetes.add(e)
+                        break
+
+    nodes = Node.objects.all()
+
+    prod_aux = set()
+    formats_aux = set()
+
+    for d in dies_node_entrega:
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d):
+            diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
+            date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
+            aux = d.franja_inici()
+            daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                stock_result = t.stock_calc(d, 1)
+                if stock_result['result'] == True:
+                    prod_aux.add(t.producte.pk)
+                    formats_aux.add(t)
+    p = Producte.objects.filter(pk__in=prod_aux).distinct()
+
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
+
+
+
+    #product_list = Producte.objects.filter(productor__pk='1')
+    serializer = ProducteSerializer(productes, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 # @csrf_exempt
