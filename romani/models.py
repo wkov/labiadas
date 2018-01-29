@@ -55,7 +55,7 @@ class Adjunt(models.Model):
 
 
 class Frequencia(models.Model):
-    num = models.IntegerField(primary_key=True)
+    num = models.IntegerField()
     nom = models.CharField(max_length=30)
 
     def __str__(self):
