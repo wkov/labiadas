@@ -4,7 +4,7 @@ Web platform for exchange in cooperation.
 
 Necessitaràs: 
 
-Python3.5, pip, virtualenv
+Python3.5, pip 9.0.1, virtualenv
 
 Obre el terminal en la carpeta en la que vulguis instal·lar i escriu:
 
@@ -20,15 +20,8 @@ $ cd labiadas
 
 $ pip install -r requirements.txt
 
-
-$ python manage.py makemigrations romani
-
-yes a totes i l'últim 2
-
 $ python manage.py migrate
 
 $ python manage.py collectstatic
 
 $ python manage.py runserver
-
-http://127.0.0.1:8000/
