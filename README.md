@@ -4,7 +4,7 @@ Web platform for exchange in cooperation.
 
 - Necessitaràs: 
 
-    Python3.5 / pip 9.0.1 / virtualenv
+    Python3.5 / Pip 9.0.1 / Virtualenv
 
 on LINUX:
 
