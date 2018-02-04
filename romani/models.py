@@ -87,10 +87,10 @@ class Node(models.Model):
     pis = models.CharField(max_length=15, blank=True, null=True)
     poblacio = models.CharField(max_length=40, blank=False, null=False)
     codi_postal = models.CharField(max_length=5, blank=True, null=True)
+    frequencia = models.ForeignKey(Frequencia)
     responsable = models.ManyToManyField(User, blank=False)
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
-    frequencia = models.ForeignKey(Frequencia)
     productors = models.ManyToManyField(Productor, blank=True, related_name='nodes')
     # privat = models.NullBooleanField()
 

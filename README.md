@@ -1,34 +1,55 @@
-# la massa exchange network
+# la massa
 
 Web platform for exchange in cooperation.
 
-Necessitaràs: 
+- Necessitaràs: 
 
-Python3.5, pip, virtualenv
+    Python3.5 / pip 9.0.1 / virtualenv
 
-Obre el terminal en la carpeta en la que vulguis instal·lar i escriu:
+on LINUX:
 
-$ virtualenv lamassa
+- Obre el terminal en la carpeta en la que vulguis instal·lar i escriu:
 
-$ cd lamassa
+    $ virtualenv lamassa
+    
+    $ cd lamassa
+    
+    $ source bin/activate
+    
+    $ git clone https://github.com/wkov/labiadas.git
+    
+    $ cd labiadas
+    
+    $ pip install -r requirements.txt
+    
+    $ python manage.py migrate
+    
+    $ python init_new_db
+    
+    $ python manage.py createsuperuser
+    
+    $ python manage.py runserver
 
-$ source bin/activate
+on WINDOWS:
 
-$ git clone https://github.com/wkov/labiadas.git
+- Obre el GIT en la carpeta en la que vulguis instal·lar i escriu:
 
-$ cd labiadas
-
-$ pip install -r requirements.txt
-
-
-$ python manage.py makemigrations romani
-
-yes a totes i l'últim 2
-
-$ python manage.py migrate
-
-$ python manage.py collectstatic
-
-$ python manage.py runserver
-
-http://127.0.0.1:8000/
+    $ virtualenv lamassa
+    
+    $ cd lamassa
+    
+    $ source activate
+    
+    $ git clone https://github.com/wkov/labiadas.git
+    
+    $ cd labiadas
+    
+    $ pip install -r requirements.txt
+    
+    $ py manage.py migrate
+    
+    $ py init_new_db
+    
+    $ py manage.py createsuperuser
+    
+    $ py manage.py runserver
