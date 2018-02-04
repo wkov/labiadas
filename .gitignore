@@ -1,3 +1,12 @@
 db.sqlite3
 /romani/static
 /.idea
+error.log
+labiadas/__pycache__/
+labiadas_nginx.conf
+labiadas_uwsgi.ini
+media/
+romani/__pycache__/
+romani/templatetags/__pycache__/
+uwsgi_params
+
