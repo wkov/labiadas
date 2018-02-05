@@ -7,6 +7,7 @@ labiadas_nginx.conf
 labiadas_uwsgi.ini
 media/
 romani/__pycache__/
+romani/migrations/__pycache__/
 romani/templatetags/__pycache__/
 uwsgi_params
 
