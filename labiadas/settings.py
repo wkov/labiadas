@@ -77,6 +77,7 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, 'romani/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
+            'debug': True,
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -177,6 +178,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
 }
 
 import datetime
@@ -191,4 +195,3 @@ JWT_AUTH = {
     # 'JWT_PAYLOAD_GET_USER_ID_HANDLER':
     # 'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
 }
-
