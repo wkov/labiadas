@@ -1,6 +1,6 @@
 from django.http import JsonResponse
-from .models import Producte, UserProfile, Etiqueta, Node, TipusProducte, DiaFormatStock, Entrega, Comanda
-from .serializers import ProducteSerializer, UserProfileSerializer, EtiquetaSerializer, FormatSerializer, ComandaSerializer
+from .models import Producte, UserProfile, Etiqueta, Node, TipusProducte, DiaFormatStock, Entrega, Comanda, Productor
+from .serializers import ProducteSerializer, UserProfileSerializer, EtiquetaSerializer, FormatSerializer, ComandaSerializer, ProductorSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 import datetime
@@ -40,13 +40,14 @@ def get_product_list(request):
 
     data = {}
     etiquetes = get_etiquetes(request, user_p.first())
-    productes, formats = get_productes(request, user_p.first())
+    productes, formats, productors = get_productes(request, user_p.first())
     user_profile = UserProfileSerializer(user_p, many=True)
     comandes = get_comandes(request)
     data['etiquetes'] = etiquetes.data
     data['formats'] = formats.data
     data['comandes'] = comandes.data
     data['productes']=productes.data
+    data['productors']=productors.data
     data['user_profile']=user_profile.data
 
     # productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
@@ -110,11 +111,17 @@ def get_productes(request, user_p):
                     formats_disponibles.add(t.pk)
     productes = Producte.objects.filter(pk__in=productes_disponibles).distinct()
     formats = TipusProducte.objects.filter(pk__in=formats_disponibles).distinct()
+    productors = Productor.objects.filter(producte__pk__in=productes_disponibles).distinct()
     producte_serialized = ProducteSerializer(productes, many=True)
     formats_serialized = FormatSerializer(formats, many=True)
+    productors_serialized = ProductorSerializer(productors, many=True)
 
 
-    return producte_serialized, formats_serialized
+    return producte_serialized, formats_serialized, productors_serialized
+
+
+
+
 
 
 # @csrf_exempt
