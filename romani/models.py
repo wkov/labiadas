@@ -13,6 +13,7 @@ from PIL import Image
 import os
 from django.template.defaultfilters import filesizeformat
 import magic
+from django.core.validators import RegexValidator
 from django.core.files import File
 # from romani.public_views import stock_calc
 
@@ -484,13 +485,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, related_name='user_profile')
     bio = models.TextField(null=True, blank=True)
     lloc_entrega = models.ForeignKey(Node, blank=True, null=True)
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
+                                 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     invitacions = models.IntegerField(default=4, blank=True, null=True)
     avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
-
     carrer = models.CharField(max_length=50, blank=True, null=True)
     numero = models.CharField(max_length=10, blank=True, null=True)
     pis = models.CharField(max_length=15, blank=True, null=True)
     poblacio = models.CharField(max_length=40, blank=True, null=True)
+    preferits = models.ManyToManyField(Producte)
 
     #
     # punt_lat = models.CharField(max_length=25, null=True, blank=True)
