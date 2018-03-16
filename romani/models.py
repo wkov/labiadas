@@ -47,7 +47,7 @@ class Adjunt(models.Model):
 
 
     arxiu = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
-    productor = models.ForeignKey(Productor)
+    productor = models.ForeignKey(Productor, related_name='adjunts')
 
 
     def __str__(self):

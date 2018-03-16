@@ -18,8 +18,8 @@ class ProductorSerializer(serializers.ModelSerializer):
     # formats = serializers.StringRelatedField(many=True)
     class Meta:
         model = Productor
-        depth = 0
-        fields = "__all__"
+        depth = 1
+        fields = ('nom', 'responsable', 'text', 'hores_limit', 'adjunts')
 
 
 class EtiquetaSerializer(serializers.ModelSerializer):
