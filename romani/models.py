@@ -196,11 +196,21 @@ class Producte(models.Model):
     def __str__(self):
         return self.nom
 
-    def positive_votes(self):
-        return Vote.objects.filter(entrega__comanda__format__producte=self).filter(positiu=True).count()
+    def votes(self):
+        return Vote.objects.filter(entrega__comanda__format__producte=self)
 
-    def negative_votes(self):
-        return Vote.objects.filter(entrega__comanda__format__producte=self).filter(positiu=False).count()
+    def estrelles(self):
+        votes_sum = 0
+        index = 0
+        for v in self.votes():
+            votes_sum = v.valor + votes_sum
+            index += 1
+        if index:
+            votes_average = votes_sum / index
+        else:
+            votes_average = 2.5
+        return votes_average
+
 
     def karma(self, node):
         com = 0
@@ -208,10 +218,19 @@ class Producte(models.Model):
             com = com + f.comanda_set.filter(entregas__dia_entrega__node=node).count()
         rnd = random.randint(0, 5)
         next_day = self.next_day_sec(node)
-        if next_day['result'] == True:
-            karma_value = com +  rnd + self.positive_votes() - self.negative_votes() - next_day['next_day']
+        votes_sum = 0
+        index = 0
+        for v in self.votes():
+            votes_sum = v.valor + votes_sum
+            index+=1
+        if index:
+            votes_average = votes_sum/index
         else:
-            karma_value = com +  rnd + self.positive_votes() - self.negative_votes()
+            votes_average = 2.5
+        if next_day['result'] == True:
+            karma_value = rnd * self.votes().count() + votes_average * com - next_day['next_day']
+        else:
+            karma_value = rnd * self.votes().count() + votes_average * com
         # self.save()
         return karma_value
 
@@ -311,6 +330,46 @@ class TipusProducte(models.Model):
                         # Si el estoc és sense límit, aleshores confirmem que hi ha existències
                         return True
         return False
+
+    def dies_stocks_futurs(self):
+        dict = {}
+        diesformat = self.dies_entrega.filter(dia__date__gte=datetime.datetime.now())
+        for d in diesformat:
+            date = datetime.datetime.now() + timedelta(hours=d.hores_limit)
+            aux = d.dia.franja_inici()
+            daytime = datetime.datetime(d.dia.date.year, d.dia.date.month, d.dia.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                 if d.tipus_stock == '0':
+                        # Límit per stock...
+                        try:
+                            stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=d.dia.date, dia_prod__caducitat__gte=d.dia.date, format=self).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
+                            for s in stocks:
+                                # accedim al dia de producció en que es genera el estoc
+                                diaproduccio = s.dia_prod
+                                s = stocks.get(dia_prod=diaproduccio)
+                                # num = int(s.stock()) - int(cantitat)
+                                if s:
+                                    i = 0
+                                    franjes = {}
+                                    for f in d.dia.franjes_horaries.all():
+                                        franjes = {i: {'inici':f.inici, 'final':f.final}}
+                                   #  I si encara hi ha estoc disponible,confirmem existències
+                                   #  franjes = FranjaHorariaSerializer(d.dia.franjes_horaries, many=True)
+                                    dict[d.dia.pk] = {'dia': d.dia.date, 'franjes': franjes, 'stock': int(s.stock())}
+                                    break
+                        except:
+                            # Si ni tan sols 'ha creat el estoc...
+                            pass
+
+                 elif d.tipus_stock == '2':
+                        # Si el estoc és sense límit, aleshores confirmem que hi ha existències
+                        # franjes = FranjaHorariaSerializer(d.dia.franjes_horaries, many=True)
+                        i = 0
+                        franjes = {}
+                        for f in d.dia.franjes_horaries.all():
+                            franjes = {i: {'inici':f.inici, 'final':f.final}}
+                        dict[d.dia.pk] = {'dia': d.dia.date, 'franjes': franjes, 'stock': 'SenseLimit'}
+        return dict
 
     def dies_entrega_futurs(self, cantitat):
         d_lst = []
@@ -519,7 +578,7 @@ class UserProfile(models.Model):
 class Vote(models.Model):
     voter = models.ForeignKey(User)
     entrega = models.ForeignKey(Entrega, related_name='vote')
-    positiu = models.BooleanField()
+    valor = models.IntegerField()
     text = models.TextField(blank=True)
 
     def __unicode__(self):

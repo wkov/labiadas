@@ -41,12 +41,12 @@ def get_product_list(request):
 
     data = {}
     etiquetes = get_etiquetes(request, user_p.first())
-    productes, formats, productors = get_productes(request, user_p.first())
+    productes, productors = get_productes(request, user_p.first())
     user_profile = UserProfileSerializer(user_p, many=True)
     comandes, historial = get_comandes(request)
     nodes = get_nodes(request)
     data['etiquetes'] = etiquetes.data
-    data['formats'] = formats.data
+    # data['formats'] = formats.data
     data['comandes'] = comandes.data
     data['historial'] = historial.data
     data['productes']=productes.data
@@ -119,12 +119,12 @@ def get_productes(request, user_p):
     productes = Producte.objects.filter(pk__in=productes_disponibles).distinct()
     formats = TipusProducte.objects.filter(pk__in=formats_disponibles).distinct()
     productors = Productor.objects.filter(producte__pk__in=productes_disponibles).distinct()
-    producte_serialized = ProducteSerializer(productes, many=True)
-    formats_serialized = FormatSerializer(formats, many=True)
+    producte_serialized = ProducteSerializer(productes, many=True, context={'userp_pk': user_p.pk, 'formats_dis': formats})
+    # formats_serialized = FormatSerializer(formats, many=True)
     productors_serialized = ProductorSerializer(productors, many=True)
 
 
-    return producte_serialized, formats_serialized, productors_serialized
+    return producte_serialized, productors_serialized
 
 
 def get_nodes(request):

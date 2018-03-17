@@ -254,5 +254,5 @@ class NodeProductorsForm(forms.ModelForm):
 class VoteForm(forms.ModelForm):
     class Meta:
         model = Vote
-        fields = ("voter", "positiu")
+        fields = ("voter", "valor")
         exclude = ("entrega", )
