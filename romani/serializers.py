@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class ProducteSerializer(serializers.ModelSerializer):
     punts_karma = serializers.SerializerMethodField('puntuacio')
     formats_dis = serializers.SerializerMethodField('formats_disponibles')
+    productora = serializers.SerializerMethodField('productor')
     # dies_stocks = serializers.SerializerMethodField('d_s_futurs')
     #
     def puntuacio(self, obj):
@@ -24,7 +25,9 @@ class ProducteSerializer(serializers.ModelSerializer):
         formats_dis_serialized = FormatSerializer(formats, many=True)
         return formats_dis_serialized.data
 
-
+    def productor(self, obj):
+        productor_serialized = ProductorSerializer(obj.productor, many=False)
+        return productor_serialized.data
     # def d_s_futurs(self, obj):
     #     return obj.dies_stocks_futurs()
 
@@ -33,7 +36,7 @@ class ProducteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producte
         depth = 1
-        fields = ('nom', 'etiqueta', 'text_curt', 'descripcio', 'datahora', 'foto', 'thumb', 'productor', 'keywords',
+        fields = ('nom', 'etiqueta', 'text_curt', 'descripcio', 'datahora', 'foto', 'thumb', 'productora', 'keywords',
                   'frequencies', 'estrelles', 'punts_karma', 'formats_dis')
 
 class ProductorSerializer(serializers.ModelSerializer):
@@ -62,7 +65,7 @@ class FormatSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipusProducte
         depth = 1
-        fields = ('pk', 'nom', 'preu', 'productor', 'producte', 'dies_stocks_futurs')
+        fields = ('pk', 'nom', 'preu', 'dies_stocks_futurs')
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -93,12 +96,12 @@ class DiaEntregaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class FranjaHorariaSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FranjaHoraria
-        depth = 0
-        fields = ('inici', 'final')
+# class FranjaHorariaSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = FranjaHoraria
+#         depth = 0
+#         fields = ('inici', 'final')
 
 
 class NodeSerializer(serializers.ModelSerializer):
@@ -115,5 +118,5 @@ class NodeSerializer(serializers.ModelSerializer):
         model = Node
         depth = 1
         fields = ('pk','nom','position','carrer','numero','pis','poblacio','codi_postal','frequencia','responsable',
-                  'a_domicili','text','productors','dies_entrega', 'proxims_dies')
+                  'a_domicili','text','proxims_dies')
 
