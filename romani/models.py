@@ -552,6 +552,7 @@ class UserProfile(models.Model):
     carrer = models.CharField(max_length=50, blank=True, null=True)
     numero = models.CharField(max_length=10, blank=True, null=True)
     pis = models.CharField(max_length=15, blank=True, null=True)
+    direccio = models.CharField(max_length=60, blank=True, null=True)
     poblacio = models.CharField(max_length=40, blank=True, null=True)
     preferits = models.ManyToManyField(Producte)
 

@@ -36,7 +36,7 @@ class ProducteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producte
         depth = 1
-        fields = ('nom', 'etiqueta', 'text_curt', 'descripcio', 'datahora', 'foto', 'thumb', 'productora', 'keywords',
+        fields = ('pk','nom', 'etiqueta', 'text_curt', 'descripcio', 'datahora', 'foto', 'thumb', 'productora', 'keywords',
                   'frequencies', 'estrelles', 'punts_karma', 'formats_dis')
 
 class ProductorSerializer(serializers.ModelSerializer):

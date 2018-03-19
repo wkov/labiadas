@@ -9,6 +9,8 @@ from datetime import timedelta
 from rest_framework.decorators import parser_classes
 from django.db.models import Q
 
+from django.contrib.auth.models import User
+
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
@@ -18,11 +20,68 @@ def example_view(request):
     """
     A view that can accept POST requests with JSON content.
     """
+    dict={}
+    dict = request.data
+    user = request.user
+    up = UserProfile.objects.get(user=user)
+    log = ""
+    if 'first_name' in dict:
+        user.first_name = dict['first_name']
+        user.save()
+        log = "OK"
+        user_profile = UserProfileSerializer(up, many=False)
+        return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'email' in dict:
+        user.email = dict['email']
+        user.save()
+        log = "OK"
+        user_profile = UserProfileSerializer(up, many=False)
+        return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'last_name' in dict:
+        user.last_name = dict['last_name']
+        user.save()
+        log = "OK"
+        user_profile = UserProfileSerializer(up, many=False)
+        return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'username' in dict:
+        try:
+            other_user = User.objects.get(username=dict['username'])
+            log = "KO"
+            user_profile = UserProfileSerializer(up, many=False)
+            return Response({'log': log, 'user_profile': user_profile.data})
+
+        except:
+                user.username = dict['username']
+                user.save()
+                log = "OK"
+                user_profile = UserProfileSerializer(up, many=False)
+                return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'phone_number' in dict:
+        up.phone_number = dict['phone_number']
+        up.save()
+        log = "OK"
+        user_profile = UserProfileSerializer(up, many=False)
+        return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'poblacio' in dict:
+        up.poblacio = dict['poblacio']
+        up.save()
+        log = "OK"
+        user_profile = UserProfileSerializer(up, many=False)
+        return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'direccio' in dict:
+        up.direccio = dict['direccio']
+        up.save()
+        log = "OK"
+        user_profile = UserProfileSerializer(up, many=False)
+        return Response({'log': log, 'user_profile': user_profile.data})
+    log = "KO"
+    user_profile = UserProfileSerializer(up, many=False)
+    return Response({'log': log, 'user_profile': user_profile.data})
 
     # serializer = ProducteSerializer(p, many=True)
     # return JsonResponse(serializer.data, safe=False)
 
-    return Response({'received data': request.data})
+    # return Response({'received data': request.data})
 
 # @csrf_exempt
 def jwt_payload_handler(token, user=None, request=None):
