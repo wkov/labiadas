@@ -80,12 +80,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class ComandaSerializer(serializers.ModelSerializer):
 
-    # formats_nom = serializers.RelatedField(source='formats', read_only=True)
-    # formats = serializers.StringRelatedField(many=True)
+    producte = serializers.SerializerMethodField('product')
+
+
+    def product(self, obj):
+        return obj.format.producte.nom
+
     class Meta:
         model = Comanda
         depth = 1
-        fields = "__all__"
+        fields = ('format', 'producte', 'cantitat', 'data_comanda', 'client', 'node', 'preu', 'frequencia')
+
 
 
 class DiaEntregaSerializer(serializers.ModelSerializer):
