@@ -74,6 +74,14 @@ def example_view(request):
         log = "OK"
         user_profile = UserProfileSerializer(up, many=False)
         return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'lloc_entrega' in dict:
+        lloc = dict['lloc_entrega']
+        lloc_entrega = Node.objects.get(pk=lloc['pk'])
+        up.lloc_entrega = lloc_entrega
+        up.save()
+        log = "OK"
+        user_profile = UserProfileSerializer(up, many=False)
+        return Response({'log': log, 'user_profile': user_profile.data})
     log = "KO"
     user_profile = UserProfileSerializer(up, many=False)
     return Response({'log': log, 'user_profile': user_profile.data})
