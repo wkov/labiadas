@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_jwt',
     'corsheaders',
+    'webpack_loader',
     # 'django_rest_framework_jwt',
     # 'registration',
 )
@@ -194,4 +195,14 @@ JWT_AUTH = {
     # 'JWT_AUTH_HEADER_PREFIX': '',
     # 'JWT_PAYLOAD_GET_USER_ID_HANDLER':
     # 'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+}
+
+
+
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+            'BUNDLE_DIR_NAME': 'bundles/',
+            'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.dev.json'),
+        }
 }

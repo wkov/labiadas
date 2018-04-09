@@ -19,7 +19,7 @@ from romani.productor_views import distriCalendarEvents, distriCalendarSelected,
 from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
-from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
+from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView, Leaderboard
 
 from romani import api
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
@@ -116,6 +116,13 @@ urlpatterns = [
     # url(r'^authenticate/', CustomObtainAuthToken.as_view()),
     url(r'^api/auth/token/obtain/$', obtain_jwt_token),
     url(r'^api/auth/token/refresh/$', refresh_jwt_token),
+
+
+
+    url(r'^leaderboard/', auth(Leaderboard.as_view()), name='leaderboard'),
+    url(r'^lead/', TemplateView.as_view(template_name='index.html')),
+
+
 
 
 

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load romani_tags %}
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+{%  block content %}
+    <div id="root">
+
+     {% render_bundle 'main' %}
+
+
+</div>
+
+{% endblock %}

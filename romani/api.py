@@ -82,6 +82,21 @@ def example_view(request):
         log = "OK"
         user_profile = UserProfileSerializer(up, many=False)
         return Response({'log': log, 'user_profile': user_profile.data})
+    elif 'preferits' in dict:
+        try:
+            is_favorite = up.preferits.get(nom=dict['preferits'])
+            up.preferits.remove(is_favorite)
+            log = "OK"
+            user_profile = UserProfileSerializer(up, many=False)
+            return Response({'log': log, 'user_profile': user_profile.data})
+
+        except:
+                producte = Producte.objects.get(nom=dict['preferits'])
+                up.preferits.add(producte)
+                # user.save()
+                log = "OK"
+                user_profile = UserProfileSerializer(up, many=False)
+                return Response({'log': log, 'user_profile': user_profile.data})
     log = "KO"
     user_profile = UserProfileSerializer(up, many=False)
     return Response({'log': log, 'user_profile': user_profile.data})
