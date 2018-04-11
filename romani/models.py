@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
-import datetime, random
+import datetime
 from django.db.models import Q
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
@@ -205,12 +205,11 @@ class Producte(models.Model):
         com = 0
         for f in self.formats.all():
             com = com + f.comanda_set.filter(entregas__dia_entrega__node=node).count()
-        rnd = random.randint(0, 5)
         next_day = self.next_day_sec(node)
         if next_day['result'] == True:
-            karma_value = com +  rnd + self.positive_votes() - self.negative_votes() - next_day['next_day']
+            karma_value = com + self.positive_votes() - self.negative_votes() - next_day['next_day']
         else:
-            karma_value = com +  rnd + self.positive_votes() - self.negative_votes()
+            karma_value = com + self.positive_votes() - self.negative_votes()
         # self.save()
         return karma_value
 
