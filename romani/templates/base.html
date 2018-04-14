@@ -3,7 +3,7 @@
 <html lang="en">
 
 {% load staticfiles %}
-
+{% load romani_tags %}
 <head>
     {% block PREheaders %}{% endblock %}
     {% include 'headers.html' %}
@@ -20,11 +20,38 @@
     <header class="nav-down">
     <div id="div_header">
         <div id="div_menu1">
-              <a  href="{% url 'coope' %}"> <h1>
-                    {{ node_user }}</h1></a>
-{#                    <div id="loading" class="loader" style="margin-left:0 auto; margin-right:0 auto;"></div>#}
 
-{#            Més proper, Massa Xarxa, lamassa.net , Més a prop#}
+<!--{#                    <div id="loading" class="loader" style="margin-left:0 auto; margin-right:0 auto;"></div>#}-->
+
+<!--{#            Més proper, Massa Xarxa, lamassa.net , Més a prop#}-->
+        <ul class="nav navbar-nav main-nav "><li><a  href="{% url 'coope' %}" class="active"> <h1>
+                    {{ node_user }}</h1></a></li>
+
+            {% if user.is_authenticated %}
+                         {% if request.user|has_group:"Productors" %}
+                             <li><a class='expandable' href="{% url 'productor_list' %}" title='Zona Productor'>
+                                    <span id="notification_count">
+                    <!--{#                   productor_comandes prove de "romani_tags.py"                      #}-->
+                                        {% productor_comandes as productor_comandes %}
+                                            {{ productor_comandes }}
+                                    </span>
+
+                                    <span id="zonaproductors" name="zonaproductors" class='glyphicon glyphicon-folder-open collapsed-element'></span>
+                                    &nbsp; <span class='expanded-element'>Productor</span>
+                                  </a>
+                             </li>
+                         {% endif %}
+                         {% if request.user|has_group:"Nodes" %}
+                            <li>
+                                <a class='expandable' href="{% url 'vista_nodes' %}" title='Zona Coop Consum'>
+                                    <span id="zonanodes" name="zonanodes" class='glyphicon glyphicon-map-marker collapsed-element'></span>
+                                    <span class='expanded-element'>CoopConsum</span>
+                                </a>
+                            </li>
+                         {% endif %}
+            {% endif %}
+        </ul>
+
         </div>
         <div id="div_user">
             {%  include "usermenu.html" %}

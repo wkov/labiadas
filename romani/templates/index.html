@@ -5,11 +5,19 @@
 {% load staticfiles %}
 {% csrf_token %}
 {%  block content %}
+
+
+<script>
+    window.props = {{props|json}};
+</script>
+
     <div id="root">
 
-     {% render_bundle 'main' %}
+     {% render_bundle 'main' 'js' 'DEFAULT' %}
 
 
 </div>
+
+
 
 {% endblock %}

@@ -205,4 +205,9 @@ WEBPACK_LOADER = {
             'BUNDLE_DIR_NAME': 'bundles/',
             'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.dev.json'),
         }
+    # ,
+    # 'DASHBOARD': {
+    #         'BUNDLE_DIR_NAME': 'dashboard_bundles/',
+    #         'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats-dashboard.json'),
+    #     }
 }
