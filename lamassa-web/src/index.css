@@ -1,0 +1,330 @@
+* {
+  font-family: 'Playfair Display';
+}
+
+body {
+  margin: 0px;
+}
+/* Drawer por encima */
+header {
+  z-index: 1;
+  position: relative;
+}
+
+#page-content-wrapper {
+  padding-top: 0px;
+}
+
+.appbar-menu-button {
+  position: fixed;
+  top: 20px;
+  left: 0px;
+}
+
+/* .bar-title {
+  background-color: white;
+}
+
+.appbar-container {
+  min-height: 80px !important;
+} */
+
+/* .container-screen {
+  width: inherit;
+  padding-top: 24px;
+  margin-top: 50px;
+  margin-left: 0px,
+}
+
+@media (min-width: 768px) {
+  .container-screen {
+    margin-left: 54px;
+    padding: 15px;
+  }
+} */
+
+.card-review-product {
+  background-color: #ebf9d6 !important;
+  margin-bottom: 20px;
+}
+
+.cards-list {
+  width: 380px;
+  height: 380px;
+  background-color: #ebf9d6 !important;
+}
+
+.cards-image {
+  border-color: #5c6671;
+  border: solid;
+  border-width: 2px;
+  max-width: 200px;
+  height: 200px;
+}
+
+.cards-title {
+  text-decoration: none;
+  font-weight: 900;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  font-size: 22px;
+}
+
+.cards-subtitle {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.cards-text {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  text-align: justify;
+}
+
+.cards-subtext {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  font-size: 14px;
+  text-align: justify;
+  opacity: 0.9;
+}
+
+.cards-selector-label {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  text-align: justify;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.cards-media-container {
+  display: flex;
+  flex-grow: 1;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.cards-selector-text {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  text-align: right;
+  align-items:flex-end;
+  margin-left: 10px;
+}
+
+.image-review-card {
+  height: 300px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.form-card-select-product {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.categories-bar {
+  width: 100%;
+  min-width: 200px;
+  max-width: 220px;
+}
+
+.footer-bar {
+  background-color: #90ae68 !important;
+  color: #90ae68 !important;
+  z-index: 1;
+  margin-top: 40px;
+  position: static;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  height: 50px;
+}
+
+.footer-text {
+  text-align: center;
+  color: white;
+  margin: auto;
+  font-weight: 900;
+  font-family: 'Playfair Display';
+  font-size: 18px;
+}
+
+.drawer-menu-button {
+  z-index: 1;
+}
+
+.drawer-text {
+  margin-left: 15px;
+  font-weight: 900;
+  color: white;
+  font-family: 'Playfair Display';
+  font-size: 22px;
+  text-decoration: none;
+}
+
+.drawer-list {
+  text-decoration: none;
+}
+
+.drawer-icon {
+  color: white !important;
+}
+
+.drawer-badge span{
+  background-color: #5c6671 !important;
+  color: white;
+  opacity: 0.8;
+  height: 21px;
+  width: 21px;
+}
+
+.search-input {
+  padding: 10px 10px;
+  height: 52px;
+  position: relative;
+}
+
+.search-input::before {
+  content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAQJJREFUKBWVkr2uQUEUhf3ET6GRaC5aFRoJKrf1BKpb8SwqovYGXkCj00k0QnRKEYkILYobvpUYmeMMyVnJl7P3mjN7Zu9zwiGv2qRFyMMSRrAFp6JPN8XzBj+wgDkUYAg7WINTYdwpDECxrRLJHeq2accdkgm8bzTvNAg2EDOGeUYI1KNO1gkuzTA1g8T7ojbn4ONQWPuHPWgeHmnzCqoe15tkSNPgPEAn68oVcOmA2XMtGK9FoE/VhOTTVNExqLCGZnxCv2pYauEC6lF0oQxX6IOvb7yX9NPEQafan+aPXDdQC18LsO6Tip5BBY6gIQaSbnMCFRCBZRcIvFkbsvCr4AFGOCxQy+JdGQAAAABJRU5ErkJggg==');
+  display: block;
+  position: absolute;
+  width: 15px;
+  z-index: 3;
+  height: 15px;
+  font-size: 20px;
+  top: 11px;
+  left: 16px;
+  line-height: 32px;
+  opacity: 0.6;
+}
+
+.search-input > input {
+  width: 100%;
+  font-size: 18px;
+  border: none;
+  line-height: 22px;
+  padding: 5px 10px 5px 25px;
+  height: 32px;
+  position: relative;
+}
+
+.search-input > input:focus {
+  outline: none;
+}
+
+.userprofile-card {
+  width: fit-content !important;
+  background-color: #ebf9d6 !important;
+}
+
+.userprofile-avatar {
+  width: 200px !important;
+  height: 200px !important;
+  margin: auto;
+}
+
+.userprofile-avatar-container {
+}
+
+.userprofile-input {
+  margin-left: 10px;
+}
+
+.userprofile-text {
+  font-size: 16px;
+  padding: 10px !important;
+}
+
+@media (max-width: 768px) {
+  .userprofile-text {
+    padding: 0px !important;
+  }
+}
+
+.userprofile-input {
+  font-size: 14px;
+}
+
+.userprofile-inputcell {
+  padding: 0px !important;
+  max-width: 200px;
+}
+
+.userprofile-editar {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .userprofile-editar {
+    font-size: 12px;
+    padding: 10px !important;
+  }
+  .userprofile-editar-button {
+  }
+}
+
+.nohyperlink {
+  text-decoration: none !important;
+  color: black !important;
+}
+
+.dialog-calendar-paper {
+  width: 100% !important;
+  max-width: 900px;
+}
+
+.calendar-app {
+  display: flex;
+}
+
+.react-calendar {
+  width: 250px !important;
+}
+
+.react-calendar__tile {
+  font-size: 10px;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  font-size: 10px;
+}
+
+.calendar-container {
+  padding: 10px;
+}
+
+
+.calendar-month {
+  text-align: center;
+  font-size: 18px;
+}
+
+.calendar-tile-active {
+  background: #006edc !important;
+}
+
+.calendar-tile-holiday {
+  background: red !important;
+}
+
+.calendar-controlpanel {
+  display: flex;
+}
+
+.calendar-control {
+  padding: 10px;
+}

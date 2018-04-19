@@ -1,0 +1,170 @@
+body {
+}
+
+.bar-title {
+  background-color: white;
+}
+
+.container-screen {
+  width: inherit;
+  padding-top: 24px;
+  margin-top: 65px;
+  margin-left: 0px,
+}
+
+@media (min-width: 768px) {
+  .container-screen {
+    margin-left: 54px;
+    padding: 15px;
+  }
+}
+
+.card-review-product {
+  background-color: #ebf9d6 !important;
+}
+
+.cards-list {
+  width: 380px;
+  height: 380px;
+  background-color: #ebf9d6 !important;
+}
+
+.cards-image {
+  border-color: #5c6671;
+  border: solid;
+  border-width: 2px;
+  max-width: 200px;
+  height: 200px;
+}
+
+.cards-title {
+  text-decoration: none;
+  font-weight: 900;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  font-size: 22px;
+}
+
+.cards-subtitle {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.cards-text {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  text-align: justify;
+}
+
+.cards-subtext {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  font-size: 14px;
+  text-align: justify;
+  opacity: 0.9;
+}
+
+.cards-selector-label {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  text-align: justify;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.cards-media-container {
+  display: flex;
+  flex-grow: 1;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.cards-selector-text {
+  text-decoration: none;
+  color: #5c6671 !important;
+  font-family: 'Playfair Display';
+  text-align: right;
+  align-items:flex-end;
+  margin-left: 10px;
+}
+
+.image-review-card {
+  height: 400px;
+}
+
+.form-card-select-product {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.categories-bar {
+  width: 100%;
+  min-width: 200px;
+  max-width: 220px;
+}
+
+.footer-bar {
+  background-color: #90ae68 !important;
+  color: #90ae68 !important;
+  z-index: 1;
+  margin-top: 40px;
+  position: static;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  height: 50px;
+}
+
+.footer-text {
+  text-align: center;
+  color: white;
+  margin: auto;
+  font-weight: 900;
+  font-family: 'Playfair Display';
+  font-size: 18px;
+}
+
+.drawer-text {
+  margin-left: 15px;
+  font-weight: 900;
+  color: white;
+  font-family: 'Playfair Display';
+  font-size: 22px;
+  text-decoration: none;
+}
+
+.drawer-list {
+  text-decoration: none;
+}
+
+.drawer-icon {
+  color: white !important;
+}
+
+.drawer-badge span{
+  background-color: #5c6671 !important;
+  color: white;
+  opacity: 0.8;
+  height: 21px;
+  width: 21px;
+}
+
+.nohyperlink {
+  text-decoration: none !important;
+  color: black !important;
+}
+
+.userprofile-card {
+  width: fit-content !important;
+}

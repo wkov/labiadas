@@ -1,0 +1,16 @@
+[{
+  "name": "Farina",
+  "img": "/food_wheat.png"
+},
+{
+  "name": "Pa",
+  "img": "/food_bread.png"
+},
+{
+  "name": "Cervesa",
+  "img": "/food_beer.png"
+},
+{
+  "name": "Medicina",
+  "img": "/food_medical.png"
+}]

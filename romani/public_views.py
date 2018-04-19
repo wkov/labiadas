@@ -137,7 +137,7 @@ def coopeView(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    return render(request, "productes.html", {'productes':products, 'formats':formats_aux, 'etiquetes': etiquetes, 'nodes':nodes, 'up': user_p})
+    return render(request, "index.html", {'productes':products, 'formats':formats_aux, 'etiquetes': etiquetes, 'nodes':nodes, 'up': user_p})
 
 
 def producteView(request,pk):
@@ -579,9 +579,9 @@ def diesEntregaView(request, pk, pro):
                 productes = Producte.objects.filter(productor=comanda.format.productor)
                 object_list = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=now)
                 productors = Productor.objects.filter(responsable=request.user)
-                
+
                 messages.success(request, (u"Comanda desada correctament"))
-                
+
                 return render(request, "romani/productors/comanda_list.html", {'object_list': object_list, 'productor': comanda.format.productor, 'productors': productors})
 
         except:
@@ -628,8 +628,3 @@ class VoteFormView(FormView):
                 pass
         ret = {"success": 1}
         return super(VoteFormView, self).form_valid(form)
-
-
-
-
-

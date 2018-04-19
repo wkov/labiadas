@@ -11,3 +11,4 @@ romani/migrations/__pycache__/
 romani/templatetags/__pycache__/
 uwsgi_params
 .pyc
+lamassa-web/node_modules/
