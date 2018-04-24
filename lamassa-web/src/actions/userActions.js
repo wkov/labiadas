@@ -11,20 +11,21 @@ export const ADD_CART = '@@user/ADD_CART';
 export const REMOVE_CART = '@@user/REMOVE_CART';
 
 export const addFavorites = ({ favorites, itemPk }) => {
+  const csrf = getCookie('csrftoken');
   return dispatch => {
-    fetch('http://localhost:8000/api/example', {
-      method: 'post',
+    fetch('http://localhost:8000/api/auth/example', {
+      method: 'POST',
       credentials: 'same-origin',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
       },
-      body: {
+      body: JSON.stringify({
         preferits: itemPk,
-      },
+      }),
     })
       .then(response => {
-        console.log('requesting');
         dispatch({
           type: ADD_FAVORITES,
           payload: favorites,
@@ -35,6 +36,7 @@ export const addFavorites = ({ favorites, itemPk }) => {
         console.log('Data is ok', data);
         dispatch({
           type: POST_SUCCESS,
+          payload: data,
         });
       })
       .catch(function(ex) {
@@ -129,3 +131,18 @@ export const handleDrawer = ({ open }) => ({
   type: HANDLE_DRAWER,
   payload: open,
 });
+
+export const getCookie = name => {
+  if (!document.cookie) {
+    return null;
+  }
+  const token = document.cookie
+    .split(';')
+    .map(c => c.trim())
+    .filter(c => c.startsWith(name + '='));
+
+  if (token.length === 0) {
+    return null;
+  }
+  return decodeURIComponent(token[0].split('=')[1]);
+};

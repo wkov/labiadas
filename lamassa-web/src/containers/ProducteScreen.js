@@ -13,7 +13,9 @@ class ProducteScreen extends Component {
     product: '',
   };
   componentWillMount() {
+    console.log('mounting');
     if (this.props.match.params.product) {
+      console.log('mounting2');
       this.props.fetchProduct({ term: this.props.match.params.product });
       this.setState({ product: this.props.match.params.product });
     }
@@ -31,11 +33,10 @@ class ProducteScreen extends Component {
       return (
         <div style={{ width: '-webkit-fill-available' }}>
           <Grid container>
-            <Grid item md={6}>
-              <div>weke</div>
-            </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} sm={12} md={6}>
               <SimpleMediaCard producte={reviewedProduct} productsProducer={productsProducer} />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6}>
               <ProductReviews />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12}>

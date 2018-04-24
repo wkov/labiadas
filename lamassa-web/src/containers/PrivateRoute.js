@@ -28,7 +28,6 @@ const styles = {
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
   if (true) {
-    console.log(props);
     return (
       <div style={styles.appFrame}>
         <DrawerBar />

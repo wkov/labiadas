@@ -18,11 +18,12 @@ const styles = {
 };
 
 const App = ({ ...children }) => {
-  console.log(...children);
   return (
     <div style={styles.appFrame}>
       <AppBarTitle />
-      <PrivateRoute path="/" component={ListScreen} />
+      <Switch>
+        <PrivateRoute path="/" component={ListScreen} />
+      </Switch>
       <footer>
         <FooterBar />
       </footer>

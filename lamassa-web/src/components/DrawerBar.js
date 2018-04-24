@@ -18,7 +18,7 @@ const drawerWidth = 240;
 
 const styles = theme => ({
   drawerPaper: {
-    top: 80,
+    top: 50,
     position: 'fixed',
     width: drawerWidth,
     transition: theme.transitions.create('width', {

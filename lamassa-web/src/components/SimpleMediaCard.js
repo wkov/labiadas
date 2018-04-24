@@ -62,7 +62,7 @@ class SimpleMediaCard extends Component {
             title={<div className="cards-title">{producte.nom}</div>}
             subheader={
               <div>
-                <div className="cards-subtitle">{producte.productor.nom}</div>
+                <div className="cards-subtitle">{producte.productora.nom}</div>
               </div>
             }
           />
@@ -89,7 +89,7 @@ class SimpleMediaCard extends Component {
                 onChange={this.handleChange('tipus')}
                 className="cards-selector-text"
               >
-                {producte.formats.map((value, index) => (
+                {producte.formats_dis.map((value, index) => (
                   <option className="cards-selector-text" key={value.nom} value={index}>
                     {value.preu + ' € - ' + value.nom}
                   </option>
@@ -120,7 +120,7 @@ class SimpleMediaCard extends Component {
           item={producte}
           selected={{
             quantitat: !this.state.quantitat ? 1 : this.state.quantitat,
-            tipus: !this.state.tipus ? producte.formats[0] : producte.formats[this.state.tipus],
+            tipus: !this.state.tipus ? producte.formats_dis[0] : producte.formats_dis[this.state.tipus],
           }}
         />
       </div>

@@ -40,21 +40,35 @@ export const fetchList = () => {
   };
 };
 
-export const fetchProduct = ({ term }) => ({
-  [RSAA]: {
-    endpoint: 'http://localhost:8000/api/auth/list',
-    method: 'GET',
-    headers: withAuth({ 'Content-Type': 'application/json' }),
-    types: [
-      {
-        type: FETCH_PRODUCT_REQUEST,
-        payload: term,
+export const fetchProduct = ({ term }) => {
+  return dispatch => {
+    fetch('http://localhost:8000/api/list', {
+      method: 'get',
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      FETCH_PRODUCT_SUCCESS,
-      FETCH_PRODUCT_FAILURE,
-    ],
-  },
-});
+    })
+      .then(function(response) {
+        dispatch({
+          type: FETCH_PRODUCT_REQUEST,
+          payload: term,
+        });
+        return response.json();
+      })
+      .then(function(data) {
+        console.log('Data is ok', data);
+        dispatch({
+          type: FETCH_PRODUCT_SUCCESS,
+          payload: data,
+        });
+      })
+      .catch(function(ex) {
+        console.log('parsing failed', ex);
+      });
+  };
+};
 
 export const addRemoveItem = () => ({
   [RSAA]: {
