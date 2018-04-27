@@ -108,80 +108,6 @@ nav.sidebar ul.level1 ul.level2 li a {
 }
 </style>
 
-<script>
-{#(function () {#}
-{#    $(function () {#}
-{#        var SideBAR;#}
-{#        SideBAR = (function () {#}
-{#            function SideBAR() {}#}
-{#            SideBAR.prototype.expandMyMenu = function () {#}
-{#                return $("nav.sidebar").removeClass("sidebar-menu-collapsed").addClass("sidebar-menu-expanded");#}
-{#            };#}
-{#            SideBAR.prototype.collapseMyMenu = function () {#}
-{#                return $("nav.sidebar").removeClass("sidebar-menu-expanded").addClass("sidebar-menu-collapsed");#}
-{#            };#}
-{#            SideBAR.prototype.showMenuTexts = function () {#}
-{#                return $("nav.sidebar ul a span.expanded-element").show();#}
-{#            };#}
-{#            SideBAR.prototype.hideMenuTexts = function () {#}
-{#                return $("nav.sidebar ul a span.expanded-element").hide();#}
-{#            };#}
-{#            SideBAR.prototype.showActiveSubMenu = function () {#}
-{#                $("li.active ul.level2").show();#}
-{#                return $("li.active a.expandable").css({#}
-{#                    width: "100%"#}
-{#                });#}
-{#            };#}
-{#            SideBAR.prototype.hideActiveSubMenu = function () {#}
-{#                return $("li.active ul.level2").hide();#}
-{#            };#}
-{#            SideBAR.prototype.adjustPaddingOnExpand = function () {#}
-{#                $("ul.level1 li a.expandable").css({#}
-{#                    padding: "1px 4px 4px 0px"#}
-{#                });#}
-{#                return $("ul.level1 li.active a.expandable").css({#}
-{#                    padding: "1px 4px 4px 4px"#}
-{#                });#}
-{#            };#}
-{#            SideBAR.prototype.resetOriginalPaddingOnCollapse = function () {#}
-{#                $("ul.nbs-level1 li a.expandable").css({#}
-{#                    padding: "4px 4px 4px 0px"#}
-{#                });#}
-{#                return $("ul.level1 li.active a.expandable").css({#}
-{#                    padding: "4px"#}
-{#                });#}
-{#            };#}
-{#            SideBAR.prototype.ignite = function () {#}
-{#                return (function (instance) {#}
-{#                    return $("#justify-icon").click(function (e) {#}
-{#                        if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-collapsed")) {#}
-{#                            instance.adjustPaddingOnExpand();#}
-{#                            instance.expandMyMenu();#}
-{#                            instance.showMenuTexts();#}
-{#                            instance.showActiveSubMenu();#}
-{#                            $(this).css({#}
-{#                                color: "#000"#}
-{#                            });#}
-{#                        } else if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-expanded")) {#}
-{#                            instance.resetOriginalPaddingOnCollapse();#}
-{#                            instance.collapseMyMenu();#}
-{#                            instance.hideMenuTexts();#}
-{#                            instance.hideActiveSubMenu();#}
-{#                            $(this).css({#}
-{#                                color: "#FFF"#}
-{#                            });#}
-{#                        }#}
-{#                        return false;#}
-{#                    });#}
-{#                })(this);#}
-{#            };#}
-{#            return SideBAR;#}
-{#        })();#}
-{#        return (new SideBAR).ignite();#}
-{#    });#}
-{# }).call(this);#}
-
-</script>
 
 {% if user.is_authenticated %}
  <nav class='sidebar sidebar-menu-collapsed' >
@@ -237,33 +163,5 @@ nav.sidebar ul.level1 ul.level2 li a {
               </a>
             </li>
         </ul>
-<!--{#                   "has_group" es un custom_filter que es pot trobar a "romani_tags.py"#}-->
-         <!--{% if request.user|has_group:"Productors" %}-->
-        <!--<ul class='level1'>-->
-            <!--<li class=''>-->
-              <!--<a class='expandable' href="{% url 'productor_list' %}" title='Zona Productor'>-->
-                <!--<span id="notification_count">-->
-<!--{#                   productor_comandes prove de "romani_tags.py"                      #}-->
-                    <!--{% productor_comandes as productor_comandes %}-->
-                        <!--{{ productor_comandes }}-->
-                <!--</span>-->
-
-                <!--<span id="zonaproductors" name="zonaproductors" class='glyphicon glyphicon-folder-open collapsed-element'></span>-->
-                <!--&nbsp; <span class='expanded-element'>Zona Productor</span>-->
-              <!--</a>-->
-            <!--</li>-->
-        <!--</ul>-->
-        <!--{% endif %}-->
-<!--{#      "has_group" es un custom_filter que es pot trobar a "romani_tags.py"#}-->
-        <!--{% if request.user|has_group:"Nodes" %}-->
-        <!--<ul class='level1'>-->
-            <!--<li class=''>-->
-              <!--<a class='expandable' href="{% url 'vista_nodes' %}" title='Zona Coop Consum'>-->
-                <!--<span id="zonanodes" name="zonanodes" class='glyphicon glyphicon-map-marker collapsed-element'></span>-->
-                <!--<span class='expanded-element'>Zona Coop Consum</span>-->
-              <!--</a>-->
-            <!--</li>-->
-        <!--</ul>-->
-        <!--{% endif %}-->
  </nav>
 {% endif %}
