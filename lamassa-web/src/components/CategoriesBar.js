@@ -53,7 +53,7 @@ class CategoriesBar extends React.Component {
     return (
       <div className="categories-bar">
         <div className="cards-title" style={{ textAlign: 'center' }}>
-          Categories
+          Etiquetes
         </div>
         <List>
           <ListItem dense button>

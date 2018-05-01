@@ -24,12 +24,12 @@
 <!--{#                    <div id="loading" class="loader" style="margin-left:0 auto; margin-right:0 auto;"></div>#}-->
 
 <!--{#            Més proper, Massa Xarxa, lamassa.net , Més a prop#}-->
-        <ul class="nav navbar-nav main-nav "><li><a  href="{% url 'coope' %}" class="active"> <h1>
+        <ul class="list-inline"><li class="nav"><a  href="{% url 'coope' %}"> <h1>
                     {{ node_user }}</h1></a></li>
 
             {% if user.is_authenticated %}
                          {% if request.user|has_group:"Productors" %}
-                             <li><a class='expandable' href="{% url 'productor_list' %}" title='Zona Productor'>
+                             <li class="nav"><a href="{% url 'productor_list' %}" title='Zona Productor'>
                                     <span id="notification_count">
                     <!--{#                   productor_comandes prove de "romani_tags.py"                      #}-->
                                         {% productor_comandes as productor_comandes %}
@@ -42,8 +42,8 @@
                              </li>
                          {% endif %}
                          {% if request.user|has_group:"Nodes" %}
-                            <li>
-                                <a class='expandable' href="{% url 'vista_nodes' %}" title='Zona Coop Consum'>
+                            <li class="nav">
+                                <a href="{% url 'vista_nodes' %}" title='Zona Coop Consum'>
                                     <span id="zonanodes" name="zonanodes" class='glyphicon glyphicon-map-marker collapsed-element'></span>
                                     <span class='expanded-element'>CoopConsum</span>
                                 </a>

@@ -20,14 +20,8 @@ class ListScreen extends Component {
         <div style={{ width: '-webkit-fill-available' }}>
           <main>
             <SearchApp />
+            <CategoriesBar etiquetes={etiquetes} />
             <Grid container spacing={0}>
-              <Hidden smDown>
-                <Grid item md={1} lg={2}>
-                  <Hidden mdDown>
-                    <CategoriesBar etiquetes={etiquetes} />
-                  </Hidden>
-                </Grid>
-              </Hidden>
               <Grid item xs={12} sm={12} md={10} lg={10}>
                 <MediaCard data={data} productors={productors} etiquetes={etiquetes} />
               </Grid>
@@ -36,7 +30,7 @@ class ListScreen extends Component {
         </div>
       );
     }
-    return <div>Cargando...</div>;
+    return <div style={{ margin: '60px' }}>Cargando...</div>;
   }
 }
 

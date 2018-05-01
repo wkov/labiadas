@@ -2,7 +2,7 @@
   font-family: 'Playfair Display';
 }
 
-body {
+main {
   padding-left: 60px;
 }
 /* Drawer por encima */
@@ -16,11 +16,12 @@ header {
 }
 
 .appbar-menu-button {
-  position: absolute;
+  position: fixed;
   top: 0px;
   left: 0px;
   z-index: 1300;
 }
+
 
 /* .bar-title {
   background-color: white;
@@ -137,8 +138,6 @@ header {
 
 .categories-bar {
   width: 100%;
-  min-width: 200px;
-  max-width: 220px;
 }
 
 .footer-bar {
@@ -276,6 +275,9 @@ header {
   }
   .userprofile-editar-button {
   }
+  main {
+  padding-left: 0px;
+}
 }
 
 .nohyperlink {
@@ -329,3 +331,5 @@ header {
 .calendar-control {
   padding: 10px;
 }
+
+
