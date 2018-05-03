@@ -70,13 +70,24 @@ class FormatSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
 
+    def userp_pk(self):
+        return self.context.get("userp_pk")
+
+    def formats(self):
+        return self.context.get("formats_dis")
+
+    preferits = ProducteSerializer(many=True, context={'userp_pk': userp_pk, 'formats_dis': formats})
+
+
+    # preferits = ProducteSerializer(many=True)
     # formats_nom = serializers.RelatedField(source='formats', read_only=True)
     # formats = serializers.StringRelatedField(many=True)
     class Meta:
         model = UserProfile
-        depth = 1
-        fields = "__all__"
-            # ('pk', 'nom', 'etiqueta', 'foto', 'productor', 'thumb', 'text_curt', 'formats')
+        depth = 2
+        fields = ('user', 'bio', 'invitacions', 'phone_number', 'avatar', 'carrer',
+                  'numero', 'pis', 'direccio', 'poblacio', 'preferits')
+
 
 class ComandaSerializer(serializers.ModelSerializer):
 
@@ -88,7 +99,7 @@ class ComandaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comanda
-        depth = 1
+        depth = 2
         fields = ('format', 'producte', 'cantitat', 'data_comanda', 'client', 'node', 'preu', 'frequencia')
 
 

@@ -123,8 +123,8 @@ def get_product_list(request):
 
     data = {}
     etiquetes = get_etiquetes(request, user_p.first())
-    productes, productors = get_productes(request, user_p.first())
-    user_profile = UserProfileSerializer(user_p, many=True)
+    productes, productors, user_profile = get_productes(request, user_p.first())
+
     comandes, historial = get_comandes(request)
     nodes = get_nodes(request)
     data['etiquetes'] = etiquetes.data
@@ -204,9 +204,10 @@ def get_productes(request, user_p):
     producte_serialized = ProducteSerializer(productes, many=True, context={'userp_pk': user_p.pk, 'formats_dis': formats})
     # formats_serialized = FormatSerializer(formats, many=True)
     productors_serialized = ProductorSerializer(productors, many=True)
+    user_profile = UserProfileSerializer(user_p, context={'userp_pk': user_p.pk, 'formats_dis': formats})
 
 
-    return producte_serialized, productors_serialized
+    return producte_serialized, productors_serialized, user_profile
 
 
 def get_nodes(request):
