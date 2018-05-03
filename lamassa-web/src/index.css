@@ -328,3 +328,10 @@ header {
 .calendar-control {
   padding: 10px;
 }
+/* .react-calendar button:focus {
+  background-color: unset !important;
+}
+
+button.react-calendar__tile:enabled:focus {
+  background-color: unset !important;
+} */

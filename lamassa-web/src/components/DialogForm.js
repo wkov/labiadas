@@ -13,6 +13,8 @@ import Dialog, {
 import DialogCalendar from './DialogCalendar';
 import StepperCart from './StepperCart';
 
+const url = 'http://localhost:8000';
+
 const frequencies = {
   1: 'Una sola vegada',
   2: 'Cada Setmana',
@@ -108,7 +110,7 @@ class DialogForm extends Component {
                 value={selected.tipus ? selected.tipus.preu * selected.quantitat : null}
               />
             </div>
-            <img alt="" src="/item_espelta.jpg" style={styles.img} />
+            <img alt="" src={url + item.thumb} style={styles.img} />
           </div>
           <StepperCart
             data={selected}

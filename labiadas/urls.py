@@ -121,6 +121,11 @@ urlpatterns = [
 
     url(r'^leaderboard/', auth(Leaderboard.as_view()), name='leaderboard'),
     url(r'^lead/', TemplateView.as_view(template_name='index.html')),
+
+    # REACT new URLS
+
+    url(r'^preferits/', TemplateView.as_view(template_name='index.html')),
+
     url(r'^producte/(?P<pk>\d+)$', TemplateView.as_view(template_name='index.html')),
 
 

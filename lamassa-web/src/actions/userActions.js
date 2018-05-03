@@ -8,6 +8,7 @@ export const POST_FAILURE = '@@user/POST_FAILURE';
 export const ADD_FAVORITES = '@@user/ADD_FAVORITES';
 export const HANDLE_DRAWER = '@@user/HANDLE_DRAWER';
 export const ADD_CART = '@@user/ADD_CART';
+export const ADD_CART_SUCCESS = '@@user/ADD_CART_SUCCESS';
 export const REMOVE_CART = '@@user/REMOVE_CART';
 
 export const addFavorites = ({ favorites, itemPk }) => {
@@ -44,37 +45,6 @@ export const addFavorites = ({ favorites, itemPk }) => {
       });
   };
 };
-//
-// export const addFavorites = ({ favorites, itemPk }) => {
-//   if (favorites.includes(itemPk)) {
-//     const index = favorites.indexOf(itemPk);
-//     favorites.splice(index, 1);
-//   } else {
-//     favorites.push(itemPk);
-//   }
-//   return {
-//     [RSAA]: {
-//       endpoint: 'http://aamping.pythonanywhere.com/api/auth/example',
-//       method: 'POST',
-//       headers: withAuth({ 'Content-Type': 'application/json' }),
-//       body: JSON.stringify({
-//         preferits: itemPk,
-//       }),
-//       types: [
-//         {
-//           type: ADD_FAVORITES,
-//           payload: favorites,
-//         },
-//         POST_SUCCESS,
-//         POST_FAILURE,
-//       ],
-//     },
-//   };
-//   // return {
-//   //   type: ADD_FAVORITES,
-//   //   payload: favorites,
-//   // };
-// };
 
 export const postChanges = ({ prop, value }) => {
   return {
@@ -91,21 +61,37 @@ export const postChanges = ({ prop, value }) => {
 };
 
 export const addToCart = (item, comanda, cart) => {
-  const { pk } = item;
-  const exist = cart.map(value => {
-    if (value.item.pk === pk) {
-      return true;
-    }
-    return false;
-  });
-  if (exist) {
-    cart.push({ item, comanda });
-  } else {
-    cart.push({ item, comanda });
-  }
-  return {
-    type: ADD_CART,
-    payload: cart,
+  const csrf = getCookie('csrftoken');
+  return dispatch => {
+    fetch('http://localhost:8000/api/auth/example', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify({
+        comanda: item,
+      }),
+    })
+      .then(response => {
+        dispatch({
+          type: ADD_CART,
+          payload: favorites,
+        });
+        return response.json();
+      })
+      .then(function(data) {
+        console.log('Data is ok', data);
+        dispatch({
+          type: ADD_CART_SUCCESS,
+          payload: data,
+        });
+      })
+      .catch(function(ex) {
+        console.log('parsing failed', ex);
+      });
   };
 };
 

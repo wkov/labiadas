@@ -16,25 +16,29 @@ class PreferScreen extends Component {
 
   render() {
     const { data, productors, etiquetes } = this.props;
-    return (
-      <div style={{ width: '-webkit-fill-available' }}>
-        <main>
-          <SearchApp />
-          <Grid container spacing={0}>
-            <Hidden smDown>
-              <Grid item md={1} lg={2}>
-                <Hidden mdDown>
-                  <CategoriesBar etiquetes={etiquetes} />
-                </Hidden>
+    console.log(data);
+    if (data.length) {
+      return (
+        <div style={{ width: '-webkit-fill-available' }}>
+          <main>
+            <SearchApp />
+            <Grid container spacing={0}>
+              <Hidden smDown>
+                <Grid item md={1} lg={2}>
+                  <Hidden mdDown>
+                    <CategoriesBar etiquetes={etiquetes} />
+                  </Hidden>
+                </Grid>
+              </Hidden>
+              <Grid item xs={12} sm={12} md={10} lg={10}>
+                <MediaCard isFavorites data={data} productors={productors} etiquetes={etiquetes} />
               </Grid>
-            </Hidden>
-            <Grid item xs={12} sm={12} md={10} lg={10}>
-              <MediaCard isFavorites data={data} productors={productors} etiquetes={etiquetes} />
             </Grid>
-          </Grid>
-        </main>
-      </div>
-    );
+          </main>
+        </div>
+      );
+    }
+    return <div> CARGANDO... </div>;
   }
 }
 
