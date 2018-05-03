@@ -61,12 +61,15 @@ class DialogCalendar extends React.Component {
     enabledDay: today.getDay(),
     diesHabils: [],
     diesFestius: [],
+    diesSelected: [],
     frequencia: '',
   };
 
   componentWillMount() {
+    const { dies } = this.props;
+    const lastDia = new Date(dies[Object.keys(dies).reduce((a, b) => (dies[a] > dies[b] ? a : b))].dia);
     const calendar = [];
-    for (let i = today.getMonth(); i !== endTime.getMonth(); i++) {
+    for (let i = today.getMonth(); i <= lastDia.getMonth(); i++) {
       if (!calendar.includes(i)) {
         calendar.push(i);
       }
@@ -74,13 +77,9 @@ class DialogCalendar extends React.Component {
         i = -1;
       }
     }
-    this.setState({ calendar });
-    const { dies } = this.props;
-    console.log(dies);
-    let month = 0;
-    // _.map(dies, obj => {
-    //   if (month)
-    // })
+    const diesHabils = [];
+    _.map(dies, obj => diesHabils.push(new Date(obj.dia).toDateString()));
+    this.setState({ calendar, diesHabils });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -90,42 +89,61 @@ class DialogCalendar extends React.Component {
   }
 
   onChangeFrequency = frequencia => {
-    const diesHabils = [];
+    const diesSelected = [];
+    const diesDisponibles = [];
+    const semanesDisponibles = [];
+    const { dies } = this.props;
+    _.map(dies, obj => diesDisponibles.push(new Date(obj.dia)));
+    _.map(dies, obj => semanesDisponibles.push(new Date(obj.dia).getWeek()));
     switch (frequencia) {
       case 'Cada Setmana': {
-        for (let i = today.getTime(); i <= endTime; i = i + dayMiliseconds * 7) {
-          diesHabils.push(new Date(i).toDateString());
+        for (let i = diesDisponibles[0].getWeek(); i <= diesDisponibles[diesDisponibles.length - 1].getWeek(); i++) {
+          if (semanesDisponibles.includes(i)) {
+            diesSelected.push(diesDisponibles[semanesDisponibles.indexOf(i)].toDateString());
+          }
         }
         break;
       }
       case 'Cada 2 Setmanes': {
-        for (let i = today.getTime(); i <= endTime; i = i + dayMiliseconds * 14) {
-          diesHabils.push(new Date(i).toDateString());
+        for (
+          let i = diesDisponibles[0].getWeek();
+          i <= diesDisponibles[diesDisponibles.length - 1].getWeek();
+          i = i + 2
+        ) {
+          if (semanesDisponibles.includes(i)) {
+            diesSelected.push(diesDisponibles[semanesDisponibles.indexOf(i)].toDateString());
+          }
         }
         break;
       }
       case 'Cada 4 Setmanes': {
-        for (let i = today.getTime(); i <= endTime; i = i + dayMiliseconds * 28) {
-          diesHabils.push(new Date(i).toDateString());
+        for (
+          let i = diesDisponibles[0].getWeek();
+          i <= diesDisponibles[diesDisponibles.length - 1].getWeek();
+          i = i + 4
+        ) {
+          if (semanesDisponibles.includes(i)) {
+            diesSelected.push(diesDisponibles[semanesDisponibles.indexOf(i)].toDateString());
+          }
         }
         break;
       }
       default:
         break;
     }
-    this.setState({ diesHabils, frequencia });
+    this.setState({ diesSelected, frequencia });
   };
 
   onPressTile = value => {
     const data = new Date(value);
-    const { diesHabils, diesFestius, color } = this.state;
+    const { diesSelected, diesFestius, color } = this.state;
     switch (color) {
       case BLUE: {
-        if (diesHabils.includes(data.toDateString())) {
-          diesHabils.splice(diesHabils.indexOf(data.toDateString()), 1);
+        if (diesSelected.includes(data.toDateString())) {
+          diesSelected.splice(diesSelected.indexOf(data.toDateString()), 1);
         } else {
-          diesHabils.push(data.toDateString());
-          diesHabils.sort((a, b) => a - b);
+          diesSelected.push(data.toDateString());
+          diesSelected.sort((a, b) => a - b);
           if (diesFestius.includes(data.toDateString())) {
             diesFestius.splice(diesFestius.indexOf(data.toDateString()), 1);
           }
@@ -138,8 +156,8 @@ class DialogCalendar extends React.Component {
         } else {
           diesFestius.push(data.toDateString());
           diesFestius.sort((a, b) => a - b);
-          if (diesHabils.includes(data.toDateString())) {
-            diesHabils.splice(diesHabils.indexOf(data.toDateString()), 1);
+          if (diesSelected.includes(data.toDateString())) {
+            diesSelected.splice(diesSelected.indexOf(data.toDateString()), 1);
           }
         }
         break;
@@ -147,27 +165,29 @@ class DialogCalendar extends React.Component {
       default:
         break;
     }
-    this.setState({ diesHabils, diesFestius });
+    this.setState({ diesSelected, diesFestius });
   };
 
   renderTileClassName(date, view, month) {
-    const { diesHabils, diesFestius } = this.state;
+    const { diesSelected, diesFestius } = this.state;
     if (date.getMonth() === month && diesFestius.includes(`${date.toDateString()}`)) {
       return 'calendar-tile-holiday';
-    } else if (date.getMonth() === month && diesHabils.includes(`${date.toDateString()}`)) {
+    } else if (date.getMonth() === month && diesSelected.includes(`${date.toDateString()}`)) {
       return 'calendar-tile-active';
     }
     return null;
   }
 
   renderTileDisabled({ date }) {
-    if (date.getTime() < today.getTime()) return true;
-    if (date.getDay() !== this.state.enabledDay) return true;
-    return false;
+    const diesDisponibles = [];
+    const { dies } = this.props;
+    _.map(dies, obj => diesDisponibles.push(new Date(obj.dia).toDateString()));
+    if (diesDisponibles.includes(date.toDateString())) return false;
+    return true;
   }
 
   render() {
-    const { open, handleClose, handleConfirm, fullScreen, frequencia } = this.props;
+    const { open, handleClose, handleConfirm, fullScreen, frequencia, dies } = this.props;
     const { calendar, enabledDay } = this.state;
     return (
       <div>
@@ -265,3 +285,21 @@ DialogCalendar.propTypes = {
 };
 
 export default withMobileDialog()(DialogCalendar);
+
+Date.prototype.getWeek = function() {
+  var date = new Date(this.getTime());
+  date.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  // January 4 is always in week 1.
+  var week1 = new Date(date.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+};
+
+// Returns the four-digit year corresponding to the ISO week of the date.
+Date.prototype.getWeekYear = function() {
+  var date = new Date(this.getTime());
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  return date.getFullYear();
+};
