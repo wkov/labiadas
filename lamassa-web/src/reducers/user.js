@@ -50,7 +50,7 @@ export default (state = initialState, action) => {
       // const newProductes = mergeFormatsProductes(productes, formats);
       return {
         ...state,
-        user: user_profile[0],
+        user: user_profile,
         nodes,
         historial,
       };
