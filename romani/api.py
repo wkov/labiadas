@@ -24,55 +24,57 @@ def example_view(request):
     dict = request.data
     user = request.user
     up = UserProfile.objects.get(user=user)
+    formats_dis, productes_dis = x_disponibles(up)
+    formats = TipusProducte.objects.filter(pk__in=formats_dis).distinct()
     log = ""
     if 'first_name' in dict:
         user.first_name = dict['first_name']
         user.save()
         log = "OK"
-        user_profile = UserProfileSerializer(up, many=False)
+        user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
         return Response({'log': log, 'user_profile': user_profile.data})
     elif 'email' in dict:
         user.email = dict['email']
         user.save()
         log = "OK"
-        user_profile = UserProfileSerializer(up, many=False)
+        user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
         return Response({'log': log, 'user_profile': user_profile.data})
     elif 'last_name' in dict:
         user.last_name = dict['last_name']
         user.save()
         log = "OK"
-        user_profile = UserProfileSerializer(up, many=False)
+        user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
         return Response({'log': log, 'user_profile': user_profile.data})
     elif 'username' in dict:
         try:
             other_user = User.objects.get(username=dict['username'])
             log = "KO"
-            user_profile = UserProfileSerializer(up, many=False)
+            user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
             return Response({'log': log, 'user_profile': user_profile.data})
 
         except:
                 user.username = dict['username']
                 user.save()
                 log = "OK"
-                user_profile = UserProfileSerializer(up, many=False)
+                user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
                 return Response({'log': log, 'user_profile': user_profile.data})
     elif 'phone_number' in dict:
         up.phone_number = dict['phone_number']
         up.save()
         log = "OK"
-        user_profile = UserProfileSerializer(up, many=False)
+        user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
         return Response({'log': log, 'user_profile': user_profile.data})
     elif 'poblacio' in dict:
         up.poblacio = dict['poblacio']
         up.save()
         log = "OK"
-        user_profile = UserProfileSerializer(up, many=False)
+        user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
         return Response({'log': log, 'user_profile': user_profile.data})
     elif 'direccio' in dict:
         up.direccio = dict['direccio']
         up.save()
         log = "OK"
-        user_profile = UserProfileSerializer(up, many=False)
+        user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
         return Response({'log': log, 'user_profile': user_profile.data})
     elif 'lloc_entrega' in dict:
         lloc = dict['lloc_entrega']
@@ -80,14 +82,14 @@ def example_view(request):
         up.lloc_entrega = lloc_entrega
         up.save()
         log = "OK"
-        user_profile = UserProfileSerializer(up, many=False)
+        user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
         return Response({'log': log, 'user_profile': user_profile.data})
     elif 'preferits' in dict:
         try:
             is_favorite = up.preferits.get(pk=dict['preferits'])
             up.preferits.remove(is_favorite)
             log = "OK"
-            user_profile = UserProfileSerializer(up, many=False)
+            user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
             return Response({'log': log, 'user_profile': user_profile.data})
 
         except:
@@ -95,10 +97,12 @@ def example_view(request):
                 up.preferits.add(producte)
                 # user.save()
                 log = "OK"
-                user_profile = UserProfileSerializer(up, many=False)
+                user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
                 return Response({'log': log, 'user_profile': user_profile.data})
+
+
     log = "KO"
-    user_profile = UserProfileSerializer(up, many=False)
+    user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
     return Response({'log': log, 'user_profile': user_profile.data})
 
     # serializer = ProducteSerializer(p, many=True)
@@ -178,9 +182,8 @@ def get_comandes(request):
     hist_serialized=ComandaSerializer(hist, many=True)
     return comanda_serialized, hist_serialized
 
-def get_productes(request, user_p):
 
-
+def x_disponibles(user_p):
     today = datetime.date.today()
     dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt=today)
 
@@ -198,9 +201,18 @@ def get_productes(request, user_p):
                 if stock_result['result'] == True:
                     productes_disponibles.add(t.producte.pk)
                     formats_disponibles.add(t.pk)
-    productes = Producte.objects.filter(pk__in=productes_disponibles).distinct()
-    formats = TipusProducte.objects.filter(pk__in=formats_disponibles).distinct()
-    productors = Productor.objects.filter(producte__pk__in=productes_disponibles).distinct()
+
+    return formats_disponibles, productes_disponibles
+
+
+
+def get_productes(request, user_p):
+
+
+    formats_dis, productes_dis = x_disponibles(user_p)
+    productes = Producte.objects.filter(pk__in=productes_dis).distinct()
+    formats = TipusProducte.objects.filter(pk__in=formats_dis).distinct()
+    productors = Productor.objects.filter(producte__pk__in=productes_dis).distinct()
     producte_serialized = ProducteSerializer(productes, many=True, context={'userp_pk': user_p.pk, 'formats_dis': formats})
     # formats_serialized = FormatSerializer(formats, many=True)
     productors_serialized = ProductorSerializer(productors, many=True)
@@ -208,6 +220,7 @@ def get_productes(request, user_p):
 
 
     return producte_serialized, productors_serialized, user_profile
+
 
 
 def get_nodes(request):
