@@ -26,7 +26,6 @@ export default (state = initialState, action) => {
     case user.ADD_CART:
       return {
         ...state,
-        cart: action.payload,
         ts: new Date().getTime(),
       };
     case user.REMOVE_CART:
@@ -46,13 +45,14 @@ export default (state = initialState, action) => {
         user: action.payload.user,
       };
     case api.FETCH_SUCCESS: {
-      const { user_profile, nodes, historial } = action.payload;
+      const { user_profile, nodes, historial, comandes } = action.payload;
       // const newProductes = mergeFormatsProductes(productes, formats);
       return {
         ...state,
         user: user_profile,
         nodes,
         historial,
+        cart: comandes,
       };
     }
     case user.POST_SUCCESS:

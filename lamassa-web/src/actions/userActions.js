@@ -9,6 +9,8 @@ export const ADD_FAVORITES = '@@user/ADD_FAVORITES';
 export const HANDLE_DRAWER = '@@user/HANDLE_DRAWER';
 export const ADD_CART = '@@user/ADD_CART';
 export const ADD_CART_SUCCESS = '@@user/ADD_CART_SUCCESS';
+export const ADD_CART_CHECK = '@@user/ADD_CART_CHECK';
+export const ADD_CART_FAILED = '@@user/ADD_CART_FAILED';
 export const REMOVE_CART = '@@user/REMOVE_CART';
 
 export const addFavorites = ({ favorites, itemPk }) => {
@@ -60,7 +62,7 @@ export const postChanges = ({ prop, value }) => {
   };
 };
 
-export const addToCart = (item, comanda, cart) => {
+export const addToCart = comanda => {
   const csrf = getCookie('csrftoken');
   return dispatch => {
     fetch('http://localhost:8000/api/auth/example', {
@@ -72,22 +74,33 @@ export const addToCart = (item, comanda, cart) => {
         'X-CSRFToken': csrftoken,
       },
       body: JSON.stringify({
-        comanda: item,
+        comanda,
       }),
     })
       .then(response => {
         dispatch({
           type: ADD_CART,
-          payload: favorites,
+          payload: comanda,
         });
         return response.json();
       })
       .then(function(data) {
-        console.log('Data is ok', data);
-        dispatch({
-          type: ADD_CART_SUCCESS,
-          payload: data,
-        });
+        if (data.log === 'OK') {
+          dispatch({
+            type: ADD_CART_SUCCESS,
+            payload: data,
+          });
+        } else if (data.log === 'CHECK') {
+          dispatch({
+            type: ADD_CART_CHECK,
+            payload: data,
+          });
+        } else {
+          dispatch({
+            type: ADD_CART_FAILED,
+            payload: data,
+          });
+        }
       })
       .catch(function(ex) {
         console.log('parsing failed', ex);
