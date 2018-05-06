@@ -86,7 +86,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         depth = 2
         fields = ('user', 'bio', 'invitacions', 'phone_number', 'avatar', 'carrer',
-                  'numero', 'pis', 'direccio', 'poblacio', 'preferits')
+                  'numero', 'pis', 'direccio', 'poblacio', 'preferits', 'lloc_entrega')
 
 
 class ComandaSerializer(serializers.ModelSerializer):

@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from .models import Producte, UserProfile, Etiqueta, Node, TipusProducte, DiaFormatStock, Entrega, Comanda, Productor
+from .models import FranjaHoraria, DiaEntrega
 from .serializers import ProducteSerializer, UserProfileSerializer, EtiquetaSerializer, FormatSerializer, \
     ComandaSerializer, ProductorSerializer, NodeSerializer
 from django.views.decorators.csrf import csrf_exempt
@@ -100,7 +101,37 @@ def example_view(request):
                 user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
                 return Response({'log': log, 'user_profile': user_profile.data})
 
+    elif 'comanda' in dict:
+        errors = {}
+        com = dict['comanda']
+        v = Comanda.objects.create(client=user, cantitat=com['cantitat'], format=com['format'], node=up.lloc_entrega, preu=com['preu'])
+        for d in com['entregas']:
+            dia = DiaEntrega.objects.get(pk=d)
+            stock_result = v.format.stock_calc(dia, com.cantitat)
+            if stock_result['result'] == True:
+                franja_pk = request.POST.get(str(dia.pk))
+                franja = FranjaHoraria.objects.get(pk=franja_pk)
+                if stock_result['dia_prod'] == '':
+                    e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja)
+                else:
+                    e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja,
+                                               dia_produccio=stock_result['dia_prod'])
+            else:
+                log = "CHECK"
+                errors[dia.pk] = {'dia': dia.date}
+                return Response({'log': log, 'errors': errors})
+        log = "OK"
+        comanda = ComandaSerializer(v)
+        return Response({'log': log, 'comanda': comanda.data})
 
+    elif 'comanda_delete' in dict:
+        com_del = dict['comanda_delete']
+        try:
+            v = Comanda.objects.delete(pk=com_del)
+            log = "OK"
+        except:
+            log = "KO"
+        return Response({'log': log})
     log = "KO"
     user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
     return Response({'log': log, 'user_profile': user_profile.data})
