@@ -11,6 +11,7 @@ import Dialog, {
   withMobileDialog,
 } from 'material-ui/Dialog';
 import Grid from 'material-ui/Grid';
+import DialogSelect from './DialogSelect';
 
 const months = [
   'Gener',
@@ -56,6 +57,7 @@ const initialState = [
 class DialogCalendar extends React.Component {
   state = {
     open: false,
+    openDialogSelect: false,
     calendarData: initialState,
     color: BLUE,
     enabledDay: today.getDay(),
@@ -134,9 +136,11 @@ class DialogCalendar extends React.Component {
     this.setState({ diesSelected, frequencia });
   };
 
-  onPressTile = value => {
+  onPressTile = (value, e) => {
     const data = new Date(value);
+    const { dies } = this.props;
     const { diesSelected, diesFestius, color } = this.state;
+
     switch (color) {
       case BLUE: {
         if (diesSelected.includes(data.toDateString())) {
@@ -186,8 +190,25 @@ class DialogCalendar extends React.Component {
     return true;
   }
 
+  handleConfirm = () => {
+    const { dies } = this.props;
+    const { diesSelected } = this.state;
+    const diesEntrega = [];
+    diesSelected.map(diesSel => {
+      const data = new Date(diesSel);
+      data.setUTCHours(24); // Corrigiendo error de UTC hours.
+      _.map(dies, (x, ke) => {
+        if (x.dia === data.toISOString().split('T')[0]) {
+          diesEntrega.push(ke);
+        }
+      });
+    });
+    this.props.handleConfirm(diesEntrega);
+  };
+
   render() {
-    const { open, handleClose, handleConfirm, fullScreen, frequencia, dies } = this.props;
+    const { open, handleClose, fullScreen, frequencia, dies } = this.props;
+    console.log(dies);
     const { calendar, enabledDay } = this.state;
     return (
       <div>
@@ -201,6 +222,7 @@ class DialogCalendar extends React.Component {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle>{"Selecciona els dies en què vols l'entrega"}</DialogTitle>
+          <div onClick={() => this.setState({ openDialogSelect: true })}> Prova </div>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               {"Blau - Dies en què es farà l'entrega del producte"}
@@ -270,11 +292,16 @@ class DialogCalendar extends React.Component {
             <Button onClick={handleClose} color="primary">
               Cancel·lar
             </Button>
-            <Button onClick={handleConfirm} color="primary" autoFocus>
+            <Button onClick={this.handleConfirm} color="primary" autoFocus>
               Confirmar
             </Button>
           </DialogActions>
         </Dialog>
+        <DialogSelect
+          open={this.state.openDialogSelect}
+          horaris={['wiki', 'waka']}
+          onClose={() => this.setState({ openDialogSelect: false })}
+        />
       </div>
     );
   }

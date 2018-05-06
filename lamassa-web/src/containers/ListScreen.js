@@ -18,15 +18,13 @@ class ListScreen extends Component {
     if (data.length) {
       return (
         <div style={{ width: '-webkit-fill-available' }}>
-          <main>
-            <SearchApp />
-            <CategoriesBar etiquetes={etiquetes} />
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={12} md={10} lg={10}>
-                <MediaCard data={data} productors={productors} etiquetes={etiquetes} />
-              </Grid>
+          <SearchApp />
+          <CategoriesBar etiquetes={etiquetes} />
+          <Grid container spacing={0}>
+            <Grid item xs={12} sm={12} md={10} lg={10}>
+              <MediaCard data={data} productors={productors} etiquetes={etiquetes} />
             </Grid>
-          </main>
+          </Grid>
         </div>
       );
     }

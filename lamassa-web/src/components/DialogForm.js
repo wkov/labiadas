@@ -128,18 +128,30 @@ class DialogForm extends Component {
           frequencia={this.state.frequencia}
           open={this.state.openDialogCalendar}
           handleClose={this.handleDialogCalendar}
+          handleConfirm={this.handleDialogCalendar}
         />
       </Dialog>
     );
   }
-  handleDialogCalendar = () => {
+  handleDialogCalendar = (dies = []) => {
+    const { selected } = this.props;
+    if (dies[0]) {
+      const comanda = {
+        cantitat: selected.quantitat,
+        format: selected.tipus.pk,
+        preu: selected.tipus.preu,
+        entregas: dies,
+      };
+      this.props.submitForm(comanda);
+    }
     this.setState({ openDialogCalendar: false });
+    this.props.handleClose();
   };
   addCart(entrega) {
     const { item, selected } = this.props;
     const comanda = { ...selected, ...entrega, preuTotal: selected.tipus.preu * selected.quantitat };
     if (comanda.frequencia === 1) {
-      this.props.submitForm(item, comanda);
+      this.props.submitForm(comanda);
       this.props.handleClose();
     } else {
       this.setState({ openDialogCalendar: true });

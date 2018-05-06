@@ -90,16 +90,17 @@ class MediaCard extends Component {
       element,
     });
   };
-  handleAddCart(item, comanda) {
+  handleAddCart(comanda) {
     const { cart } = this.props;
-    this.props.addToCart(item, comanda, cart);
+    // this.props.addToCart(item, comanda, cart);
+    this.props.addToCart(comanda);
   }
   render() {
     const { classes, data, favorites, isFavorites } = this.props;
     return (
       <Grid container alignItems={'center'} spacing={24} direction={'row'} justify={'center'}>
         {data.map((value, index) => {
-          if (!isFavorites || favorites.includes(value.pk)) {
+          if (!isFavorites || favorites.some(prod => prod.pk === value.pk)) {
             return (
               <Grid className={classes.gridItem} item key={value.nom}>
                 <Card className="cards-list">
@@ -111,7 +112,11 @@ class MediaCard extends Component {
                           <IconButton />
                           <IconButton onClick={() => this.handleAddFavorites(value.pk)} aria-label="Afegir a preferits">
                             <FavoriteIcon
-                              style={favorites.includes(value.pk) ? { color: '#da6d76' } : { color: '#c4d97e' }}
+                              style={
+                                favorites.some(prod => prod.pk === value.pk)
+                                  ? { color: '#da6d76' }
+                                  : { color: '#c4d97e' }
+                              }
                             />
                           </IconButton>
                         </div>
