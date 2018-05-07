@@ -104,22 +104,23 @@ def example_view(request):
     elif 'comanda' in dict:
         errors = {}
         com = dict['comanda']
-        v = Comanda.objects.create(client=user, cantitat=com['cantitat'], format=com['format'], node=up.lloc_entrega, preu=com['preu'])
-        for d in com['entregas']:
-            dia = DiaEntrega.objects.get(pk=d)
-            stock_result = v.format.stock_calc(dia, com.cantitat)
-            if stock_result['result'] == True:
-                franja_pk = request.POST.get(str(dia.pk))
-                franja = FranjaHoraria.objects.get(pk=franja_pk)
-                if stock_result['dia_prod'] == '':
-                    e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja)
-                else:
-                    e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja,
-                                               dia_produccio=stock_result['dia_prod'])
-            else:
-                log = "CHECK"
-                errors[dia.pk] = {'dia': dia.date}
-                return Response({'log': log, 'errors': errors})
+        tipus = TipusProducte.objects.get(pk=com['tipus']['pk'])
+        v = Comanda.objects.create(client=user, cantitat=com['quantitat'], format=tipus, node=up.lloc_entrega, preu=com['preuTotal'])
+        # for d in com['entregas']:
+        #     dia = DiaEntrega.objects.get(pk=d)
+        #     stock_result = v.format.stock_calc(dia, com['quantitat'])
+        #     if stock_result['result'] == True:
+        #         franja_pk = request.POST.get(str(dia.pk))
+        #         franja = FranjaHoraria.objects.get(pk=franja_pk)
+        #         if stock_result['dia_prod'] == '':
+        #             e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja)
+        #         else:
+        #             e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja,
+        #                                        dia_produccio=stock_result['dia_prod'])
+        #     else:
+        #         log = "CHECK"
+        #         errors[dia.pk] = {'dia': dia.date}
+        #         return Response({'log': log, 'errors': errors})
         log = "OK"
         comanda = ComandaSerializer(v)
         return Response({'log': log, 'comanda': comanda.data})
@@ -127,7 +128,7 @@ def example_view(request):
     elif 'comanda_delete' in dict:
         com_del = dict['comanda_delete']
         try:
-            v = Comanda.objects.delete(pk=com_del)
+            v = Comanda.objects.get(pk=com_del).delete()
             log = "OK"
         except:
             log = "KO"

@@ -26,10 +26,12 @@
 <!--{#            Més proper, Massa Xarxa, lamassa.net , Més a prop#}-->
         <ul class="list-inline"><li class="nav"><a  href="{% url 'coope' %}"> <h1>
                     {{ node_user }}</h1></a></li>
-
+            <li>
+                <ul>
             {% if user.is_authenticated %}
                          {% if request.user|has_group:"Productors" %}
-                             <li class="nav"><a href="{% url 'productor_list' %}" title='Zona Productor'>
+                             <li class="nav">
+                                 <a href="{% url 'productor_list' %}" title='Zona Productor'>
                                     <span id="notification_count">
                     <!--{#                   productor_comandes prove de "romani_tags.py"                      #}-->
                                         {% productor_comandes as productor_comandes %}
@@ -38,7 +40,7 @@
 
                                     <span id="zonaproductors" name="zonaproductors" class='glyphicon glyphicon-folder-open collapsed-element'></span>
                                     &nbsp; <span class='expanded-element'>Productor</span>
-                                  </a>
+                                 </a>
                              </li>
                          {% endif %}
                          {% if request.user|has_group:"Nodes" %}
@@ -50,6 +52,8 @@
                             </li>
                          {% endif %}
             {% endif %}
+                    </ul>
+            </li>
         </ul>
 
         </div>

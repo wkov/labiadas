@@ -483,7 +483,7 @@ class Comanda(models.Model):
     node = models.ForeignKey(Node)
     externa = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
-    frequencia = models.ForeignKey(Frequencia)
+    frequencia = models.ForeignKey(Frequencia, blank=True, null=True)
 
     def __str__(self):
         return self.format.producte.nom
