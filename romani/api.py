@@ -96,7 +96,7 @@ def example_view(request):
         except:
                 producte = Producte.objects.get(pk=dict['preferits'])
                 up.preferits.add(producte)
-                # user.save()
+                # user.save() ALBERTO COMMENT PARA MERGE
                 log = "OK"
                 user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
                 return Response({'log': log, 'user_profile': user_profile.data})

@@ -65,6 +65,7 @@ class DialogCalendar extends React.Component {
     diesFestius: [],
     diesSelected: [],
     frequencia: '',
+    franjes: [],
   };
 
   componentWillMount() {
@@ -79,8 +80,11 @@ class DialogCalendar extends React.Component {
         i = -1;
       }
     }
-    const diesHabils = [];
-    _.map(dies, obj => diesHabils.push(new Date(obj.dia).toDateString()));
+    const diesHabils = _.map(dies, (obj, key) => ({
+      pk: key,
+      dia: obj.dia,
+      franjes: _.map(obj.franjes, (data, key) => ({ pk: key, ...data })),
+    }));
     this.setState({ calendar, diesHabils });
   }
 
@@ -95,13 +99,25 @@ class DialogCalendar extends React.Component {
     const diesDisponibles = [];
     const semanesDisponibles = [];
     const { dies } = this.props;
+    dies[12] = { dia: '2018-05-30', franjes: { 0: { inici: '19:00:00', final: '20:30:00' } }, stock: 'SenseLimit' };
     _.map(dies, obj => diesDisponibles.push(new Date(obj.dia)));
+    const diesDis = _.map(dies, (obj, key) => ({
+      pk: key,
+      dia: obj.dia,
+      franjes: _.map(obj.franjes, (data, key) => ({ pk: key, ...data })),
+    }));
+    console.log(diesDis);
     _.map(dies, obj => semanesDisponibles.push(new Date(obj.dia).getWeek()));
+    console.log(new Date(diesDis[diesDis.length - 1].dia).getWeek(), new Date(diesDis[0].dia).getWeek());
     switch (frequencia) {
       case 'Cada Setmana': {
-        for (let i = diesDisponibles[0].getWeek(); i <= diesDisponibles[diesDisponibles.length - 1].getWeek(); i++) {
+        for (
+          let i = new Date(diesDis[0].dia).getWeek();
+          i <= new Date(diesDis[diesDis.length - 1].dia).getWeek();
+          i++
+        ) {
           if (semanesDisponibles.includes(i)) {
-            diesSelected.push(diesDisponibles[semanesDisponibles.indexOf(i)].toDateString());
+            diesSelected.push(diesDis[semanesDisponibles.indexOf(i)]);
           }
         }
         break;
@@ -133,21 +149,24 @@ class DialogCalendar extends React.Component {
       default:
         break;
     }
+    console.log(diesSelected);
     this.setState({ diesSelected, frequencia });
   };
 
   onPressTile = (value, e) => {
     const data = new Date(value);
-    const { dies } = this.props;
-    const { diesSelected, diesFestius, color } = this.state;
-
+    const { diesSelected, diesFestius, color, diesHabils } = this.state;
+    const item = diesSelected.find(obj => new Date(obj.dia).toDateString() === data.toDateString());
     switch (color) {
       case BLUE: {
-        if (diesSelected.includes(data.toDateString())) {
-          diesSelected.splice(diesSelected.indexOf(data.toDateString()), 1);
+        if (item) {
+          diesSelected.splice(diesSelected.indexOf(item), 1);
         } else {
-          diesSelected.push(data.toDateString());
-          diesSelected.sort((a, b) => a - b);
+          const dia = diesHabils.find(obj => new Date(obj.dia).toDateString() === data.toDateString());
+          console.log(dia);
+          this.handleDialogSelect(dia.franjes);
+          diesSelected.push(item);
+          diesSelected.sort((a, b) => a.pk - b.pk);
           if (diesFestius.includes(data.toDateString())) {
             diesFestius.splice(diesFestius.indexOf(data.toDateString()), 1);
           }
@@ -160,8 +179,8 @@ class DialogCalendar extends React.Component {
         } else {
           diesFestius.push(data.toDateString());
           diesFestius.sort((a, b) => a - b);
-          if (diesSelected.includes(data.toDateString())) {
-            diesSelected.splice(diesSelected.indexOf(data.toDateString()), 1);
+          if (item) {
+            diesSelected.splice(diesSelected.indexOf(item), 1);
           }
         }
         break;
@@ -169,6 +188,7 @@ class DialogCalendar extends React.Component {
       default:
         break;
     }
+    console.log(diesSelected);
     this.setState({ diesSelected, diesFestius });
   };
 
@@ -176,7 +196,10 @@ class DialogCalendar extends React.Component {
     const { diesSelected, diesFestius } = this.state;
     if (date.getMonth() === month && diesFestius.includes(`${date.toDateString()}`)) {
       return 'calendar-tile-holiday';
-    } else if (date.getMonth() === month && diesSelected.includes(`${date.toDateString()}`)) {
+    } else if (
+      date.getMonth() === month &&
+      diesSelected.find(obj => new Date(obj.dia).toDateString() === date.toDateString())
+    ) {
       return 'calendar-tile-active';
     }
     return null;
@@ -208,7 +231,6 @@ class DialogCalendar extends React.Component {
 
   render() {
     const { open, handleClose, fullScreen, frequencia, dies } = this.props;
-    console.log(dies);
     const { calendar, enabledDay } = this.state;
     return (
       <div>
@@ -299,12 +321,15 @@ class DialogCalendar extends React.Component {
         </Dialog>
         <DialogSelect
           open={this.state.openDialogSelect}
-          horaris={['wiki', 'waka']}
-          onClose={() => this.setState({ openDialogSelect: false })}
+          horaris={this.state.franjes}
+          onClose={selFranja => this.setState({ selFranja, openDialogSelect: false })}
         />
       </div>
     );
   }
+  handleDialogSelect = franjes => {
+    this.setState({ openDialogSelect: true, franjes });
+  };
 }
 
 DialogCalendar.propTypes = {
