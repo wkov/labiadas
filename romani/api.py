@@ -104,23 +104,25 @@ def example_view(request):
     elif 'comanda' in dict:
         errors = {}
         com = dict['comanda']
-        tipus = TipusProducte.objects.get(pk=com['tipus']['pk'])
-        v = Comanda.objects.create(client=user, cantitat=com['quantitat'], format=tipus, node=up.lloc_entrega, preu=com['preuTotal'])
-        # for d in com['entregas']:
-        #     dia = DiaEntrega.objects.get(pk=d)
-        #     stock_result = v.format.stock_calc(dia, com['quantitat'])
-        #     if stock_result['result'] == True:
-        #         franja_pk = request.POST.get(str(dia.pk))
-        #         franja = FranjaHoraria.objects.get(pk=franja_pk)
-        #         if stock_result['dia_prod'] == '':
-        #             e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja)
-        #         else:
-        #             e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja,
-        #                                        dia_produccio=stock_result['dia_prod'])
-        #     else:
-        #         log = "CHECK"
-        #         errors[dia.pk] = {'dia': dia.date}
-        #         return Response({'log': log, 'errors': errors})
+        # tipus = TipusProducte.objects.get(pk=com['tipus']['pk'])
+        # v = Comanda.objects.create(client=user, cantitat=com['quantitat'], format=tipus, node=up.lloc_entrega, preu=com['preuTotal'])
+        format_pk = TipusProducte.objects.get(pk=com['format'])
+        v = Comanda.objects.create(client=user, cantitat=com['cantitat'], format=format_pk, node=up.lloc_entrega, preu=com['preu'])
+        for d in com['entregas']:
+            dia = DiaEntrega.objects.get(pk=d['dia_entrega'])
+            stock_result = v.format.stock_calc(dia, com['quantitat'])
+            if stock_result['result'] == True:
+                franja_pk = request.POST.get(str(dia.pk))
+                franja = FranjaHoraria.objects.get(pk=franja_pk)
+                if stock_result['dia_prod'] == '':
+                    e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja)
+                else:
+                    e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja,
+                                               dia_produccio=stock_result['dia_prod'])
+            else:
+                log = "CHECK"
+                errors[dia.pk] = {'dia': dia.date}
+                return Response({'log': log, 'errors': errors})
         log = "OK"
         comanda = ComandaSerializer(v)
         return Response({'log': log, 'comanda': comanda.data})

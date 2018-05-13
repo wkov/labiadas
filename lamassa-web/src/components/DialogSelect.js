@@ -12,21 +12,24 @@ class DialogSelect extends React.Component {
   };
 
   handleListItemClick = value => {
-    this.props.onClose(value);
+    const { horaris } = this.props;
+    this.props.clickItem({ ...horaris, franjes: value });
   };
 
   render() {
-    const { onClose, selectedValue, horaris, ...other } = this.props;
+    const { onClose, selectedValue, horaris, open } = this.props;
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" {...other}>
+      <Dialog open={open} onClose={this.handleClose}>
         <DialogTitle id="simple-dialog-title">Tria una franja horaria:</DialogTitle>
         <div>
           <List>
-            {horaris.map(horari => (
-              <ListItem button onClick={() => this.handleListItemClick(horari)} key={horari}>
-                <ListItemText primary={horari} />
-              </ListItem>
-            ))}
+            {horaris.franjes
+              ? horaris.franjes.map(franjes => (
+                  <ListItem button onClick={() => this.handleListItemClick(franjes)} key={franjes}>
+                    <ListItemText primary={`${franjes.inici} - ${franjes.final}`} />
+                  </ListItem>
+                ))
+              : null}
           </List>
         </div>
       </Dialog>

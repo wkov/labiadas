@@ -89,7 +89,7 @@ class StepperCart extends Component {
       steps,
       frequencia: key,
     });
-    this.props.onChangeFrequencia(key);
+    this.props.onChangeFrequencia(key, this.state.hora);
   };
 
   handleChangeDia = event => {
@@ -110,15 +110,27 @@ class StepperCart extends Component {
   };
 
   handleSubmit = () => {
+    const { data } = this.props;
+    const stocksData = data.tipus.dies_stocks_futurs;
     const { dia, hora, frequencia } = this.state;
-    this.props.submit({ dia, hora, frequencia });
+    console.log(stocksData);
+    const stocks = _.map(stocksData, (obj, key) => ({
+      pk: key,
+      dia: obj.dia,
+      franjes: _.map(obj.franjes, (data, key) => ({ pk: key, ...data })),
+    }));
+    const diaSel = stocks.find(obj => new Date(obj.dia).toDateString() === new Date(dia.dia).toDateString());
+    this.props.submit({
+      ...diaSel,
+      franjes: diaSel.franjes.find(obj => `${obj.inici} - ${obj.final}` === hora),
+      frequencia,
+    });
   };
 
   render() {
     const { classes, data } = this.props;
     const { activeStep, steps } = this.state;
     const stocksData = data.tipus.dies_stocks_futurs;
-
     return (
       <div className={classes.root}>
         <Stepper activeStep={activeStep} alternativeLabel>

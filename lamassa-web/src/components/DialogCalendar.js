@@ -66,6 +66,8 @@ class DialogCalendar extends React.Component {
     diesSelected: [],
     frequencia: '',
     franjes: [],
+    selDia: {},
+    hora: {},
   };
 
   componentWillMount() {
@@ -90,58 +92,54 @@ class DialogCalendar extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.frequencia !== nextProps.frequencia) {
-      this.onChangeFrequency(nextProps.frequencia);
+      this.setState({ frequencia: nextProps.frequencia });
+    }
+    if (this.props.entrega !== nextProps.entrega) {
+      this.setState({ hora: nextProps.entrega.franjes });
+      this.onChangeDates();
     }
   }
 
-  onChangeFrequency = frequencia => {
+  onChangeDates = () => {
+    const { frequencia } = this.state;
     const diesSelected = [];
-    const diesDisponibles = [];
     const semanesDisponibles = [];
     const { dies } = this.props;
-    dies[12] = { dia: '2018-05-30', franjes: { 0: { inici: '19:00:00', final: '20:30:00' } }, stock: 'SenseLimit' };
-    _.map(dies, obj => diesDisponibles.push(new Date(obj.dia)));
-    const diesDis = _.map(dies, (obj, key) => ({
-      pk: key,
-      dia: obj.dia,
-      franjes: _.map(obj.franjes, (data, key) => ({ pk: key, ...data })),
-    }));
-    console.log(diesDis);
+    const { diesHabils } = this.state;
     _.map(dies, obj => semanesDisponibles.push(new Date(obj.dia).getWeek()));
-    console.log(new Date(diesDis[diesDis.length - 1].dia).getWeek(), new Date(diesDis[0].dia).getWeek());
     switch (frequencia) {
       case 'Cada Setmana': {
         for (
-          let i = new Date(diesDis[0].dia).getWeek();
-          i <= new Date(diesDis[diesDis.length - 1].dia).getWeek();
+          let i = new Date(diesHabils[0].dia).getWeek();
+          i <= new Date(diesHabils[diesHabils.length - 1].dia).getWeek();
           i++
         ) {
           if (semanesDisponibles.includes(i)) {
-            diesSelected.push(diesDis[semanesDisponibles.indexOf(i)]);
+            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes: this.state.hora });
           }
         }
         break;
       }
       case 'Cada 2 Setmanes': {
         for (
-          let i = diesDisponibles[0].getWeek();
-          i <= diesDisponibles[diesDisponibles.length - 1].getWeek();
+          let i = new Date(diesHabils[0].dia).getWeek();
+          i <= new Date(diesHabils[diesHabils.length - 1].dia).getWeek();
           i = i + 2
         ) {
           if (semanesDisponibles.includes(i)) {
-            diesSelected.push(diesDisponibles[semanesDisponibles.indexOf(i)].toDateString());
+            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes: this.state.hora });
           }
         }
         break;
       }
       case 'Cada 4 Setmanes': {
         for (
-          let i = diesDisponibles[0].getWeek();
-          i <= diesDisponibles[diesDisponibles.length - 1].getWeek();
+          let i = new Date(diesHabils[0].dia).getWeek();
+          i <= new Date(diesHabils[diesHabils.length - 1].dia).getWeek();
           i = i + 4
         ) {
           if (semanesDisponibles.includes(i)) {
-            diesSelected.push(diesDisponibles[semanesDisponibles.indexOf(i)].toDateString());
+            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes: this.state.hora });
           }
         }
         break;
@@ -149,7 +147,6 @@ class DialogCalendar extends React.Component {
       default:
         break;
     }
-    console.log(diesSelected);
     this.setState({ diesSelected, frequencia });
   };
 
@@ -163,10 +160,7 @@ class DialogCalendar extends React.Component {
           diesSelected.splice(diesSelected.indexOf(item), 1);
         } else {
           const dia = diesHabils.find(obj => new Date(obj.dia).toDateString() === data.toDateString());
-          console.log(dia);
-          this.handleDialogSelect(dia.franjes);
-          diesSelected.push(item);
-          diesSelected.sort((a, b) => a.pk - b.pk);
+          this.handleDialogSelect(dia);
           if (diesFestius.includes(data.toDateString())) {
             diesFestius.splice(diesFestius.indexOf(data.toDateString()), 1);
           }
@@ -188,7 +182,6 @@ class DialogCalendar extends React.Component {
       default:
         break;
     }
-    console.log(diesSelected);
     this.setState({ diesSelected, diesFestius });
   };
 
@@ -216,16 +209,10 @@ class DialogCalendar extends React.Component {
   handleConfirm = () => {
     const { dies } = this.props;
     const { diesSelected } = this.state;
-    const diesEntrega = [];
-    diesSelected.map(diesSel => {
-      const data = new Date(diesSel);
-      data.setUTCHours(24); // Corrigiendo error de UTC hours.
-      _.map(dies, (x, ke) => {
-        if (x.dia === data.toISOString().split('T')[0]) {
-          diesEntrega.push(ke);
-        }
-      });
-    });
+    const diesEntrega = diesSelected.map(dia => ({
+      dia_entrega: dia.pk,
+      franja_horaria: dia.franjes.pk,
+    }));
     this.props.handleConfirm(diesEntrega);
   };
 
@@ -277,7 +264,7 @@ class DialogCalendar extends React.Component {
                 <div> Frenqüència </div>
                 <select
                   defaultValue={this.state.frequencia}
-                  onChange={e => this.onChangeFrequency(e.nativeEvent.target.value)}
+                  onChange={e => this.onChangeDates(e.nativeEvent.target.value)}
                 >
                   {frequency.map(value => (
                     <option key={value} value={value}>
@@ -321,14 +308,20 @@ class DialogCalendar extends React.Component {
         </Dialog>
         <DialogSelect
           open={this.state.openDialogSelect}
-          horaris={this.state.franjes}
-          onClose={selFranja => this.setState({ selFranja, openDialogSelect: false })}
+          horaris={this.state.selDia}
+          onClose={() => this.setState({ openDialogSelect: false })}
+          clickItem={this.handleDialogSelectConfirm}
         />
       </div>
     );
   }
-  handleDialogSelect = franjes => {
-    this.setState({ openDialogSelect: true, franjes });
+  handleDialogSelectConfirm = dia => {
+    const { diesSelected } = this.state;
+    diesSelected.push(dia);
+    this.setState({ diesSelected, openDialogSelect: false });
+  };
+  handleDialogSelect = selDia => {
+    this.setState({ openDialogSelect: true, selDia });
   };
 }
 

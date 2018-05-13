@@ -35,7 +35,7 @@ const styles = {
 class DialogForm extends Component {
   state = {
     open: false,
-    entrega: '',
+    entrega: {},
     openDialogCalendar: false,
     frequencia: '',
   };
@@ -125,8 +125,10 @@ class DialogForm extends Component {
         </DialogActions>
         <DialogCalendar
           dies={selected.tipus.dies_stocks_futurs}
+          franja={this.state.franja}
           frequencia={this.state.frequencia}
           open={this.state.openDialogCalendar}
+          entrega={this.state.entrega}
           handleClose={this.handleDialogCalendar}
           handleConfirm={this.handleDialogCalendar}
         />
@@ -135,11 +137,11 @@ class DialogForm extends Component {
   }
   handleDialogCalendar = (dies = []) => {
     const { selected } = this.props;
-    if (dies[0]) {
+    if (dies.length) {
       const comanda = {
         cantitat: selected.quantitat,
         format: selected.tipus.pk,
-        preu: selected.tipus.preu,
+        preu: selected.tipus.preu * selected.quantitat,
         entregas: dies,
       };
       this.props.submitForm(comanda);
@@ -149,12 +151,23 @@ class DialogForm extends Component {
   };
   addCart(entrega) {
     const { item, selected } = this.props;
-    const comanda = { ...selected, ...entrega, preuTotal: selected.tipus.preu * selected.quantitat };
-    if (comanda.frequencia === 1) {
+    console.log(entrega, selected);
+    const comanda = [
+      {
+        cantitat: selected.quantitat,
+        format: selected.tipus.pk,
+        preu: selected.tipus.preu * selected.quantitat,
+        entregas: {
+          dia_entrega: entrega.pk,
+          franja_horaria: entrega.franjes.pk,
+        },
+      },
+    ];
+    if (entrega.frequencia === 1) {
       this.props.submitForm(comanda);
       this.props.handleClose();
     } else {
-      this.setState({ openDialogCalendar: true });
+      this.setState({ openDialogCalendar: true, entrega: { ...entrega, frequencia: comanda.frequencia } });
     }
   }
 }
