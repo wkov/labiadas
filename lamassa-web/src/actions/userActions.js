@@ -1,5 +1,6 @@
 import { RSAA } from 'redux-api-middleware';
 import { withAuth } from '../reducers';
+import { showSnack, dismissSnack } from 'react-redux-snackbar';
 
 export const POST_REQUEST = '@@user/POST_REQUEST';
 export const POST_SUCCESS = '@@user/POST_SUCCESS';
@@ -12,6 +13,18 @@ export const ADD_CART_SUCCESS = '@@user/ADD_CART_SUCCESS';
 export const ADD_CART_CHECK = '@@user/ADD_CART_CHECK';
 export const ADD_CART_FAILED = '@@user/ADD_CART_FAILED';
 export const REMOVE_CART = '@@user/REMOVE_CART';
+
+export const snackMessage = () => {
+  return dispatch => {
+    dispatch(
+      showSnack('myUniqueId', {
+        label: 'Yay, that actually worked!',
+        timeout: 4000,
+        button: { label: 'OK, GOT IT', action: () => console.log('weke') },
+      })
+    );
+  };
+};
 
 export const addFavorites = ({ favorites, itemPk }) => {
   const csrf = getCookie('csrftoken');

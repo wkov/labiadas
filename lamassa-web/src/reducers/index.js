@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
+import { snackbarReducer } from 'react-redux-snackbar';
 import auth, * as fromAuth from './auth.js';
 import api from './api.js';
 import user from './user.js';
@@ -9,6 +10,7 @@ export default combineReducers({
   api: api,
   user: user,
   auth: auth,
+  snackbar: snackbarReducer,
 });
 
 export const isAuthenticated = state => fromAuth.isAuthenticated(state.auth);

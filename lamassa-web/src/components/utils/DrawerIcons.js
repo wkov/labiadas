@@ -10,6 +10,7 @@ import HomeIcon from 'material-ui-icons/Home';
 import Badge from 'material-ui/Badge';
 import Divider from 'material-ui/Divider';
 import ShareIcon from 'material-ui-icons/Share';
+import { snackMessage } from '../../actions/userActions';
 
 const DrawerIcons = props => {
   return (
@@ -46,7 +47,7 @@ const DrawerIcons = props => {
       <Divider />
       <ListItem className="drawer-list" button>
         <ListItemIcon>
-          <MailIcon className="drawer-icon" />
+          <MailIcon className="drawer-icon" onClick={() => props.snackMessage()} />
         </ListItemIcon>
         <div className="drawer-text">Missatges</div>
       </ListItem>
@@ -74,4 +75,4 @@ const mapStateToProps = ({ user }) => {
   };
 };
 
-export default connect(mapStateToProps, null)(DrawerIcons);
+export default connect(mapStateToProps, { snackMessage })(DrawerIcons);

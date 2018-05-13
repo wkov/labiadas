@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router';
+import { Snackbar } from 'react-redux-snackbar';
 import ListScreen from './containers/ListScreen';
 import AppBarTitle from './components/AppBarTitle';
 import PrivateRoute from './containers/PrivateRoute';
@@ -27,6 +28,7 @@ const App = ({ ...children }) => {
       <footer>
         <FooterBar />
       </footer>
+      <Snackbar />
     </div>
   );
 };
