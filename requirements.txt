@@ -13,4 +13,6 @@ django-tables2==1.4.1
 django-model-utils==2.6.1
 django-filter==1.0.1
 coreapi==2.3.3
--e git://github.com/arneb/django-messages.git#egg=django-messages
+-e git://github.com/arneb/django-messages@b6bd11a767c9a5bf31fec6e1980a28b3734ea432
+django-webpack-loader==0.6.0
+bleach==2.1.3
