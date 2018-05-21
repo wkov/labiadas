@@ -152,17 +152,17 @@ class DialogForm extends Component {
   addCart(entrega) {
     const { item, selected } = this.props;
     console.log(entrega, selected);
-    const comanda = [
-      {
-        cantitat: selected.quantitat,
-        format: selected.tipus.pk,
-        preu: selected.tipus.preu * selected.quantitat,
-        entregas: {
+    const comanda = {
+      cantitat: selected.quantitat,
+      format: selected.tipus.pk,
+      preu: selected.tipus.preu * selected.quantitat,
+      entregas: [
+        {
           dia_entrega: entrega.pk,
           franja_horaria: entrega.franjes.pk,
         },
-      },
-    ];
+      ],
+    };
     if (entrega.frequencia === 1) {
       this.props.submitForm(comanda);
       this.props.handleClose();
