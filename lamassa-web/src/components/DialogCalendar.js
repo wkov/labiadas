@@ -96,11 +96,11 @@ class DialogCalendar extends React.Component {
     }
     if (this.props.entrega !== nextProps.entrega) {
       this.setState({ hora: nextProps.entrega.franjes });
-      this.onChangeDates();
+      this.onChangeDates(nextProps.entrega.franjes);
     }
   }
 
-  onChangeDates = () => {
+  onChangeDates = (franjes = this.props.entrega.franjes) => {
     const { frequencia } = this.state;
     const diesSelected = [];
     const semanesDisponibles = [];
@@ -115,7 +115,7 @@ class DialogCalendar extends React.Component {
           i++
         ) {
           if (semanesDisponibles.includes(i)) {
-            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes: this.state.hora });
+            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes });
           }
         }
         break;
@@ -127,7 +127,7 @@ class DialogCalendar extends React.Component {
           i = i + 2
         ) {
           if (semanesDisponibles.includes(i)) {
-            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes: this.state.hora });
+            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes });
           }
         }
         break;
@@ -139,7 +139,7 @@ class DialogCalendar extends React.Component {
           i = i + 4
         ) {
           if (semanesDisponibles.includes(i)) {
-            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes: this.state.hora });
+            diesSelected.push({ ...diesHabils[semanesDisponibles.indexOf(i)], franjes });
           }
         }
         break;
@@ -147,6 +147,7 @@ class DialogCalendar extends React.Component {
       default:
         break;
     }
+    console.log(diesSelected);
     this.setState({ diesSelected, frequencia });
   };
 
