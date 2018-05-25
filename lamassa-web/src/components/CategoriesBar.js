@@ -52,10 +52,7 @@ class CategoriesBar extends React.Component {
     const { etiquetes } = this.props;
     return (
       <div className="categories-bar">
-        <div className="cards-title" style={{ textAlign: 'center' }}>
-          Etiquetes
-        </div>
-        <List>
+        <List style={{ display: 'flex' }}>
           <ListItem dense button>
             <div style={{ marginLeft: 10 }} className="cards-text">
               {'Totes les categories'}{' '}

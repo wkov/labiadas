@@ -6,7 +6,7 @@ import Grid from 'material-ui/Grid';
 import Hidden from 'material-ui/Hidden';
 import SearchApp from '../components/SearchApp';
 import MediaCard from '../components/MediaCard';
-import CategoriesBar from '../components/CategoriesBar';
+import NewCategoriesBar from '../components/NewCategoriesBar';
 import { fetchList } from '../actions/apiActions';
 
 class ListScreen extends Component {
@@ -19,8 +19,8 @@ class ListScreen extends Component {
       return (
         <div style={{ width: '-webkit-fill-available' }}>
           <SearchApp />
-          <CategoriesBar etiquetes={etiquetes} />
-          <Grid container spacing={0}>
+          <NewCategoriesBar etiquetes={etiquetes} />
+          <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <MediaCard data={data} productors={productors} etiquetes={etiquetes} />
             </Grid>
