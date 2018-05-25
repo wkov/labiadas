@@ -349,10 +349,9 @@ class TipusProducte(models.Model):
                                 s = stocks.get(dia_prod=diaproduccio)
                                 # num = int(s.stock()) - int(cantitat)
                                 if s:
-                                    i = 0
                                     franjes = {}
                                     for f in d.dia.franjes_horaries.all():
-                                        franjes = {i: {'inici':f.inici, 'final':f.final}}
+                                        franjes[f.pk] = {'inici':f.inici, 'final':f.final}
                                    #  I si encara hi ha estoc disponible,confirmem existències
                                    #  franjes = FranjaHorariaSerializer(d.dia.franjes_horaries, many=True)
                                     dict[d.dia.pk] = {'dia': d.dia.date, 'franjes': franjes, 'stock': int(s.stock())}
@@ -367,7 +366,7 @@ class TipusProducte(models.Model):
                         i = 0
                         franjes = {}
                         for f in d.dia.franjes_horaries.all():
-                            franjes = {i: {'inici':f.inici, 'final':f.final}}
+                            franjes[f.pk] = {'inici':f.inici, 'final':f.final}
                         dict[d.dia.pk] = {'dia': d.dia.date, 'franjes': franjes, 'stock': 'SenseLimit'}
         return dict
 

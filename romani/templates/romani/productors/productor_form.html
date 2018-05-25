@@ -9,10 +9,9 @@
 {% endblock %}
 
 {% block content %}
-{#<div style="float: left; position: relative; margin-top: 90px;    font-family: 'Satisfy', cursive;#}
-{#    font-size: 3em"> {{ productor.nom }} </div>#}
+<div style="float: left; position:relative; margin-top: 90px">
             {% include 'romani/productors/menu_pro.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
+    <div style="float: left; position:relative; margin-top: 90px; font-family: 'Satisfy', cursive;
     font-size: 2em"> Editar Productora &nbsp;</div>
 <form method="post" action="">
 
@@ -20,35 +19,7 @@
 
   {% csrf_token %}
     {% if productor %}
-{##}
-{#    <div style="margin: 0 auto; text-align:center;">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_dates' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Calendari</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_update' productor.pk %}" id="etq_selected"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productor</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >#}
-{#                                    <b id="pato" name="pato" class="pato">Veure historial</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>#}
-{##}
+
     <br/>
 {##}
     <a href="{% url 'adjunt_create' productor.pk %}" id="pro_menu">Carregar nova foto</a>
@@ -61,18 +32,6 @@
 
 
        <br/>           {% if adjunts %}
-
-{#                    <div id="dialog" title="Edita la teva info">#}
-{#                        <p>#}
-{#                            Pots carregar tantes fotos com vulguis. Seran les que veuran els usuaris quan mirin el teu perfil.#}
-{#                            El text també pot ser tant llarg com necessitis. Quanta més informació millor#}
-{#                        </p>#}
-{#                        <p>#}
-{#                            En el llistat de possibles responsables pots marcar més d'una persona. Si algú que no hi és vol aparèixer a la llista haurà de seguir l'Ajuda de la web.#}
-{#                            Els que veus són els usuaris de La Massa amb rol de responsable com tu.#}
-{#                        </p>#}
-{#                        </div>#}
-
 
                 <br />
 
@@ -128,5 +87,5 @@
 
   <input type="submit" value="Grabar">
 </form>
-
+</div>
 {% endblock %}

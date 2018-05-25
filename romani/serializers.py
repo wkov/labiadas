@@ -46,7 +46,7 @@ class ProductorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Productor
         depth = 1
-        fields = ('nom', 'responsable', 'text', 'hores_limit', 'adjunts')
+        fields = ('pk', 'nom', 'responsable', 'text', 'hores_limit', 'adjunts')
 
 
 class EtiquetaSerializer(serializers.ModelSerializer):

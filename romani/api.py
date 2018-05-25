@@ -110,10 +110,10 @@ def example_view(request):
         v = Comanda.objects.create(client=user, cantitat=com['cantitat'], format=format_pk, node=up.lloc_entrega, preu=com['preu'])
         for d in com['entregas']:
             dia = DiaEntrega.objects.get(pk=d['dia_entrega'])
-            stock_result = v.format.stock_calc(dia, com['quantitat'])
+            stock_result = v.format.stock_calc(dia, com['cantitat'])
             if stock_result['result'] == True:
-                franja_pk = request.POST.get(str(dia.pk))
-                franja = FranjaHoraria.objects.get(pk=franja_pk)
+                # franja_pk = request.POST.get(str(d['franja_horaria']))
+                franja = FranjaHoraria.objects.get(pk=str(d['franja_horaria']))
                 if stock_result['dia_prod'] == '':
                     e = Entrega.objects.create(dia_entrega=dia, comanda=v, franja_horaria=franja)
                 else:
@@ -125,7 +125,7 @@ def example_view(request):
                 return Response({'log': log, 'errors': errors})
         log = "OK"
         comanda = ComandaSerializer(v)
-        return Response({'log': log, 'comanda': comanda.data})
+        return Response({'log': log, 'comanda': comanda.data, 'entregas': com['entregas']})
 
     elif 'comanda_delete' in dict:
         com_del = dict['comanda_delete']
