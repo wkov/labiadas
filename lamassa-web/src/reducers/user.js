@@ -28,11 +28,28 @@ export default (state = initialState, action) => {
         ...state,
         ts: new Date().getTime(),
       };
+    case user.ADD_CART_SUCCESS:
+      return {
+        ...state,
+        ts: new Date().getTime(),
+        cart: action.payload.comandes,
+      };
     case user.REMOVE_CART:
       return {
         ...state,
-        cart: action.payload,
         ts: new Date().getTime(),
+      };
+    case user.REMOVE_CART_SUCCESS:
+      return {
+        ...state,
+        ts: new Date().getTime(),
+        cart: action.payload.comandes,
+      };
+    case user.REMOVE_CART_FAILED:
+      return {
+        ...state,
+        ts: new Date().getTime(),
+        cart: action.payload.comandes,
       };
     case user.HANDLE_DRAWER:
       return {

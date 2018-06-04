@@ -10,17 +10,22 @@ class CartScreen extends Component {
     this.props.fetchList();
   }
   render() {
+    console.log(this.props.historial);
+    if (!this.props.historial) {
+      return <div>Cargando..</div>;
+    }
     return (
       <div>
-        <CartList title={'Properes entregues'} cart={this.props.cart} removeFromCart={this.props.removeFromCart} />
+        <CartList title={'Properes entregues'} cart={this.props.cart} removeFromCart={this.props.removeFromCart} edit />
+        <CartList title={'Historial comandes'} cart={this.props.historial} removeFromCart={this.props.removeFromCart} />
       </div>
     );
   }
 }
 
 const mapStateToProps = ({ user }) => {
-  const { cart } = user;
-  return { cart };
+  const { cart, historial } = user;
+  return { cart, historial };
 };
 
 export default connect(mapStateToProps, { removeFromCart, fetchList })(CartScreen);

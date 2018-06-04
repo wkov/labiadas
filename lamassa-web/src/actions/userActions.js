@@ -13,6 +13,8 @@ export const ADD_CART_SUCCESS = '@@user/ADD_CART_SUCCESS';
 export const ADD_CART_CHECK = '@@user/ADD_CART_CHECK';
 export const ADD_CART_FAILED = '@@user/ADD_CART_FAILED';
 export const REMOVE_CART = '@@user/REMOVE_CART';
+export const REMOVE_CART_SUCCESS = '@@user/REMOVE_CART_SUCCESS';
+export const REMOVE_CART_FAILED = '@@user/REMOVE_CART_FAILED';
 
 export const snackMessage = () => {
   return dispatch => {
@@ -121,21 +123,44 @@ export const addToCart = comanda => {
   };
 };
 
-export const removeFromCart = (cart, itemPk) => {
-  let pos = false;
-  const exist = cart.map((value, index) => {
-    if (value.item.pk === itemPk) {
-      pos = index;
-      return true;
-    }
-    return false;
-  });
-  if (exist) {
-    cart.splice(pos, 1);
-  }
-  return {
-    type: REMOVE_CART,
-    payload: cart,
+export const removeFromCart = comandaPk => {
+  const csrf = getCookie('csrftoken');
+  return dispatch => {
+    fetch('http://localhost:8000/api/auth/example', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify({
+        comanda_delete: comandaPk,
+      }),
+    })
+      .then(response => {
+        dispatch({
+          type: REMOVE_CART,
+          payload: comandaPk,
+        });
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.log === 'OK') {
+          dispatch({
+            type: REMOVE_CART_SUCCESS,
+            payload: data,
+          });
+        } else {
+          dispatch({
+            type: REMOVE_CART_FAILED,
+            payload: data,
+          });
+        }
+      })
+      .catch(function(ex) {
+        console.log('parsing failed', ex);
+      });
   };
 };
 

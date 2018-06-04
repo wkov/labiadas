@@ -12,6 +12,7 @@ import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import AccountCircle from 'material-ui-icons/AccountCircle';
+import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 
 import * as reducers from '../reducers';
 import { userLogout } from '../actions/authActions';
@@ -69,6 +70,13 @@ class AppBarTitle extends Component {
           className={classNames(classes.menuButton, this.props.open && classes.hide)}
         >
           <MenuIcon />
+        </IconButton>
+        <IconButton
+          color="contrast"
+          onClick={this.handleDrawerClose}
+          className={classNames(classes.menuButton, !this.props.open && classes.hide)}
+        >
+          <ChevronLeftIcon />
         </IconButton>
       </div>
     );

@@ -42,6 +42,9 @@ header {
 } */
 
 .card-simple {
+  width: 100%;
+  margin: 0px;
+  max-width: 500px !important;
   background-color: #ebf9d6 !important;
 }
 
@@ -336,4 +339,16 @@ header {
 
 .calendar-control {
   padding: 10px;
+}
+
+.cart-details {
+  display: flex !important;
+  flex-basis: 50%;
+  justify-content: space-between;
+  margin-left: auto;
+}
+
+.cart-details-item {
+  display: flex;
+  flex-basis: 30%;
 }

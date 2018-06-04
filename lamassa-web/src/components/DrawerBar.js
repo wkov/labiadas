@@ -18,7 +18,7 @@ const drawerWidth = 240;
 
 const styles = theme => ({
   drawerPaper: {
-    zIndex: 0,
+    zIndex: 20,
     top: 0,
     position: 'fixed',
     width: drawerWidth,

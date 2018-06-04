@@ -85,7 +85,7 @@ class CartList extends React.Component {
   };
 
   handleDelete = () => {
-    this.props.removeFromCart(this.props.cart, this.state.selectedItem);
+    this.props.removeFromCart(this.state.selectedItem);
     this.handleCloseConfirm();
   };
 
@@ -100,22 +100,27 @@ class CartList extends React.Component {
           {cart.map((value, index) => {
             preuTotal = preuTotal + value.preu;
             return (
-              <ExpansionPanel style={{ width: '80%' }} key={value.data_comanda}>
+              <ExpansionPanel key={value.pk}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <div className={classes.column} style={{ display: 'flex' }}>
-                    <DeleteIcon
-                      onClick={() => this.handleClickOpenConfirm(value.data_comanda)}
-                      style={{ marginRight: 20 }}
-                    />
-                    <Typography className={classes.heading}>{value.producte}</Typography>
+                    {this.props.edit ? (
+                      <DeleteIcon onClick={() => this.handleClickOpenConfirm(value.pk)} style={{ marginRight: 20 }} />
+                    ) : null}
+                    <div className="cards-text">{value.producte}</div>
                   </div>
-                  <div className={classes.column} style={{ display: 'flex' }}>
-                    <Typography className={classes.secondaryHeading}>Quantitat: </Typography>
-                    <Chip label={value.cantitat} className={classes.chip} />
-                    <Typography className={classes.secondaryHeading}>Tipus: </Typography>
-                    <Chip label={value.format.nom + ` (${value.format.preu} €)`} className={classes.chip} />
-                    <Typography className={classes.secondaryHeading}>Total: </Typography>
-                    <Chip label={value.preu + ' €'} className={classes.chip} />
+                  <div className="cart-details">
+                    <div className="cart-details-item">
+                      <div className="cards-text">Quantitat: </div>
+                      <Chip label={value.cantitat} className={classes.chip} />
+                    </div>
+                    <div className="cart-details-item">
+                      <div className="cards-text">Tipus: </div>
+                      <Chip label={value.format.nom + ` (${value.format.preu} €)`} className={classes.chip} />
+                    </div>
+                    <div className="cart-details-item">
+                      <div className="cards-text">Total: </div>
+                      <Chip label={value.preu + ' €'} className={classes.chip} />
+                    </div>
                   </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.details}>
@@ -177,12 +182,14 @@ class CartList extends React.Component {
             );
           })}
         </CardContent>
-        <CardActions>
-          <div className="card-cart-total">
-            <Typography className={classes.secondaryHeading}>Total: </Typography>
-            <Chip label={preuTotal + ' €'} className={classes.chip} />
-          </div>
-        </CardActions>
+        {this.props.edit ? (
+          <CardActions>
+            <div className="card-cart-total">
+              <div className="cards-text">Total: </div>
+              <Chip label={preuTotal + ' €'} className={classes.chip} />
+            </div>
+          </CardActions>
+        ) : null}
         <DialogConfirm open={this.state.open} handleConfirm={this.handleDelete} handleClose={this.handleCloseConfirm} />
       </Card>
     );

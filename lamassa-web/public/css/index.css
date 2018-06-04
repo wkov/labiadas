@@ -19,6 +19,11 @@ body {
   }
 }
 
+.card-simple {
+  width: 50% !important;
+  background-color: #ebf9d6 !important;
+}
+
 .card-review-product {
   background-color: #ebf9d6 !important;
 }
@@ -167,4 +172,8 @@ body {
 
 .userprofile-card {
   width: fit-content !important;
+}
+
+.cart-details {
+  display: flex !important;
 }

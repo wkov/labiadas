@@ -8,7 +8,7 @@ import rootReducer from './reducers';
 
 export default history => {
   const persistedFilter = createFilter('auth', ['access', 'refresh']);
-  const persistedUser = createFilter('user', ['cart', 'favorites', 'user']);
+  const persistedUser = createFilter('user', ['cart', 'favorites', 'user', 'historial']);
 
   const reducer = persistReducer(
     {

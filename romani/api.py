@@ -124,20 +124,22 @@ def example_view(request):
                 errors[dia.pk] = {'dia': dia.date}
                 return Response({'log': log, 'errors': errors})
         log = "OK"
-        comanda = ComandaSerializer(v)
-        return Response({'log': log, 'comanda': comanda.data, 'entregas': com['entregas']})
+        comandes, historial = get_comandes(request)
+        return Response({'log': log, 'comandes': comandes.data, 'entregas': com['entregas']})
 
     elif 'comanda_delete' in dict:
         com_del = dict['comanda_delete']
         try:
             v = Comanda.objects.get(pk=com_del).delete()
+            comandes, historial = get_comandes(request)
             log = "OK"
         except:
             log = "KO"
-        return Response({'log': log})
+        return Response({'log': log, 'comandes': comandes.data})
     log = "KO"
     user_profile = UserProfileSerializer(up, many=False, context={'userp_pk': up.pk, 'formats_dis': formats})
-    return Response({'log': log, 'user_profile': user_profile.data})
+    comandes, historial = get_comandes(request)
+    return Response({'log': log, 'comandes': comandes.data, 'user_profile': user_profile.data})
 
     # serializer = ProducteSerializer(p, many=True)
     # return JsonResponse(serializer.data, safe=False)
