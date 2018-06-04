@@ -100,7 +100,7 @@ class ComandaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comanda
         depth = 2
-        fields = ('format', 'producte', 'cantitat', 'data_comanda', 'client', 'node', 'preu', 'frequencia')
+        fields = ('pk', 'entregas', 'format', 'producte', 'cantitat', 'data_comanda', 'client', 'node', 'preu', 'frequencia')
 
 
 
