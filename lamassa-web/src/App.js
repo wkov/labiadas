@@ -19,6 +19,7 @@ const styles = {
 };
 
 const App = ({ ...children }) => {
+  console.log(location);
   return (
     <div style={styles.appFrame}>
       <AppBarTitle />

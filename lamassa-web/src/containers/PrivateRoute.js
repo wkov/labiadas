@@ -9,6 +9,7 @@ import PreferScreen from './PreferScreen';
 import CartScreen from './CartScreen';
 import ProducteScreen from './ProducteScreen';
 import UserProfileScreen from './UserProfileScreen';
+import ContactScreen from './ContactScreen';
 
 const styles = {
   appFrame: {
@@ -37,6 +38,7 @@ const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
             <Route path="/preferits" component={PreferScreen} />
             <Route path="/userprofile" component={UserProfileScreen} />
             <Route path="/producte/:product" component={ProducteScreen} />
+            <Route path="/contacte/productora=:productora" component={ContactScreen} />
             <Route path="/" component={ListScreen} />
           </Switch>
         </div>

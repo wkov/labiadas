@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Typography } from 'material-ui/Typography';
 
 class ContactScreen extends Component {
   render() {
-    return <div>contactform</div>;
+    return (
+      <div>
+        weke
+        <div> Contact form </div>
+      </div>
+    );
   }
 }
 

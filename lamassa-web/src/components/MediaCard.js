@@ -142,7 +142,9 @@ class MediaCard extends Component {
                             {value.productora.nom}
                           </a>
                         </Typography>
-                        <MessageIcon style={{ marginLeft: 10 }} />
+                        <Link to={`/contacte/productora=${value.productora.nom.replace(/\s/g, '')}`}>
+                          <MessageIcon style={{ marginLeft: 10 }} />
+                        </Link>
                       </div>
                     }
                   />

@@ -126,7 +126,11 @@ urlpatterns = [
 
     url(r'^preferits/', TemplateView.as_view(template_name='index.html')),
 
+    url(r'^cart/', TemplateView.as_view(template_name='index.html')),
+
     url(r'^producte/(?P<pk>\d+)$', TemplateView.as_view(template_name='index.html')),
+
+    url(r'^contacte/productora=(?P<pk>\d+)$', TemplateView.as_view(template_name='index.html')),
 
 
 
