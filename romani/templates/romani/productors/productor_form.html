@@ -9,24 +9,20 @@
 {% endblock %}
 
 {% block content %}
-<div style="float: left; position:relative; margin-top: 90px">
+<div style="position:relative; margin-top: 90px">
             {% include 'romani/productors/menu_pro.html' %}
-    <div style="float: left; position:relative; margin-top: 90px; font-family: 'Satisfy', cursive;
+    <div style="float: left; position:relative; font-family: 'Satisfy', cursive;
     font-size: 2em"> Editar Productora &nbsp;</div>
 <form method="post" action="">
-
-
 
   {% csrf_token %}
     {% if productor %}
 
     <br/>
-{##}
+
     <a href="{% url 'adjunt_create' productor.pk %}" id="pro_menu">Carregar nova foto</a>
-{##}
-{#{% else %}#}
-{#    <br/>#}
-{#    <a href=""  id="pro_menu_selected">Editar Productor</a> <br/>#}
+
+
 {% endif %}
 
 

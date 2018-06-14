@@ -14,31 +14,8 @@
     {% include 'romani/nodes/menu_coops.html' %}
     <div style="float: left; position:relative; margin-top: 90px;  font-family: 'Satisfy', cursive;
     font-size: 2em">Seleccionar Productores &nbsp;</div>
-{#<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
-{#    font-size: 3em"> {{ node.nom }} </div>#}
-{#    <div style="margin: 0 auto;  text-align:center;">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'node_update' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar Coope</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_nodesdates' object.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'nodeproductors_update' object.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Escollir Productors</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>#}
     <br/><br/>
 
-{#    <div id="dialog" title="Tria els productors afins">#}
-{#        <p>Selecciona els productors que vols que portin productes al teu Lloc d'entrega. Una vegada hagis triat els productors,#}
-{#            faltarà que el productor indiqui quins dels dies que obres vindrà, i amb quins productes. I aleshores la gent ja podrà fer comandes</p>#}
-{#    </div>#}
 
 <form method="post">
 {% csrf_token %}

@@ -108,6 +108,7 @@ class CartList extends React.Component {
                     ) : null}
                     <div className="cards-text">{value.producte}</div>
                   </div>
+
                   <div className="cart-details">
                     <div className="cart-details-item">
                       <div className="cards-text">Quantitat: </div>
