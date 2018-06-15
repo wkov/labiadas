@@ -170,10 +170,10 @@ def get_product_list(request):
     nodes = get_nodes(request)
     data['etiquetes'] = etiquetes.data
     # data['formats'] = formats.data
-    data['old_com'] = com.data
-    data['old_hist'] = hist.data
-    data['comandes'] = comandes
-    data['historial'] = historial
+    data['comandes'] = com.data
+    data['historial'] = hist.data
+    data['new_com'] = comandes
+    data['new_hist'] = historial
     data['productes'] = productes.data
     data['productors'] = productors.data
     data['user_profile'] = user_profile.data
