@@ -121,6 +121,7 @@ class CartList extends React.Component {
                       <DeleteIcon onClick={() => this.handleClickOpenConfirm(value.pk)} style={{ marginRight: 20 }} />
                     ) : null}
                   </div>
+
                   <div className="cart-details">
                     <div className={classes.column}>{value.producte}</div>
                     <div className={classes.column}>

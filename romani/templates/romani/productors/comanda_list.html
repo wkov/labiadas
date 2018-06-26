@@ -9,41 +9,13 @@
 {% csrf_token %}
 {% block content %}
 
+    <div style="font-family: 'Satisfy', cursive;
+    font-size: 2em">Comandes rebudes &nbsp;</div>
+<div style="margin-top: 90px">
             {% include 'romani/productors/menu_pro.html' %}
 
-    <div style="float: left; position:relative; margin-top: 90px;font-family: 'Satisfy', cursive;
-    font-size: 2em">Comandes rebudes &nbsp;</div>
-{#<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
-{#    font-size: 3em"> {{ productor.nom }} </div>#}
-{#    <div style="margin: 0 auto; text-align:center;">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_dates' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Calendari</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productor</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >#}
-{#                                    <b id="pato" name="pato" class="pato">Veure historial</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>#}
 
-{#    <div id="dialog" title="Bústia de comandes"><p>Aquí pots veure totes les comandes que t'han arribat</p></div>#}
+
 
     <br/><br/>
 
@@ -51,7 +23,6 @@
     <a href="{% url 'comanda_create' productor.pk %}" id="pro_menu">Crear nova comanda</a>
 
     {% if object_list %}<br/>
-{#    Comandes: <br/>#}
      <table border="1" id="myTable" class="tablesorter " style="width: 100%;">
      <thead>
      <tr>
@@ -88,4 +59,5 @@
      </tbody>
        </table>
     {% endif %}
+</div>
 {% endblock %}

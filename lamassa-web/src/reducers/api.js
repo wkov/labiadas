@@ -33,7 +33,7 @@ export default (state = initialState, action) => {
       let oldArray = [];
       if (action.payload.join()) {
         action.payload.map(value => {
-          const newArray = state.message.filter(createFilter(`${value.pk}`, ['etiqueta']));
+          const newArray = state.message.filter(createFilter(`${value}`, ['etiqueta']));
           msgs = oldArray.concat(newArray);
           oldArray = msgs;
           return null;

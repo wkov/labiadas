@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from .models import Producte, UserProfile, Etiqueta, Node, TipusProducte, DiaFormatStock, Entrega, Comanda, Productor
 from .models import FranjaHoraria, DiaEntrega
 from .serializers import ProducteSerializer, UserProfileSerializer, EtiquetaSerializer, FormatSerializer, \
-    ComandaSerializer, ProductorSerializer, NodeSerializer
+    ComandaSerializer, ProductorSerializer, NodeSerializer, EntregaSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 import datetime
@@ -165,16 +165,19 @@ def get_product_list(request):
     etiquetes = get_etiquetes(request, user_p.first())
     productes, productors, user_profile = get_productes(request, user_p.first())
 
-    comandes, historial = get_comandes(request)
+    comandes, historial = get_entregues(request)
+    com, hist = get_comandes(request)
     nodes = get_nodes(request)
     data['etiquetes'] = etiquetes.data
     # data['formats'] = formats.data
-    data['comandes'] = comandes.data
-    data['historial'] = historial.data
-    data['productes']=productes.data
-    data['productors']=productors.data
-    data['user_profile']=user_profile.data
-    data['nodes']=nodes.data
+    data['comandes'] = com.data
+    data['historial'] = hist.data
+    data['new_com'] = comandes
+    data['new_hist'] = historial
+    data['productes'] = productes.data
+    data['productors'] = productors.data
+    data['user_profile'] = user_profile.data
+    data['nodes'] = nodes.data
 
     # productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
     # product_list = Producte.objects.filter(productor__pk='1')
@@ -204,6 +207,45 @@ def get_etiquetes(request, user_p):
     etq = Etiqueta.objects.filter(pk__in=etiquetes).distinct()
     etiquetes_serialized = EtiquetaSerializer(etq, many=True)
     return etiquetes_serialized
+
+def get_entregues(request):
+    orders = {}
+    day = {}
+    date = ""
+    entrega = ""
+    hist = {}
+    now = datetime.datetime.now()
+    entregas = Entrega.objects.filter(comanda__client=request.user, dia_entrega__date__gte=now).order_by('-dia_entrega__date', 'franja_horaria__inici')
+    # com = Comanda.objects.filter(entregas__in=entregas).distinct()
+    entregas_hist = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by('-dia_entrega__date', 'franja_horaria__inici')
+    # hist = Comanda.objects.filter(entregas__in=entregas_hist).distinct()
+    if entregas:
+        for e in entregas:
+            if date:
+                if e.dia_entrega != date:
+                    day[date.pk] = orders
+                    orders = {}
+            date = e.dia_entrega
+            entrega = EntregaSerializer(e, many=False)
+            orders[e.pk] = entrega.data
+        day[date.pk] = orders
+        orders = {}
+        date = ""
+    if entregas_hist:
+        for eh in entregas_hist:
+            if date:
+                if eh.dia_entrega != date:
+                    hist[date.pk] = orders
+                    orders = {}
+            date = eh.dia_entrega
+            entrega = EntregaSerializer(eh, many=False)
+            orders[e.pk] = entrega.data
+        hist[date.pk] = orders
+        orders = {}
+    # comandes = sorted(com, key=lambda a: (a.prox_entrega().dia_entrega.date, a.prox_entrega().franja_horaria.inici))
+    # comanda_serialized=ComandaSerializer(com, many=True)
+    # hist_serialized=ComandaSerializer(hist, many=True)
+    return day, hist
 
 
 def get_comandes(request):

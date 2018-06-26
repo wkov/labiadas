@@ -47,54 +47,17 @@
 {% include 'romani/productors/menu_dis.html' %}
     <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
     font-size: 2em">Calendari &nbsp;</div>
-{#        {% for link in object_list %}#}
-{#              <li style="display: inline;">#}
-{#                 &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor" id="pro_menu">#}
-{#                    [{{ link.nom }}]#}
-{#                </a>#}
-{#                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">#}
-{#                      <span id="notification_count">#}
-{#                        {{ link.comandes_count }}#}
-{#                      </span>#}
-{#                  </a>#}
-{#              </li>#}
-{#            <br/>#}
-{#        {% endfor %}#}
+
     {% else %}
         <a href="{% url 'productor_create' %}" id="pro_menu"> Crear Nou Productor</a> <br/>
             <br/>
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
     {% endif %}
-    </div>
-{#    <div style="margin: 0 auto; text-align:center; ">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_cal_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Calendari</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >#}
-{#                                    <b id="pato" name="pato" class="pato">Veure historial</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>#}
 
 <br/><br/>
     <br/>
-{#    <div id="dialog" title="Calendari d'entregues">#}
-{#        <p>Clica sobre el dia d'entrega per seleccionar els productes que portaràs. En <b style="color: green">verd</b> estan pintats els dies en que <b style="color: green">SÍ</b> t'has compromés a portar productes,#}
-{#        en <b style="color: black">negre</b> els que <b style="color: black">NO</b> has confirmat assistència</p>#}
-{#    </div>#}
-
-
-
     <div id='calendar' style="float:left; position: relative"></div>
 
 
-
+</div>
 {% endblock %}
