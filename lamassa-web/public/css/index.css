@@ -21,6 +21,7 @@ body {
 
 .card-simple {
   width: 50% !important;
+  margin: 10px !important;
   background-color: #ebf9d6 !important;
 }
 

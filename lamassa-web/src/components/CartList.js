@@ -40,13 +40,11 @@ const styles = theme => ({
   details: {
     alignItems: 'center',
   },
-  column: {
-    flexBasis: '33.3%',
+  firstColumn: {
+    flexBasis: '10%',
   },
-  chip: {
-    marginLeft: 5,
-    marginRight: 10,
-    height: '24px',
+  column: {
+    flexBasis: '20%',
   },
   helper: {
     borderLeft: `2px solid ${theme.palette.text.lightDivider}`,
@@ -94,32 +92,54 @@ class CartList extends React.Component {
     let preuTotal = 0;
 
     return (
-      <Card className="card-simple">
+      <Card className="card-review-product ">
         <CardHeader title={<div className="cards-title">{this.props.title}</div>} />
         <CardContent>
+          <ExpansionPanel expanded={false}>
+            <ExpansionPanelSummary>
+              <div className={classes.firstColumn} style={{ display: 'flex' }}>
+                .
+              </div>
+              <div className="cart-details">
+                <div className={classes.column}>Producte:</div>
+                <div className={classes.column}>Format:</div>
+                <div className={classes.column}>Entrega:</div>
+                <div className={classes.column}>Preu Unitat:</div>
+                <div className={classes.column}>Quantitat:</div>
+                <div className={classes.column}>Total:</div>
+              </div>
+            </ExpansionPanelSummary>
+            <Divider />
+          </ExpansionPanel>
           {cart.map((value, index) => {
             preuTotal = preuTotal + value.preu;
             return (
               <ExpansionPanel key={value.pk}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <div className={classes.column} style={{ display: 'flex' }}>
+                  <div className={classes.firstColumn} style={{ display: 'flex' }}>
                     {this.props.edit ? (
                       <DeleteIcon onClick={() => this.handleClickOpenConfirm(value.pk)} style={{ marginRight: 20 }} />
                     ) : null}
-                    <div className="cards-text">{value.producte}</div>
                   </div>
                   <div className="cart-details">
-                    <div className="cart-details-item">
-                      <div className="cards-text">Quantitat: </div>
-                      <Chip label={value.cantitat} className={classes.chip} />
+                    <div className={classes.column}>{value.producte}</div>
+                    <div className={classes.column}>
+                      <Chip label={value.format.nom} className="cart-chips" />
                     </div>
-                    <div className="cart-details-item">
-                      <div className="cards-text">Tipus: </div>
-                      <Chip label={value.format.nom + ` (${value.format.preu} €)`} className={classes.chip} />
+                    <div className={classes.column}>
+                      <Chip
+                        label={new Date(value.entregas[0].dia_entrega.date).toLocaleDateString()}
+                        className="cart-chips"
+                      />
                     </div>
-                    <div className="cart-details-item">
-                      <div className="cards-text">Total: </div>
-                      <Chip label={value.preu + ' €'} className={classes.chip} />
+                    <div className={classes.column}>
+                      <Chip label={`(${value.format.preu} €)`} className="cart-chips" />
+                    </div>
+                    <div className={classes.column}>
+                      <Chip label={value.cantitat} className="cart-chips" />
+                    </div>
+                    <div className={classes.column}>
+                      <Chip label={value.preu + ' €'} className="cart-chips" />
                     </div>
                   </div>
                 </ExpansionPanelSummary>

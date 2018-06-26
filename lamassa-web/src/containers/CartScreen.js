@@ -10,7 +10,6 @@ class CartScreen extends Component {
     this.props.fetchList();
   }
   render() {
-    console.log(this.props.historial);
     if (!this.props.historial) {
       return <div>Cargando..</div>;
     }
