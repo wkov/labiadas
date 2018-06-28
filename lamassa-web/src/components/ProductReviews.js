@@ -1,7 +1,9 @@
 import React from 'react';
-import List, { ListItem } from 'material-ui/List';
-import Card, { CardContent } from 'material-ui/Card';
-import Divider from 'material-ui/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import CardContent from '@material-ui/core/CardContent';
+import Card from '@material-ui/core/Card';
+import Divider from '@material-ui/core/Divider';
 
 const ProductReviews = () => {
   const comentaris = [

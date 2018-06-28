@@ -1,15 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ListItem, ListItemIcon } from 'material-ui/List';
-import MailIcon from 'material-ui-icons/Mail';
-import ShoppingCartIcon from 'material-ui-icons/ShoppingCart';
-import FavoriteIcon from 'material-ui-icons/Favorite';
-import HelpIcon from 'material-ui-icons/Help';
-import HomeIcon from 'material-ui-icons/Home';
-import Badge from 'material-ui/Badge';
-import Divider from 'material-ui/Divider';
-import ShareIcon from 'material-ui-icons/Share';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import MailIcon from '@material-ui/icons/Mail';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import HelpIcon from '@material-ui/icons/Help';
+import HomeIcon from '@material-ui/icons/Home';
+import Badge from '@material-ui/core/Badge';
+import Divider from '@material-ui/core/Divider';
+import ShareIcon from '@material-ui/icons/Share';
 import { snackMessage } from '../../actions/userActions';
 
 const DrawerIcons = props => {

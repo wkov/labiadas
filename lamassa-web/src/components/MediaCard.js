@@ -3,17 +3,20 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import compose from 'recompose/compose';
-import { withStyles } from 'material-ui/styles';
-import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card';
-import IconButton from 'material-ui/IconButton';
-import FavoriteIcon from 'material-ui-icons/Favorite';
-import ShoppingCartIcon from 'material-ui-icons/ShoppingCart';
-import MessageIcon from 'material-ui-icons/Message';
-import Button from 'material-ui/Button';
-import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Select from 'material-ui/Select';
-import { ListItemIcon } from 'material-ui/List';
+import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import IconButton from '@material-ui/core/IconButton';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import MessageIcon from '@material-ui/icons/Message';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import StarRatingComponent from 'react-star-rating-component';
 import { addFavorites } from '../actions/userActions';
 import { addRemoveItem } from '../actions/apiActions';
@@ -185,7 +188,6 @@ class MediaCard extends Component {
                   <CardActions className={classes.container} disableActionSpacing>
                     <Button
                       style={{ marginLeft: 'auto' }}
-                      dense
                       onClick={() => {
                         const { openDialogCart } = this.state;
                         openDialogCart[index] = true;

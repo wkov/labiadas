@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 
 import { Link } from 'react-router-dom';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import AccountCircle from 'material-ui-icons/AccountCircle';
-import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import * as reducers from '../reducers';
 import { userLogout } from '../actions/authActions';
@@ -64,19 +65,12 @@ class AppBarTitle extends Component {
     return (
       <div className="appbar-menu-button">
         <IconButton
-          color="contrast"
+          color="secondary"
           aria-label="open drawer"
           onClick={this.handleDrawerOpen}
           className={classNames(classes.menuButton, this.props.open && classes.hide)}
         >
           <MenuIcon />
-        </IconButton>
-        <IconButton
-          color="contrast"
-          onClick={this.handleDrawerClose}
-          className={classNames(classes.menuButton, !this.props.open && classes.hide)}
-        >
-          <ChevronLeftIcon />
         </IconButton>
       </div>
     );

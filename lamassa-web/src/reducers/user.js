@@ -9,6 +9,7 @@ const initialState = {
   cart: [],
   nodes: [],
   historial: [],
+  newCart: {},
 };
 
 export default (state = initialState, action) => {
@@ -33,6 +34,7 @@ export default (state = initialState, action) => {
         ...state,
         ts: new Date().getTime(),
         cart: action.payload.comandes,
+        newCart: action.payload.new_com,
       };
     case user.REMOVE_CART:
       return {
@@ -62,7 +64,7 @@ export default (state = initialState, action) => {
         user: action.payload.user,
       };
     case api.FETCH_SUCCESS: {
-      const { user_profile, nodes, historial, comandes } = action.payload;
+      const { user_profile, nodes, historial, comandes, new_com } = action.payload;
       // const newProductes = mergeFormatsProductes(productes, formats);
       return {
         ...state,
@@ -70,6 +72,7 @@ export default (state = initialState, action) => {
         nodes,
         historial,
         cart: comandes,
+        newCart: new_com,
       };
     }
     case user.POST_SUCCESS:

@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Card, { CardContent, CardMedia, CardHeader } from 'material-ui/Card';
-import Avatar from 'material-ui/Avatar';
-import Table, { TableBody, TableCell, TableRow, TableHead } from 'material-ui/Table';
-import Grid from 'material-ui/Grid';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle, // eslint-disable-next-line
-} from 'material-ui/Dialog';
-import Button from 'material-ui/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardHeader from '@material-ui/core/CardHeader';
+import Avatar from '@material-ui/core/Avatar';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import TableHead from '@material-ui/core/TableHead';
+import Grid from '@material-ui/core/Grid';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 import { postChanges } from '../actions/userActions';
 import { fetchList } from '../actions/apiActions';

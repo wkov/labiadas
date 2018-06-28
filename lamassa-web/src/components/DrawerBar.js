@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import Drawer from 'material-ui/Drawer';
-import List from 'material-ui/List';
-import IconButton from 'material-ui/IconButton';
-import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
-import ChevronRightIcon from 'material-ui-icons/ChevronRight';
-import Hidden from 'material-ui/Hidden';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import IconButton from '@material-ui/core/IconButton';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Hidden from '@material-ui/core/Hidden';
 
 import { handleDrawer } from '../actions/userActions';
 import DrawerIcons from './utils/DrawerIcons';
@@ -18,7 +18,7 @@ const drawerWidth = 240;
 
 const styles = theme => ({
   drawerPaper: {
-    zIndex: 20,
+    zIndex: 1200,
     top: 0,
     position: 'fixed',
     width: drawerWidth,
@@ -29,12 +29,16 @@ const styles = theme => ({
     backgroundColor: '#90ae68',
   },
   drawerPaperClose: {
-    width: 60,
+    zIndex: 10,
     overflowX: 'hidden',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    width: theme.spacing.unit * 7,
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing.unit * 9,
+    },
     backgroundColor: '#90ae68',
   },
   drawerInner: {
@@ -59,15 +63,16 @@ class DrawerBar extends Component {
 
   render() {
     const { open, classes, theme } = this.props;
+    console.log('Drawer;', open, theme);
     return (
       <div>
         <Hidden smDown>
           <Drawer
-            type="permanent"
+            variant="permanent"
             classes={{
-              paper: classNames(classes.drawerPaper, !open && classes.drawerPaperClose),
+              paper: classNames(classes.drawerPaper, !(open ? open : false) && classes.drawerPaperClose),
             }}
-            open={open}
+            open={open ? open : false}
           >
             <div className={classes.drawerInner}>
               <div className={classes.drawerHeader}>
@@ -83,11 +88,11 @@ class DrawerBar extends Component {
         </Hidden>
         <Hidden mdUp>
           <Drawer
-            type="persistent"
+            variant="persistent"
             classes={{
               paper: classNames(classes.drawerPaper),
             }}
-            open={open}
+            open={open ? open : false}
           >
             <div className={classes.drawerInner}>
               <div className={classes.drawerHeader}>

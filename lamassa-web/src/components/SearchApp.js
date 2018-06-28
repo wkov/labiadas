@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import SearchInput from 'react-search-input';
-import Button from 'material-ui/Button';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import { ListItemIcon, ListItemText } from 'material-ui/List';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { connect } from 'react-redux';
-import Hidden from 'material-ui/Hidden';
+import Hidden from '@material-ui/core/Hidden';
 
 import { searchUpdated, categoryUpdated } from '../actions/apiActions';
 
@@ -67,13 +69,7 @@ class SearchApp extends Component {
     return (
       <div>
         <Hidden lgUp>
-          <Button
-            raised
-            dense
-            aria-owns={anchorEl ? 'simple-menu' : null}
-            aria-haspopup="true"
-            onClick={this.handleClick}
-          >
+          <Button aria-owns={anchorEl ? 'simple-menu' : null} aria-haspopup="true" onClick={this.handleClick}>
             {this.renderButtonCategory(this.state.categoryTerm)}
           </Button>
         </Hidden>

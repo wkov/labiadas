@@ -52,6 +52,19 @@ header {
   margin: 10px;
 }
 
+.card-cistella {
+  width: 60%;
+  background-color: #ebf9d6 !important;
+  margin: 10px;
+}
+
+.cistella-table-row {
+  display: flex !important;
+}
+
+.card-cistella-columns {
+}
+
 .cards-list {
   width: 380px;
   height: 380px;

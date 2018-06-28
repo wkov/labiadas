@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Button from 'material-ui/Button';
-import { FormHelperText } from 'material-ui/Form';
+import Button from '@material-ui/core/Button';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator } from 'react-material-ui-form-validator';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 
 class LoginForm extends Component {
   constructor(props) {

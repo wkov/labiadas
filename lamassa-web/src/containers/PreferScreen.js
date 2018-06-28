@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
-import Hidden from 'material-ui/Hidden';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
 import SearchApp from '../components/SearchApp';
 import MediaCard from '../components/MediaCard';
 import CategoriesBar from '../components/CategoriesBar';

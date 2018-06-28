@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import CartList from '../components/CartList';
-import Typography from 'material-ui/Typography';
+import NewCartList from '../components/NewCartList';
+import Typography from '@material-ui/core/Typography';
 import { removeFromCart } from '../actions/userActions';
 import { fetchList } from '../actions/apiActions';
 
@@ -15,6 +16,13 @@ class CartScreen extends Component {
     }
     return (
       <div>
+        <NewCartList
+          title={'Cistella'}
+          cart={this.props.cart}
+          newCart={this.props.newCart}
+          removeFromCart={this.props.removeFromCart}
+          edit
+        />
         <CartList title={'Properes entregues'} cart={this.props.cart} removeFromCart={this.props.removeFromCart} edit />
         <CartList title={'Historial comandes'} cart={this.props.historial} removeFromCart={this.props.removeFromCart} />
       </div>
@@ -23,8 +31,8 @@ class CartScreen extends Component {
 }
 
 const mapStateToProps = ({ user }) => {
-  const { cart, historial } = user;
-  return { cart, historial };
+  const { newCart, cart, historial } = user;
+  return { cart, newCart, historial };
 };
 
 export default connect(mapStateToProps, { removeFromCart, fetchList })(CartScreen);

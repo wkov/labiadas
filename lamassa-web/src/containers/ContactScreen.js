@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Typography } from 'material-ui/Typography';
+import { Typography } from '@material-ui/core/Typography';
 
 class ContactScreen extends Component {
   render() {

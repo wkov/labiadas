@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import SimpleMediaCard from '../components/SimpleMediaCard';
 import MediaCard from '../components/MediaCard';
 import ProductReviews from '../components/ProductReviews';
