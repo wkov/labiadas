@@ -10,6 +10,7 @@ const initialState = {
   nodes: [],
   historial: [],
   newCart: {},
+  newHist: {},
 };
 
 export default (state = initialState, action) => {
@@ -64,7 +65,7 @@ export default (state = initialState, action) => {
         user: action.payload.user,
       };
     case api.FETCH_SUCCESS: {
-      const { user_profile, nodes, historial, comandes, new_com } = action.payload;
+      const { user_profile, nodes, historial, comandes, new_com, new_hist } = action.payload;
       // const newProductes = mergeFormatsProductes(productes, formats);
       return {
         ...state,
@@ -73,6 +74,7 @@ export default (state = initialState, action) => {
         historial,
         cart: comandes,
         newCart: new_com,
+        newHist: new_hist,
       };
     }
     case user.POST_SUCCESS:
