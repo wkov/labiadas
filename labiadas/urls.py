@@ -156,6 +156,6 @@ urlpatterns = [
     url(r'^messages/', include('django_messages.urls')),
     url('^inbox/notifications/', include('notifications.urls', namespace="notifications")),
     url(r"edit_profile/$", auth(UserProfileEditView.as_view()), name="edit_profile"),
-    url(r'^perfil/(?P<pk>\d+)$', auth(UserDetailView), name='perfil'),
+    url(r'^perfil/(?P<username>\w+)$', auth(UserDetailView), name='perfil'),
     url(r'^$', auth(coopeView), name="coope"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
