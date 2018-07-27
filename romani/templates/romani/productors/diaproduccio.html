@@ -130,7 +130,8 @@ Introdueix els stocks que crees el dia de producció:
                             <td>{{ link.dia_entrega.date }}</td>
                             <td>{{ link.franja_horaria }}</td>
                             <td>{{ link.comanda.preu }}€</td>
-                            <td>{{ link.comanda.client.first_name }}</td>
+                            <td><a  href="{% url 'perfil' link.comanda.client.pk %}">
+                                    {{ link.comanda.client.username }} </a></td>
 {#                            <td>{{ link.comanda.frequencia }}</td>#}
                             <td>{{ link.data_comanda.date }}</td>
                         </tr>

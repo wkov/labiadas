@@ -77,7 +77,8 @@
                         <td>{{ link.dia_entrega.date|date:"d/m/Y" }}</td>
                         <td>{{ link.franja_horaria }}</td>
                         <td>{{ link.comanda.preu }}€</td>
-                        <td>{{ link.comanda.client.first_name }}</td>
+                        <td><a  href="{% url 'perfil' link.comanda.client.pk %}">
+                                    {{ link.comanda.client.username }} </a></td>
 {#                        <td>{{ link.comanda.frequencia.nom }}</td>#}
                         <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
                </tr>
