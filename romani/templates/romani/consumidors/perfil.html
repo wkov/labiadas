@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+{% block headers %}
+{% endblock %}
+{% block content %}
+    <div id="recurs_wraper" style="display: inline-block; margin:0px; width: 100%">
+        <div id="div_recurs"  style="display: block ">
+            <div class="thumbnail">
+
+
+        Nom complet: <h2>{{ userp.user.first_name }} {{ userp.user.last_name }}</h2>
+                <br/>Usuari: <h3>{{ userp.user.username }}</h3>
+                <h3>{{ userp.user.email }}</h3>
+                 <h3>{{ userp.poblacio }}</h3>
+
+                 Node:<p>{{ userp.lloc_entrega.nom }}</p>
+                <p>a lamassa des de: &nbsp; {{ userp.user.date_joined }}</p>
+
+        <br/><br />
+        <a  href="{% url 'comandes' %}"> Tornar a les comandes </a>
+        </div>
+         <br />
+         <br />
+        </div>
+    </div><br /><br />
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
