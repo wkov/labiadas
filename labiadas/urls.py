@@ -20,6 +20,7 @@ from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, di
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
+from romani.pers_views import UserDetailView
 
 from romani import api
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
@@ -155,5 +156,6 @@ urlpatterns = [
     url(r'^messages/', include('django_messages.urls')),
     url('^inbox/notifications/', include('notifications.urls', namespace="notifications")),
     url(r"edit_profile/$", auth(UserProfileEditView.as_view()), name="edit_profile"),
+    url(r'^perfil/(?P<pk>\d+)$', auth(UserDetailView), name='perfil'),
     url(r'^$', auth(coopeView), name="coope"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
