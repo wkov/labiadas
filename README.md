@@ -2,13 +2,11 @@
 
 Web platform for exchange in cooperation.
 
-- Necessitaràs: 
+- You'll need: 
 
     Python3.5 / Pip 9.0.1 / Virtualenv
 
-on LINUX:
-
-- Obre el terminal en la carpeta en la que vulguis instal·lar i escriu:
+- Open terminal in the folder where you want lamassa app:
 
     $ virtualenv lamassa
     
@@ -30,26 +28,3 @@ on LINUX:
     
     $ python manage.py runserver
 
-on WINDOWS:
-
-- Obre el GIT en la carpeta en la que vulguis instal·lar i escriu:
-
-    $ virtualenv lamassa
-    
-    $ cd lamassa
-    
-    $ source activate
-    
-    $ git clone https://github.com/wkov/labiadas.git
-    
-    $ cd labiadas
-    
-    $ pip install -r requirements.txt
-    
-    $ py manage.py migrate
-    
-    $ py init_new_db
-    
-    $ py manage.py createsuperuser
-    
-    $ py manage.py runserver
