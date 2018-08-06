@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block headers %}
+    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
+    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
+    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/menubar.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    {% include 'romani/productors/menu_pro.html' %}
+
+    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
+    font-size: 2em"> Fotos Productora &nbsp;</div>
+
+<br/><br/>
+<a  href="{% url 'adjunt_create' productor.pk %}" id="pro_menu">Carregar nova foto</a><br/><br/>
+
+{% if adjunts %}
+        {% for producte in adjunts %}
+          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" >
+            <div class="thumbnail" >
+              <div class="caption">
+                      {% if producte.arxiu %}
+                        <a href="{{ MEDIA_URL }}{{ producte.arxiu.url }}" title="veure imatge">
+                        <div class="g-item" style="background-image:url('{{ producte.arxiu.url }}');background-position: center;
+            background-size: cover; " >
+                            </div>
+                        </a>
+                      {% endif %}
+
+                    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+                        <a class="glyphicon glyphicon-trash" type="button" href="{% url 'adjuntDelete' producte.pk  %}"
+                           title="Borrar foto"
+                           onclick="return confirm('Segur que vols borrar la foto?')">
+                                Borrar</a>
+            </div>
+            </div>
+    </div>
+        {%  endfor %}
+        {% endif %}
+        {% if not adjunts %}
+                No hi ha adjunts encara
+                </br></br>
+        {% endif %}
+
+
+
+
+{% endblock %}
