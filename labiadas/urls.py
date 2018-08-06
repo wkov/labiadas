@@ -16,7 +16,7 @@ from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
 from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
-from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls
+from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls, adjuntDelete, adjuntsProductor
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
@@ -69,6 +69,8 @@ urlpatterns = [
     url(r"^producte/update/(?P<pk>\d+)/$", auth(ProducteUpdateView.as_view()), name="producte_update"),
     url(r"^format/update/(?P<pk>\d+)/$", auth(TipusProducteUpdateView.as_view()), name="format_update"),
     url(r"^pro/(?P<pro>\d+)/adjunt/create/$", auth(AdjuntCreateView.as_view()), name="adjunt_create"),
+    url(r"^pro/(?P<pro>\d+)/adjunts/$", auth(adjuntsProductor), name="adjuntsProductor"),
+    url(r'^adjuntDelete/(?P<pk>\d+)$', auth(adjuntDelete), name="adjuntDelete"),
     url(r"^pro/(?P<pro>\d+)/format/create/$", auth(TipusProducteCreateView.as_view()), name="format_create"),
     url(r"^pro/(?P<pro>\d+)/producte/create/$", auth(ProducteCreateView.as_view()), name="producte_create"),
     url(r"^productor/create/$", auth(ProductorCreateView.as_view()), name="productor_create"),

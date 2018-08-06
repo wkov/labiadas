@@ -29,7 +29,7 @@
       <li>Calendari
           <ul>
               <li><a href="{% url 'vista_dates' link.pk %}">Editar Calendari</a></li>
-              <li><a href="{% url 'diaproduccio_create' link.pk %}">Crear nous stocks de producció</a></li>
+              <li><a href="{% url 'diaproduccio_create' link.pk %}">Nova producció(opcional)</a></li>
           </ul>
       </li>
       <li>Productes
@@ -41,8 +41,8 @@
       </li>
       <li>Productora
         <ul>
-            <li><a href="{% url 'productor_update' link.pk %}">Editar Productora</a></li>
-            <li><a href="{% url 'adjunt_create' link.pk %}">Carregar fotos</a></li>
+            <li><a href="{% url 'productor_update' link.pk %}">Info Productora</a></li>
+            <li><a href="{% url 'adjuntsProductor' link.pk %}">Fotos Productora</a></li>
         </ul>
       </li>
     </ul>

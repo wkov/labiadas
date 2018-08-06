@@ -8,16 +8,7 @@
 {% endblock %}
 
 {% block content %}
-{#    <div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
-{#    font-size: 3em"> {{ productor.nom }} </div>#}
-{#    <script>#}
-{#    jQuery(document).ready(function($) {#}
-{#        $("#checkAll").click(function () {#}
-{##}
-{#            $('input:checkbox').not(this).prop('checked', this.checked);#}
-{#        })#}
-{#        })#}
-{#    </script>#}
+
 
     {% include 'romani/productors/menu_pro.html' %}
 
@@ -26,38 +17,33 @@
 
 <form method="post" action="">
   {% csrf_token %}
-{#    <div style="margin: 0 auto; text-align:center;">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_dates' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Calendari</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productor</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >#}
-{#                                    <b id="pato" name="pato" class="pato">Veure historial</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>#}
-{##}
-{#<br/><br/>#}
-{#<a href="{% url 'diaproduccio_create' productor.pk %}" id="pro_menu_selected">Editar produccio</a>#}
+
 <br/>
-Introdueix els stocks que crees el dia de producció:
+    &nbsp; És un afegit opcional a les funcions de lamassa.
+    Óptim per a integrar la gestió del magatzem (no integrada x la massa), amb la gestió de les comandes (que ja fa lamassa).
+    Si vols fer-ho servir,
+    A continuació pots veure un llistat de tots els formats que produeixes amb {{productor.nom}},
+    introdueix la data de producció, així com la data de caducitat.
+    També has d'introduir les quantitats que produiràs de cada format. Ho pots fer amb cada productor
+    del que siguis responsable. També, si vols, pots introduïr una cooperativa, això vol dir que la
+    producció introduïda va íntegrament a aquesta cooperativa.
+<br/><br/>
+    &nbsp; Aleshores quan visitis el calendari per editar els dies d'entrega,
+    en cada format que posis disponible en el dia d'entrega podràs triar la opció "límit per stock".
+    Per cada format en que indiquis aquesta opció la web anirà a buscar el stock més antic
+    que no hagi caducat encara. Si cada vegada que fas una producció que voldràs posar disponible
+    per a lamassa l'introdueixes d'aquesta manera i ho ordenes d'igual forma en el magatzem,
+    quan et facin comandes podràs saber de quin lot treure-ho, quants et queden de cada lot,
+    podràs modificar també els stocks disponibles si es mermen unitats produïdes,
+    o si pel que sigui les vols retirar.
+<br/><br/>
+    &nbsp; La gestió de magatzem guanya molta força quan es combina amb les opcions que ja tenim
+    en els dies d'entrega. Està pensat per a facilitarnos la vida als productors, i dissenyat per
+    a ser el més senzill possible en el seu ús habitual, pero és veritat que s'ha desenvolupar més
+    la eina per facilitar-ho i explicar millor i en profunditat el concepte per a començar-ho a
+    fer servir.
+    Per a + info escriviu a: lamassaxarxa@gmail.com
+<br/>
 <table border="1">
 <tr><td>{{ form.as_p }}
 </td></tr>

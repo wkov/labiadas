@@ -270,7 +270,47 @@ class AdjuntCreateView(CreateView):
         # messages.success(self.request, (u"S'ha carregat la nova foto a l'àlbum del productor"))
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         messages.success(self.request, (u"Fotografia afegida a l'àlbum del productor"))
-        return "/productor/update/" + str(productor.pk)
+        return "/pro/" + str(productor.pk) + "/adjunts"
+
+
+def adjuntsProductor(request, pro):
+
+    productors = Productor.objects.filter(responsable=request.user)
+    productor = Productor.objects.get(pk=pro)
+    if productor in productors:
+        adjunts = Adjunt.objects.filter(productor__pk=pro)
+        return render(request, "romani/productors/fotos_productor.html",
+                      {'adjunts': adjunts, 'productor': productor, 'productors': productors})
+    else:
+        messages.error(request, (u"Hi ha hagut un error. No tens permissos "
+                                      u"per gestionar fotos d'aquest productor"))
+        return render(request, "romani/productors/fotos_productor.html",
+                      {'productor': productor, 'productors': productors})
+
+
+
+
+
+
+
+def adjuntDelete(request, pk):
+
+    productors = Productor.objects.filter(responsable=request.user)
+
+    fotoDelete = Adjunt.objects.get(pk=pk)
+    if fotoDelete.productor in productors:
+        adjunts = Adjunt.objects.filter(productor=fotoDelete.productor)
+        fotoDelete.delete()
+        return render(request, "romani/productors/fotos_productor.html",
+                      {'adjunts': adjunts, 'productor': fotoDelete.productor, 'productors': productors})
+    else:
+        messages.error(request, (u"Hi ha hagut un error. No tens permissos "
+                                      u"per gestionar fotos d'aquest productor"))
+        return render(request, "romani/productors/fotos_productor.html",
+                      {'productor': fotoDelete.productor, 'productors': productors})
+
+
+
 
 
 
