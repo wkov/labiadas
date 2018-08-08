@@ -482,7 +482,7 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User, unique=True, related_name='user_profile')
     bio = models.TextField(null=True, blank=True)
-    lloc_entrega = models.ForeignKey(Node, blank=True, null=True)
+    lloc_entrega = models.ForeignKey(Node, blank=True, null=True, related_name='user_profiles')
     invitacions = models.IntegerField(default=4, blank=True, null=True)
     avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
 

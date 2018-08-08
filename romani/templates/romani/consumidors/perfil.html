@@ -12,14 +12,13 @@
 
         Nom complet: <h2>{{ userp.user.first_name }} {{ userp.user.last_name }}</h2>
                 <br/>Usuari: <h3>{{ userp.user.username }}</h3>
-                <h3>{{ userp.user.email }}</h3>
-                 <h3>{{ userp.poblacio }}</h3>
+                Correu-e: <h3>{{ userp.user.email }}</h3>
+                 <!--<h3>{{ userp.poblacio }}</h3>-->
 
-                 Node:<p>{{ userp.lloc_entrega.nom }}</p>
-                <p>a lamassa des de: &nbsp; {{ userp.user.date_joined }}</p>
+                 Node:<h3>{{ userp.lloc_entrega.nom }}</h3>
+                a lamassa des de: <h3>{{ userp.user.date_joined }}</h3>
 
         <br/><br />
-        <a  href="{% url 'comandes' %}"> Tornar a les comandes </a>
         </div>
          <br />
          <br />
