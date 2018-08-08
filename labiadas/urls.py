@@ -16,7 +16,7 @@ from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
 from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
-from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls, adjuntDelete, adjuntsProductor
+from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls, adjuntDelete, adjuntsProductor, CoopsListView
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^pro/(?P<pro>\d+)/calProdEvents/$', auth(diaProdEvents), name="calProdEvents"),
     url(r'^pro/distriEvents/$', auth(distriCalendarEvents), name="distriEvents"),
     url(r'^pro/distriSelected/$', auth(distriCalendarSelected), name="distriSelected"),
+    url(r'^pro/coops/', auth(CoopsListView.as_view()), name='productorCoops'),
     url(r'^pro/(?P<pro>\d+)/vista_productes/', auth(ProductesListView.as_view()), name='vista_productes'),
     url(r'^pro/(?P<pro>\d+)/vista_dates/', auth(DatesListView.as_view()), name='vista_dates'),
     url(r'^pro/(?P<pro>\d+)/vista_historial/', auth(HistorialListView.as_view()), name='vista_historial'),

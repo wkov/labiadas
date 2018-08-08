@@ -182,6 +182,19 @@ class ProductesListView(ListView):
         return context
 
 
+class CoopsListView(ListView):
+    model = Node
+    template_name = "romani/productors/coops.html"
+
+    def get_queryset(self):
+        return Productor.objects.filter(responsable=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(CoopsListView, self).get_context_data(**kwargs)
+        nodes = Node.objects.exclude(pk=1)
+        context["nodes"] = nodes
+        return context
+
 class TipusProducteCreateView(CreateView):
     model = TipusProducte
     form_class = TipusProducteForm
