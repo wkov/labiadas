@@ -67,6 +67,17 @@ def dis_export_comandes_xls(request, pk):
     row_num += 1
     ws.write(row_num, col_num, total, font_style)
 
+
+    row_num += 2
+    de = DiaEntrega.objects.get(pk=pk)
+    rows = de.totals_productors_propis(request.user)
+    rows.sort(key=lambda rw: rw[0])
+    for row in rows:
+        old_row=row[0]
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
     # messages.success(request, (u"S'ha descarregat el arxiu correctament"))
     wb.save(response)
     return response
@@ -119,6 +130,7 @@ def pro_export_comandes_xls(request, pro, pk):
 
     row_num += 1
     ws.write(row_num, col_num, total, font_style)
+
 
     # messages.success(request, (u"S'ha descarregat el arxiu correctament"))
     wb.save(response)
@@ -464,6 +476,8 @@ def DiaEntregaDistribuidorView(request, dataentrega):
     formats = TipusProducte.objects.filter(producte__productor__in=productors)
     # Filtrem les comandes lligades al dia d'entrega
     comandes = Entrega.objects.filter(comanda__format__in=formats, dia_entrega=diaentrega)
+    #Calculem el total del dia per a cada un dels productors de la distribuidora
+    totals_productors = diaentrega.totals_productors_propis(request.user)
     # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
     preu_total = 0
     cant_total = 0
@@ -577,7 +591,8 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                     return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
 
     return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'object_list': productors_menu, 'formatstockform': formatstockform,
-                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                        'totals_productors': totals_productors})
 
 
 

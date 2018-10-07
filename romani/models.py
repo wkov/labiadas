@@ -149,6 +149,34 @@ class DiaEntrega(models.Model):
     def franja_inici(self):
         return self.franjes_horaries.order_by("inici").first()
 
+    def total_productor(self, pro_pk):
+        total = 0
+        for e in self.entregas.filter(comanda__format__producte__productor__pk=pro_pk):
+            total = total + e.comanda.preu
+        return total
+
+    def totals_productors(self):
+        list = []
+        for productor in self.productors():
+            s = [productor.nom, self.total_productor(productor.pk)]
+            list.append(s)
+        return list
+
+    def totals_productors_propis(self, user):
+        list = []
+        for productor in self.productors():
+            if user in productor.responsable.all():
+                s = [productor.nom, self.total_productor(productor.pk)]
+                list.append(s)
+        return list
+
+    def productors(self):
+        productors = set()
+        for p in self.entregas.all():
+            productors.add(p.comanda.format.producte.productor)
+        return productors
+
+
     # def franja(self):
     #     return self.franja_inici().inici
 

@@ -80,6 +80,23 @@
              </tr>
          </tbody>
            </table>
+<br/><br/>
+         <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
+                <thead>
+                <tr>
+                <th>Productor</th>
+                <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p, c in diaentrega.totals_productors %}
+                    <tr>
+                        <td>{{ p }}</td>
+                        <td>{{ c }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
     {% endif %}
     {% if not object_list %}
             Encara no hi ha comandes fetes per aquest dia d'entrega

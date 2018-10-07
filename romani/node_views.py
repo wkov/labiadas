@@ -59,6 +59,21 @@ def export_comandes_xls(request, pk):
     row_num += 1
     ws.write(row_num, col_num, total, font_style)
 
+    row_num += 2
+    de = DiaEntrega.objects.get(pk=pk)
+    rows = de.totals_productors()
+    rows.sort(key=lambda rw: rw[0])
+    for row in rows:
+        old_row=row[0]
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+
+
+
+
+
     # messages.success(request, (u"S'ha descarregat el arxiu correctament"))
     wb.save(response)
     return response
