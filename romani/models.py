@@ -176,6 +176,39 @@ class DiaEntrega(models.Model):
             productors.add(p.comanda.format.producte.productor)
         return productors
 
+    def total_producte(self, pro_pk):
+        total = 0
+        cant = 0
+        for e in self.entregas.filter(comanda__format__pk=pro_pk):
+            total = total + e.comanda.preu
+            cant = cant + e.comanda.cantitat
+        return total, cant
+
+    def totals_productes(self):
+        list =[]
+        for p in self.formats.all():
+            s = [p.format.producte.nom, p.format.nom, self.total_producte(p.pk)]
+        return list
+
+    def totals_productes_propis(self, user):
+        list = []
+        for p in self.formats.all():
+            if user in p.format.productor.responsable.all():
+                total, cant =  self.total_producte(p.format.pk)
+                s = [p.format.producte.nom, p.format.nom, cant, total]
+                list.append(s)
+        return list
+
+    def totals_productesxproductor(self, pro_pk):
+        list = []
+        productor = Productor.objects.get(pk=pro_pk)
+        for p in self.formats.filter(format__productor=productor):
+                total, cant = self.total_producte(p.format.pk)
+                s = [p.format.producte.nom, p.format.nom, cant, total]
+                list.append(s)
+        return list
+
+
 
     # def franja(self):
     #     return self.franja_inici().inici
@@ -217,6 +250,7 @@ class Producte(models.Model):
     productor = models.ForeignKey(Productor)
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
+    status = models.BooleanField(default=True)
     # karma_date = models.DateTimeField(blank=True, null=True)
     # karma_value = models.IntegerField(blank=True, null=True)
 

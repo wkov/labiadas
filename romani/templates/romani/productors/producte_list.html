@@ -27,6 +27,7 @@
 {#                      <span class="glyphicon glyphicon-pencil"></span>#}
                 </a></h3>
 
+
                 <div>
 
 {#                <p>Formats:</p>#}
@@ -57,6 +58,12 @@
                 {% endfor %}
                 </tbody>
                 </table>
+                                   <div>     &nbsp;
+                            <a class="glyphicon glyphicon-trash" type="button" href="{% url 'producteDelete' link.pk  %}"
+                           title="Borrar producte"
+                           onclick="return confirm('Segur que vols borrar el producte?')">
+                         Borrar producte       </a>
+                 </div>
                 </div>
             </div>
         {% endfor %}

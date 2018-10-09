@@ -69,10 +69,32 @@
              </tr>
          </tbody>
            </table>
-    {% endif %}
 
 <br/><br/>
-         <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
+<p><b>Totals</b> per <b>productes</b>:</p>
+         <table border="1" id="myTable2" class="tablesorter" style="; position: relative; width: 100%">
+                <thead>
+                <tr>
+                <th>Producte</th>
+                <th>Format</th>
+                <th>Unitats</th>
+                <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p, f, c, t in totals_productes %}
+                    <tr>
+                        <td>{{ p }}</td>
+                        <td>{{ f }}</td>
+                        <td>{{ c }}</td>
+                        <td>{{ t }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+<br/><br/>
+<p><b>Totals</b> per <b>productors</b>:</p>
+         <table border="1" id="myTable3" class="tablesorter" style="; position: relative; width: 100%">
                 <thead>
                 <tr>
                 <th>Productor</th>
@@ -89,8 +111,14 @@
                 </tbody>
             </table>
 
+
+    {% endif %}
+
+
+
 <form method="post" action="">
   {% csrf_token %}
+    <br/>
 <p><b>Productes</b> que ofereixes el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
 
 {{ formatstockform.management_form }}

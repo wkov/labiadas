@@ -12,7 +12,12 @@ from django.contrib import messages
 from django.contrib.auth.models import Group
 
 from django.shortcuts import render, get_object_or_404, redirect
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponse
 
+from django.utils import timezone
+from notifications import notify
 
 import xlwt
 import datetime
@@ -182,7 +187,7 @@ class ProductesListView(ListView):
 
     def get_queryset(self):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
-        return Producte.objects.filter(productor=productor)
+        return Producte.objects.filter(productor=productor, status=True)
 
     def get_context_data(self, **kwargs):
         context = super(ProductesListView, self).get_context_data(**kwargs)
@@ -473,11 +478,13 @@ def DiaEntregaDistribuidorView(request, dataentrega):
     # Calculem els productors controlats per l'usuari distribuidor que són acceptats en el dia d'entrega per a no mostrarli els que estan exclosos en el node del dia d'entrega seleccionat
     productors = Productor.objects.filter(responsable=request.user, nodes=diaentrega.node)
     # Seleccionem tots els possibles formats que podrien ser seleccionats pel productor per portarlos en el dia d'entrega seleccionat
-    formats = TipusProducte.objects.filter(producte__productor__in=productors)
+    formats = TipusProducte.objects.filter(producte__productor__in=productors, producte__status=True)
     # Filtrem les comandes lligades al dia d'entrega
     comandes = Entrega.objects.filter(comanda__format__in=formats, dia_entrega=diaentrega)
     #Calculem el total del dia per a cada un dels productors de la distribuidora
     totals_productors = diaentrega.totals_productors_propis(request.user)
+    # Calculem el total del dia per a cada un dels productes de la distribuidora
+    totals_productes = diaentrega.totals_productes_propis(request.user)
     # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
     preu_total = 0
     cant_total = 0
@@ -555,7 +562,8 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                                    #  Si trobem que algun dels formats que intenta deseleccionar el distribuidor ja té entregues per aquest dia, aleshores no deixem que es retiri el format del dia ,d'entrega
                                    messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
                                    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'object_list': productors_menu, 'formatstockform': formatstockform,
-                                                                                                       'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                                                       'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                                                        'totals_productors': totals_productors, 'totals_productes': totals_productes})
                        except:
                            pass
 
@@ -592,7 +600,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
 
     return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'object_list': productors_menu, 'formatstockform': formatstockform,
                                                                         'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
-                                                                        'totals_productors': totals_productors})
+                                                                        'totals_productors': totals_productors, 'totals_productes': totals_productes})
 
 
 
@@ -605,9 +613,11 @@ def DiaEntregaProductorView(request, pk, dataentrega):
     # Calculem el productorgestionat per l'usuari
     productor = Productor.objects.get(pk=pk)
     # Seleccionem tots els possibles formats que podrien ser seleccionats pel productor per portarlos en el dia d'entrega seleccionat
-    formats = TipusProducte.objects.filter(producte__productor=productor)
+    formats = TipusProducte.objects.filter(producte__productor=productor, producte__status=True)
     # Filtrem les comandes lligades al dia d'entrega
     comandes = Entrega.objects.filter(comanda__format__in=formats, dia_entrega=diaentrega)
+    # Calculem el total del dia per a cada un dels productes de la productora
+    totals_productes = diaentrega.totals_productesxproductor(pk)
     # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
     preu_total = 0
     cant_total = 0
@@ -685,7 +695,8 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                                    #  Si trobem que algun dels formats que intenta deseleccionar el distribuidor ja té entregues per aquest dia, aleshores no deixem que es retiri el format del dia ,d'entrega
                                    messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
                                    return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform, 'productors': productors,
-                                                                                                       'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                                                       'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                        'totals_productes': totals_productes})
                        except:
                            pass
 
@@ -720,7 +731,8 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                     return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
 
     return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform, 'productors':productors,
-                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                        'totals_productes': totals_productes})
 
 
 
@@ -729,7 +741,7 @@ from django.forms import formset_factory, modelformset_factory
 def DiaProduccioCreateView(request, pro):
 
     productor = Productor.objects.get(pk=pro)
-    productes = Producte.objects.filter(productor=productor)
+    productes = Producte.objects.filter(productor=productor, status=True)
     StockFormset = formset_factory(StockForm, extra=0)
     formats = TipusProducte.objects.filter(producte__in=productes)
     stockform = StockFormset(initial=[{'format': x} for x in formats])
@@ -818,7 +830,7 @@ def DiaProduccioUpdateView(request, pro, pk):
 
     productor = Productor.objects.get(pk=pro)
     productors = Productor.objects.filter(responsable=request.user)
-    productes = Producte.objects.filter(productor=productor)
+    productes = Producte.objects.filter(productor=productor, status=True)
     formats = TipusProducte.objects.filter(producte__in=productes)
     dp_obj = DiaProduccio.objects.get(pk=pk)
     stocks = Stock.objects.filter(dia_prod=dp_obj)
@@ -1035,9 +1047,6 @@ def eventsProductor(productor):
 
 
 
-import json
-from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse
 
 
 def diaEntregaEvents(request, pro):
@@ -1136,3 +1145,29 @@ def distriCalendarSelected(request):
                           , 'url': url
                        })
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
+
+
+# Funció per borrar comandes per part de l'usuari. Comprovem que el productor no hagi començat a elaborar el producte solicitat
+def producteDelete(request, pk):
+
+    producteDel = Producte.objects.get(pk=pk)
+
+
+    dia = datetime.datetime.now()
+
+    if request.user in producteDel.productor.responsable.all():
+        if not Comanda.objects.filter(format__producte=producteDel, entregas__dia_entrega__date__gte=datetime.datetime.today()):
+            notify.send(producteDel, recipient = request.user,  verb="Has borrat ", action_object=producteDel,
+                description="de lamassa.org" , timestamp=timezone.now())
+            # url=comandaDel.format.producte.foto.url,
+            producteDel.status = False
+            producteDel.save()
+            messages.info(request, (u"Has borrat el producte"))
+        else:
+            messages.error(request, (u"Tens comandes d'aquest producte per entregar en el futur"))
+    else:
+        messages.error(request, (u"No ets responsable d'aquest productor"))
+    productes = Producte.objects.filter(productor=producteDel.productor, status=True)
+    productors = Productor.objects.filter(responsable=request.user)
+
+    return render(request, "romani/productors/producte_list.html", {'object_list': productes,'productor': producteDel.productor, 'productors': productors})

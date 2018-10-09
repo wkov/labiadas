@@ -17,6 +17,7 @@ from romani.productor_views import ComandesListView, ProductesListView, Historia
 from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
 from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
 from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls, adjuntDelete, adjuntsProductor, CoopsListView
+from romani.productor_views import producteDelete
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
@@ -78,6 +79,7 @@ urlpatterns = [
     url(r"^pro/(?P<pro>\d+)/diaproduccio/$", auth(DiaProduccioCreateView), name="diaproduccio_create"),
     url(r"^pro/(?P<pro>\d+)/diaproduccio_update/(?P<pk>\d+)$", auth(DiaProduccioUpdateView), name="diaproduccio_update"),
     url(r"^pro/(?P<pro>\d+)/comanda/create/$", auth(ComandaCreateView.as_view()), name="comanda_create"),
+    url(r'^producteDelete/(?P<pk>\d+)$', auth(producteDelete), name="producteDelete"),
 
 
 

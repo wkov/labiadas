@@ -36,50 +36,7 @@
 
     <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
     font-size: 2em">Dia d'entrega &nbsp;</div>
-{#    <div>#}
-{#    {% if message %}#}
-{##}
-{#            <div class="thumbnail" >#}
-{#            <span class="glyphicon glyphicon-info-sign"></span>#}
-{#                {{ message }}#}
-{#            </br>#}
-{#        </div>#}
-{#    {% endif %}#}
-{#    </div>#}
 
-{#<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
-{#    font-size: 3em"> {{ productor.nom }} </div>#}
-{#    <div style="margin: 0 auto; text-align:center;">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_dates' productor.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Calendari</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_productes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_update' productor.pk %}" id="etq"  class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productor" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar productor</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_historial' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >#}
-{#                                    <b id="pato" name="pato" class="pato">Veure historial</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>#}
-{#    <div id="dialog" title="Dia d'entrega"><p>#}
-{#        Una vegada seleccionis els productes que portaràs el {{ dia.date }}, et podran fer comandes per aquest dia tots els usuaris de {{ dia.node.nom }}#}
-{#    </p>#}
-{#    <p>Les comandes que et facin per al dia i lloc indicats també les pots veure llistades aquí</p></div>#}
     {% if comandes%}    <br/><br/>
         <p><b>Comandes</b> rebudes per al <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
 
@@ -116,6 +73,33 @@
      </tr>
      </tbody>
        </table>
+
+
+
+<br/><br/>
+<p><b>Totals</b> per <b>productes</b>:</p>
+         <table border="1" id="myTable2" class="tablesorter" style="; position: relative; width: 100%">
+                <thead>
+                <tr>
+                <th>Producte</th>
+                <th>Format</th>
+                <th>Unitats</th>
+                <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p, f, c, t in totals_productes %}
+                    <tr>
+                        <td>{{ p }}</td>
+                        <td>{{ f }}</td>
+                        <td>{{ c }}</td>
+                        <td>{{ t }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+
     {% endif %}
 
 
