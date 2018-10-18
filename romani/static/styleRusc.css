@@ -348,6 +348,13 @@ header {
         background-position: center;
         background-size: cover;
     }
+    .foto-graph{
+        width: 600px;
+        height:500px;
+/*        float: left;
+        background-position: center;
+        background-size: cover;*/
+    }
 
     .g-item{
         width: 250px;

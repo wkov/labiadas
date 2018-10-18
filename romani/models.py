@@ -192,7 +192,7 @@ class DiaEntrega(models.Model):
 
     def totals_productes_propis(self, user):
         list = []
-        for p in self.formats.all():
+        for p in self.formats.filter(format__producte__status=True):
             if user in p.format.productor.responsable.all():
                 total, cant =  self.total_producte(p.format.pk)
                 s = [p.format.producte.nom, p.format.nom, cant, total]
@@ -202,12 +202,17 @@ class DiaEntrega(models.Model):
     def totals_productesxproductor(self, pro_pk):
         list = []
         productor = Productor.objects.get(pk=pro_pk)
-        for p in self.formats.filter(format__productor=productor):
+        for p in self.formats.filter(format__productor=productor, format__producte__status=True):
                 total, cant = self.total_producte(p.format.pk)
                 s = [p.format.producte.nom, p.format.nom, cant, total]
                 list.append(s)
         return list
 
+    def total(self):
+        t = 0
+        for e in self.entregas.all():
+            t += e.comanda.preu
+        return t
 
 
     # def franja(self):

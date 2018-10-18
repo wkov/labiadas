@@ -404,13 +404,13 @@ class ComandaFormBaseView(FormView):
         lloc = form.data["lloc_entrega"]
         lloc_obj = get_object_or_404(Node, pk = lloc)
 
-        if (lloc_obj.a_domicili == True):
-
-            user_profile.carrer = form.data["carrer"]
-            user_profile.numero = form.data["numero"]
-            user_profile.pis = form.data["pis"]
-            user_profile.poblacio = form.data["poblacio"]
-        user_profile.save()
+        # if (lloc_obj.a_domicili == True):
+        #
+        #     user_profile.carrer = form.data["carrer"]
+        #     user_profile.numero = form.data["numero"]
+        #     user_profile.pis = form.data["pis"]
+        #     user_profile.poblacio = form.data["poblacio"]
+        # user_profile.save()
 
 
 

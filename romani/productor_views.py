@@ -480,7 +480,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
     # Seleccionem tots els possibles formats que podrien ser seleccionats pel productor per portarlos en el dia d'entrega seleccionat
     formats = TipusProducte.objects.filter(producte__productor__in=productors, producte__status=True)
     # Filtrem les comandes lligades al dia d'entrega
-    comandes = Entrega.objects.filter(comanda__format__in=formats, dia_entrega=diaentrega)
+    comandes = Entrega.objects.filter(comanda__format__productor__in=productors, dia_entrega=diaentrega)
     #Calculem el total del dia per a cada un dels productors de la distribuidora
     totals_productors = diaentrega.totals_productors_propis(request.user)
     # Calculem el total del dia per a cada un dels productes de la distribuidora
@@ -492,7 +492,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
         preu_total += c.comanda.preu
         cant_total += c.comanda.cantitat
     # Seleccionem tots els productes que ja estan confirmats pel productor o distribuidor com disponibles en el dia d'entrega
-    diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor__in=productors)
+    diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor__in=productors, format__producte__status=True)
     if diaformatstock:
         # Si anteriorment ja s'havia seleccionat afirmativament el tipus d'stock d'algun format del productor per a aquest dia d'entrega...                                                                                             SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         f_lst = []
@@ -615,7 +615,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
     # Seleccionem tots els possibles formats que podrien ser seleccionats pel productor per portarlos en el dia d'entrega seleccionat
     formats = TipusProducte.objects.filter(producte__productor=productor, producte__status=True)
     # Filtrem les comandes lligades al dia d'entrega
-    comandes = Entrega.objects.filter(comanda__format__in=formats, dia_entrega=diaentrega)
+    comandes = Entrega.objects.filter(comanda__format__productor=productor, dia_entrega=diaentrega)
     # Calculem el total del dia per a cada un dels productes de la productora
     totals_productes = diaentrega.totals_productesxproductor(pk)
     # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
@@ -625,7 +625,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
         preu_total += c.comanda.preu
         cant_total += c.comanda.cantitat
     # Seleccionem tots els productes que ja estan confirmats pel productor o distribuidor com disponibles en el dia d'entrega
-    diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor=productor)
+    diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor=productor, format__producte__status=True)
     if diaformatstock:
         # Si anteriorment ja s'havia seleccionat afirmativament el tipus d'stock d'algun format del productor per a aquest dia d'entrega...                                                                                             SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         f_lst = []
@@ -1171,3 +1171,100 @@ def producteDelete(request, pk):
     productors = Productor.objects.filter(responsable=request.user)
 
     return render(request, "romani/productors/producte_list.html", {'object_list': productes,'productor': producteDel.productor, 'productors': productors})
+
+from django.http import HttpResponse
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import numpy as np
+import io
+import matplotlib.pyplot as plt
+from django.db.models import Count
+
+def graphView(request, pro):
+    f = Figure()
+    buf = io.BytesIO()
+    ax = f.add_subplot(211)
+    des = DiaEntrega.objects.filter(date__lte=datetime.date.today()).order_by('date')
+
+    totals = []
+    for d in des:
+        totals.append(d.total())
+
+    des_v = des.values('date')
+    # totals = list(map(lambda d: d['entregas'], des))
+    dates = list(map(lambda d: d['date'], des_v))
+
+
+
+    # x = np.arange(-2, 3, .01)
+    # y = np.sin(np.exp(2 * x))
+    # ax.title = "Dates"
+    ax.plot(dates, totals)
+    # f.title = pro
+    canvas = FigureCanvas(f)
+
+    f.savefig(buf, format='png')
+    # plt.close(f)
+    response = HttpResponse(buf.getvalue(), content_type='image/png')
+    return response
+
+def productorGraphView(request, pro):
+    f = Figure()
+    buf = io.BytesIO()
+    # ax = f.add_subplot(211)
+    productor = Productor.objects.get(pk=pro)
+    des = DiaEntrega.objects.filter(date__lte=datetime.date.today(), formats__format__productor=productor).order_by('date')
+
+    nodes = set()
+
+
+
+    totals = []
+    for d in des:
+        totals.append(d.total_productor(pro))
+        # totals2.append(d.total())
+
+    for x in des:
+        nodes.add(x.node)
+
+    des_v = des.values('date')
+    # totals = list(map(lambda d: d['entregas'], des))
+    dates = list(map(lambda d: d['date'], des_v))
+    # ax.set_title(productor.nom)
+    # ax.set_xlabel('Dies d entrega')
+    # ax.set_ylabel('Ingrés')
+    # ax.plot(dates, totals , '.-')
+
+    nodes_in = []
+    ax2 = f.add_subplot(111)
+    for p in nodes:
+        totals2 = []
+        dates2 = []
+        d = des.filter(node=p)
+        zotal = 0
+        for r in d:
+            dates2.append(r.date)
+            totals2.append(r.total_productor(pro))
+            zotal += r.total_productor(pro)
+        if zotal > 0:
+            ax2.plot(dates2, totals2, '.-')
+            nodes_in.append(p)
+    ax2.legend(nodes_in)
+    ax2.set_title(productor.nom)
+
+    f.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.5,
+                    wspace=0.35)
+
+    canvas = FigureCanvas(f)
+    f.savefig(buf, format='png')
+    # plt.close(f)
+    response = HttpResponse(buf.getvalue(), content_type='image/png')
+    return response
+
+def graphProductorView(request, pro):
+
+    productor = Productor.objects.get(pk=pro)
+    # Trobem els productors dels quals es responsable l'usuari per al menu
+    productors = Productor.objects.filter(responsable=request.user)
+
+    return render(request, "romani/productors/graph_productor.html", {'productor': productor, 'productors': productors})

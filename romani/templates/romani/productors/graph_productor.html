@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block headers %}
+
+    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
+    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
+    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/menubar.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+
+
+
+
+        {% include 'romani/productors/menu_pro.html' %}
+<br/><br/>
+
+<a href="{% url 'graph' productor.pk %}" >
+                        <div>
+                            <img src="{% url 'graph' productor.pk %}"/>
+                        </div>
+                    </a>
+
+
+
+{% endblock %}

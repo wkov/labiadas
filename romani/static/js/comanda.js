@@ -290,30 +290,30 @@ jQuery(document).ready(function($)
 
 
 
-		var carrer = document.getElementById('carrer');
-		var numero = document.getElementById('numero');
-		var pis = document.getElementById('pis')
-		var poblacio = document.getElementById('poblacio');
-
-		$.post("/domicili/", $(this).serializeArray(),
-			function (data) {
-				if ( data["a_domicili"] == true){
-					carrer.readOnly = false;
-					numero.readOnly = false;
-					pis.readOnly = false;
-					poblacio.readOnly = true;
-				}else{
-					carrer.readOnly = true;
-					numero.readOnly = true;
-					pis.readOnly = true;
-					poblacio.readOnly = true;
-				}
-				carrer.value = data["carrer"]
-				numero.value = data["numero"]
-				pis.value = data["pis"]
-				poblacio.value = data["poblacio"]
-				//$('#effect').show();
-			});
+//		var carrer = document.getElementById('carrer');
+//		var numero = document.getElementById('numero');
+//		var pis = document.getElementById('pis')
+//		var poblacio = document.getElementById('poblacio');
+//
+//		$.post("/domicili/", $(this).serializeArray(),
+//			function (data) {
+//				if ( data["a_domicili"] == true){
+//					carrer.readOnly = false;
+//					numero.readOnly = false;
+//					pis.readOnly = false;
+//					poblacio.readOnly = true;
+//				}else{
+//					carrer.readOnly = true;
+//					numero.readOnly = true;
+//					pis.readOnly = true;
+//					poblacio.readOnly = true;
+//				}
+//				carrer.value = data["carrer"]
+//				numero.value = data["numero"]
+//				pis.value = data["pis"]
+//				poblacio.value = data["poblacio"]
+//				//$('#effect').show();
+//			});
 
 		$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function(data) {
 			var dataentrega = document.getElementById("dataentrega");
@@ -364,7 +364,7 @@ jQuery(document).ready(function($)
 				data.forEach( function (arrayItem)
 				{
 					var s = arrayItem.inici + "-" + arrayItem.final;
-					franjes.options[i] = new Option(s, arrayItem.pk, false, false)
+					franjes.options[i] = new Option(s, arrayItem.pk, false, true)
 					i++;
 				});
 			}
