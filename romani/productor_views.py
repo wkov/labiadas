@@ -1209,34 +1209,32 @@ def graphView(request, pro):
     return response
 
 def productorGraphView(request, pro):
-    f = Figure()
+    f = Figure(figsize=(15, 15))
     buf = io.BytesIO()
     # ax = f.add_subplot(211)
     productor = Productor.objects.get(pk=pro)
-    des = DiaEntrega.objects.filter(date__lte=datetime.date.today(), formats__format__productor=productor).order_by('date')
+    des = DiaEntrega.objects.filter(date__lte=datetime.date.today(), formats__format__productor=productor).order_by('date').distinct()
+    productes = Producte.objects.filter(productor=productor)
 
     nodes = set()
 
 
 
-    totals = []
+    # totals = []
     for d in des:
-        totals.append(d.total_productor(pro))
-        # totals2.append(d.total())
+        # totals.append(d.total_productor(pro))
+        nodes.add(d.node)
 
-    for x in des:
-        nodes.add(x.node)
-
-    des_v = des.values('date')
+    # des_v = des.values('date')
     # totals = list(map(lambda d: d['entregas'], des))
-    dates = list(map(lambda d: d['date'], des_v))
+    # dates = list(map(lambda d: d['date'], des_v))
     # ax.set_title(productor.nom)
     # ax.set_xlabel('Dies d entrega')
     # ax.set_ylabel('Ingrés')
     # ax.plot(dates, totals , '.-')
 
     nodes_in = []
-    ax2 = f.add_subplot(111)
+    ax2 = f.add_subplot(211)
     for p in nodes:
         totals2 = []
         dates2 = []
@@ -1250,7 +1248,24 @@ def productorGraphView(request, pro):
             ax2.plot(dates2, totals2, '.-')
             nodes_in.append(p)
     ax2.legend(nodes_in)
-    ax2.set_title(productor.nom)
+    ax2.set_title("Cooperatives")
+
+    ax3 = f.add_subplot(212)
+    for c in productes:
+        d = des.filter(formats__format=c.formats.all()).values('date').distinct()
+        dates3 = []
+        totals3 = []
+        for r in d:
+            dates3.append(r['date'])
+            new_d = des.filter(date=r['date']).distinct()
+            total_p = 0
+            for new_r in new_d:
+                total_p = total_p + new_r.total_producte(c.pk)
+            totals3.append(total_p)
+        ax3.plot(dates3, totals3, '.-')
+
+    ax3.legend(productes)
+    ax3.set_title("Productes")
 
     f.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.5,
                     wspace=0.35)

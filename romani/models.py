@@ -176,7 +176,7 @@ class DiaEntrega(models.Model):
             productors.add(p.comanda.format.producte.productor)
         return productors
 
-    def total_producte(self, pro_pk):
+    def total_format(self, pro_pk):
         total = 0
         cant = 0
         for e in self.entregas.filter(comanda__format__pk=pro_pk):
@@ -184,17 +184,23 @@ class DiaEntrega(models.Model):
             cant = cant + e.comanda.cantitat
         return total, cant
 
-    def totals_productes(self):
-        list =[]
-        for p in self.formats.all():
-            s = [p.format.producte.nom, p.format.nom, self.total_producte(p.pk)]
-        return list
+    def total_producte(self, pro_pk):
+        total = 0
+        p = Producte.objects.get(pk=pro_pk)
+        for e in self.entregas.filter(comanda__format__in=p.formats.all()):
+            total += e.comanda.preu
+        return total
+    # def totals_productes(self):
+    #     list =[]
+    #     for p in self.formats.all():
+    #         s = [p.format.producte.nom, p.format.nom, self.total_producte(p.pk)]
+    #     return list
 
     def totals_productes_propis(self, user):
         list = []
         for p in self.formats.filter(format__producte__status=True):
             if user in p.format.productor.responsable.all():
-                total, cant =  self.total_producte(p.format.pk)
+                total, cant =  self.total_format(p.format.pk)
                 s = [p.format.producte.nom, p.format.nom, cant, total]
                 list.append(s)
         return list
@@ -203,7 +209,7 @@ class DiaEntrega(models.Model):
         list = []
         productor = Productor.objects.get(pk=pro_pk)
         for p in self.formats.filter(format__productor=productor, format__producte__status=True):
-                total, cant = self.total_producte(p.format.pk)
+                total, cant = self.total_format(p.format.pk)
                 s = [p.format.producte.nom, p.format.nom, cant, total]
                 list.append(s)
         return list

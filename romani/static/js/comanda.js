@@ -166,6 +166,7 @@ jQuery(document).ready(function($)
 			var cantitat = document.getElementById('cantitat_t');
 			var imatge = document.getElementById('imatge');
 			var frequencia = document.getElementById('frequencia');
+			var frequencia_label = document.getElementById('frequencia_label')
 			//var primera_entrega = document.getElementById('primera_entrega')
 
 		$.post("/info/", $(this).serializeArray(),function(data) {
@@ -198,20 +199,30 @@ jQuery(document).ready(function($)
 						j++;
 					});
 					j = 0;
-					data["freqs"].forEach(function (arrayItem) {
-						frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
-						j++;
-					});
+					if (data["freqs"].length > 1) {
+					    frequencia.style.display = "block";
+					    frequencia_label.style.display = "block";
+                        data["freqs"].forEach(function (arrayItem) {
+                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
+                            j++;
+                        });
+					} else{
+					    frequencia.style.display = "none";
+					    frequencia_label.style.display = "none";
+					}
 
 
 					$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function (data) {
 						var dataentrega = document.getElementById("dataentrega");
 						var franjes = document.getElementById("franjes");
+						var franjes_label = document.getElementById("franjes_label")
 
 						var i = 1;
 
 						dataentrega.options.length = 0;
 						franjes.options.length = 0;
+						franjes.style.display = 'none';
+						franjes_label.style.display = 'none'
 
 						var t;
 
@@ -318,9 +329,12 @@ jQuery(document).ready(function($)
 		$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function(data) {
 			var dataentrega = document.getElementById("dataentrega");
 			var franjes = document.getElementById("franjes");
+			var franjes_label = document.getElementById("franjes_label");
 			var i = 1;
 			dataentrega.options.length=0;
 			franjes.options.length=0;
+			franjes.style.display = "none"
+			franjes_label.style.display = "none"
 			//var data_info = document.getElementById("primera_entrega");
 			//data_info.value = " ";
 			var t;
@@ -336,11 +350,20 @@ jQuery(document).ready(function($)
 			var h = 0;
 			var frequencia = document.getElementById("frequencia");
 			frequencia.options.length=0;
-			data.forEach( function (arrayItem)
-			{
-				frequencia.options[h] = new Option(arrayItem.nom, arrayItem.num, false, false);
-				h++;
-			});
+			if (data.length > 1) {
+                frequencia.style.display = "block";
+                frequencia_label.style.display = "block";
+                data.forEach( function (arrayItem)
+                {
+                    frequencia.options[h] = new Option(arrayItem.nom, arrayItem.num, false, false);
+                    h++;
+                });
+            } else{
+                    frequencia.style.display = "none";
+                    frequencia_label.style.display = "none";
+                }
+
+
 		});
     });
 
@@ -352,13 +375,12 @@ jQuery(document).ready(function($)
 		$.post("/franjacalc/", $(this).serializeArray(), function(data) {
 
 			var franjes = document.getElementById("franjes");
+			var franjes_label = document.getElementById("franjes_label")
 
 
 			var i = 1;
 
 			franjes.options.length=0
-			//var data_info = document.getElementById("primera_entrega");
-			//data_info.value = " ";
 
 			if (data.constructor == Array){
 				data.forEach( function (arrayItem)
@@ -367,7 +389,14 @@ jQuery(document).ready(function($)
 					franjes.options[i] = new Option(s, arrayItem.pk, false, true)
 					i++;
 				});
+				franjes.style.display = 'block'
+			    franjes_label.style.display = 'block'
+			} else{
+			    franjes.style.display = 'none'
+			    franjes_label.style.display = 'none'
 			}
+
+
 
 
 		});
