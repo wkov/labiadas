@@ -209,6 +209,10 @@ jQuery(document).ready(function($)
 					} else{
 					    frequencia.style.display = "none";
 					    frequencia_label.style.display = "none";
+					    data["freqs"].forEach(function (arrayItem) {
+                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
+                            j++;
+                        });
 					}
 
 
@@ -361,6 +365,11 @@ jQuery(document).ready(function($)
             } else{
                     frequencia.style.display = "none";
                     frequencia_label.style.display = "none";
+                    data.forEach( function (arrayItem)
+                    {
+                        frequencia.options[h] = new Option(arrayItem.nom, arrayItem.num, false, false);
+                        h++;
+                    });
                 }
 
 
