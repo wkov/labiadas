@@ -102,15 +102,36 @@ class ComandaSerializer(serializers.ModelSerializer):
         depth = 2
         fields = ('pk', 'entregas', 'format', 'producte', 'cantitat', 'data_comanda', 'client', 'node', 'preu', 'frequencia')
 
+# class ComandaDEntregaSerializer(serializers.ModelSerializer):
+#
+#     producte = serializers.SerializerMethodField('product')
+#
+#
+#     def product(self, obj):
+#         return obj.format.producte.nom
+#
+#     class Meta:
+#         model = Comanda
+#         depth = 0
+#         fields = ('pk', 'format', 'producte', 'cantitat', 'data_comanda', 'client', 'node', 'preu', 'frequencia')
+
 
 class EntregaSerializer(serializers.ModelSerializer):
 
-    # producte = serializers.SerializerMethodField('product')
+    producte = serializers.SerializerMethodField('product')
+
+    foto = serializers.SerializerMethodField('photo')
+
+    def product(self, obj):
+        return obj.comanda.format.producte.nom
+
+    def photo(self, obj):
+        return obj.comanda.format.producte.thumb.url
 
     class Meta:
         model = Entrega
         depth = 1
-        fields = ('pk', 'dia_entrega', 'comanda', 'data_comanda', 'dia_produccio', 'franja_horaria')
+        fields = ('pk', 'dia_entrega', 'producte', 'comanda', 'data_comanda', 'dia_produccio', 'franja_horaria', 'foto')
 
 
 class DiaEntregaSerializer(serializers.ModelSerializer):
