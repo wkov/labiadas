@@ -200,8 +200,8 @@ jQuery(document).ready(function($)
 					});
 					j = 0;
 					if (data["freqs"].length > 1) {
-					    frequencia.style.display = "block";
-					    frequencia_label.style.display = "block";
+					    frequencia.style.display = "none";
+					    frequencia_label.style.display = "none";
                         data["freqs"].forEach(function (arrayItem) {
                             frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
                             j++;
@@ -221,21 +221,58 @@ jQuery(document).ready(function($)
 						var franjes = document.getElementById("franjes");
 						var franjes_label = document.getElementById("franjes_label")
 
-						var i = 1;
+						var i = 0;
 
 						dataentrega.options.length = 0;
 						franjes.options.length = 0;
-						franjes.style.display = 'none';
-						franjes_label.style.display = 'none'
+						franjes.style.display = 'block';
+						franjes_label.style.display = 'block'
 
 						var t;
 
 						data.forEach(function (arrayItem) {
-							t = arrayItem.dia + " " + arrayItem.date
-							dataentrega.options[i] = new Option(t, arrayItem.pk, false, false)
+							t = arrayItem.dia + " " + arrayItem.date;
+							dataentrega.options[i] = new Option(t, arrayItem.pk);
 							i++;
 						});
+
+						$.post("/franjacalc/", $(".comanda2_form").serializeArray(), function(data) {
+
+                        var franjes = document.getElementById("franjes");
+                        var franjes_label = document.getElementById("franjes_label")
+
+
+                        var i = 1;
+
+                        franjes.options.length=0
+
+                        if (data.constructor == Array){
+                            data.forEach( function (arrayItem)
+                            {
+                                var s = arrayItem.inici + "-" + arrayItem.final;
+                                franjes.options[i] = new Option(s, arrayItem.pk, false, true)
+                                i++;
+                            });
+                            franjes.style.display = 'block'
+                            franjes_label.style.display = 'block'
+                        } else{
+                            franjes.style.display = 'none'
+                            franjes_label.style.display = 'none'
+                        }
+
+
+
+
+                    });
+
+
+
+
 					});
+
+
+
+
 		}
 		});
 	});

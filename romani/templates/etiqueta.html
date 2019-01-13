@@ -20,6 +20,7 @@
 
 
     <div style="margin: 0 auto; text-align:center;">
+
                     {% for etq in etiquetes %}
 
                         {% if etq == etiqueta %}
@@ -45,6 +46,15 @@
                                 </div>
                         {% endif %}
                     {% endfor %}
+            <div style=" position: relative; display: inline-block; ">
+              <a class='btn btn-default btn-group-xs' href="{% url 'busk' %}" title='Cercar'
+               style="width: auto; "  id="etq" name="etq" title="{{ etq.nom }}">
+                <span  style="background-image: url('/media/etiquetes/search.png'); margin-left: -15px;
+                margin-top: 5px; width:32px; height:32px;  position: absolute"></span>
+                <br/><br/>
+                <b id="pato" name="pato" class="pato">Cerca</b>
+              </a>
+            </div>
     </div>
     <br/>
     {% for producte in productes %}

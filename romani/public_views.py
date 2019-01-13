@@ -7,6 +7,7 @@ from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
 from romani.models import UserProfile, Etiqueta, Adjunt, DiaFormatStock
 from romani.forms import ComandaForm, VoteForm
+from romani.serializers import EntregaSerializer
 
 from django.http import HttpResponse
 
@@ -236,6 +237,59 @@ def productorView(request,pk):
 
     return render(request, "productor.html",{'productor': productor, 'productes': productes, 'adjunts': adjunts, 'up': user_p})
 
+
+def cistella(user):
+    orders = []
+    days = []
+    day = {}
+    date = ""
+    entrega = ""
+    total = 0
+    now = datetime.datetime.now()
+    entregas = Entrega.objects.filter(comanda__client=user, dia_entrega__date__gte=now).order_by(
+        'dia_entrega__date', 'franja_horaria__inici')
+    # com = Comanda.objects.filter(entregas__in=entregas).distinct()
+    # entregas_hist = Entrega.objects.filter(comanda__client=user).filter(Q(dia_entrega__date__lte=now)).order_by(
+    #     'dia_entrega__date', 'franja_horaria__inici')
+    # hist = Comanda.objects.filter(entregas__in=entregas_hist).distinct()
+    if entregas:
+        for e in entregas:
+            if date:
+                if e.dia_entrega != date:
+                    day = {'entregas': orders, 'dia': date.date, 'total':total}
+                    days.append(day)
+                    total = 0
+                    orders = []
+            date = e.dia_entrega
+            e_dict = {'pk': e.comanda.pk,
+                      'entrega_pk': e.pk,
+                      'producte': e.comanda.format.producte.nom,
+                      'productor': e.comanda.format.productor.nom,
+                      'cantitat': e.comanda.cantitat,
+                      'format': e.comanda.format.nom,
+                      'preu': e.comanda.preu,
+                      'lloc': e.dia_entrega.node.nom,
+                      'hora': e.franja_horaria,
+                      'dia': e.dia_entrega.date
+                      }
+            total += e.comanda.preu
+            orders.append(e_dict)
+        day = {'entregas': orders, 'dia': date.date, 'total': str(total)}
+        days.append(day)
+    return days
+
+def cistellaView(request):
+
+        # orders = {}
+        # date = ""
+
+    days = cistella(request.user)
+    user_p = UserProfile.objects.filter(user=request.user).first()
+
+    return render(request, "romani/consumidors/comandes.html", {'comandes': days, 'up': user_p})
+
+
+
 def comandesView(request):
 
     now = datetime.datetime.now()
@@ -247,7 +301,63 @@ def comandesView(request):
 
     user_p = UserProfile.objects.filter(user=request.user).first()
 
-    return render(request, "comandes.html", {'comandes': comandes, 'up': user_p })
+    return render(request, "romani/consumidors/comandes.html", {'comandes': comandes, 'up': user_p })
+
+def historialView(request):
+    orders = []
+    days = []
+    day = {}
+    date = ""
+    entrega = ""
+    total = 0
+    now = datetime.datetime.now()
+    entregas_hist = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__lte=now)).order_by(
+        '-dia_entrega__date', 'franja_horaria__inici')
+    # hist = Comanda.objects.filter(entregas__in=entregas_hist).distinct()
+    if entregas_hist:
+        for e in entregas_hist:
+            if date:
+                if e.dia_entrega != date:
+                    day = {'entregas': orders, 'dia': date.date, 'total': total}
+                    days.append(day)
+                    total = 0
+                    orders = []
+            date = e.dia_entrega
+            e_dict = {'pk': e.pk,
+                      'comanda_pk':e.comanda.pk,
+                      'producte': e.comanda.format.producte.nom,
+                      'productor': e.comanda.format.productor.nom,
+                      'cantitat': e.comanda.cantitat,
+                      'format': e.comanda.format.nom,
+                      'preu': e.comanda.preu,
+                      'lloc': e.dia_entrega.node.nom,
+                      'hora': e.franja_horaria,
+                      'dia': e.dia_entrega.date
+                      }
+            total += e.comanda.preu
+            orders.append(e_dict)
+        day = {'entregas': orders, 'dia': date.date, 'total': str(total)}
+        days.append(day)
+
+    voted = Vote.objects.filter(voter=request.user)
+
+    comandes_in_page = [comanda.pk for comanda in entregas_hist]
+
+    upvoted_comandes = voted.filter(entrega_id__in=comandes_in_page, positiu=True)
+
+    if upvoted_comandes:
+        upvoted_comandes = upvoted_comandes.values_list('entrega_id', flat=True)
+
+    downvoted_comandes = voted.filter(entrega_id__in=comandes_in_page, positiu=False)
+
+    if downvoted_comandes:
+        downvoted_comandes = downvoted_comandes.values_list('entrega_id', flat=True)
+
+    user_p = UserProfile.objects.filter(user=request.user).first()
+    return render(request, "romani/consumidors/historial.html", {'comandes': days, 'up': user_p,
+                                                                 'upvoted_comandes': upvoted_comandes,
+                                                                 'downvoted_comandes': downvoted_comandes
+                                                                 })
 
 
 def entregasView(request):
@@ -274,10 +384,39 @@ def entregasView(request):
                                             'downvoted_comandes': downvoted_comandes })
 
 
+def entregaDelete(request, pk):
+
+    entregaDel = Entrega.objects.filter(pk=pk).first()
+
+
+    dia = datetime.datetime.now() + timedelta(hours=entregaDel.comanda.format.productor.hores_limit)
+    # prox_entrega = comandaDel.prox_entrega()
+    dia_prox_entrega = entregaDel.dia_entrega
+    aux = dia_prox_entrega.franja_inici()
+    daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
+
+    if daytime > dia:
+        notify.send(entregaDel.comanda.format, recipient = request.user,  verb="Has tret ", action_object=entregaDel,
+            description="de la cistella" , timestamp=timezone.now())
+        # url=comandaDel.format.producte.foto.url,
+        entregaDel.delete()
+        messages.info(request, (u"Has anulat la entrega i hem tret el producte de la cistella"))
+    else:
+        messages.error(request, (u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"))
+
+    # now = datetime.datetime.now()
+    # entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
+    # comandes = Comanda.objects.filter(entregas__in=entregas).distinct()
+    user_p = UserProfile.objects.filter(user=request.user).first()
+    days = cistella(request.user)
+
+    return render(request, "romani/consumidors/comandes.html",{'comandes': days, 'up': user_p})
 
 
 
-# Funció per borrar comandes per part de l'usuari. Comprovem que el productor no hagi començat a elaborar el producte solicitat
+
+# No es fa servir ara mateix. Ara es fa servir entregaDelete
+#  Funció per borrar comandes per part de l'usuari. Comprovem que el productor no hagi començat a elaborar el producte solicitat
 def comandaDelete(request, pk):
 
     comandaDel = Comanda.objects.filter(pk=pk).first()
@@ -298,12 +437,13 @@ def comandaDelete(request, pk):
     else:
         messages.error(request, (u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"))
 
-    now = datetime.datetime.now()
-    entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
-    comandes = Comanda.objects.filter(entregas__in=entregas).distinct()
+    # now = datetime.datetime.now()
+    # entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
+    # comandes = Comanda.objects.filter(entregas__in=entregas).distinct()
     user_p = UserProfile.objects.filter(user=request.user).first()
+    days = cistella(request.user)
 
-    return render(request, "comandes.html",{'comandes': comandes, 'up': user_p})
+    return render(request, "romani/consumidors/comandes.html",{'comandes': days, 'up': user_p})
 
 
 
@@ -476,7 +616,7 @@ def diesEntregaView(request, pk, pro):
     now = datetime.datetime.now()
     comanda = Comanda.objects.get(pk=pk)
     user_p = UserProfile.objects.filter(user=request.user).first()
-    # date = datetime.datetime.now() + timedelta(hours=int(comanda.format.productor.hores_limit))
+    date = datetime.datetime.now() + timedelta(hours=int(comanda.format.productor.hores_limit))
 
     # Llistat de dies futurs en que es posible demanar noves entregues de la comanda
     pk_lst = set()
@@ -524,6 +664,7 @@ def diesEntregaView(request, pk, pro):
     entregas_pas = Entrega.objects.filter(pk__in=pk3_lst).exclude(dia_entrega__pk__in=pk_lst)
 
 
+
     if request.POST:
         try:
             dies_pk = request.POST.getlist('dies')
@@ -567,12 +708,13 @@ def diesEntregaView(request, pk, pro):
 
             if pro == '0':   #si el usuari es consumidor i prove de la pantalla de comanda principal
 
-                entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
-                comandes = Comanda.objects.filter(entregas__in=entregas).distinct()
+                # entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
+                # comandes = Comanda.objects.filter(entregas__in=entregas).distinct()
+                days = cistella(request.user)
 
                 messages.success(request, (u"Comanda desada correctament"))
 
-                return render(request, "comandes.html",{'comandes': comandes, 'up': user_p })
+                return render(request, "romani/consumidors/comandes.html",{'comandes': days, 'up': user_p })
 
             elif pro == '1':  #si el usuari es productor i esta introduint comandes que li han arribat de fora la web
 

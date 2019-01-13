@@ -36,12 +36,20 @@
             <span class="glyphicon glyphicon-info-sign"></span>
             <b>Les invitacions són personals. Per convidar copia el següent link: </b>  &nbsp; </br>
 
-        <textarea rows="6" class="js-copytextarea" style="width: 80%" >Et convido a entrar a la xarxa de productes de proximitat: {{ message }} </textarea>
+        <textarea rows="6" class="js-copytextarea" style="width: 80%" > {{ message }} </textarea>
 
             <button class="js-textareacopybtn"><span class="glyphicon glyphicon-duplicate"> Copiar</span></button>
 
             </br>
-                <b>Si vols convidar a alguna persona més, recorda generar una nova invitació clicant de nou "Generar invitació".</b>
+                <b>Si vols convidar a alguna persona més,<br/> recorda generar una nova invitació <br/> clicant de nou: </b>
+                    <form action="/convidar/" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                          <span class="input-group-btn">
+                              <button type="submit" class="btn btn-default" style="font-size: medium"><b>Generar invitació</b></button>
+                          </span>
+                        </div>
+    </form>
         </div>
     {% endif %}
     </div>
@@ -54,8 +62,11 @@
 
         </div>
     {% endif %}
-
-    Encara disposes de <b>{{ invitacions }}</b> invitacions a la xarxa. Tens 2 opcions:<br/><br/>
+    Quan convides a algú, l'estàs convidant a tenir accés als productes de la cooperativa de consum
+            de la que formes part.<br/>
+            Recorda, si cal, comunicar-ho a la cooperativa a través dels canals que tingueu establerts.
+    <!--Encara disposes de <b>{{ invitacions }}</b> invitacions a la xarxa. -->
+    Tens 2 opcions:<br/><br/>
     <li>Pots convidar introduïnt el email de la persona: <br/>
     <form action="/convidar/" method="post">
                         {% csrf_token %}
@@ -69,7 +80,7 @@
         </li>
     <br/>
 
-    <li>També pots convidar a traves de watsapp, messenger o qualsevol plataforma enviant la url que pots generar clicant el seguent botó:
+    <li>També pots convidar enviant el text que pots generar clicant el seguent botó:
 
     </li>
     <form action="/convidar/" method="post">

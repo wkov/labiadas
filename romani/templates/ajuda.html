@@ -20,43 +20,102 @@
             </div>
         {% endif %}
     </div>
-    Benvingut a la secció d'ajuda de la xarxa.
+    Benvingut a la secció d'ajuda de la xarxa.<br/>
+    lamassa.org és una xarxa de petits productors i cooperatives de consum. <br/><br/>
+           L'objectiu és facilitar la comunicació de les comandes,
+            la introducció de nous productes i productors,
+            i la col·laboració entre els productors a l'hora de compartir viatges per a transportar productes.
+
+<br/><br/>
+<a href="#comcomprar"><b> 1) Com comprar ? </b></a><br/>
+<a href="#comcomandes"><b>2) Com gestiono els encàrrecs ?</b></a> <br/>
+<a href="#aoncomanda" ><b> 3) A on arriba la comanda ? </b></a><br/>
+<a href="#compagar"><b> 4) Com es fa el pagament ?</b></a><br/>
+<a href="#comconvidar"><b> 5) Com puc convidar nous usuaris a la xarxa ?</b></a><br/>
+<a href="#comproductor"><b> 6) Sóc petit <b>productor</b>, què haig de fer per oferir els meus productes?</b></a><br/>
+<a href="#comcoope"><b> 7) Sóc responsable d'una <b>Cooperativa de Consum</b> de productes, com puc fer servir la web?</b></a><br/>
+<a href="#altredubte"><b>8) Tens algun altre dubte ? Vols col·laborar amb lamassa.org?</b></a>
+<br/><br/><br/><br/>
+   <a href="{% url 'coope' %}" id="comcomprar"> 1)<b> Com comprar ? </b></a>
 <br/>
-<br/>
-   <a href="{% url 'coope' %}"> 1) Com comprar ? </a>
-<br/>
-    Ves a la pantalla principal clicant <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>, allà trobaràs tots els productes disponibles. Pots triar el format, la quantitat i començar la compra
+    Ves a la pantalla principal clicant <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>
+, allà trobaràs tots els productes disponibles. Pots triar el format, la quantitat i començar la compra.
+T'arribarà el dia d'entrega indicat a la teva cooperativa de consum.
 <br/></br>
-    <a href="{% url 'comandes' %}">2) Com gestiono els encàrrecs ?</a> <br/>
+    <a id="comcomandes" href="{% url 'comandes' %}">2)<b> Com gestiono els encàrrecs ?</b></a> <br/>
     A la gestió de comandes pots accedir sempre des del menú de l'esquerra a través del botó <a href="{% url 'comandes' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a><br/>
     Permet borrar les comandes que ja no desitjis.
-    També pots consultar les entregues rebudes en el passat, així com consultar els detalls de cada una d'elles
+        També pots consultar els productes rebuts en el passat.
 <br/></br>
-    <a href=""> 3) A on arriba la comanda ? </a><br/>
-                Al punt de trobada que escullis entre els espais que han creat les cooperatives de consum, els grups, les families i els consumidors<br/>
-                <br/>
-    <a href=""> 4) Com es fa el pagament ?</a><br/>
-    Com decideixi la cooperativa de consum. No es fan pagaments via web.
+    <a href="" id="aoncomanda"> 3)<b> A on arriba la comanda ? </b></a><br/>
+        Al punt de trobada de la teva cooperativa de consum.
+        <br/><br/>
+    <a href="" id="compagar"> 4)<b> Com es fa el pagament ?</b></a><br/>
+    Com decidiu a la cooperativa de consum. No es fan pagaments a través de lamassa.org
             <br/> <br/>
 
-    <a href="{% url 'convidar' %}"> 5) Com puc convidar nous usuaris a la xarxa ?</a><br/>
+    <a href="{% url 'convidar' %}" id="comconvidar"> 5)<b> Com puc convidar nous usuaris a la xarxa ?</b></a><br/>
     Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-bullhorn collapsed-element'></span></a>
-    que sempre trobaràs en el menú esquerra
+    que sempre trobaràs en el menú esquerra<br/>
+            Quan convidis a algú, l'estàs convidant a tenir accés als productes de la cooperativa de consum
+            de la que formes part.
+            Recorda si cal comunicar-ho a la cooperativa a través dels canals que tingueu establerts.
             <br/> <br/>
 
-    <a href="{% url 'productor_list' %}"> 6) Sóc <b>productor</b>, què haig de fer per oferir els meus productes?</a><br/>
-    Els productors teniu una secció de la web dedicada especialment a vosaltres. Clica el botó
+    <a href="{% url 'productor_list' %}" id="comproductor"> 6)<b> Sóc petit <b>productor</b>, què haig de fer per oferir els meus productes?</b></a><br/>
+    Els petits productors teniu una secció de la web, entra-hi clicant el botó
         <a href="{% url 'productor_list' %}">
             <span class='glyphicon glyphicon-folder-open collapsed-element'></span></a>
-            <br/> <br/>
-    <a href="{% url 'vista_nodes' %}"> 7) Sóc responsable d'una <b>Cooperativa de Consum</b> de productes, com puc fer servir la web?</a><br/>
-    Els responsables de Cooperatives de Consum teniu una secció de la web dedicada. Clica el botó
+        (sempre trobaràs aquest botó en el menú esquerra).
+         <br/>Una vegada et registris com a productor les cooperatives poden triarte com a col·laborador,
+            i ja t'apareixeran al calendari els dies en que obren, i podràs confirmar quins d'aquests dies
+        hi portes productes. Aleshores la gent de la cooperativa pot començar a ferte comandes.
+            <br/>Primer hauràs d'editar el teu catàleg de productes i els respectius formats.
+            <br/><br/><b>Exemple:</b> Sóc un petit productor de melmelada. He fet melmelada de figues i melmelada de taronja amarga.
+            De figues he fet tot pots de 300ml, i de taronja amarga n'he fet pots de 100ml i de 300ml.
+            En aquest cas hauria de crear per una banda el producte "melmelada de figues",
+            i el format "100ml" associat al producte "melmelada de figues".
+            Després creariem el producte "melmelada de taronja amarga" i el format
+            "100ml" associat al producte "melmelada de taronja amarga", creariem el format "300ml" i
+            l'associariem també a "melmelada de taronja amarga".
+            <br/><br/>Una vegada introduït el teu catàleg, ja podràs veure
+            tots els dies en que les cooperatives afins obren i podràs decidir quins dies hi portes producte.
+            A partir d'aquí, els teus productes ja estarian visibles per a que els consumidors puguin ferte comandes.
+            <br/>Tens una pantalla on t'apareixeran totes les comandes llistades amb tots els detalls:
+            producte, format, cantitat, preu, lloc d'entrega, dia d'entrega, hora, client i dia de comanda.
+            <br/><br/>Si és el cas que gestiones varis perfils de productor,
+            podràs gestionar el calendari i les comandes per a tots els teus perfils de productor
+            a la vegada o un per un. Selecciona el productor concret en el menú per a fer una gestió individualitzada,
+            o selecciona "Totes" per a gestionar tots els productors a la vegada.
+<br/>
+          <br/>Fomentem la col·laboració entre els productors a l'hora de compartir viatges.
+          No existeix cap obligació al respecte pel fet de fer servir lamassa.org,
+          però sí que pensem que si cada productor aprofita els viatges que ja s'estan fent per
+          intentar col·laborar amb la distribució dels productes d'altres, s'acaben produïnt sinèrgies
+          positives entre els diferents transports.
+            <br/><br/>
+    <a href="{% url 'vista_nodes' %}" id="comcoope"> 7)<b> Sóc responsable d'una <b>Cooperativa de Consum</b> de productes, com puc fer servir la web?</b></a><br/>
+    Els responsables de Cooperatives de Consum teniu una secció de la web. Clica el botó
         <a href="{% url 'vista_nodes' %}">
             <span class='glyphicon glyphicon-map-marker collapsed-element'></span></a>
+            (sempre trobaràs aquest botó en el menú esquerra).
+            <br/>Cada cooperativa tria els productors amb els que vol treballar i introdueix els dies en que obrirà botiga.
+            Els productors confirmen els dies en que portaran producte i aleshores els productes passan a estar
+            disponibles per a que se'n facin comandes.
+            <br/><br/>En el calendari podreu consultar totes les dades dels dies en els que obriu botiga.
+            Per cada dia d'entrega de productes es poden consultar o imprimir la llista de totes les comandes,
+            on veureu les comandes per cada persona, els totals per persona i també per productor, els productes
+            disponibles i la quantitat màxima si és el cas.
+            <br/>A la pantalla "Seleccionar productors" podeu veure tots els productors que hi ha a lamassa.org.
+            Aquí és on podeu triar a quins d'ells voleu fer comandes de productes.
+            <br/>A la pantalla "Editar Coope" podeu cambiar detalls de la cooperativa com
+            el nom, el text descriptiu,
+            el punt de trobada i el usuari/s responsable/s.
             <br/> <br/>
 
 
-    <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge"> 8) Tens algun altre dubte ?</a><br/>
+    <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge" id="altredubte">
+        8)<b> Tens algun altre dubte ? Vols col·laborar amb <b>lamassa.org?</b></b></a><br/>
     Escriu-nos un missatge <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge">
           (Clica aquí <span class="glyphicon glyphicon-comment" style="color: #f6a828">  </span>)</a>
     i et contestarem l'abans possible.

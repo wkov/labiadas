@@ -302,7 +302,7 @@ def ConvidarView(request):
 
     if request.POST:
 
-        if up.invitacions > 0:
+        # if up.invitacions > 0:
 
             email = request.POST.get('email')
 
@@ -314,8 +314,8 @@ def ConvidarView(request):
                         try:
                             k = generate_key(request)
                             enviarInvitacio(email, up.user.get_full_name(), k)
-                            up.invitacions = up.invitacions - 1
-                            up.save()
+                            # up.invitacions = up.invitacions - 1
+                            # up.save()
                             key = Key.objects.get(key=k)
                             notify.send(key, recipient=up.user, verb="",
                                 description=", has convidat un nou usuari. " , timestamp=timezone.now())
@@ -328,8 +328,8 @@ def ConvidarView(request):
                     message_email = "La direcció de correu electrònic ja té usuari a la xarxa"
             else:
                 k = generate_key(request)
-                up.invitacions = up.invitacions - 1
-                up.save()
+                # up.invitacions = up.invitacions - 1
+                # up.save()
                 key = Key.objects.get(key=k)
                 notify.send(key, recipient=up.user, verb="",
                                 description=", has generat una nova invitació " , timestamp=timezone.now())
@@ -337,10 +337,10 @@ def ConvidarView(request):
                 s = "http://lamassa.org/register/" + str(k)
                 message = s
 
-        else:
-            message_email = "Ja has utilitzat totes les invitacions. De moment no pots convidar més gent. Gràcies"
+        # else:
+        #     message_email = "Ja has utilitzat totes les invitacions. De moment no pots convidar més gent. Gràcies"
 
-    return render(request, "convidar.html", {'invitacions':up.invitacions, 'email':email, 'message':message, 'message_email': message_email, 'nodes': nodes})
+    return render(request, "convidar.html", {'email':email, 'message':message, 'message_email': message_email, 'nodes': nodes})
 
 
 

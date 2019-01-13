@@ -10,7 +10,8 @@ from romani.models import EmailModelBackend
 from django.contrib.auth.decorators import login_required as auth
 
 from romani.public_views import buskadorProducte, etiquetaView, ComandaFormView, producteView, productorView, diesEntregaView
-from romani.public_views import coopeView, etiquetaView, comandesView, entregasView, comandaDelete, VoteFormView
+from romani.public_views import coopeView, etiquetaView, comandesView, entregasView, comandaDelete, VoteFormView, cistellaView
+from romani.public_views import historialView, entregaDelete
 from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView
 from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export_comandes_xls, NodeCreateView
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
@@ -141,9 +142,9 @@ urlpatterns = [
     url(r'^productor/(?P<pk>\d+)$', auth(productorView), name='productor'),
     url(r'^(?P<pk>\d+)$', auth(producteView), name='producte'),
     # url(r'^coope/', auth(views.coopeView), name="coope"), #MAIN VIEW
-    url(r'^comandes/', auth(comandesView), name="comandes"),
-    url(r'^entregas/', auth(entregasView), name="entregas"),
-    url(r'^comandaDelete/(?P<pk>\d+)$', auth(comandaDelete), name="comandaDelete"),
+    url(r'^comandes/', auth(cistellaView), name="comandes"),
+    url(r'^entregas/', auth(historialView), name="entregas"),
+    url(r'^comandaDelete/(?P<pk>\d+)$', auth(entregaDelete), name="comandaDelete"),
     # url(r'^contracteDelete/(?P<pk>\d+)$', auth(contracteDelete), name="contracteDelete"),
     url(r'^etiqueta/(?P<pk>\d+)/$', auth(etiquetaView),name='etiqueta'),#llistat de productes relacionats amb la etiqueta
     url(r'^ajuda/', auth(views.AjudaView), name="ajuda"),

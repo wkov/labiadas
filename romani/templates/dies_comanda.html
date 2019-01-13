@@ -2,7 +2,7 @@
 {% block headers %}
 <script>
 
-$(document).ready(function() {
+jQuery(document).ready(function() {
 
 {#    Si l'usuari deselecciona un dia amaguem les franjes horàries d'aquest dia, i si el torna a seleccionar li tornem a mostrar les possibles franjes horàries del dia #}
     $('input[name=dies]').click(function(){
@@ -31,14 +31,14 @@ $(document).ready(function() {
 </script>
 {% endblock %}
 {% block content %}
-
+<div style="float: left">
 <form method="post" action="">
   {% csrf_token %}
-<p>A continuació pots veure tots els dies d'entrega en que pots demanar. T'hem preseleccionat els dies que coincideixen
-    amb la teva elecció. Ara pots marcar o desmarcar els dies en que rebràs la comanda segons desitjis. </p><br/>
+<!--<p>A continuació pots veure tots els dies d'entrega en que pots demanar. T'hem preseleccionat els dies que coincideixen-->
+    <!--amb la teva elecció. Ara pots marcar o desmarcar els dies en que rebràs la comanda segons desitjis. </p><br/>-->
 
 {#En un requadre escorat a dalt a l'esquerra de la pantalla mostrem els detalls de la comanda#}
-<div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
+<div class="col-lg-8 col-md-8 col-xs-12 col-sm-10" >
             <div class="thumbnail" >
               <div class="caption">
                       {% if comanda.format.producte.foto %}
@@ -74,9 +74,9 @@ $(document).ready(function() {
                   <div style="width:100%; display: inline-block">
                     <label for="l_com" style="font-size: medium; font-weight: 500"> Comanda: </label> <b id="l_com" name="l_com">{{ comanda.prox_entrega.data_comanda.date }}</b>
                   </div><br/>
-                  <div style="width:100%; display: inline-block">
-                    <label for="l_com" style="font-size: medium; font-weight: 500"> Freqüència: </label> <b id="l_com" name="l_com">{{ comanda.frequencia.nom }}</b>
-                  </div>
+                  <!--<div style="width:100%; display: inline-block">-->
+                    <!--<label for="l_com" style="font-size: medium; font-weight: 500"> Freqüència: </label> <b id="l_com" name="l_com">{{ comanda.frequencia.nom }}</b>-->
+                  <!--</div>-->
             </div>
             </div>
     </div>
@@ -138,4 +138,10 @@ $(document).ready(function() {
     <br/><br/>
       <input type="submit" value="Confirmar" style="position: relative; float: left">
     </form>
-{% endblock %}
+    </div>
+<div style="float:left">
+    <a type="button" href="{% url 'comandes'  %} " id="pro_menu" style="border: 3px; margin: 0" title=""> Veure la cistella</a>
+    <a type="button" href="{% url 'coope' %}" id="pro_menu" style="border: 3px; margin: 0" title=""> Veure la botiga </a> &nbsp;
+<a type="button" href="{% url 'entregas'  %} " id="pro_menu" style="border: 3px; margin: 0" title=""> Veure Historial de comandes</a>
+</div>
+    {% endblock %}

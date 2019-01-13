@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from romani.models import Producte, Etiqueta, TipusProducte, UserProfile, Comanda, Productor, Node, DiaEntrega
+from romani.models import Producte, Etiqueta, Entrega, TipusProducte, UserProfile, Comanda, Productor, Node, DiaEntrega
 from django.contrib.auth.models import User
 
 
@@ -60,6 +60,22 @@ class ComandaSerializer(serializers.ModelSerializer):
         depth = 1
         fields = "__all__"
 
+class EntregaSerializer(serializers.ModelSerializer):
+
+    producte = serializers.SerializerMethodField('product')
+
+    foto = serializers.SerializerMethodField('photo')
+
+    def product(self, obj):
+        return obj.comanda.format.producte.nom
+
+    def photo(self, obj):
+        return obj.comanda.format.producte.thumb.url
+
+    class Meta:
+        model = Entrega
+        depth = 1
+        fields = ('pk', 'dia_entrega', 'producte', 'comanda', 'data_comanda', 'dia_produccio', 'franja_horaria', 'foto')
 
 class DiaEntregaSerializer(serializers.ModelSerializer):
 

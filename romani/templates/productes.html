@@ -15,16 +15,28 @@
 
 
     <div style="margin: 0 auto; text-align:center;">
+
                     {% for etq in etiquetes %}
                         <div style=" position: relative; display: inline-block; ">
-                                <a href="{% url 'etiqueta' etq.pk %} " class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="{{ etq.nom }}" >
-                                    <span  style="background-image: url({{ etq.img.url }}); margin-left: 5px; margin-top: 5px; width:32px; height:32px;  position: absolute">
+                                <a href="{% url 'etiqueta' etq.pk %} " class="btn btn-default btn-group-xs"
+                                   style="width: auto; "  id="etq" name="etq" title="{{ etq.nom }}" >
+                                    <span  style="background-image: url({{ etq.img.url }}); margin-left: 5px;
+                                    margin-top: 5px; width:32px; height:32px;  position: absolute">
                                     </span>
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/><br/>
                                     <b id="pato" name="pato" class="pato"> {{ etq.nom }}</b>
                                  </a>
                         </div>
                     {% endfor %}
+            <div style=" position: relative; display: inline-block; ">
+              <a class='btn btn-default btn-group-xs' href="{% url 'busk' %}" title='Cercar'
+               style="width: auto; "  id="etq" name="etq" title="{{ etq.nom }}">
+                <span  style="background-image: url('/media/etiquetes/search.png'); margin-left: -15px;
+                margin-top: 5px; width:32px; height:32px;  position: absolute"></span>
+                <br/><br/>
+                <b id="pato" name="pato" class="pato">Cerca</b>
+              </a>
+            </div>
     </div>
     <br/>
     {% for producte in productes %}
@@ -33,10 +45,10 @@
             <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
                 <div style="background-color: #f6a828; float: right " title="Próxima entrega">
                 <span class="glyphicon glyphicon-time" ></span> {%  next_day producte up.lloc_entrega %}</div>
-                <div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">
-                <span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>
-                <div style="background-color: #8ae090; color: white; float: right" title="Vots positius">
-                <span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>
+                <!--<div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">-->
+                <!--<span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>-->
+                <!--<div style="background-color: #8ae090; color: white; float: right" title="Vots positius">-->
+                <!--<span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>-->
             </div>
             <div class="caption">
                  {% if producte.foto %}

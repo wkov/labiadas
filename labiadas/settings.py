@@ -111,15 +111,16 @@ LOCALE_PATHS = ( "locale/",)
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = 'ca'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-
-gettext = lambda s: s
+def gettext_noop(s):
+    return s
+# gettext = lambda s: s
 LANGUAGES = (
-    # ('es-ca', gettext('Catalan')),
-    ('es-es', gettext('Spanish')),
+    ('ca', gettext_noop('Catalan')),
+    # ('es-es', gettext('Spanish')),
 )
 
 
