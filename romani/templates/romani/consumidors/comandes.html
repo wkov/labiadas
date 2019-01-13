@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+
+{% block headers %}
+{% endblock %}
+
+{% block modals %}
+    {% include "comanda_modal.html" %}
+{% endblock %}
+
+
+{%  block content %}
+
+    <!--<div style="margin: 0 auto; text-align:center;">-->
+        <!--&lt;!&ndash;<h2>La teva cistella</h2>&ndash;&gt;-->
+        <!--<div class="caption" >-->
+            <!--<a type="button" href="{% url 'entregas'  %} " id="pro_menu" style="border: 3px; margin: 0" title="Visitar historial d'entregues"> Veure Historial d'entregues</a>-->
+        <!--</div>-->
+    <!--</div>-->
+
+{% if comandes %}
+
+
+        <div style="overflow-x:auto;">
+                {% for c in comandes %}
+
+            <b>{{ c.dia }}</b> <br/>
+            <ul style="list-style-type:disc">
+            {% for v in c.entregas %}
+<li>
+              {{v.cantitat}} &nbsp; {{ v.producte }} &nbsp; {{v.format}} &nbsp; {{v.preu}} &nbsp;
+    <a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntrega' v.pk '0' %}" title="llegir més"></a>
+&nbsp;
+    <a class="glyphicon glyphicon-remove" type="button" href="{% url 'comandaDelete' v.entrega_pk  %}"
+                           title="Borrar comanda"
+                           onclick="return confirm('Segur que vols borrar la comanda?')">
+                                </a>
+</li>
+              {% endfor %}
+              <br/>Total:  {{c.total}}
+</ul>
+              {%  endfor %}
+        </div>
+
+        {% endif %}
+        {% if not comandes %}
+                No hi ha comandes encara
+        {% endif %}
+<br/>
+<a type="button" href="{% url 'entregas'  %} " id="pro_menu" style="border: 3px; margin: 0" title="">
+    Veure Historial de comandes</a>
+<a type="button" href="{% url 'coope' %}" id="pro_menu" style="border: 3px; margin: 0" title=""> Tornar a la botiga </a>
+
+
+
+{% endblock %}
+

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% csrf_token %}
+
+{% block headers %}
+    <script src="{% static 'js/comanda.js' %}"></script>
+{% endblock %}
+
+{% block modals %}
+
+    {% include "comanda_modal.html" %}
+    {% include "comentari_modal.html" %}
+
+{% endblock %}
+
+
+
+{%  block content %}
+    <!--<div style="margin: 0 auto; text-align:center;">-->
+        <!--<h2>{% trans "Historial d'entregues" %}</h2>-->
+        <!--<div class="caption" >-->
+            <!--<a type="button" href="{% url 'comandes'  %} " id="pro_menu" style="border: 3px; margin: 0" title="Visitar comandes actuals"> Veure cistella actual</a>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<br/>-->
+<!--</br>-->
+
+{% if comandes %}
+
+        <div style="overflow-x:auto;">
+                {% for c in comandes %}
+
+            <b>{{ c.dia }}</b> <br/>
+            <ul style="list-style-type:disc">
+            {% for v in c.entregas %}
+<li>
+              {{v.cantitat}} &nbsp; {{ v.producte }} &nbsp; {{v.format}} &nbsp; {{v.preu}} &nbsp;
+<a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntrega' v.comanda_pk '0' %}" title="llegir més"></a>
+&nbsp;
+
+        <form method="post" class="vote_form"
+{#                  action="{% url 'vote' %}"
+                    >
+
+          <!--<div style="background-color: #f6a828; float: right; position: absolute; z-index: 1000000; top: 0px; right: 0px; font-family: 'Barrio';">-->
+          <!--<div style="float: left">-->
+              <!--<div style="margin: 0 auto; text-align:center">-->
+          <!--&lt;!&ndash;Valoració: &nbsp; <br/>&ndash;&gt;-->
+                  <!--</div>-->
+          <!--</div>-->
+          <!--<div style="float: right">-->
+            {% csrf_token %}
+            <input type="hidden" id="id_entrega" name="entrega" class="hidden_id" value="{{ v.pk }}" />
+            <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />
+            {% if v.pk in upvoted_comandes %}
+                <!--<button type="submit" onclick="this.form.submited=this.value;" name="Nothing"  style="width: 16px; height: 16px; border: none;" class="arrow-upvoted hidden_id" value="Nothing" title="Ha anat bé"></button> &nbsp;-->
+                <button type="submit" onclick="this.form.submited=this.value;" name="Down" value="Down"  style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-up hidden_id" title="He tingut problemes">
+                </button>
+            {% elif v.pk in downvoted_comandes %}
+                <button type="submit" onclick="this.form.submited=this.value;" name="Up" value="Up" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-down hidden_id" title="Ha anat bé"></button> &nbsp;
+                <!--<button type="submit" onclick="this.form.submited=this.value;" name="Nothing" value="Nothing"  style="width: 16px; height: 16px; border: none;" class="arrow-downvoted hidden_id" title="He tingut problemes"></button>-->
+            {% else %}
+                <button type="submit" onclick="this.form.submited=this.value;" name="NewUp" value="NewUp" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-up hidden_id" title="Ha anat bé"></button> &nbsp;
+                <button type="submit" onclick="this.form.submited=this.value;" name="NewDown" value="NewDown" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-down hidden_id" title="He tingut problemes"></button>
+            {% endif %}
+          <!--</div>-->
+          <!--</div>-->
+        </form>
+
+
+</li>
+              {% endfor %}
+              <br/>Total:  {{c.total}}
+</ul>
+              {%  endfor %}
+        </div>
+        {% endif %}
+
+        {% if not comandes %}
+                No hi ha comandes passades encara
+        {% endif %}
+<br/>
+<a type="button" href="{% url 'comandes'  %} " id="pro_menu" style="border: 3px; margin: 0" title=""> Veure cistella actual</a>
+<a type="button" href="{% url 'coope' %}" id="pro_menu" style="border: 3px; margin: 0" title=""> Tornar a la botiga </a>
+{% endblock %}
+
