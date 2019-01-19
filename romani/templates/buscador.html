@@ -40,10 +40,10 @@
             <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
                 <div style="background-color: #f6a828; float: right " title="Próxima entrega">
                 <span class="glyphicon glyphicon-time" ></span> {%  next_day producte up.lloc_entrega %}</div>
-                <div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">
-                <span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>
-                <div style="background-color: #8ae090; color: white; float: right" title="Vots positius">
-                <span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>
+                <!--<div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">-->
+                <!--<span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>-->
+                <!--<div style="background-color: #8ae090; color: white; float: right" title="Vots positius">-->
+                <!--<span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>-->
             </div>
             <div class="caption">
                  {% if producte.foto %}
@@ -82,7 +82,7 @@
                              Cant:
                              <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 37px"/>
                              de <br/>
-                             <select id="id_format" name="format" class="hidden_id" style="width: 100% float:right" >
+                             <select id="id_format" name="format" class="hidden_id form-control" style="width: 100% float:right" >
 
                                  {% for tipusproducte in producte.formats.all %}
                                     {% if tipusproducte in formats %}

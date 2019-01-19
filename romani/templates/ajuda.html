@@ -21,40 +21,48 @@
         {% endif %}
     </div>
     Benvingut a la secció d'ajuda de la xarxa.<br/>
-    lamassa.org és una xarxa de petits productors i cooperatives de consum. <br/><br/>
-           L'objectiu és facilitar la comunicació de les comandes,
+
+
+<br/><br/>
+<a href="#quisom"><b> 1) Qui som ? </b></a><br/>
+<a href="#comcomprar"><b> 2) Com comprar ? </b></a><br/>
+<a href="#comcomandes"><b>3) Com gestiono els encàrrecs ?</b></a> <br/>
+<a href="#aoncomanda" ><b> 4) A on arriba la comanda ? </b></a><br/>
+<a href="#compagar"><b> 5) Com es fa el pagament ?</b></a><br/>
+<a href="#comconvidar"><b> 6) Com puc convidar nous usuaris a la xarxa ?</b></a><br/>
+<a href="#comproductor"><b> 7) Sóc petit <b>productor</b>, què haig de fer per oferir els meus productes?</b></a><br/>
+<a href="#comcoope"><b> 8) Sóc responsable d'una <b>Cooperativa de Consum</b> de productes, com puc fer servir la web?</b></a><br/>
+<a href="#altredubte"><b>9) Tens algun altre dubte ? Vols col·laborar amb lamassa.org?</b></a>
+<br/><br/>
+
+<br/><br/>
+   <a href="{% url 'coope' %}" id="quisom"> 1)<b> Qui som ? </b></a>
+<br/>
+   lamassa.org és una xarxa de petits productors i cooperatives de consum. <br/>
+           L'objectiu és facilitar la comunicació de les comandes amb les cooperatives,
             la introducció de nous productes i productors,
             i la col·laboració entre els productors a l'hora de compartir viatges per a transportar productes.
 
 <br/><br/>
-<a href="#comcomprar"><b> 1) Com comprar ? </b></a><br/>
-<a href="#comcomandes"><b>2) Com gestiono els encàrrecs ?</b></a> <br/>
-<a href="#aoncomanda" ><b> 3) A on arriba la comanda ? </b></a><br/>
-<a href="#compagar"><b> 4) Com es fa el pagament ?</b></a><br/>
-<a href="#comconvidar"><b> 5) Com puc convidar nous usuaris a la xarxa ?</b></a><br/>
-<a href="#comproductor"><b> 6) Sóc petit <b>productor</b>, què haig de fer per oferir els meus productes?</b></a><br/>
-<a href="#comcoope"><b> 7) Sóc responsable d'una <b>Cooperativa de Consum</b> de productes, com puc fer servir la web?</b></a><br/>
-<a href="#altredubte"><b>8) Tens algun altre dubte ? Vols col·laborar amb lamassa.org?</b></a>
-<br/><br/><br/><br/>
-   <a href="{% url 'coope' %}" id="comcomprar"> 1)<b> Com comprar ? </b></a>
+   <a href="{% url 'coope' %}" id="comcomprar"> 2)<b> Com comprar ? </b></a>
 <br/>
     Ves a la pantalla principal clicant <a href="{% url 'coope' %}"><span class="glyphicon glyphicon-home"></span></a>
 , allà trobaràs tots els productes disponibles. Pots triar el format, la quantitat i començar la compra.
 T'arribarà el dia d'entrega indicat a la teva cooperativa de consum.
 <br/></br>
-    <a id="comcomandes" href="{% url 'comandes' %}">2)<b> Com gestiono els encàrrecs ?</b></a> <br/>
+    <a id="comcomandes" href="{% url 'comandes' %}">3)<b> Com gestiono els encàrrecs ?</b></a> <br/>
     A la gestió de comandes pots accedir sempre des del menú de l'esquerra a través del botó <a href="{% url 'comandes' %}"><span class="glyphicon glyphicon-shopping-cart"></span></a><br/>
     Permet borrar les comandes que ja no desitjis.
         També pots consultar els productes rebuts en el passat.
 <br/></br>
-    <a href="" id="aoncomanda"> 3)<b> A on arriba la comanda ? </b></a><br/>
+    <a href="" id="aoncomanda"> 4)<b> A on arriba la comanda ? </b></a><br/>
         Al punt de trobada de la teva cooperativa de consum.
         <br/><br/>
-    <a href="" id="compagar"> 4)<b> Com es fa el pagament ?</b></a><br/>
+    <a href="" id="compagar"> 5)<b> Com es fa el pagament ?</b></a><br/>
     Com decidiu a la cooperativa de consum. No es fan pagaments a través de lamassa.org
             <br/> <br/>
 
-    <a href="{% url 'convidar' %}" id="comconvidar"> 5)<b> Com puc convidar nous usuaris a la xarxa ?</b></a><br/>
+    <a href="{% url 'convidar' %}" id="comconvidar"> 6)<b> Com puc convidar nous usuaris a la xarxa ?</b></a><br/>
     Pots convidar nous usuaris a la xarxa clicant el botó <a href="{% url 'convidar' %}"><span class='glyphicon glyphicon-bullhorn collapsed-element'></span></a>
     que sempre trobaràs en el menú esquerra<br/>
             Quan convidis a algú, l'estàs convidant a tenir accés als productes de la cooperativa de consum
@@ -62,7 +70,7 @@ T'arribarà el dia d'entrega indicat a la teva cooperativa de consum.
             Recorda si cal comunicar-ho a la cooperativa a través dels canals que tingueu establerts.
             <br/> <br/>
 
-    <a href="{% url 'productor_list' %}" id="comproductor"> 6)<b> Sóc petit <b>productor</b>, què haig de fer per oferir els meus productes?</b></a><br/>
+    <a href="{% url 'productor_list' %}" id="comproductor"> 7)<b> Sóc petit <b>productor</b>, què haig de fer per oferir els meus productes?</b></a><br/>
     Els petits productors teniu una secció de la web, entra-hi clicant el botó
         <a href="{% url 'productor_list' %}">
             <span class='glyphicon glyphicon-folder-open collapsed-element'></span></a>
@@ -94,7 +102,7 @@ T'arribarà el dia d'entrega indicat a la teva cooperativa de consum.
           intentar col·laborar amb la distribució dels productes d'altres, s'acaben produïnt sinèrgies
           positives entre els diferents transports.
             <br/><br/>
-    <a href="{% url 'vista_nodes' %}" id="comcoope"> 7)<b> Sóc responsable d'una <b>Cooperativa de Consum</b> de productes, com puc fer servir la web?</b></a><br/>
+    <a href="{% url 'vista_nodes' %}" id="comcoope"> 8)<b> Sóc responsable d'una <b>Cooperativa de Consum</b> de productes, com puc fer servir la web?</b></a><br/>
     Els responsables de Cooperatives de Consum teniu una secció de la web. Clica el botó
         <a href="{% url 'vista_nodes' %}">
             <span class='glyphicon glyphicon-map-marker collapsed-element'></span></a>
@@ -115,7 +123,7 @@ T'arribarà el dia d'entrega indicat a la teva cooperativa de consum.
 
 
     <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge" id="altredubte">
-        8)<b> Tens algun altre dubte ? Vols col·laborar amb <b>lamassa.org?</b></b></a><br/>
+        9)<b> Tens algun altre dubte ? Vols col·laborar amb <b>lamassa.org?</b></b></a><br/>
     Escriu-nos un missatge <a href="{% url 'messages_compose_to' webmaster %}" title="enviar missatge">
           (Clica aquí <span class="glyphicon glyphicon-comment" style="color: #f6a828">  </span>)</a>
     i et contestarem l'abans possible.

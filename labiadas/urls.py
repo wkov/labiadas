@@ -22,6 +22,7 @@ from romani.productor_views import producteDelete, productorGraphView, graphProd
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
+from romani.views import numcomandesView, numproductorView, usercornerView
 from romani.pers_views import UserDetailView
 
 from romani import api
@@ -157,6 +158,9 @@ urlpatterns = [
     url(r'^freqcalc/$', auth(FreqCalcView), name="freqcalc"), #ajax: en comanda calcula els posibles dies de la setmana segons el node seleccionat
     url(r'^franjacalc/$', auth(FranjaCalcView), name="franjacalc"),#ajax: en comanda calcula les franjes horaries segons el lloc i el dia seleccionats
     # url(r'^datacalc/$', auth(DataCalcView), name="datacalc"),  #ajax: calcula el dia concret (dd/mm/yyyy) segons el dia de la setmana (dilluns, dimarts,)  seleccionat
+    url(r'^numcomandes/$', auth(numcomandesView), name="numcomandes"),
+    url(r'^numcomandespro/$', auth(numproductorView), name="numcomandespro"),
+    url(r'^usercorner/$', auth(usercornerView), name="usercorner"),
     url(r'^info/$', auth(InfoFormView.as_view()), name="info"), #genera el modal en que es confirma una comanda
     url(r'^comanda/$', auth(ComandaFormView.as_view()), name="comanda"), #confirma la comanda
     url(r'^dies_entrega/(?P<pk>\d+)/(?P<pro>\d+)$', auth(diesEntregaView), name="diesEntrega"),

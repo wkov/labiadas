@@ -563,12 +563,12 @@ class ComandaFormBaseView(FormView):
                 else:
                     e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
                 ret = {"contracte": 0, "success": 1}
-                notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
-                    description=e.dia_entrega.date , timestamp=timezone.now())
-                messages.success(self.request, (u"Comanda realitzada correctament"))
+                # notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
+                #     description=e.dia_entrega.date , timestamp=timezone.now())
+                # messages.success(self.request, (u"Comanda realitzada correctament"))
             else:
                 ret = {"contracte": 0, "success": 0}
-                messages.error(self.request, (u"Disculpa, NO està disponible la cantitat sol·licitada"))
+                # messages.error(self.request, (u"Disculpa, NO està disponible la cantitat sol·licitada"))
 
         else:     #freqüència: més d'una vegada o periòdic
 

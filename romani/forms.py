@@ -78,7 +78,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        exclude = ("user","invitacions", "bio")
+        exclude = ("user","invitacions", "bio", "avatar")
 
     def save(self, *args, **kwargs):
       """

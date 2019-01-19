@@ -593,6 +593,20 @@ def FranjaCalcView(request):
     return HttpResponse("NO")
 
 
+def numcomandesView(request):
+    up = UserProfile.objects.get(user=request.user)
+    num_comandes = up.comandes_cistella().count()
+    return render(request, 'romani/consumidors/num_comandes.html', {'data': num_comandes})
+
+def numproductorView(request):
+    up = UserProfile.objects.get(user=request.user)
+    entregas_num = up.pro_entregas().count()
+    return render(request, 'romani/consumidors/num_productor.html', {'data': entregas_num})
+
+def usercornerView(request):
+    return render(request, 'romani/userCorner.html')
+
+
 class JSONFormMixin(object):
     def create_response(self, vdict=dict(), valid_form=True):
         response = HttpResponse(json.dumps(vdict), content_type='application/json')

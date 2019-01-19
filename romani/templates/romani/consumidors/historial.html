@@ -39,34 +39,34 @@
 <a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntrega' v.comanda_pk '0' %}" title="llegir més"></a>
 &nbsp;
 
-        <form method="post" class="vote_form"
-{#                  action="{% url 'vote' %}"
-                    >
+        <!--<form method="post" class="vote_form"-->
+<!--{#                  action="{% url 'vote' %}"-->
+                    <!--&gt;-->
 
-          <!--<div style="background-color: #f6a828; float: right; position: absolute; z-index: 1000000; top: 0px; right: 0px; font-family: 'Barrio';">-->
-          <!--<div style="float: left">-->
-              <!--<div style="margin: 0 auto; text-align:center">-->
-          <!--&lt;!&ndash;Valoració: &nbsp; <br/>&ndash;&gt;-->
-                  <!--</div>-->
-          <!--</div>-->
-          <!--<div style="float: right">-->
-            {% csrf_token %}
-            <input type="hidden" id="id_entrega" name="entrega" class="hidden_id" value="{{ v.pk }}" />
-            <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />
-            {% if v.pk in upvoted_comandes %}
-                <!--<button type="submit" onclick="this.form.submited=this.value;" name="Nothing"  style="width: 16px; height: 16px; border: none;" class="arrow-upvoted hidden_id" value="Nothing" title="Ha anat bé"></button> &nbsp;-->
-                <button type="submit" onclick="this.form.submited=this.value;" name="Down" value="Down"  style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-up hidden_id" title="He tingut problemes">
-                </button>
-            {% elif v.pk in downvoted_comandes %}
-                <button type="submit" onclick="this.form.submited=this.value;" name="Up" value="Up" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-down hidden_id" title="Ha anat bé"></button> &nbsp;
-                <!--<button type="submit" onclick="this.form.submited=this.value;" name="Nothing" value="Nothing"  style="width: 16px; height: 16px; border: none;" class="arrow-downvoted hidden_id" title="He tingut problemes"></button>-->
-            {% else %}
-                <button type="submit" onclick="this.form.submited=this.value;" name="NewUp" value="NewUp" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-up hidden_id" title="Ha anat bé"></button> &nbsp;
-                <button type="submit" onclick="this.form.submited=this.value;" name="NewDown" value="NewDown" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-down hidden_id" title="He tingut problemes"></button>
-            {% endif %}
-          <!--</div>-->
-          <!--</div>-->
-        </form>
+          <!--&lt;!&ndash;<div style="background-color: #f6a828; float: right; position: absolute; z-index: 1000000; top: 0px; right: 0px; font-family: 'Barrio';">&ndash;&gt;-->
+          <!--&lt;!&ndash;<div style="float: left">&ndash;&gt;-->
+              <!--&lt;!&ndash;<div style="margin: 0 auto; text-align:center">&ndash;&gt;-->
+          <!--&lt;!&ndash;&lt;!&ndash;Valoració: &nbsp; <br/>&ndash;&gt;&ndash;&gt;-->
+                  <!--&lt;!&ndash;</div>&ndash;&gt;-->
+          <!--&lt;!&ndash;</div>&ndash;&gt;-->
+          <!--&lt;!&ndash;<div style="float: right">&ndash;&gt;-->
+            <!--{% csrf_token %}-->
+            <!--<input type="hidden" id="id_entrega" name="entrega" class="hidden_id" value="{{ v.pk }}" />-->
+            <!--<input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ up.user.pk }}" />-->
+            <!--{% if v.pk in upvoted_comandes %}-->
+                <!--&lt;!&ndash;<button type="submit" onclick="this.form.submited=this.value;" name="Nothing"  style="width: 16px; height: 16px; border: none;" class="arrow-upvoted hidden_id" value="Nothing" title="Ha anat bé"></button> &nbsp;&ndash;&gt;-->
+                <!--<button type="submit" onclick="this.form.submited=this.value;" name="Down" value="Down"  style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-up hidden_id" title="He tingut problemes">-->
+                <!--</button>-->
+            <!--{% elif v.pk in downvoted_comandes %}-->
+                <!--<button type="submit" onclick="this.form.submited=this.value;" name="Up" value="Up" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-down hidden_id" title="Ha anat bé"></button> &nbsp;-->
+                <!--&lt;!&ndash;<button type="submit" onclick="this.form.submited=this.value;" name="Nothing" value="Nothing"  style="width: 16px; height: 16px; border: none;" class="arrow-downvoted hidden_id" title="He tingut problemes"></button>&ndash;&gt;-->
+            <!--{% else %}-->
+                <!--<button type="submit" onclick="this.form.submited=this.value;" name="NewUp" value="NewUp" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-up hidden_id" title="Ha anat bé"></button> &nbsp;-->
+                <!--<button type="submit" onclick="this.form.submited=this.value;" name="NewDown" value="NewDown" style="width: 16px; height: 16px; border: none;" class="glyphicon glyphicon-thumbs-down hidden_id" title="He tingut problemes"></button>-->
+            <!--{% endif %}-->
+          <!--&lt;!&ndash;</div>&ndash;&gt;-->
+          <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--</form>-->
 
 
 </li>

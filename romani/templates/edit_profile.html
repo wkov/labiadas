@@ -258,26 +258,26 @@ jQuery(document).ready(function($) {
 
     <form method="post" enctype="multipart/form-data" action="">{% csrf_token %}
                 <div id="tabs-1">
-                    {% if object.avatar  %}
-                                <a href="{{ MEDIA_URL }}{{ object.avatar.url }}" >
-                                    <div class="g-item" style="background-image:url('{{ object.avatar.url }}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >
-                                    </div>
-                                </a>
-                    {% else %}
-                                <a href="{{ MEDIA_URL }}{% static "img/fusta.jpg" %}" >
-                                    <div class="g-item" style="background-image:url('{% static "img/fusta.jpg" %}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >
-                                    </div>
-                                </a>
-                    {% endif %}<br/><br/>
-                    <div style="display: block">
+                    <!--{% if object.avatar  %}-->
+                                <!--<a href="{{ MEDIA_URL }}{{ object.avatar.url }}" >-->
+                                    <!--<div class="g-item" style="background-image:url('{{ object.avatar.url }}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >-->
+                                    <!--</div>-->
+                                <!--</a>-->
+                    <!--{% else %}-->
+                                <!--<a href="{{ MEDIA_URL }}{% static "img/fusta.jpg" %}" >-->
+                                    <!--<div class="g-item" style="background-image:url('{% static "img/fusta.jpg" %}'); position:relative; z-index: 10" id="fotoavatar" name="fotoavatar" alt="Quan desis pujarem la nova foto de perfil" >-->
+                                    <!--</div>-->
+                                <!--</a>-->
+                    <!--{% endif %}<br/><br/>-->
+                    <!--<div style="display: block">-->
 
-                            <label for="avatar"><span class="glyphicon glyphicon-picture"></span>Nova foto de perfil: </label>
-                            {% if object.avatar  %}
-                                <input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>
-                            {% else %}
-                                <input type="file" id="avatar" name="avatar" class="avatar" src="{% static "img/fusta.jpg" %}"/> </br>
-                            {% endif %}
-                    </div>
+                            <!--<label for="avatar"><span class="glyphicon glyphicon-picture"></span>Nova foto de perfil: </label>-->
+                            <!--{% if object.avatar  %}-->
+                                <!--<input type="file" id="avatar" name="avatar" class="avatar" src="{{ object.avatar.url }}" /> </br>-->
+                            <!--{% else %}-->
+                                <!--<input type="file" id="avatar" name="avatar" class="avatar" src="{% static "img/fusta.jpg" %}"/> </br>-->
+                            <!--{% endif %}-->
+                    <!--</div>-->
                       <label>Email: </label> {{ object.user.email }}  <br/>
                       <label>Nom d'usuari: </label>   {{ object.user.username }} <br/>
                       <label>Nom: </label>     {{ form.first_name }} <br/>

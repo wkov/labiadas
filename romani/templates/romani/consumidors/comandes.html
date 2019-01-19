@@ -33,7 +33,7 @@
               {{v.cantitat}} &nbsp; {{ v.producte }} &nbsp; {{v.format}} &nbsp; {{v.preu}} &nbsp;
     <a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntrega' v.pk '0' %}" title="llegir més"></a>
 &nbsp;
-    <a class="glyphicon glyphicon-remove" type="button" href="{% url 'comandaDelete' v.entrega_pk  %}"
+    <a class="glyphicon glyphicon-remove" type="button" href="{% url 'comandaDelete' v.pk  %}"
                            title="Borrar comanda"
                            onclick="return confirm('Segur que vols borrar la comanda?')">
                                 </a>
@@ -49,9 +49,9 @@
                 No hi ha comandes encara
         {% endif %}
 <br/>
-<a type="button" href="{% url 'entregas'  %} " id="pro_menu" style="border: 3px; margin: 0" title="">
+<a type="button" href="{% url 'entregas'  %} " id="pro_menu" style="border: 3px; margin: 0" title="Veure historial d'entregues">
     Veure Historial de comandes</a>
-<a type="button" href="{% url 'coope' %}" id="pro_menu" style="border: 3px; margin: 0" title=""> Tornar a la botiga </a>
+<a type="button" href="{% url 'coope' %}" id="pro_menu" style="border: 3px; margin: 0" title="Veure comandes actuals"> Tornar a la botiga </a>
 
 
 

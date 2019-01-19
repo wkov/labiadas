@@ -2,7 +2,7 @@ jQuery(document).ready(function($)
 
     {
 
-
+//        $(this).scrollTop(0);
 
 
 
@@ -297,6 +297,7 @@ jQuery(document).ready(function($)
 				var dataentrega = document.getElementById("dataentrega");
 				var franjes = document.getElementById("franjes");
 				var modal = document.getElementById('myModal');
+//				var numcom = document.getElementById('notification_count')
 				var check1 = document.getElementById('check1');
 				var check2 = document.getElementById('check2');
 				if ((dataentrega.value == "")||(franjes.value == "")){
@@ -315,14 +316,36 @@ jQuery(document).ready(function($)
 
 						  modal.style.display = "none";
 
-						  if ( data["contracte"] == 1) {
-							  url = "/dies_entrega/" + data["pk"] + "/0";
-							  location = url;
-							  //call = "Has fet la comanda correctament"
-							  //CallNotification(call,"success")
-						  }else {
-							  location.reload()
-						  }
+//						  if ( data["contracte"] == 1) {
+//							  url = "/dies_entrega/" + data["pk"] + "/0";
+//							  location = url;
+//
+//						  }else {
+//							  location.reload()
+                              $.post("/numcomandes/", $(this).serializeArray(), function(data){
+                                    $('#auxcomandes').html(data);
+                                });
+                              $.post("/numcomandespro/", $(this).serializeArray(), function(data){
+                                    $('#auxcomandespro').html(data);
+                                });
+                              $.post("/usercorner/", $(this).serializeArray(), function(data){
+                                    $('#userCorner').html();
+                                });
+
+//                                $.ajax({
+//                                  url: '{% url 'myview' %}',
+//                                  success: function(data) {
+//                                  $('#notification_count').html();
+//                                  }
+//                                });
+                              if (data["success"] == 1){
+                                  call = "El producte s'ha afegit a la cistella"
+                                  CallNotification(call,"success")
+							  }else{
+                                  call = "NO està disponible la quantitat sol·licitada"
+                                  CallNotification(call,"error")
+							  }
+//						  }
 								});
 				}
 	});
