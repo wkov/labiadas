@@ -388,8 +388,9 @@ def entregaDelete(request, pk):
 
     entregaDel = Entrega.objects.filter(pk=pk).first()
 
-
-    dia = datetime.datetime.now() + timedelta(hours=entregaDel.comanda.format.productor.hores_limit)
+    dia_entregatime = entregaDel.comanda.format.dies_entrega.get(dia=entregaDel.dia_entrega)
+    # time = dies_entrega.get(dia=entregaDel.dia_entrega)
+    dia = datetime.datetime.now() + timedelta(hours=dia_entregatime.hores_limit)
     # prox_entrega = comandaDel.prox_entrega()
     dia_prox_entrega = entregaDel.dia_entrega
     aux = dia_prox_entrega.franja_inici()
