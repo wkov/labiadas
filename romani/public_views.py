@@ -396,14 +396,15 @@ def entregaDelete(request, pk):
     aux = dia_prox_entrega.franja_inici()
     daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
 
-    if daytime > dia:
+    if daytime < dia:
+        messages.error(request, (u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"))
+    else:
         notify.send(entregaDel.comanda.format, recipient = request.user,  verb="Has tret ", action_object=entregaDel,
             description="de la cistella" , timestamp=timezone.now())
         # url=comandaDel.format.producte.foto.url,
         entregaDel.delete()
         messages.info(request, (u"Has anulat la entrega i hem tret el producte de la cistella"))
-    else:
-        messages.error(request, (u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"))
+
 
     # now = datetime.datetime.now()
     # entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
