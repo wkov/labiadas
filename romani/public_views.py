@@ -396,15 +396,14 @@ def entregaDelete(request, pk):
     aux = dia_prox_entrega.franja_inici()
     daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
 
-    if daytime < dia:
-        messages.error(request, (u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"))
-    else:
+    if daytime > dia:
         notify.send(entregaDel.comanda.format, recipient = request.user,  verb="Has tret ", action_object=entregaDel,
             description="de la cistella" , timestamp=timezone.now())
         # url=comandaDel.format.producte.foto.url,
         entregaDel.delete()
         messages.info(request, (u"Has anulat la entrega i hem tret el producte de la cistella"))
-
+    else:
+        messages.error(request, (u"El productor ja t'està preparant la comanda, no podem treure el producte de la cistella"))
 
     # now = datetime.datetime.now()
     # entregas = Entrega.objects.filter(comanda__client=request.user).filter(Q(dia_entrega__date__gte=now)).order_by('-data_comanda')
@@ -704,9 +703,29 @@ def diesEntregaView(request, pk, pro):
                 if str(d.pk) not in dies_pk:
                     # Borrem les entregues que han deixat d'estar seleccionades
                     entrega = Entrega.objects.get(comanda=comanda, dia_entrega=d)
-                    entrega.delete()
-                    notify.send(entrega.comanda.format, recipient= user_p.user, verb="Has tret de la cistella", action_object=entrega.comanda,
-                    description=entrega.dia_entrega.date , timestamp=timezone.now())
+
+                    dia_entregatime = entrega.comanda.format.dies_entrega.get(dia=entrega.dia_entrega)
+                    # time = dies_entrega.get(dia=entregaDel.dia_entrega)
+                    dia = datetime.datetime.now() + timedelta(hours=dia_entregatime.hores_limit)
+                    # prox_entrega = comandaDel.prox_entrega()
+                    dia_prox_entrega = entrega.dia_entrega
+                    aux = dia_prox_entrega.franja_inici()
+                    daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month,
+                                                dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
+
+                    if daytime > dia:
+
+
+
+
+
+                        entrega.delete()
+                        notify.send(entrega.comanda.format, recipient= user_p.user, verb="Has tret de la cistella", action_object=entrega.comanda,
+                        description=entrega.dia_entrega.date , timestamp=timezone.now())
+                    else:
+                        messages.error(request, (
+                            u"El productor ja t'està preparant alguna de les comandes que vols anul·lar"
+                            u", NO podem treure el producte de la cistella"))
 
             if pro == '0':   #si el usuari es consumidor i prove de la pantalla de comanda principal
 
@@ -732,7 +751,9 @@ def diesEntregaView(request, pk, pro):
             messages.warning(request, (u"Hem trobat errors en el formulari"))
             pass
 
-    return render(request, "dies_comanda.html",{'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles, 'dies_entrega_ini': dies_entrega_ini, 'entregas_pas': entregas_pas })
+    return render(request, "dies_comanda.html",
+                  {'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles,
+                   'dies_entrega_ini': dies_entrega_ini, 'entregas_pas': entregas_pas })
 
 
 

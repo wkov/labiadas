@@ -33,7 +33,7 @@
               {{v.cantitat}} &nbsp; {{ v.producte }} &nbsp; {{v.format}} &nbsp; {{v.preu}} &nbsp;
     <a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntrega' v.pk '0' %}" title="llegir més"></a>
 &nbsp;
-    <a class="glyphicon glyphicon-remove" type="button" href="{% url 'comandaDelete' v.pk  %}"
+    <a class="glyphicon glyphicon-remove" type="button" href="{% url 'entregaDelete' v.entrega_pk  %}"
                            title="Borrar comanda"
                            onclick="return confirm('Segur que vols borrar la comanda?')">
                                 </a>
