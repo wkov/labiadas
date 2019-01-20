@@ -170,6 +170,12 @@ class DiaEntrega(models.Model):
                 list.append(s)
         return list
 
+    def productes(self):
+        productes = set()
+        for p in self.entregas.all():
+            productes.add(p.comanda.format.producte)
+        return productes
+
     def productors(self):
         productors = set()
         for p in self.entregas.all():

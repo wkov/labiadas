@@ -110,7 +110,7 @@ def coopeView(request):
     formats_aux = set()
 
     for d in dies_node_entrega:
-        for t in TipusProducte.objects.filter(dies_entrega__dia=d):
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d).exclude(producte__pk__in=prod_aux):
             diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
             date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()
@@ -121,12 +121,12 @@ def coopeView(request):
                     prod_aux.add(t.producte.pk)
                     etiquetes.add(t.producte.etiqueta)
                     formats_aux.add(t)
-    p = Producte.objects.filter(pk__in=prod_aux).distinct()
+    p = Producte.objects.filter(pk__in=prod_aux)
 
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
 
-    paginator = Paginator(productes, 12) # Show 24 productes per page
+    paginator = Paginator(productes, 50) # Show 24 productes per page
 
     page = request.GET.get('page')
 
@@ -139,7 +139,7 @@ def coopeView(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
 
-    return render(request, "productes.html", {'productes':products, 'formats':formats_aux, 'etiquetes': etiquetes, 'nodes':nodes, 'up': user_p})
+    return render(request, "productes.html", {'productes': products, 'formats': formats_aux, 'etiquetes': etiquetes, 'nodes': nodes, 'up': user_p})
 
 
 def producteView(request,pk):
