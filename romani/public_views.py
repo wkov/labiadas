@@ -91,17 +91,17 @@ def coopeView(request):
 
     dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = today)
 
-    etiquetes_pre = Etiqueta.objects.all()
+    # etiquetes_pre = Etiqueta.objects.all()
 
     etiquetes = set()
 
-    for e in etiquetes_pre:
-        for p in e.producte_set.all():
-            for f in p.formats.all():
-                for p2 in f.dies_entrega.all():
-                    if p2.dia in dies_node_entrega:
-                        etiquetes.add(e)
-                        break
+    # for e in etiquetes_pre:
+    #     for p in e.producte_set.all():
+    #         for f in p.formats.all():
+    #             for p2 in f.dies_entrega.all():
+    #                 if p2.dia in dies_node_entrega:
+    #                     etiquetes.add(e)
+    #                     break
 
     nodes = Node.objects.all()
 
@@ -119,6 +119,7 @@ def coopeView(request):
                 stock_result = t.stock_calc(d, 1)
                 if stock_result['result'] == True:
                     prod_aux.add(t.producte.pk)
+                    etiquetes.add(t.producte.etiqueta)
                     formats_aux.add(t)
     p = Producte.objects.filter(pk__in=prod_aux).distinct()
 
