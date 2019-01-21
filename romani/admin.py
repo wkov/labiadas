@@ -3,18 +3,18 @@ from romani.models import Producte, Productor, TipusProducte, Comanda, Node, Use
 
 class producteAdmin(admin.ModelAdmin):
     list_display = ('nom', 'productor', 'descripcio', 'text_curt', 'foto', 'thumb')
-    search_fields = ['nom']
-    list_filter = ['nom', 'productor']
+    search_fields = ['nom', 'productor__nom']
+    list_filter = ['productor', 'etiqueta', 'status', 'nom']
 
-class voteAdmin(admin.ModelAdmin):
-    list_display = ('voter', 'entrega', 'text')
-    search_fields = ['voter', 'entrega','entrega__dia_entrega', 'entrega__comanda']
-    list_filter = ['voter', 'entrega','entrega__dia_entrega', 'entrega__comanda']
+# class voteAdmin(admin.ModelAdmin):
+#     list_display = ('voter', 'entrega', 'text')
+#     search_fields = ['voter', 'entrega','entrega__dia_entrega', 'entrega__comanda']
+#     list_filter = ['voter', 'entrega','entrega__dia_entrega', 'entrega__comanda']
 
 class productorAdmin(admin.ModelAdmin):
-    list_display = ('nom','text')
-    search_fields = ['nom', 'text']
-    list_filter = ['nom', 'responsable']
+    list_display = ('nom','text', 'hores_limit')
+    search_fields = ['nom', 'text','productes__nom', 'productes__descripcio']
+    list_filter = ['nodes']
 
 class tipusproducteAdmin(admin.ModelAdmin):
     # list_display = ('nom', 'producte_nom','preu','pk','stock')
@@ -34,8 +34,9 @@ class entregaAdmin(admin.ModelAdmin):
 
 class userprofileAdmin(admin.ModelAdmin):
     list_display = ('user','bio','lloc_entrega')
-    search_fields = ['user','bio','lloc_entrega']
-    list_filter = ['user','bio','lloc_entrega']
+    search_fields = ['user__username', 'user__first_name', 'user__last_name'
+        ,'user__email','bio','lloc_entrega__nom']
+    list_filter = ['lloc_entrega']
 
 class adjuntAdmin(admin.ModelAdmin):
     list_display = ('productor', 'arxiu')
@@ -48,8 +49,8 @@ class etiquetaAdmin(admin.ModelAdmin):
 
 class diaFormatStockAdmin(admin.ModelAdmin):
     list_display = ('dia', 'tipus_stock', 'format')
-    search_fields = ['dia', 'tipus_stock', 'format']
-    list_filter = ['dia', 'tipus_stock', 'format']
+    search_fields = ['dia__date', 'tipus_stock', 'format__nom']
+    list_filter = ['tipus_stock','format__productor','dia__node','format','dia']
 
 class diaentregaAdmin(admin.ModelAdmin):
     # list_display = ('franjes_horaries', 'date', 'node')
@@ -102,4 +103,4 @@ admin.site.register(FranjaHoraria, franjahorariaAdmin)
 admin.site.register(Entrega, entregaAdmin)
 admin.site.register(Key, keyAdmin)
 admin.site.register(Frequencia, frequenciaAdmin)
-admin.site.register(Vote, voteAdmin)
+# admin.site.register(Vote, voteAdmin)

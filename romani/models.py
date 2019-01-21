@@ -264,7 +264,7 @@ class Producte(models.Model):
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='productes/%Y/%m/%d', null=True, validators=[validate_file])
     thumb = models.FileField(blank=True, null=True)
-    productor = models.ForeignKey(Productor)
+    productor = models.ForeignKey(Productor, related_name='productes')
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
     frequencies = models.ForeignKey(Frequencia)
     status = models.BooleanField(default=True)
