@@ -28,37 +28,17 @@ def buskadorProducte(request):
 
     searchString = request.POST.get('searchString', 0)
     #ToDo Afegir Cela al Buscador, Django no permet Ands i Ors, Construir query manualment
-
-    # etiquetes = Etiqueta.objects.all()
     user_p = UserProfile.objects.filter(user=request.user).first()
-
-    etiquetes_pre = Etiqueta.objects.all()
-
     dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
-
     etiquetes = set()
 
-    for e in etiquetes_pre:
-        for p in e.producte_set.all():
-            for f in p.formats.all():
-                for p2 in f.dies_entrega.all():
-                    if p2.dia in dies_node_entrega:
-                        etiquetes.add(e)
-                        break
-
-
-
-
     if not searchString == 0:
-
-
-
 
         prod_aux = set()
         formats_aux = set()
 
         for d in dies_node_entrega:
-            for t in TipusProducte.objects.filter(dies_entrega__dia=d):
+            for t in TipusProducte.objects.filter(dies_entrega__dia=d).exclude(producte__pk__in=prod_aux):
                 diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
                 date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
                 aux = d.franja_inici()
@@ -67,8 +47,9 @@ def buskadorProducte(request):
                     stock_result = t.stock_calc(d, 1)
                     if stock_result['result'] == True:
                         prod_aux.add(t.producte.pk)
+                        # etiquetes.add(t.producte.etiqueta)
                         formats_aux.add(t)
-        p = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)),
+        p = Producte.objects.filter((Q(nom__icontains = searchString) | Q(descripcio__icontains = searchString) | Q(keywords__icontains = searchString)|Q(etiqueta__nom__icontains = searchString)),
                                         pk__in=prod_aux).distinct()
 
         productes = sorted(p, key=lambda a: a.karma(user_p.lloc_entrega), reverse=True)
@@ -177,24 +158,25 @@ def etiquetaView(request,pk):
     dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
 
 
-    etiquetes_pre = Etiqueta.objects.all()
+    # etiquetes_pre = Etiqueta.objects.all()
 
     etiquetes = set()
 
-    for e in etiquetes_pre:
-        for p in e.producte_set.all():
-            for f in p.formats.all():
-                for p2 in f.dies_entrega.all():
-                    if p2.dia in dies_node_entrega:
-                        etiquetes.add(e)
-                        break
+    # for e in etiquetes_pre:
+    #     for p in e.producte_set.all():
+    #         for f in p.formats.all():
+    #             for p2 in f.dies_entrega.all():
+    #                 if p2.dia in dies_node_entrega:
+    #                     etiquetes.add(e)
+    #                     break
 
 
     prod_aux = set()
+    prod_tot = set()
     formats_aux = set()
 
     for d in dies_node_entrega:
-        for t in TipusProducte.objects.filter(dies_entrega__dia=d, producte__etiqueta=etiqueta):
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d).exclude(producte__pk__in=prod_tot):
             diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
             date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()
@@ -202,16 +184,20 @@ def etiquetaView(request,pk):
             if daytime > date:
                 stock_result = t.stock_calc(d, 1)
                 if stock_result['result'] == True:
-                    prod_aux.add(t.producte.pk)
-                    formats_aux.add(t)
+                    if t.producte.etiqueta == etiqueta:
+                        prod_aux.add(t.producte.pk)
+                        formats_aux.add(t)
+                    prod_tot.add(t.producte.pk)
+                    etiquetes.add(t.producte.etiqueta)
 
 
-    p = Producte.objects.filter(pk__in=prod_aux).distinct()
+
+    p = Producte.objects.filter(pk__in=prod_aux)
 
 
     productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
 
-    paginator = Paginator(productes, 12) # Show 24 productes per page
+    paginator = Paginator(productes, 50) # Show 24 productes per page
 
     page = request.GET.get('page')
 
