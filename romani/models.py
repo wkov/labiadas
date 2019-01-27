@@ -566,7 +566,7 @@ class DiaProduccio(models.Model):
     total_uts = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return str(self.date)
+        return str(self.date)+str(self.productor)
 
     def stock(self):
    # Per al cas tipus_stock == 1
