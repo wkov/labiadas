@@ -393,7 +393,8 @@ class TipusProducte(models.Model):
                      try:
                          dias_pro = DiaProduccio.objects.filter((Q(node=d.dia.node) | Q(node=None)),
                                                                date__lte=d.dia.date,
-                                                       caducitat__gte=d.dia.date).exclude(total_uts__isnull=True) \
+                                                       caducitat__gte=d.dia.date,
+                                                                productor=self.productor).exclude(total_uts__isnull=True) \
                                                         .order_by('-node', 'caducitat', 'date')
 
                          # stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node) | Q(dia_prod__node=None))
@@ -451,7 +452,8 @@ class TipusProducte(models.Model):
                      try:
                          dias_pro = DiaProduccio.objects.filter((Q(node=d.dia.node) | Q(node=None)),
                                                                 date__lte=d.dia.date,
-                                                                caducitat__gte=d.dia.date).exclude(total_uts__isnull=True) \
+                                                                caducitat__gte=d.dia.date, 
+                                                                productor=self.productor).exclude(total_uts__isnull=True) \
                              .order_by('-node', 'caducitat', 'date')
 
                          # stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node) | Q(dia_prod__node=None))
@@ -613,7 +615,7 @@ class Comanda(models.Model):
     frequencia = models.ForeignKey(Frequencia, blank=True, null=True)
 
     def __str__(self):
-        return self.format.producte.nom
+        return str(self.format.producte.nom)+str(self.client.username)
 
     def get_absolute_url(self):
         return reverse('comandes')
