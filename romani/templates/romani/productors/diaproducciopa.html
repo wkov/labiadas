@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block headers %}
+    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
+    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
+    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/menubar.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+
+    {% include 'romani/productors/menu_pro.html' %}
+
+    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
+    font-size: 2em">Dia de Producció de PA &nbsp;</div>
+<br/><br/>
+<form method="post" action="">
+  {% csrf_token %}
+
+<table border="1">
+<tr><td>{{ form.as_p }}
+</td></tr>
+    {{ stockform.management_form }}
+    {% for f in stockform %}
+<tr>
+{#    {{ f.id }}#}
+    <td>
+    {% if f.instance.format %}
+        <b>{{ f.instance.format.nom }}
+        {{ f.instance.format.producte }}</b>
+        {{ f.instance.format.preu }} €
+{#        {{ f.format }}#}
+    {% else %}
+       {{ f.initial.format.nom}} {{ f.initial.format.producte.nom}} {{ f.initial.format.preu }}
+{#        {{ f.instance.format.value }}#}
+    {% endif %}</td>
+
+<td>{{ f.id }}{{ f.format.as_hidden }}
+
+    <td>
+    &nbsp; {{ f.as_p }}
+    </td>
+
+
+    </tr>
+        {% endfor %}
+</table>
+{#  <input type="submit" value="Grabar">#}
+  <input type="submit" name="create" value="Confirmar">
+  <input type="submit" name="createagain" value="Confirmar i crear altre dia de producció">
+
+</form>
+
+
+    {% if comandes %}
+
+        <br/>
+         <table border="1" id="myTable" class="tablesorter" style="width: 100%">
+         <thead>
+         <tr>
+         <th>Producte</th>
+         <th>Lloc d'entrega</th>
+         <th>Cant</th>
+         <th>Format</th>
+         <th>Data d'entrega</th>
+         <th>Franja horària</th>
+         <th>Preu</th>
+         <th>Client</th>
+{#         <th>Freqüència</th>#}
+         <th>Data de comanda</th>
+         </tr>
+         </thead>
+         <tbody>
+            {% for link in comandes %}
+                   <tr>
+                            <td>[{{ link.comanda.format.producte.nom }}]</td>
+                            <td>{{ link.dia_entrega.node }}</td>
+                            <td>{{ link.comanda.cantitat }}</td>
+                            <td>{{ link.comanda.format.nom }}</td>
+                            <td>{{ link.dia_entrega.date }}</td>
+                            <td>{{ link.franja_horaria }}</td>
+                            <td>{{ link.comanda.preu }}€</td>
+                            <td><a  href="{% url 'perfil' link.comanda.client.pk %}">
+                                    {{ link.comanda.client.username }} </a></td>
+{#                            <td>{{ link.comanda.frequencia }}</td>#}
+                            <td>{{ link.data_comanda.date }}</td>
+                        </tr>
+            {% endfor %}
+         <tr>
+             <td>TOTAL</td><td></td><td>{{ cant_total }}</td><td></td><td></td><td></td><td>{{ preu_total }}€</td>
+         </tr>
+         </tbody>
+           </table>
+    {% endif %}
+
+    {% if stockform.errors %}
+        <p>{{ form.non_field_errors }}</p>
+    {% endif %}
+{% endblock %}
