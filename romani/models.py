@@ -87,11 +87,12 @@ class Node(models.Model):
     pis = models.CharField(max_length=15, blank=True, null=True)
     poblacio = models.CharField(max_length=40, blank=False, null=False)
     codi_postal = models.CharField(max_length=5, blank=True, null=True)
-    frequencia = models.ForeignKey(Frequencia)
+    frequencia = models.ForeignKey(Frequencia, blank=True, null=True)
     responsable = models.ManyToManyField(User, blank=False)
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
     productors = models.ManyToManyField(Productor, blank=True, related_name='nodes')
+    nomes_seguent = models.NullBooleanField()
     # privat = models.NullBooleanField()
 
     def __str__(self):
@@ -266,7 +267,7 @@ class Producte(models.Model):
     thumb = models.FileField(blank=True, null=True)
     productor = models.ForeignKey(Productor, related_name='productes')
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
-    frequencies = models.ForeignKey(Frequencia)
+    frequencies = models.ForeignKey(Frequencia, blank=True, null=True)
     status = models.BooleanField(default=True)
     # karma_date = models.DateTimeField(blank=True, null=True)
     # karma_value = models.IntegerField(blank=True, null=True)
@@ -372,7 +373,10 @@ class TipusProducte(models.Model):
                  if d.tipus_stock == '0':
                         # Límit per stock...
                         try:
-                            stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=d.dia.date, dia_prod__caducitat__gte=d.dia.date, format=self).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
+                            stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node)|Q(dia_prod__node=None))
+                                                          , dia_prod__date__lte=d.dia.date, dia_prod__caducitat__gte=d.dia.date, format=self,
+                                                          dia_prod__total_uts__isnull=True)\
+                                                            .order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
                             for s in stocks:
                                 # accedim al dia de producció en que es genera el estoc
                                 diaproduccio = s.dia_prod
@@ -384,6 +388,30 @@ class TipusProducte(models.Model):
                         except:
                             # Si ni tan sols 'ha creat el estoc...
                             pass
+                 elif d.tipus_stock == '1':
+                     # Límit per stock del pa
+                     try:
+                         dias_pro = DiaProduccio.objects.filter((Q(node=d.dia.node) | Q(node=None)),
+                                                               date__lte=d.dia.date,
+                                                       caducitat__gte=d.dia.date).exclude(total_uts__isnull=True) \
+                                                        .order_by('-node', 'caducitat', 'date')
+
+                         # stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node) | Q(dia_prod__node=None))
+                         #                               , dia_prod__date__lte=d.dia.date,
+                         #                               dia_prod__caducitat__gte=d.dia.date) \
+                         #                            .order_by('-dia_prod__node', 'dia_prod__caducitat', 'dia_prod__date')
+                         for dpro in dias_pro:
+                             # accedim al dia de producció en que es genera el estoc
+                             # diaproduccio = s.dia_prod
+                             # s = stocks.get(dia_prod=diaproduccio)
+                             stck = dpro.stocks.get(format=self)
+                             num = int(dpro.stock()) - (int(cantitat)*int(stck.stock_ini))
+                             if num >= 0:
+                                 #  I si encara hi ha estoc disponible,confirmem existències
+                                 return True
+                     except:
+                         # Si ni tan sols 'ha creat el estoc...
+                         pass
                  elif d.tipus_stock == '2':
                         # Si el estoc és sense límit, aleshores confirmem que hi ha existències
                         return True
@@ -400,7 +428,11 @@ class TipusProducte(models.Model):
                  if d.tipus_stock == '0':
                         # Límit per stock...
                         try:
-                            stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=d.dia.date, dia_prod__caducitat__gte=d.dia.date, format=self).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
+                            stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node)|Q(dia_prod__node=None)),
+                                                          dia_prod__date__lte=d.dia.date,
+                                                          dia_prod__caducitat__gte=d.dia.date,
+                                                          format=self, dia_prod__total_uts__isnull=True).\
+                                                            order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
                             for s in stocks:
                                 # accedim al dia de producció en que es genera el estoc
                                 diaproduccio = s.dia_prod
@@ -414,6 +446,31 @@ class TipusProducte(models.Model):
                             # Si ni tan sols 'ha creat el estoc...
                             pass
 
+                 elif d.tipus_stock =='1':
+                     # Límit per stock del pa
+                     try:
+                         dias_pro = DiaProduccio.objects.filter((Q(node=d.dia.node) | Q(node=None)),
+                                                                date__lte=d.dia.date,
+                                                                caducitat__gte=d.dia.date).exclude(total_uts__isnull=True) \
+                             .order_by('-node', 'caducitat', 'date')
+
+                         # stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node) | Q(dia_prod__node=None))
+                         #                               , dia_prod__date__lte=d.dia.date,
+                         #                               dia_prod__caducitat__gte=d.dia.date) \
+                         #                            .order_by('-dia_prod__node', 'dia_prod__caducitat', 'dia_prod__date')
+                         for dpro in dias_pro:
+                             # accedim al dia de producció en que es genera el estoc
+                             # diaproduccio = s.dia_prod
+                             # s = stocks.get(dia_prod=diaproduccio)
+                             stck = dpro.stocks.get(format=self)
+                             num = int(dpro.stock()) - (int(cantitat) * int(stck.stock_ini))
+                             if num >= 0:
+                                 #  I si encara hi ha estoc disponible,confirmem existències
+                                 d_lst.append(d.dia.pk)
+                                 break
+                     except:
+                         # Si ni tan sols 'ha creat el estoc...
+                         pass
                  elif d.tipus_stock == '2':
                         # Si el estoc és sense límit, aleshores confirmem que hi ha existències
                         d_lst.append(d.dia.pk)
@@ -428,7 +485,11 @@ class TipusProducte(models.Model):
          if d.tipus_stock == '0':
                 # Límit per stock...
                 try:
-                    stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)), dia_prod__date__lte=dia.date, dia_prod__caducitat__gte=dia.date, format=self).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
+                    stocks = Stock.objects.filter((Q(dia_prod__node=dia.node)|Q(dia_prod__node=None)),
+                                                  dia_prod__date__lte=dia.date,
+                                                  dia_prod__caducitat__gte=dia.date, format=self,
+                                                  dia_prod__total_uts__isnull=True
+                                                  ).order_by('-dia_prod__node','dia_prod__caducitat','dia_prod__date')
                     for s in stocks:
                         # accedim al dia de producció en que es genera el estoc
                         diaproduccio = s.dia_prod
@@ -446,7 +507,37 @@ class TipusProducte(models.Model):
                     # Si ni tan sols 'ha creat el estoc. Confirmem que no hi ha existències
                     dict = {'result': False, 'dia_prod': ''}
                     return dict
+         elif d.tipus_stock == '1':
+             # Límit per stock del pa
+             try:
+                 dias_pro = DiaProduccio.objects.filter((Q(node=d.dia.node) | Q(node=None)),
+                                                        date__lte=d.dia.date,
+                                                        caducitat__gte=d.dia.date,
+                                                        productor=self.productor).\
+                     exclude(total_uts__isnull=True)\
+                     .order_by('-node', 'caducitat', 'date')
 
+                 # stocks = Stock.objects.filter((Q(dia_prod__node=d.dia.node) | Q(dia_prod__node=None))
+                 #                               , dia_prod__date__lte=d.dia.date,
+                 #                               dia_prod__caducitat__gte=d.dia.date) \
+                 #                            .order_by('-dia_prod__node', 'dia_prod__caducitat', 'dia_prod__date')
+                 for dpro in dias_pro:
+                     # accedim al dia de producció en que es genera el estoc
+                     # diaproduccio = s.dia_prod
+                     # s = stocks.get(dia_prod=diaproduccio)
+                     stck = dpro.stocks.get(format=self)
+                     num = int(dpro.stock()) - (int(cantitat) * int(stck.stock_ini))
+                     if num >= 0:
+                           #  I si encara hi ha estoc disponible,confirmem existències
+                           dict = {'result': True, 'dia_prod': dpro}
+                           return dict
+                 # Si tots els estocs shan esgotat.Confirmem que no hi ha existències.
+                 dict = {'result': False, 'dia_prod': ''}
+                 return dict
+             except:
+                 # Si ni tan sols 'ha creat el estoc. Confirmem que no hi ha existències
+                 dict = {'result': False, 'dia_prod': ''}
+                 return dict
          elif d.tipus_stock == '2':
                 # Si el estoc és sense límit, aleshores confirmem que hi ha existències
                 dict = {'result': True, 'dia_prod': ''}
@@ -455,6 +546,7 @@ class TipusProducte(models.Model):
 class DiaFormatStock(models.Model):
     TIPUS_STOCK = (
         ('0', 'Limit per stock'),
+        ('1', 'Limit relatiu'),
         ('2', 'Sense Limit')
     )
 
@@ -471,9 +563,22 @@ class DiaProduccio(models.Model):
     caducitat = models.DateField()
     productor = models.ForeignKey(Productor)
     node = models.ForeignKey(Node, blank=True, null=True)
+    total_uts = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return str(self.date)
+
+    def stock(self):
+   # Per al cas tipus_stock == 1
+        cant = 0
+        entregas = Entrega.objects.filter(dia_produccio=self)
+        for e in entregas:
+            stock = self.stocks.get(format=e.comanda.format)
+            cant = e.comanda.cantitat*stock.stock_ini + cant
+        if cant > 0:
+            return self.total_uts-cant
+        else:
+            return self.total_uts
 
 class Stock(models.Model):
 
@@ -481,6 +586,10 @@ class Stock(models.Model):
     format = models.ForeignKey(TipusProducte, related_name='stocks')
     stock_ini = models.IntegerField()
 
+    def __str__(self):
+        return str(self.dia_prod.date)+str(self.format.nom)
+
+    # Per al cas tipus_stock == 0
     def stock(self):
         cant = 0
         entregas = Entrega.objects.filter(comanda__format=self.format, dia_produccio=self.dia_prod)
@@ -501,7 +610,7 @@ class Comanda(models.Model):
     node = models.ForeignKey(Node)
     externa = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
-    frequencia = models.ForeignKey(Frequencia)
+    frequencia = models.ForeignKey(Frequencia, blank=True, null=True)
 
     def __str__(self):
         return self.format.producte.nom

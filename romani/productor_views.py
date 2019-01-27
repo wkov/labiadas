@@ -1,7 +1,8 @@
 __author__ = 'sergi'
 
 from romani.models import Comanda, Productor, Producte, DiaEntrega, TipusProducte, DiaProduccio, Stock, DiaFormatStock, Node, Entrega
-from romani.forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, DiaProduccioForm, StockForm, DiaFormatStockForm, ComandaProForm
+from romani.forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, \
+    DiaProduccioForm, StockForm, DiaFormatStockForm, ComandaProForm, DiaProduccioPaForm
 
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
@@ -910,6 +911,183 @@ def DiaProduccioUpdateView(request, pro, pk):
     form.fields['caducitat'].initial = dp_obj.caducitat
 
     return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productors':productors,
+                                                                   'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+
+def DiaProduccioPaCreateView(request, pro):
+
+    productor = Productor.objects.get(pk=pro)
+    productes = Producte.objects.filter(productor=productor, status=True)
+    StockFormset = formset_factory(StockForm, extra=0)
+    formats = TipusProducte.objects.filter(producte__in=productes)
+    stockform = StockFormset(initial=[{'format': x} for x in formats])
+    productors = Productor.objects.filter(responsable=request.user)
+
+    if request.POST:
+
+           form = DiaProduccioPaForm(request.POST)
+           formset = StockFormset(request.POST)
+
+           if form.is_valid() and formset.is_valid():
+
+               try:
+                   dia = request.POST.get('date')
+                   caducitat = request.POST.get('caducitat')
+                   node = request.POST.get('node')
+                   total_uts = request.POST.get('total_uts')
+
+                   if dia:
+
+                       a = datetime.datetime.strptime(dia, '%d/%m/%Y').strftime('%Y-%m-%d')
+
+                       if caducitat:
+                            data_cad = datetime.datetime.strptime(caducitat, '%d/%m/%Y').strftime('%Y-%m-%d')
+                            if node:
+                                node_obj = Node.objects.get(pk=node)
+                                dp = DiaProduccio.objects.create(date=a, productor=productor, caducitat=data_cad, node=node_obj, total_uts=total_uts)
+                            else:
+                                dp = DiaProduccio.objects.create(date=a, productor=productor, caducitat=data_cad, total_uts=total_uts)
+                       else:
+                           if node:
+                                node_obj = Node.objects.get(pk=node)
+                                dp = DiaProduccio.objects.create(date=a, productor=productor, node=node, total_uts=total_uts)
+                           else:
+                                dp = DiaProduccio.objects.create(date=a, productor=productor, total_uts=total_uts)
+               except:
+                   messages.warning(request, (u"Hem trobat errors en el formulari"))
+                   return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
+
+
+       # if formset.is_valid():
+               for f in formset:
+                   cd = f.cleaned_data
+                   dia_prod = dp
+                   format = cd.get('format')
+                   stock_ini = cd.get('stock_ini')
+                   s = Stock.objects.create(dia_prod=dia_prod, format=format, stock_ini=stock_ini)
+
+               if 'create' in request.POST:
+                   messages.success(request, (u"S'ha creat el dia de producció"))
+                   return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
+               else:
+
+                    messages.success(request, (u"S'ha creat el dia de producció"))
+                    # next_d = DiaProduccio.objects.filter(date__gte=dp.date, node__productors=productor).distinct()
+                    # unsorted = next_d.all()
+                    # # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
+                    # next_tab = sorted(unsorted, key = lambda obj: (obj.date))
+                    # aux = False
+                    #
+                    # for n in next_tab:
+                    #     if aux==False:
+                    #         if n == dp:
+                    #             aux=True
+                    #     elif aux==True:
+                    return redirect('diaproducciopa_create', pro=productor.pk)
+
+                    # return render(request, "romani/productors/dates_list.html", {'productor': productor})
+           else:
+
+               messages.warning(request, (u"Hem trobat errors en el formulari"))
+               return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
+
+
+    form = DiaProduccioPaForm()
+    # form.fields['productor'].choices = [(x.pk, x) for x in Productor.objects.filter(pk=pro)]
+    form.fields['node'].queryset = Node.objects.filter(productors__id__exact=pro)
+
+    # form.fields['node'].initial = ''
+
+
+    return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes, 'productors': productors})
+
+
+
+def DiaProduccioPaUpdateView(request, pro, pk):
+
+    productor = Productor.objects.get(pk=pro)
+    productors = Productor.objects.filter(responsable=request.user)
+    productes = Producte.objects.filter(productor=productor, status=True)
+    formats = TipusProducte.objects.filter(producte__in=productes)
+    dp_obj = DiaProduccio.objects.get(pk=pk)
+    stocks = Stock.objects.filter(dia_prod=dp_obj)
+    StockFormset = modelformset_factory(Stock, extra=0, form=StockForm)
+    stockform = StockFormset(queryset=stocks)
+    entregas = Entrega.objects.filter(dia_produccio=dp_obj)
+    preu_total = 0
+    cant_total = 0
+    for c in entregas:
+        preu_total += c.comanda.preu
+        cant_total += c.comanda.cantitat
+
+    if request.POST:
+           form = DiaProduccioPaForm(request.POST)
+           formset = StockFormset(request.POST)
+           if form.is_valid() and formset.is_valid():
+               try:
+                   prod = request.POST.getlist('formats')
+                   dia = request.POST.get('date')
+                   caducitat = request.POST.get('caducitat')
+                   total_uts = request.POST.get('total_uts')
+                   try:
+                        node_pk = request.POST.get('node')
+                        node = Node.objects.get(pk=node_pk)
+                        dp_obj.node = node
+                   except:
+                        dp_obj.node = None
+                   a = datetime.datetime.strptime(dia, '%d/%m/%Y').strftime('%Y-%m-%d')
+                   dp_obj.date = a
+                   dp_obj.productor = productor
+                   b = datetime.datetime.strptime(caducitat, '%d/%m/%Y').strftime('%Y-%m-%d')
+                   dp_obj.caducitat = b
+                   dp_obj.save()
+               except:
+                   messages.warning(request, (u"Hem trobat errors en el formulari"))
+                   return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes,
+                                                                                  'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total, 'productors': productors})
+
+               for f in formset:
+                   cd = f.cleaned_data
+                   dia_prod = dp_obj
+                   format = cd.get('format')
+                   stock_ini = cd.get('stock_ini')
+                   s = Stock.objects.get(pk=f.instance.pk)
+                   s.dia_prod = dia_prod
+                   s.format = format
+                   s.stock_ini = stock_ini
+                   s.save()
+               if 'create' in request.POST:
+                    messages.success(request, (u"S'ha desat el dia de producció"))
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors':productors})
+               else:
+                    messages.success(request, (u"S'ha desat el dia de producció"))
+                    # next_d = DiaProduccio.objects.filter(date__gte = dp_obj.date, node__productors=productor).distinct()
+                    # unsorted = next_d.all()
+                    # # Aqui s'ha d'ordenar el queryset next_d per tal que quedi en el 1r registre el dia d'entrega seguent a editar
+                    # next_tab = sorted(unsorted, key = lambda obj: (obj.date))
+                    # aux = False
+                    #
+                    # for n in next_tab:
+                    #     if aux==False:
+                    #         if n == dp_obj:
+                    #             aux=True
+                    #     elif aux==True:
+                    #         return redirect('diaproduccio_update', pro=productor.pk, pk=n.pk)
+                    #
+                    return redirect('diaproducciopa_create', pro=productor.pk)
+                    # return render(request, "romani/productors/dates_list.html", {'productor': productor})
+           else:
+               messages.warning(request, (u"Hem trobat errors en el formulari"))
+               return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productors':productors,
+                                                                              'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+
+
+    form = DiaProduccioPaForm()
+    form.fields['date'].initial = dp_obj.date
+    form.fields['node'].initial = dp_obj.node
+    form.fields['caducitat'].initial = dp_obj.caducitat
+    form.fields['total_uts'].initial = dp_obj.total_uts
+
+    return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productors':productors,
                                                                    'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
 
 

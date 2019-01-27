@@ -29,7 +29,10 @@ def buskadorProducte(request):
     searchString = request.POST.get('searchString', 0)
     #ToDo Afegir Cela al Buscador, Django no permet Ands i Ors, Construir query manualment
     user_p = UserProfile.objects.filter(user=request.user).first()
-    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
+    if user_p.lloc_entrega.nomes_seguent:
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=datetime.date.today()).all()[:1]
+    else:
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=datetime.date.today())
     etiquetes = set()
 
     if not searchString == 0:
@@ -70,7 +73,10 @@ def coopeView(request):
 
     today = datetime.date.today()
 
-    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = today)
+    if user_p.lloc_entrega.nomes_seguent:
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte = today).all()[:1]
+    else:
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=today)
 
     # etiquetes_pre = Etiqueta.objects.all()
 
@@ -155,8 +161,10 @@ def etiquetaView(request,pk):
     user_p = UserProfile.objects.filter(user=request.user).first()
 
 
-    dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gt = datetime.datetime.now())
-
+    if user_p.lloc_entrega.nomes_seguent:
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte = datetime.date.today()).all()[:1]
+    else:
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=datetime.date.today())
 
     # etiquetes_pre = Etiqueta.objects.all()
 

@@ -170,6 +170,23 @@ class DiaProduccioForm(forms.ModelForm):
         super(DiaProduccioForm, self).__init__(*args, **kwargs)
         self.fields["node"].label = "Cooperativa (OPCIONAL)"
 
+class DiaProduccioPaForm(forms.ModelForm):
+
+    date = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker'}),
+                                 input_formats=('%d/%m/%Y',))
+    caducitat = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y', attrs={'id': 'datepicker2'}),
+                                 input_formats=('%d/%m/%Y',))
+
+    class Meta:
+        model = DiaProduccio
+        fields = ("date", "caducitat", "node", "total_uts" )
+        exclude = ("dies_entrega", "productor")
+
+    def __init__(self, *args, **kwargs):
+        super(DiaProduccioPaForm, self).__init__(*args, **kwargs)
+        self.fields["node"].label = "Cooperativa (OPCIONAL)"
+        self.fields["total_uts"].label = "Total d'unitats"
+
 
 class DiaFormatStockForm(forms.ModelForm):
 
@@ -216,7 +233,7 @@ class NodeForm(forms.ModelForm):
 
     class Meta:
         model = Node
-        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "position", "text", "a_domicili", "responsable")
+        fields = ("nom", "carrer", "numero", "pis", "poblacio", "codi_postal", "position", "text", "a_domicili", "nomes_seguent", "responsable")
 
     def __init__(self, user, *args, **kwargs):
         super(NodeForm, self).__init__(*args, **kwargs)
@@ -225,6 +242,7 @@ class NodeForm(forms.ModelForm):
         self.fields["responsable"].queryset = g.user_set.all()
         # self.fields["frequencia"].queryset = Frequencia.objects.all()
         self.fields["position"].label = 'Coordenades'
+        self.fields["nomes_seguent"].label = 'Mostrar només productes següent entrega'
 
 
 class ProducteForm(forms.ModelForm):
