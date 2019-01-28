@@ -638,42 +638,43 @@ class InfoFormBaseView(FormView):
         ret["producte_pk"] = producte.pk
         ret["cantitat"] = cantitat
         ret["imatge"] = producte.thumb.url
+        ret["llocentrega_pk"] = user_profile.lloc_entrega.pk
 
 
-        json_res = []
-        jfreq = []
+        # json_res = []
+        # jfreq = []
 
         # Carreguem els possibles nodes on l-usuari pot trobar el producte concret
-        if format.en_stock(cantitat, user_profile.lloc_entrega):
-            for i in format.nodes(cantitat).all():
-                if i == user_profile.lloc_entrega:
-                    # Guardem les frequencies del node per informar a l-usuari en el modal
-                    for d in i.frequencia.freq_list():
-                        if d in producte.frequencies.freq_list():
-                            f_obj = dict(nom = d.nom,
-                                         num = d.num
-                                         )
-                            jfreq.append(f_obj)
-                    json_obj = dict(
-                                nom = i.nom,
-                                poblacio = i.poblacio,
-                                pk = i.pk,
-                                selected = "True"
-                            )
-                else:
-                    json_obj = dict(
-                                nom = i.nom,
-                                poblacio = i.poblacio,
-                                pk = i.pk,
-                                selected = "False"
-                            )
-                json_res.append(json_obj)
-        else:
+        if not format.en_stock(cantitat, user_profile.lloc_entrega):
+            # for i in format.nodes(cantitat).all():
+            #     if i == user_profile.lloc_entrega:
+            #         # Guardem les frequencies del node per informar a l-usuari en el modal
+            #         for d in i.frequencia.freq_list():
+            #             if d in producte.frequencies.freq_list():
+            #                 f_obj = dict(nom = d.nom,
+            #                              num = d.num
+            #                              )
+            #                 jfreq.append(f_obj)
+        #             json_obj = dict(
+        #                         nom = user_profile.lloc_entrega.nom,
+        #                         poblacio = user_profile.lloc_entrega.poblacio,
+        #                         pk = i.pk,
+        #                         selected = "True"
+        #                     )
+        #         else:
+        #             json_obj = dict(
+        #                         nom = i.nom,
+        #                         poblacio = i.poblacio,
+        #                         pk = i.pk,
+        #                         selected = "False"
+        #                     )
+        #         json_res.append(json_obj)
+        # else:
             ret = {"success": 0}
             messages.error(self.request, (u"Disculpa, NO està disponible la cantitat sol·licitada"))
 
-        ret["nodes"] = json_res
-        ret["freqs"] = jfreq
+        # ret["nodes"] = json_res
+        # ret["freqs"] = jfreq
 
         return self.create_response(ret, True)
 

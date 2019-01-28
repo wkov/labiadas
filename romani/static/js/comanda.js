@@ -183,37 +183,38 @@ jQuery(document).ready(function($)
 					producte.value = data["producte"];
 					producte_pk.value = data["producte_pk"];
 					cantitat.value = data["cantitat"];
+//					llocentrega.value = data["llocentrega_pk"];
 					imatge.style.backgroundImage = 'url("' + data["imatge"] + '")';
-					var j = 0;
+//					var j = 0;
 					llocentrega.options.length = 0;
-
-					data["nodes"].forEach(function (arrayItem) {
-						if (arrayItem.selected == "True") {
-							s = arrayItem.nom + "/" + arrayItem.poblacio;
-							llocentrega.options[j] = new Option(s, arrayItem.pk, false, true);
-							//llocentrega.value = arrayItem.pk;
-						} else {
-							s = arrayItem.nom + "/" + arrayItem.poblacio;
-							llocentrega.options[j] = new Option(s, arrayItem.pk, false, false);
-						}
-						j++;
-					});
-					j = 0;
-					if (data["freqs"].length > 1) {
-					    frequencia.style.display = "none";
-					    frequencia_label.style.display = "none";
-                        data["freqs"].forEach(function (arrayItem) {
-                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
-                            j++;
-                        });
-					} else{
-					    frequencia.style.display = "none";
-					    frequencia_label.style.display = "none";
-					    data["freqs"].forEach(function (arrayItem) {
-                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
-                            j++;
-                        });
-					}
+                    llocentrega.options[0] = new Option("llocentrega", data["llocentrega_pk"], false, true);
+//					data["nodes"].forEach(function (arrayItem) {
+//						if (arrayItem.selected == "True") {
+//							s = arrayItem.nom + "/" + arrayItem.poblacio;
+//							llocentrega.options[j] = new Option(s, arrayItem.pk, false, true);
+//							//llocentrega.value = arrayItem.pk;
+//						} else {
+//							s = arrayItem.nom + "/" + arrayItem.poblacio;
+//							llocentrega.options[j] = new Option(s, arrayItem.pk, false, false);
+//						}
+//						j++;
+//					});
+//					j = 0;
+//					if (data["freqs"].length > 1) {
+//					    frequencia.style.display = "none";
+//					    frequencia_label.style.display = "none";
+//                        data["freqs"].forEach(function (arrayItem) {
+//                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
+//                            j++;
+//                        });
+//					} else{
+//					    frequencia.style.display = "none";
+//					    frequencia_label.style.display = "none";
+//					    data["freqs"].forEach(function (arrayItem) {
+//                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
+//                            j++;
+//                        });
+//					}
 
 
 					$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function (data) {

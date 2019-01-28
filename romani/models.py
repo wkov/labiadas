@@ -452,7 +452,7 @@ class TipusProducte(models.Model):
                      try:
                          dias_pro = DiaProduccio.objects.filter((Q(node=d.dia.node) | Q(node=None)),
                                                                 date__lte=d.dia.date,
-                                                                caducitat__gte=d.dia.date, 
+                                                                caducitat__gte=d.dia.date,
                                                                 productor=self.productor).exclude(total_uts__isnull=True) \
                              .order_by('-node', 'caducitat', 'date')
 

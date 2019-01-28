@@ -531,8 +531,8 @@ class ComandaFormBaseView(FormView):
         preu_aux = format.preu
         preu = preu_aux * float(cantitat)
         data = form.data["dataentrega"]
-        frequencia = form.data["frequencia"]
-        freq = Frequencia.objects.filter(num=frequencia).first()
+        # frequencia = form.data["frequencia"]
+        # freq = Frequencia.objects.filter(num=frequencia).first()
         data_entrega = DiaEntrega.objects.get(pk=data)
         franja_pk = form.data["franjes"]
         franja = FranjaHoraria.objects.get(pk=franja_pk)
@@ -550,50 +550,50 @@ class ComandaFormBaseView(FormView):
 
 
 
-        if frequencia == '6':   #freqüència: una sola vegada
-            stock_result = format.stock_calc(data_entrega, cantitat)
-            if stock_result['result'] == True:
-                v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
-                if stock_result['dia_prod'] == '':
-                    e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja)
-                else:
-                    e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
-                ret = {"contracte": 0, "success": 1}
-                # notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
-                #     description=e.dia_entrega.date , timestamp=timezone.now())
-                # messages.success(self.request, (u"Comanda realitzada correctament"))
+        # if frequencia == '6':   #freqüència: una sola vegada
+        stock_result = format.stock_calc(data_entrega, cantitat)
+        if stock_result['result'] == True:
+            v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu)
+            if stock_result['dia_prod'] == '':
+                e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja)
             else:
-                ret = {"contracte": 0, "success": 0}
+                e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
+            ret = {"contracte": 0, "success": 1}
+            # notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
+            #     description=e.dia_entrega.date , timestamp=timezone.now())
+            # messages.success(self.request, (u"Comanda realitzada correctament"))
+        else:
+            ret = {"contracte": 0, "success": 0}
                 # messages.error(self.request, (u"Disculpa, NO està disponible la cantitat sol·licitada"))
 
-        else:     #freqüència: més d'una vegada o periòdic
-
-            dies_entrega = prox_calc(format, lloc_obj, data_entrega, franja, freq)
-
-            error = 0
-
-            v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
-
-            for d in dies_entrega:
-                stock_result = format.stock_calc(d, cantitat)
-                if stock_result['result'] == True:
-                    if stock_result['dia_prod'] == '':
-                        e = Entrega.objects.create(dia_entrega=d, comanda=v, franja_horaria=franja)
-                    else:
-                        e = Entrega.objects.create(dia_entrega=d, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
-                else:
-                    error = error + 1
-
-            if error > 0:
-                messages.error(self.request, (u"En algun dels dies en que volies producte, NO està disponible"))
-                ret = {"contracte": 0, "success": 0}
-            else:
-                # En aquest cas al ser una comanda amb varies entregues, no donem encara pere finalitzat el procés. A l'usuari se li mostrarà
-                # "dies_comanda.html" per a que trii tots els dies d'entrega que desitji
-                ret = {"contracte": 1, "success": 1, "pk": v.pk}
-
-            notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
-            description=v.frequencia , timestamp=timezone.now())
+        # else:     #freqüència: més d'una vegada o periòdic
+        #
+        #     dies_entrega = prox_calc(format, lloc_obj, data_entrega, franja, freq)
+        #
+        #     error = 0
+        #
+        #     v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu, frequencia=freq)
+        #
+        #     for d in dies_entrega:
+        #         stock_result = format.stock_calc(d, cantitat)
+        #         if stock_result['result'] == True:
+        #             if stock_result['dia_prod'] == '':
+        #                 e = Entrega.objects.create(dia_entrega=d, comanda=v, franja_horaria=franja)
+        #             else:
+        #                 e = Entrega.objects.create(dia_entrega=d, comanda=v, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
+        #         else:
+        #             error = error + 1
+        #
+        #     if error > 0:
+        #         messages.error(self.request, (u"En algun dels dies en que volies producte, NO està disponible"))
+        #         ret = {"contracte": 0, "success": 0}
+        #     else:
+        #         # En aquest cas al ser una comanda amb varies entregues, no donem encara pere finalitzat el procés. A l'usuari se li mostrarà
+        #         # "dies_comanda.html" per a que trii tots els dies d'entrega que desitji
+        #         ret = {"contracte": 1, "success": 1, "pk": v.pk}
+        #
+        #     notify.send(format, recipient= user, verb="Has afegit a la cistella", action_object=v,
+        #     description=v.frequencia , timestamp=timezone.now())
 
         return self.create_response(ret, True)
 
