@@ -573,8 +573,8 @@ class DiaProduccio(models.Model):
     def stock(self):
    # Per al cas tipus_stock == 1
         cant = 0
-        entregas = Entrega.objects.filter(dia_produccio=self)
-        for e in entregas:
+        # entregas = Entrega.objects.filter(dia_produccio=self)
+        for e in self.entregas:
             stock = self.stocks.get(format=e.comanda.format)
             cant = e.comanda.cantitat*stock.stock_ini + cant
         if cant > 0:
