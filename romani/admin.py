@@ -69,7 +69,7 @@ class nodeAdmin(admin.ModelAdmin):
 
 class keyAdmin(admin.ModelAdmin):
     list_display = ('key','usuari','nou_usuari', 'data')
-    search_fields = ['key','usuari','nou_usuari', 'data']
+    search_fields = ['key','usuari__username', 'usuari__first_name', 'usuari__last_name','nou_usuari__username','nou_usuari__last_name','nou_usuari__first_name', 'data']
     list_filter = ['key','usuari','nou_usuari', 'data']
 
 class frequenciaAdmin(admin.ModelAdmin):
@@ -79,12 +79,12 @@ class frequenciaAdmin(admin.ModelAdmin):
 
 class diaProduccioAdmin(admin.ModelAdmin):
     list_display = ['date','productor', 'node']
-    search_fields = ['date','productor', 'node']
+    search_fields = ['productor__nom', 'node__nom']
     list_filter = ['date','productor', 'node']
 
 class stockAdmin(admin.ModelAdmin):
     list_display = ['dia_prod','format']
-    search_fields = ['dia_prod','format']
+    search_fields = ['dia_prod__productor','format__nom']
     list_filter = ['dia_prod','format']
 
 admin.site.register(DiaFormatStock, diaFormatStockAdmin)
