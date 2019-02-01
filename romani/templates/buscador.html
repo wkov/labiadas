@@ -37,6 +37,7 @@
     {% for producte in posts %}
       <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
         <div class="thumbnail" >
+            {% if not up.lloc_entrega.nomes_seguent  %}
             <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
                 <div style="background-color: #f6a828; float: right " title="Próxima entrega">
                 <span class="glyphicon glyphicon-time" ></span> {%  next_day producte up.lloc_entrega %}</div>
@@ -45,6 +46,7 @@
                 <!--<div style="background-color: #8ae090; color: white; float: right" title="Vots positius">-->
                 <!--<span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>-->
             </div>
+            {% endif %}
             <div class="caption">
                  {% if producte.foto %}
                     <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >

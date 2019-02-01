@@ -1039,6 +1039,7 @@ def DiaProduccioPaUpdateView(request, pro, pk):
                    dp_obj.productor = productor
                    b = datetime.datetime.strptime(caducitat, '%d/%m/%Y').strftime('%Y-%m-%d')
                    dp_obj.caducitat = b
+                   dp_obj.total_uts = total_uts
                    dp_obj.save()
                except:
                    messages.warning(request, (u"Hem trobat errors en el formulari"))
