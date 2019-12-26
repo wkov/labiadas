@@ -1994,7 +1994,7 @@ def productorGraphView(request, pro):
 
     ax3 = f.add_subplot(212)
     for c in productes:
-        d = des.filter(formats__format=c.formats.all()).values('date').distinct()
+        d = des.filter(formats__format__in=c.formats.all()).values('date').distinct()
         dates3 = []
         totals3 = []
         for r in d:
