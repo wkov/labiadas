@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+{% load staticfiles %}
+
+<head>
+    {% block PREheaders %}{% endblock %}
+    {% include 'headers.html' %}
+    {% block headers %}{% endblock %}
+
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+</head>
+
+<body>
+
+
+    <header class="nav-down">
+    <div id="div_header">
+        <div id="div_menu1">
+              <a  href="{% url 'coope' %}"> <h1>
+                    {{ node_user }}</h1></a>
+{#                    <div id="loading" class="loader" style="margin-left:0 auto; margin-right:0 auto;"></div>#}
+
+{#            Més proper, Massa Xarxa, lamassa.net , Més a prop#}
+        </div>
+        <div id="div_user">
+            {%  include "usermenu.html" %}
+        </div>
+{#        <script>#}
+
+
+
+{#        </script>#}
+    </div>
+    </header>
+    <div id="sidebar-wrapper">
+			{% include "leftmenupro.html" %}
+	</div>
+
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+           <div class="row">
+                <div class="col-lg-12">
+        {#                    Seguent block nomes per fer funcionar el paket django_messages correctament#}
+            {% if messages %}
+                {% for message in messages %}
+        {#            Level_tag indica el tipus de missatge. I extra_tags valors customitzables del missatge. Per a més detall sobre CallNotification consultar "generic.js" #}
+{#                    CallNotification('{{ message }}', '{{ message.level_tag }}' , '{{ message.extra_tags }}');#}
+                    {% if message.level_tag == 'success' %}
+                    <div class="message" style="background-color:#508a4c; text-align: center; color: white">
+                        {{ message }}
+                        <a href="#" class="del-msg" style="color: white">&times;</a>
+                    </div>
+                    {% elif message.level_tag == 'info' %}
+                      <div class="message" style="background-color:#add8e6; text-align: center; color: white">
+                        {{ message }}
+                        <a href="#" class="del-msg" style="color: white">&times;</a>
+                    </div>
+                    {% elif message.level_tag == 'error' %}
+                        <div class="message" style="background-color:#ff8476; text-align: center; color: white">
+                            {{ message }}
+                            <a href="#" class="del-msg" style="color: white">&times;</a>
+                        </div>
+                    {% elif message.level_tag == 'warning' %}
+                        <div class="message" style="background-color:orange; text-align: center; color: white">
+                            {{ message }}
+                            <a href="#" class="del-msg" style="color: white">&times;</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+
+
+                    {% block sidebar %}{% endblock %}
+
+                    {% block content %}{% endblock %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block modals %}  {% endblock %}
+
+
+
+    <div id="div_footer">
+         {% block footer %}  {% endblock %}
+    </div>
+
+</body>
+
+</html>

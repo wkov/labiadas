@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block headers %}
+{% endblock %}
+{% block content %}
+{#<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
+{#    font-size: 3em"> {{ productor.nom }} </div>#}
+<form method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+        {% include 'romani/productors/menu_pro.html' %}
+
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em"> Editar Producte &nbsp;</div>-->
+    <br/><br/>
+
+    <a href="{% url 'vista_productes' productor.pk %}" id="pro_menu">Productes</a>
+    <!--<a href="{% url 'productor_update' productor.pk %}" id="pro_menu">Productora</a>-->
+    <a href="" id="pro_menu_selected">Editar Producte</a>
+    <br/><br/>
+  {{ form.as_p }}
+{#  <input type="text" id="datepicker" size="30">#}
+  <input type="submit" value="Grabar producte">
+    &nbsp; &nbsp; &nbsp;
+</form>
+{% endblock %}

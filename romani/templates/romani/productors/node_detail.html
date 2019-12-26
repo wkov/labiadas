@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block headers %}
+{% endblock %}
+{% block content %}
+    <div id="recurs_wraper" style="display: inline-block; margin:0px; width: 100%">
+        <div id="div_recurs"  style="display: block ">
+            <div class="thumbnail">
+                    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUirWAP7iFxFp7W1jmhoTrOYzZ-Z2sYZ8&callback=initMap"
+                                    async defer></script>
+    <script>
+      var map;
+      var polygons = [];
+      function initMap() {
+        var aa = '{{ node.position.latitude }}';
+        var aaa =  aa.replace(",",".");
+        var bb = '{{ node.position.longitude }}';
+        var bbb =  bb.replace(",",".");
+        var mollet = new google.maps.LatLng(aaa, bbb);
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: mollet,
+          zoom: 15,
+{#          mapTypeId: 'satellite'#}
+        });
+          $.post("/allcoordenades/", function(data) {
+              var i = 0;
+              var marker = [];
+              var image = '/static/img/u-pick_stand.png'
+              var img_domicili = '/static/img/vespa.png'
+              data.forEach( function(arrayItem)
+				{
+                    var contentString = '<div id="content">'+
+                          '<div id="siteNotice">'+
+                          '</div>'+
+                          '<h1 id="firstHeading" class="firstHeading">' +
+                          arrayItem.nom +
+                          '</h1>'+
+                          '<div id="bodyContent">'+
+                          '<p><b>' +
+                          arrayItem.nom +
+                          '</b>,' +
+                          arrayItem.text +
+                          '</p>' +
+                          '</div>'+
+                          '</div>';
+                      var infowindow = new google.maps.InfoWindow({
+                        content: contentString
+                      });
+                    var place = new google.maps.LatLng(arrayItem.Lat, arrayItem.Lng);
+                    if (arrayItem.a_domicili == "True"){
+                        marker[i] = new google.maps.Marker({
+                          position: place,
+                          title: "A Domicili",
+                          map: map,
+                          icon: img_domicili
+                    });
+                    }else{
+					    marker[i] = new google.maps.Marker({
+                          position: place,
+                          title: arrayItem.nom,
+                          map: map,
+                          icon: image
+                    });
+                        }
+                      marker[i].addListener('click', function() {
+                        infowindow.open(map, marker[i]);
+                      });
+					i++;
+				});
+          });
+          google.maps.event.trigger(map, 'resize');
+ }
+
+//CSRF TOKEN FOR JS
+
+
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+</script>
+        <b>Lloc d'entrega:</b> <h2>{{ node.nom }}</h2>
+                <h3>{{ node.poblacio }}</h3>
+            <div id="geodiv" name="geodiv">
+            <div id="map" name="map" ></div>
+            </div>
+                <p>{{ node.text|linebreaks }}</p>
+        <b> Frequencia: </b>  {{ node.get_frequencia.nom }}<br/><br/>
+        {% if node.carrer %}
+            <label style="float: left" for="carrer">Carrer: </label> &nbsp; {{ node.carrer }}<br/>
+        {% endif %}
+        {% if node.numero %}
+            <label style="float: left" for="numero">Número:</label> &nbsp; {{ node.numero }}<br/>
+        {% endif %}
+        {% if node.pis %}
+            <label style="float: left" for="pis">Pis:</label> &nbsp; {{ node.pis }} <br/>
+        {% endif %}
+        {% if node.poblacio %}
+        <label style="float: left" for="poblacio">Població:</label> &nbsp; {{ node.poblacio }}<br/>
+        {% endif %}
+        <br/>
+        <b>Propers dies d'entrega:</b> <br/>
+                {% for i in node.prox_dias|slice:":5" %}
+                    <table border = 1>
+                    <tr>
+                    <td>
+                        {{ i.dia }}  &nbsp; {{ i.date }}&nbsp; &nbsp;
+                    </td>
+                        {% for f in i.franjes_horaries.all %}
+                            <td>
+                             &nbsp; {{ f.inici }} - {{ f.final }} &nbsp;
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <br/>
+                    </table>
+                {% endfor %}
+        <br/><br />
+        </div>
+         <br />
+         <br />
+        </div>
+    </div><br /><br />
+
+{% endblock %}

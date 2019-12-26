@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block headers %}
+<script>
+
+jQuery(document).ready(function() {
+
+{#    Si l'usuari deselecciona un dia amaguem les franjes horàries d'aquest dia, i si el torna a seleccionar li tornem a mostrar les possibles franjes horàries del dia #}
+    $('input[name=dies]').click(function(){
+
+        if($(this).is(":checked")){
+            $(this).next("ul").children("li").show();
+            $(this).next("ul").find("input").first().prop("checked", true)
+        }else{
+            $(this).next("ul").children("li").hide();
+        }
+    })
+
+
+{#    Si l'usuari selecciona directament la franja horària li marquem el dia corresponent#}
+    $('input[id=radio]').click(function(){
+
+        if($(this).parent().parent().prev().is(":checked")){
+
+        }else{
+            $(this).parent().parent().prev().prop("checked", true)
+        }
+    })
+
+});
+
+</script>
+{% endblock %}
+{% block content %}
+{% if pro == 1 %}
+
+{% endif %}
+<div style="float: left">
+<form method="post" action="">
+  {% csrf_token %}
+<!--<p>A continuació pots veure tots els dies d'entrega en que pots demanar. T'hem preseleccionat els dies que coincideixen-->
+    <!--amb la teva elecció. Ara pots marcar o desmarcar els dies en que rebràs la comanda segons desitjis. </p><br/>-->
+
+{#En un requadre escorat a dalt a l'esquerra de la pantalla mostrem els detalls de la comanda#}
+<div class="col-lg-8 col-md-8 col-xs-12 col-sm-10" >
+            <div class="thumbnail" >
+              <div class="caption">
+                      {% if comanda.format.producte.foto %}
+                        <a href="{{ MEDIA_URL }}{{ comanda.format.producte.foto.url }}" title="veure imatge">
+                        <div class="g-item" style="background-image:url('{{ comanda.format.producte.foto.url }}');background-position: center;
+            background-size: cover; " >
+                            </div>
+                        </a>
+                      {% endif %}
+                    <div  style=" position: relative;   font-family: 'Satisfy'; font-size: 1.8em; color: #baae30; background-color:#FFFFFF;   display: inline-block" >
+                    <label for="l_prod" style="font-size: medium; font-weight: 500">Producte:</label><a href="{% url 'producte' comanda.format.producte.pk  %}" title="Visualitzar en detall el producte">
+                        <b id="l_prod" name="l_prod">{{ comanda.format.producte }}</b></a></div><br/>
+                     <div class="prodxx" style="background-color:#FFFFFF;  display: inline-block; ">
+                        <p>Autor: &nbsp;
+                        <a href="{% url 'productor'  comanda.format.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
+                                {{ comanda.format.productor.nom }}</a>
+                          <a href="{% url 'messages_compose_to' comanda.format.productor.responsable %}" title="Enviar missatge al productor">
+                         <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
+                      </div>
+                    <br/><br/>
+                        <label for="l_cant" style="font-size: medium; font-weight: 500"> Cant:  </label><b id="l_cant" name="l_cant">{{ comanda.cantitat }}</b><br/>
+                        <label for="l_form" style="font-size: medium; font-weight: 500"> Format:</label> <b id="l_form" name="l_form">{{ comanda.format.nom }}</b><br/>
+                        <label for="l_preu" style="font-size: medium; font-weight: 500"> Preu: </label> <b id="l_preu" name="l_preu">{{ comanda.preu }}€</b> <br/>
+                        <label for="xb_lloc" style="font-size: medium; font-weight: 500"> Lloc: </label>
+                        <a id="xb_lloc" name="xb_lloc" href="{% url 'node_pro_detail' comanda.node.pk %}" title="Visualitzar punt de trobada">{{ comanda.node.nom  }} <span class="glyphicon glyphicon-map-marker" >
+                        </span> </a><br/>
+
+
+                 <div style="width:100%; display: inline-block">
+                    <label for="l_entr" style="font-size: medium; font-weight: 500"> Prox Entrega: </label> <b id="l_entr" name="l_entr">{{ comanda.prox_entrega.dia_entrega.dia }}, {{ comanda.prox_entrega.dia_entrega.date }}</b>
+                 </div><br/>
+                  <label for="l_hora" style="font-size: medium; font-weight: 500"> Hora: </label> <b id="l_hora" name="l_hora">  {{ comanda.prox_entrega.franja_horaria.inici }} - {{ comanda.prox_entrega.franja_horaria.final }}</b><br/>
+                  <!--<div style="width:100%; display: inline-block">-->
+                    <!--<label for="l_com" style="font-size: medium; font-weight: 500"> Comanda: </label> <b id="l_com" name="l_com">{{ comanda.prox_entrega.data_comanda.date }}</b>-->
+                  <!--</div><br/>-->
+                  <!--<div style="width:100%; display: inline-block">-->
+                    <!--<label for="l_com" style="font-size: medium; font-weight: 500"> Freqüència: </label> <b id="l_com" name="l_com">{{ comanda.frequencia.nom }}</b>-->
+                  <!--</div>-->
+            </div>
+            </div>
+    </div>
+
+{#Mostrem les possibles entregues a les que es pot lligar la comanda#}
+
+{#Primer llistem els dies d'entrega passats en que s'ha entregat la comanda#}
+    {% for ent in entregas_pas %}
+        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
+            <input type="checkbox" name="dies" value="{{ ent.dia_entrega.pk }}" checked disabled> {{ ent.dia_entrega.dia }}, {{ ent.dia_entrega.date }}
+            <ul>
+            {% for f in ent.dia_entrega.franjes_horaries.all %}
+                <li>
+                    {% if f == ent.franja_horaria %}
+                        <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" checked disabled> {{ f.inici }} - {{ f.final }}
+                    {% else %}
+                        <input type="radio" name="{{ ent.dia_entrega.pk }}" value="{{ f.pk }}" disabled> {{ f.inici }} - {{ f.final }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+
+{#També mostrem els dies que estan per vindre en que es pot entregar la comanda. #}
+    {% for dia in dies_entrega_pos %}
+        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-10" >
+{#        Separem entre els dies d'entrega ja seleccionats per l'usuari i els dies no seleccionats però en què és possible portarli la comanda a l'usuari si així ho desitja#}
+        {% if dia in dies_entrega_ini %}
+            {% for d in comanda.entregas.all %}
+                {% if dia == d.dia_entrega %}
+                    <input type="checkbox" name="dies" value="{{ dia.pk }}" checked> {{ dia.dia }}, {{ dia.date }}
+                    <ul>
+                    {% for f in dia.franjes_horaries.all %}
+                        <li>
+                            {% if f == d.franja_horaria %}
+                                    <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}" checked> {{ f.inici }} - {{ f.final }}
+                            {% else %}
+                                    <input type="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+          <input type="checkbox" name="dies" value="{{ dia.pk }}"> {{ dia.dia }}, {{ dia.date }}
+            <ul>
+                {% for f in dia.franjes_horaries.all %}
+                    <li>
+                        <input type="radio" id="radio" name="{{ dia.pk }}" value="{{ f.pk }}"> {{ f.inici }} - {{ f.final }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        </div>
+    {% endfor %}
+    <br/><br/>
+      <input type="submit" value="Confirmar" style="position: relative; float: left">
+    </form>
+    </div>
+
+    {% endblock %}
