@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -14,9 +10,14 @@
 {#    <script src="/ui/jquery.ui.datepicker.js"></script>#}
     {% include 'romani/productors/menu_pro.html' %}
 
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em"> Carregar foto &nbsp;</div>
-
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em"> Carregar foto &nbsp;</div>--><br/><br/>
+    <!--<a href="{% url 'vista_productes' productor.pk %}" id="pro_menu">Productes</a>-->
+    <a href="{% url 'productor_update' productor.pk %}" id="pro_menu">Productora</a>
+    <!--<a href="{% url 'producte_create' productor.pk %}" id="pro_menu">Nou Producte</a>-->
+    <!--<a href="{% url 'format_create' productor.pk %}" id="pro_menu">Nou Format</a>-->
+<a href="{% url 'adjuntsProductor' productor.pk %}" id="pro_menu">Fotos</a>
+    <a  href="{% url 'adjunt_create' productor.pk %}" id="pro_menu_selected">Nova foto</a>
 <form method="post" action="" enctype="multipart/form-data">
   {% csrf_token %}
     <br/>

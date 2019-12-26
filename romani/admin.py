@@ -22,15 +22,15 @@ class tipusproducteAdmin(admin.ModelAdmin):
     list_filter = ['nom','preu', 'productor']
 
 class comandaAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'data_comanda','format','cantitat','externa','client', 'frequencia')
-    search_fields = ['format__producte', 'data_comanda','format','externa','client', 'frequencia']
-    list_filter = ['format__producte','data_comanda','format','externa','client','frequencia']
+    list_display = ('pk', 'data_comanda','format','cantitat','externa','client', 'frequencia','node')
+    search_fields = ['format__producte', 'data_comanda','format','externa','client', 'frequencia','node__nom']
+    list_filter = ['node','format__producte','data_comanda','format','externa','client','frequencia']
 
 
 class entregaAdmin(admin.ModelAdmin):
     list_display = ('dia_entrega','comanda','data_comanda', 'dia_produccio', 'franja_horaria')
     search_fields = ['comanda__format__producte', 'data_comanda','comanda__format','comanda__client']
-    list_filter = ['comanda__format','data_comanda','comanda__externa','comanda__client',]
+    list_filter = ['comanda__node', 'comanda__format','data_comanda','comanda__externa','comanda__client']
 
 class userprofileAdmin(admin.ModelAdmin):
     list_display = ('user','bio','lloc_entrega')

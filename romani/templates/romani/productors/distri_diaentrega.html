@@ -2,10 +2,6 @@
 {% load i18n %}
 {% load staticfiles %}
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
 {% block content %}
 
@@ -25,18 +21,68 @@
         }
 });
         })
+
+function openCity(evt, cityName) {
+          // Declare all variables
+          var i, tabcontent, tablinks;
+
+          // Get all elements with class="tabcontent" and hide them
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+
+          // Get all elements with class="tablinks" and remove the class "active"
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+
+          // Show the current tab, and add an "active" class to the button that opened the tab
+          document.getElementById(cityName).style.display = "block";
+          evt.currentTarget.className += " active";
+        }
+
+
     </script>
 
 
 {% include 'romani/productors/menu_dis.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Dia d'entrega &nbsp;</div>
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em">Dia d'entrega &nbsp;</div>-->
 
     <br/>
+<br/>
+    <a href="{% url 'productor_list' %}" id="pro_menu">Comandes</a>
+    <a href="{% url 'productor_cal_list' %}" id="pro_menu">Calendari</a>
+    <a href="{% url 'productor_hist_list' %}" id="pro_menu">Historial</a>
+    <br/>
+
+<p><b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b>
+    a <a href="{% url 'node_pro_detail' dia.node.pk  %}">
+        <b> {{ dia.node }} </b> </a>:</p>
+
+
+    <!-- Tab links -->
+    <div class="tab">
+      <button class="tablinks" onclick="openCity(event, 'Oferta')">Oferta</button>
+      <button class="tablinks" onclick="openCity(event, 'Demanda')">Demanda</button>
+    </div>
+
+
+
+
+
+<!-- Tab content -->
+<div id="Demanda" class="tabcontent">
+
+
+
+
+
     {% if comandes %}
-        <br/>
-        <p><b>Comandes</b> rebudes per el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b> {{ dia.node }} </b>:</p>
-            <a href="{% url 'dis_export_comandes_xls' dia.pk %}">Exportar comandes</a>
+
+          <a href="{% url 'dis_export_comandes_xls' dia.pk %}">Exportar comandes</a>
          <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
          <thead>
              <tr>
@@ -113,14 +159,12 @@
 
 
     {% endif %}
+</div>
 
-
+<div id="Oferta" class="tabcontent">
 
 <form method="post" action="">
   {% csrf_token %}
-    <br/>
-<p><b>Productes</b> que ofereixes el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
-
 {{ formatstockform.management_form }}
 
 <table border="1">
@@ -162,6 +206,6 @@
   <input type="submit" name="create" value="Grabar">
   <input type="submit" name="createagain" value="Grabar i editar següent dia d'entrega">
 </form>
-
+</div>
 
 {% endblock %}

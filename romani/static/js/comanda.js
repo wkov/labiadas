@@ -2,9 +2,42 @@ jQuery(document).ready(function($)
 
     {
 
-//        $(this).scrollTop(0);
 
+$(".vote_forum_form").submit(function(e)
+		{
+		    e.preventDefault();
+		    var btn = $("button", this);
+		    var l_id = $(".hidden_id", this).val();
+		    btn.attr('disabled', true);
+		    $.post("/forum/vote/", $(this).serializeArray(),
+			  function(data) {
+			      if(data["voteobj"]) {
+				  btn.text("-");
+			      }
+			      else {
+				  btn.text("+");
+			      }
+			  });
+		    btn.attr('disabled', false);
+		});
 
+$(".vote_debat_form").submit(function(e)
+		{
+		    e.preventDefault();
+		    var btn = $("button", this);
+		    var l_id = $(".hidden_id", this).val();
+		    btn.attr('disabled', true);
+		    $.post("/forum/votedebat/", $(this).serializeArray(),
+			  function(data) {
+			      if(data["voteobj"]) {
+				  btn.text("-");
+			      }
+			      else {
+				  btn.text("+");
+			      }
+			  });
+		    btn.attr('disabled', false);
+		});
 
 
         $("#checkAll").click(function () {
@@ -155,7 +188,7 @@ jQuery(document).ready(function($)
 		    e.preventDefault();
 		    var btn = $("button", this);
 		    var l_id = $(".hidden_id", this).val();
-			var call = "Has afegit "+ this[5].value + " articles"
+//			var call = "Has afegit "+ this[5].value + " articles"
 			var modal = document.getElementById('myModal');
 			var preu = document.getElementById('preu');
 			var llocentrega = document.getElementById('lloc_entrega');
@@ -164,7 +197,7 @@ jQuery(document).ready(function($)
 			var producte = document.getElementById('producte');
 			var producte_pk = document.getElementById('producte_pk');
 			var cantitat = document.getElementById('cantitat_t');
-			var imatge = document.getElementById('imatge');
+//			var imatge = document.getElementById('imatge');
 			var frequencia = document.getElementById('frequencia');
 			var frequencia_label = document.getElementById('frequencia_label')
 			//var primera_entrega = document.getElementById('primera_entrega')
@@ -183,39 +216,6 @@ jQuery(document).ready(function($)
 					producte.value = data["producte"];
 					producte_pk.value = data["producte_pk"];
 					cantitat.value = data["cantitat"];
-//					llocentrega.value = data["llocentrega_pk"];
-					imatge.style.backgroundImage = 'url("' + data["imatge"] + '")';
-//					var j = 0;
-					llocentrega.options.length = 0;
-                    llocentrega.options[0] = new Option("llocentrega", data["llocentrega_pk"], false, true);
-//					data["nodes"].forEach(function (arrayItem) {
-//						if (arrayItem.selected == "True") {
-//							s = arrayItem.nom + "/" + arrayItem.poblacio;
-//							llocentrega.options[j] = new Option(s, arrayItem.pk, false, true);
-//							//llocentrega.value = arrayItem.pk;
-//						} else {
-//							s = arrayItem.nom + "/" + arrayItem.poblacio;
-//							llocentrega.options[j] = new Option(s, arrayItem.pk, false, false);
-//						}
-//						j++;
-//					});
-//					j = 0;
-//					if (data["freqs"].length > 1) {
-//					    frequencia.style.display = "none";
-//					    frequencia_label.style.display = "none";
-//                        data["freqs"].forEach(function (arrayItem) {
-//                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
-//                            j++;
-//                        });
-//					} else{
-//					    frequencia.style.display = "none";
-//					    frequencia_label.style.display = "none";
-//					    data["freqs"].forEach(function (arrayItem) {
-//                            frequencia.options[j] = new Option(arrayItem.nom, arrayItem.num);
-//                            j++;
-//                        });
-//					}
-
 
 					$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function (data) {
 						var dataentrega = document.getElementById("dataentrega");
@@ -329,9 +329,9 @@ jQuery(document).ready(function($)
                               $.post("/numcomandespro/", $(this).serializeArray(), function(data){
                                     $('#auxcomandespro').html(data);
                                 });
-                              $.post("/usercorner/", $(this).serializeArray(), function(data){
-                                    $('#userCorner').html();
-                                });
+//                              $.post("/usercorner/", $(this).serializeArray(), function(data){
+//                                    $('#userCorner').html();
+//                                });
 
 //                                $.ajax({
 //                                  url: '{% url 'myview' %}',

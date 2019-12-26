@@ -18,12 +18,11 @@ window.onclick = function(event) {
     <span class="close">&times;</span>
         <h5><b>NOVA COMANDA:</b></h5>
        <form method="post" class="comanda2_form">{% csrf_token %}
-{#           <img id="imatge" name="imatge" class="img-responsive" style="float: right; max-height: 300px "  >#}
-           <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
-                <div class="g-item" id="imatge" style="float: right">
-                    </div>
-            </a>
-            <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
+<!--{#           <img id="imatge" name="imatge" class="img-responsive" style="float: right; max-height: 300px "  >#}-->
+           <!--<a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >-->
+                <!--<div class="img-responsive" id="imatge" style="float: right; background-image:url('{{ producte.thumb.url }}');">-->
+                    <!--</div>-->
+            <!--</a>-->
 
            <label for="producte">Producte:</label>
            <input type="text" style="max-width: 200px; float: right" class="form-control"  id="producte" name="producte" readonly/>
@@ -31,8 +30,8 @@ window.onclick = function(event) {
            <label for="format">Format:</label>   <input type="text" class="form-control"  id="format" style="max-width: 200px; float: right" name="format" readonly/>
            <input type="hidden" id="format_pk" name="format_pk" style="max-width: 200px; float: right" class="form-control" /><br/><br/>
            <label for="cantitat_t">Cantitat: </label>  <input type="number" style="max-width: 200px; float: right" class="form-control"  id="cantitat_t" name="cantitat_t" readonly/><br/><br/>
-           <label for="preu">Preu(€):</label> <input type="number" style="max-width: 200px; float: right;" class="form-control"  id="preu" name="preu" readonly/><br/><br/><br/>
-            </div>
+           <label for="preu">Preu(€):</label> <input type="number" style="max-width: 200px; float: right;" class="form-control"  id="preu" name="preu" readonly/><br/><br/>
+
 
            <label for="lloc_entrega" class="lloc_entrega_lbl" style="display: none" >Lloc d'entrega:</label>
             <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control" style="display: none" >
@@ -68,7 +67,7 @@ window.onclick = function(event) {
                         </div>
             {% endif %}
             <br/><br/>-->
-           <label for="dataentrega" class="lloc_entrega_lbl">Data d'entrega:</label>
+           <label for="dataentrega" >Data d'entrega:</label>
             <select id="dataentrega" name="dataentrega" class="dataentrega form-control">
                  <option selected></option>
             </select>
@@ -98,7 +97,6 @@ window.onclick = function(event) {
                <option selected></option>
            </select>
           <br/>
-           <br/>
           <button id="aceptar" type="submit">Confirmar <span class="glyphicon glyphicon-ok"></span></button>
           <button id="cancelar" type="button">Cancel·lar <span class="glyphicon glyphicon-remove"></span></button>
            </form>

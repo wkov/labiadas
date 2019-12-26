@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userprofile',
             name='lloc_entrega',
-            field=models.ForeignKey(to='romani.Node', null=True, blank=True),
+            field=models.ForeignKey(to='romani.Node', on_delete=models.CASCADE, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='diaentrega',

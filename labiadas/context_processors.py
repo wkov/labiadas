@@ -12,18 +12,18 @@ from romani.models import UserProfile, Productor
 
 # Utilitzat permanentment en la capçalera de la web per a decidir el títol que veu l'usuari
 def node_user(request):
-    if not request.user.is_authenticated():
-        return { 'node_user' : 'la massa'}
-    if request.user.is_anonymous():
-        return { 'node_user' : 'la massa'}
+    if not request.user.is_authenticated:
+        return {'node_user': 'la massa'}
+    if request.user.is_anonymous:
+        return {'node_user': 'la massa'}
 
     up = UserProfile.objects.get(user=request.user)
     pro = Productor.objects.filter(responsable=request.user)
 
     if pro:
-        return { 'node_user' : 'la massa'}
+        return {'node_user': 'la massa'}
     else:
-        return { 'node_user' : up.lloc_entrega.nom}
+        return {'node_user': up.lloc_entrega.nom}
 
 # Utilitzat permanentment en el user_menu.html per a visualitzar una miniatura de l'avatar de l'usuari
 # def foto_user(request):

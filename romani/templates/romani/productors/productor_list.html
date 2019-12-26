@@ -2,103 +2,111 @@
 {% load i18n %}
 {% load staticfiles %}
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
-{% csrf_token %}
 {% block content %}
 
 
 
 
     <div style="float: left; position:relative">
-        {% if object_list %}
-{% include 'romani/productors/menu_dis.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Comandes rebudes &nbsp;</div>
-{#        {% for link in object_list %}#}
-{#              <li style="display: inline">#}
-{#                 &nbsp; &nbsp; <a href="{% url 'vista_dates' link.pk %}" title="Gestionar productor"  id="pro_menu">#}
-{#                    {{ link.nom }}#}
-{#                </a>#}
-{#                  <a href="{% url 'vista_comandes' link.pk %}" title="Veure comandes">#}
-{#                      <span id="notification_count">#}
-{#                        {{ link.comandes_count }}#}
-{#                      </span>#}
-{#                  </a>#}
-{#              </li>#}
-{#            <br/>#}
-{#        {% endfor %}#}
+    {% if object_list %}
+        {% include 'romani/productors/menu_dis.html' %}
+
     {% else %}
         <a href="{% url 'productor_create' %}" id="pro_menu">Crear Nou Productor</a> <br/><br/>
         <p>Si ets responsable d'un productor que ja està creat a la xarxa, has de demanar al responsable actual del productor que editi el perfil i t'accepti com a responsable</p>
     {% endif %}
     </div>
-{#    <div style="margin: 0 auto; text-align:center;">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_list' %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Comandes rebudes</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_cal_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Calendari</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'productor_hist_list' %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Veure historial" >#}
-{#                                    <b id="pato" name="pato" class="pato">Veure historial</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>#}
-
     <br/>
-{#    <div id="dialog" title="Recepció de comandes">#}
-{#    <p>Consulta totes les comandes que t'arriben</p>#}
-{#    </div>#}
+    <br/>
+    {% if up.n_productors == 1 %}
+        {% for productor in object_list %}
+    <a href="{% url 'vista_comandes' productor.pk %}" id="pro_menu_selected">Comandes</a>
+    <a href="{% url 'vista_dates' productor.pk %}" id="pro_menu">Calendari</a>
+    <a href="{% url 'vista_historial' productor.pk %}" id="pro_menu">Historial</a>
+    <a href="{% url 'comanda_create' productor.pk %}" id="pro_menu">Nova comanda</a>
+
     <br/><br/>
 
-    {% if comandes%}
-         <table border="1" id="myTable" class="tablesorter" style="; position: relative; width: 100%">
-         <thead>
-             <tr>
-             <th>Producte</th>
-             <th>Productor</th>
-             <th>Lloc d'entrega</th>
-             <th>Cant</th>
-             <th>Format</th>
-             <th>Data d'entrega</th>
-             <th>Franja horària</th>
-             <th>Preu</th>
-             <th>Usuari</th>
-{#             <th>Freqüència</th>#}
-             <th>Data de comanda</th>
-             </tr>
-         </thead>
-         <tbody>
-            {% for link in comandes %}
-                   <tr>
-                            <td>{{ link.comanda.format.producte.nom }}</td>
-                            <td>{{ link.comanda.format.productor.nom }}</td>
-                            <td>{{ link.dia_entrega.node }}</td>
-                            <td>{{ link.comanda.cantitat }}</td>
-                            <td>{{ link.comanda.format.nom }}</td>
-                            <td>{{ link.dia_entrega.date|date:"d/m/Y" }}</td>
-                            {% if link.franja_horaria %}
-                                <td>{{ link.franja_horaria }}</td>
-                            {% else %}
-                                <td>{{ link.dia_entrega.inici }}-{{ link.dia_entrega.final }}</td>
-                            {% endif %}
-                            <td>{{ link.comanda.preu }}€</td>
-                            <td><a  href="{% url 'perfil' link.comanda.client.pk %}">
-                                    {{ link.comanda.client.username }} </a></td>
-                            <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
-                        </tr>
-            {% endfor %}
-         </tbody>
-           </table>
-    {% endif %}
+    {% if comandes %}
+
+
+            <div style="overflow-x:auto;">
+                    {% for c in comandes %}
+                <a href="{% url 'data_comandes' productor.pk c.dia_pk %}">
+                <b>{{c.node}} / {{ c.dia }}</b></a> <br/>
+                <ul style="list-style-type:disc">
+                {% for v in c.entregas %}
+    <li>
+                 {{v.cantitat}} &nbsp;{{v.format}}&nbsp;  {{ v.producte }}  &nbsp; &nbsp;
+        <a  href="{% url 'perfil' v.user.pk %}">
+        {{v.user}}
+        </a> &nbsp;
+        {{v.preu}}
+        <a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntregaPro' v.pk %}" title="llegir més"></a>
+    &nbsp;
+        <!--<a class="glyphicon glyphicon-remove" type="button" href="{% url 'entregaDelete' v.entrega_pk  %}"-->
+                               <!--title="Borrar comanda"-->
+                               <!--onclick="return confirm('Segur que vols borrar la comanda?')">-->
+                                    <!--</a>-->
+    </li>
+                  {% endfor %}
+                  <br/>Total:  {{c.total}}
+    </ul>
+                  {%  endfor %}
+            </div>
+
+            {% endif %}
+
+
+
+
+{% endfor %}
+
+{% else %}
+    <a href="{% url 'productor_list' %}" id="pro_menu_selected">Comandes</a>
+    <a href="{% url 'productor_cal_list' %}" id="pro_menu">Calendari</a>
+    <a href="{% url 'productor_hist_list' %}" id="pro_menu">Historial</a>
+
+        <br/>
+        <br/>
+        {% if comandes %}
+
+
+                <div style="overflow-x:auto;">
+                        {% for c in comandes %}
+                    <a href="{% url 'distri_data_comandes' c.dia_pk %}">
+                    <b>{{c.node}} / {{ c.dia }}</b>
+                    </a>
+                    <br/>
+                    <ul style="list-style-type:disc">
+                    {% for v in c.entregas %}
+        <li>
+                     {{v.cantitat}} &nbsp; {{v.format}} &nbsp; {{ v.producte }} &nbsp; {{v.productor}} &nbsp;
+            <a  href="{% url 'perfil' v.user.pk %}">
+            {{v.user}}
+            </a> &nbsp;
+            {{v.preu}}
+            <a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntregaPro' v.pk %}" title="llegir més"></a>
+        &nbsp;
+            <!--<a class="glyphicon glyphicon-remove" type="button" href="{% url 'entregaDelete' v.entrega_pk  %}"-->
+                                   <!--title="Borrar comanda"-->
+                                   <!--onclick="return confirm('Segur que vols borrar la comanda?')">-->
+                                        <!--</a>-->
+        </li>
+                      {% endfor %}
+                      <br/>Total:  {{c.total}}
+        </ul>
+                      {%  endfor %}
+                </div>
+
+                {% endif %}
+
+
+{% endif %}
+
+        {% if not comandes %}
+                No hi ha comandes encara
+        {% endif %}
 
 {% endblock %}

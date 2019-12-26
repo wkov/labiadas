@@ -1,26 +1,22 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% csrf_token %}
 
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-        <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-        <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
-        <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
+
 <script>
 $(document).ready(function() {
-    {##}
-    {##}
-    {##}
-    {#    // page is now ready, initialize the calendar...#}
-    {##}
-    {##}
-    {##}
+
 
     $('#calendar').fullCalendar({
-{#       aspectRatio: 3,#}
+           loading: function( isLoading, view ) {
+            if(isLoading) {// isLoading gives boolean value
+                document.getElementById( 'loading' ).style.display = 'block';
+                document.getElementById('page-content-wrapper').style.visibility = 'hidden';
+            } else {
+                document.getElementById( 'loading' ).style.display = 'none';
+                document.getElementById('page-content-wrapper').style.visibility = 'visible';
+            }
+        },
        eventSources: [
         {
             url: '/dis/' + {{ node.pk }} + '/Events/',
@@ -28,13 +24,7 @@ $(document).ready(function() {
             color: 'white',   // an option!
             textColor: 'green' // an option!
         }
-{#           ,#}
-{#        {#}
-{#            url: '/pro/' + {{ productor.pk }} + '/cal2Events/',#}
-{#            editable: false,#}
-{#            color: 'green',   // an option!#}
-{#            textColor: 'white' // an option!#}
-{#        }#}
+
       ]
     })
 
@@ -44,80 +34,13 @@ $(document).ready(function() {
 
 {% block content %}
     {% include 'romani/nodes/menu_coops.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Calendari &nbsp;</div>
-{#<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
-{#    font-size: 3em"> {{ node.nom }} </div>#}
-{#    <div style="margin: 0 auto; text-align:center;">#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'node_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Modificar node" >#}
-{#                                    <b id="pato" name="pato" class="pato">Editar Coope</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'vista_nodesdates' node.pk %}" id="etq_selected" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Properes entregues" >#}
-{#                                    <b id="pato" name="pato" class="pato">Dates d'entrega</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#                        <div style=" position: relative; display: inline-block; ">#}
-{#                                <a href="{% url 'nodeproductors_update' node.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Editar productes" >#}
-{#                                    <b id="pato" name="pato" class="pato">Escollir Productors</b>#}
-{#                                 </a>#}
-{#                        </div>#}
-{#    </div>    <br/>#}
-{#    <div id="dialog" title="Calendari d'entregues">#}
-{#        <p>En el calendari van apareixent les dates d'entrega que has creat. La data d'entrega és el dia i les hores en que esta obert el Lloc d'entrega per a#}
-{#        que els productors puguin portar els seus productes i la gent passi a recollir-los.</p>#}
-{#    </div>#}
-    <br/><br/><br/><br/>
-    <a href="{% url 'diaentrega_create' node.pk %}" id="pro_menu">Crear data d'entrega</a>
+    <br/><br/>
+    <a href="{% url 'vista_nodesdates' node.pk %}" id="pro_menu_selected">Calendari</a>
+    <a href="{% url 'diaentrega_create' node.pk %}" id="pro_menu">Nou dia d'entrega</a>
+<a href="{% url 'franjahoraria_create' node.pk %}" id="pro_menu">Nova franja horària</a>
 
-       <br/>
+       <br/><br/>
 
 <div id='calendar'></div>
-{#    <table border="1">#}
-{#    <th>Producte</th>#}
-{#    <th>Nodes a on arriba</th>#}
-{#        {% for link in object_list %}#}
-{#            <form method="post" action="" class="vote_form">#}
-{#              <li>#}
-{#                <tr><td>#}
-{#<a href="">#}
-{#                  [{{ link.nom }}]#}
-{#                    </a>#}
-{#                {% csrf_token %}#}
-{#                <input type="hidden" id="id_link" name="link" class="hidden_id" value="{{ link.pk }}" />#}
-{#                <input type="hidden" id="id_voter" name="voter" class="hidden_id" value="{{ user.pk }}" />#}
-{#                {% if not user.is_authenticated %}#}
-{#                <button disabled title="Si us plau, login per votar">+</button>#}
-{#                {% elif link.pk not in voted %}#}
-{#                <button>+</button>#}
-{#                {% else %}#}
-{#                <button>-</button>#}
-{#                {% endif %}#}
-{#                </td>#}
-{#                <td>#}
-{#                    {{ link.productor }}#}
-{#                  {% for aux in link.dies_entrega_futurs.all %}#}
-{#                      <tr><td>#}
-{#                      {% if link.dies_entrega in aux.dies_entrega.all %}#}
-{#                      <a href="{% url 'node_comandes' aux.pk %}">#}
-{#                    <b>{{ aux.date }}</b>#}
-{#                      {% endif %}#}
-{# /#}
-{#                              {% for d in aux.franjes_horaries.all %}#}
-{#                                  {{ d.inici }} - {{ d.final }} /#}
-{#                              {% endfor %} </a>#}
-{#                              <br/>#}
-{#                      </td></tr>#}
-{#                  {% endfor %}#}
-{#                </td>#}
-{#                  [{{ link.cantitat }} &nbsp; {{ link.format.nom }}] {{ link.data_entrega.date }} / {{ link.client.first_name }}#}
-{#                </tr>#}
-{#                <tr></tr>#}
-{#              </li>#}
-{#            </form>#}
-{#            <br/>#}
-{#        {% endfor %}#}
-{#    </table>#}
+
 {% endblock %}

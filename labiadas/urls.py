@@ -14,61 +14,66 @@ from romani.public_views import coopeView, etiquetaView, comandesView, entregasV
 from romani.public_views import historialView, entregaDelete
 from romani.node_views import NodesListView, NodesDatesListView, diaNodeEvents, NodeUpdateView, NodeProductorsUpdateView, FranjaHorariaCreateView, DiaEntregaCreateView
 from romani.node_views import DiaEntregaUpdateView, NodeComandesListView, export_comandes_xls, NodeCreateView
+from romani.node_views import diaNodeDisEvents, nodeProductorView
 from romani.productor_views import ComandesListView, ProductesListView, HistorialListView, ProducteUpdateView, AdjuntCreateView, TipusProducteCreateView, TipusProducteUpdateView, ProducteCreateView
-from romani.productor_views import ProductorsListView, ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
-from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView
+from romani.productor_views import ProductorUpdateView, DatesListView, diaEntregaEvents, diaEntregaSelected, DiaEntregaProductorView, ProductorCreateView, diaProdEvents
+from romani.productor_views import distriCalendarEvents, distriCalendarSelected, ProductorsCalListView, ProductorsHistListView, DiaEntregaDistribuidorView, DiaProduccioCreateView, historialProView
 from romani.productor_views import DiaProduccioUpdateView, ComandaCreateView, dis_export_comandes_xls, pro_export_comandes_xls, adjuntDelete, adjuntsProductor, CoopsListView
-from romani.productor_views import producteDelete, productorGraphView, graphProductorView, DiaProduccioPaCreateView, DiaProduccioPaUpdateView
+from romani.productor_views import producteDelete, productorGraphView, graphProductorView, DiaProduccioPaCreateView, DiaProduccioPaUpdateView, comandesProView, comandesDisView, historialDisView
+from romani.productor_views import NodeProDetailView, diesEntregaProView, formatDelete
 from romani.views import nouUsuariView, DomiciliView, NodeSaveView, nodesNouUsuariView, NodeDetailView, FreqCalcView
 from romani.views import UserProfileEditView, MyRegistrationView, CoordenadesView, AllCoordenadesView, ResetPasswordRequestView, PasswordResetConfirmView
 from romani.views import InfoFormView, ConvidarView, NodeCalcView, FranjaCalcView, AjudaView, NodeHorariView
 from romani.views import numcomandesView, numproductorView, usercornerView
 from romani.pers_views import UserDetailView
-
 from romani import api
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 # from romani.api_views import CustomObtainAuthToken
 
-from django.contrib.auth.views import login, logout_then_login
+from django.contrib.auth.views import LoginView, LogoutView
 
 from django.views.generic import RedirectView, TemplateView
 
 from rest_framework.schemas import get_schema_view
 
+from machina import urls as machina_urls
+
 admin.autodiscover()
 
 urlpatterns = [
 
-    url(r"^login/$", login,{"template_name": "login.html"}, name="login"),
-    url(r"^logout/$", logout_then_login,name="logout"),
-    url(r"^accounts/", include("registration.backends.simple.urls")),
+    url(r"^login/$", LoginView.as_view(), {"template_name": "login.html"}, name="login"),
+    url(r"^logout/$", LogoutView.as_view(), name="logout"),
+    # url(r"^accounts/", include("django_registration.backends.simple.urls")),
     url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
     url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
     url(r'^account/reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
     url(r'^account/reset_password', ResetPasswordRequestView.as_view(), name="reset_password"),
 
+    # url(r'^forum/', include('forum.urls')),
 
-
-    url(r'^admin/', include(admin.site.urls), name="admin"),
+    url(r'^admin/', admin.site.urls, name="admin"),
 
 
     url(r'^dis/export/xls/(?P<pk>\d+)/$', auth(dis_export_comandes_xls), name='dis_export_comandes_xls'),
-    url(r'^pro/(?P<pro>\d+)/export/xls/(?P<pk>\d+)/$', auth(pro_export_comandes_xls), name='pro_export_comandes_xls'),
-    url(r'^vista_productors/', auth(ProductorsListView.as_view()), name="productor_list"),
+    url(r'^vista_productors/', auth(comandesDisView), name="productor_list"),
     url(r'^distri_cal/', auth(ProductorsCalListView.as_view()), name="productor_cal_list"),
-    url(r'^distri_hist/', auth(ProductorsHistListView.as_view()), name="productor_hist_list"),
-    url(r'^pro/(?P<pro>\d+)/vista_comandes/', auth(ComandesListView.as_view()), name='vista_comandes'),
-    url(r'^pro/(?P<pk>\d+)/data_comandes/(?P<dataentrega>\d+)$', auth(DiaEntregaProductorView), name='data_comandes'),
+    url(r'^distri_hist/', auth(historialDisView), name="productor_hist_list"),
     url(r'^pro/distri_dia/(?P<dataentrega>\d+)$', auth(DiaEntregaDistribuidorView), name='distri_data_comandes'),
-    url(r'^pro/(?P<pro>\d+)/calEvents/$', auth(diaEntregaEvents), name="calEvents"),
-    url(r'^pro/(?P<pro>\d+)/cal2Events/$', auth(diaEntregaSelected), name="cal2Events"),
-    url(r'^pro/(?P<pro>\d+)/calProdEvents/$', auth(diaProdEvents), name="calProdEvents"),
     url(r'^pro/distriEvents/$', auth(distriCalendarEvents), name="distriEvents"),
     url(r'^pro/distriSelected/$', auth(distriCalendarSelected), name="distriSelected"),
     url(r'^pro/coops/', auth(CoopsListView.as_view()), name='productorCoops'),
+    url(r"^productor/create/$", auth(ProductorCreateView.as_view()), name="productor_create"),
+
+    url(r'^pro/(?P<pro>\d+)/export/xls/(?P<pk>\d+)/$', auth(pro_export_comandes_xls), name='pro_export_comandes_xls'),
+    url(r'^pro/(?P<pro>\d+)/vista_comandes/', auth(comandesProView), name='vista_comandes'),
+    url(r'^pro/(?P<pk>\d+)/data_comandes/(?P<dataentrega>\d+)$', auth(DiaEntregaProductorView), name='data_comandes'),
+    url(r'^pro/(?P<pro>\d+)/calEvents/$', auth(diaEntregaEvents), name="calEvents"),
+    url(r'^pro/(?P<pro>\d+)/cal2Events/$', auth(diaEntregaSelected), name="cal2Events"),
+    url(r'^pro/(?P<pro>\d+)/calProdEvents/$', auth(diaProdEvents), name="calProdEvents"),
     url(r'^pro/(?P<pro>\d+)/vista_productes/', auth(ProductesListView.as_view()), name='vista_productes'),
     url(r'^pro/(?P<pro>\d+)/vista_dates/', auth(DatesListView.as_view()), name='vista_dates'),
-    url(r'^pro/(?P<pro>\d+)/vista_historial/', auth(HistorialListView.as_view()), name='vista_historial'),
+    url(r'^pro/(?P<pro>\d+)/vista_historial/', auth(historialProView), name='vista_historial'),
     url(r"^productor/update/(?P<pk>\d+)/$", auth(ProductorUpdateView.as_view()), name="productor_update"),
     url(r"^producte/update/(?P<pk>\d+)/$", auth(ProducteUpdateView.as_view()), name="producte_update"),
     url(r"^format/update/(?P<pk>\d+)/$", auth(TipusProducteUpdateView.as_view()), name="format_update"),
@@ -77,16 +82,17 @@ urlpatterns = [
     url(r'^adjuntDelete/(?P<pk>\d+)$', auth(adjuntDelete), name="adjuntDelete"),
     url(r"^pro/(?P<pro>\d+)/format/create/$", auth(TipusProducteCreateView.as_view()), name="format_create"),
     url(r"^pro/(?P<pro>\d+)/producte/create/$", auth(ProducteCreateView.as_view()), name="producte_create"),
-    url(r"^productor/create/$", auth(ProductorCreateView.as_view()), name="productor_create"),
     url(r"^pro/(?P<pro>\d+)/diaproduccio/$", auth(DiaProduccioCreateView), name="diaproduccio_create"),
     url(r"^pro/(?P<pro>\d+)/diaproduccio_update/(?P<pk>\d+)$", auth(DiaProduccioUpdateView), name="diaproduccio_update"),
     url(r"^pro/(?P<pro>\d+)/diaproducciopa/$", auth(DiaProduccioPaCreateView), name="diaproducciopa_create"),
     url(r"^pro/(?P<pro>\d+)/diaproducciopa_update/(?P<pk>\d+)$", auth(DiaProduccioPaUpdateView), name="diaproducciopa_update"),
     url(r"^pro/(?P<pro>\d+)/comanda/create/$", auth(ComandaCreateView.as_view()), name="comanda_create"),
     url(r'^producteDelete/(?P<pk>\d+)$', auth(producteDelete), name="producteDelete"),
+    url(r'^formatDelete/(?P<pk>\d+)$', auth(formatDelete), name="formatDelete"),
     url(r'^pro/(?P<pro>\d+)/graph.png', productorGraphView, name="graph"),
     url(r'^pro/(?P<pro>\d+)/stats', graphProductorView, name="stats"),
-
+    url(r'^pro/node_detail/(?P<pk>\d+)$', NodeProDetailView, name='node_pro_detail'),
+    url(r'^pro/dies_entrega/(?P<pk>\d+)$', auth(diesEntregaProView), name="diesEntregaPro"),
 
 
 
@@ -95,6 +101,7 @@ urlpatterns = [
     url(r'^dis/(?P<dis>\d+)/node_comandes/(?P<pk>\d+)$', auth(NodeComandesListView.as_view()), name='node_comandes'),
     url(r'^dis/(?P<dis>\d+)/vista_nodesdates/', auth(NodesDatesListView.as_view()), name='vista_nodesdates'),
     url(r'^dis/(?P<dis>\d+)/Events/$', auth(diaNodeEvents), name="calNodeEvents"),
+    url(r'^disNode/Events/$', auth(diaNodeDisEvents), name="calDisNodeEvents"),
     url(r"^node/update/(?P<pk>\d+)/$", auth(NodeUpdateView.as_view()),
         name="node_update"),
     url(r"^node_productors/update/(?P<pk>\d+)/$", auth(NodeProductorsUpdateView.as_view()),
@@ -106,7 +113,7 @@ urlpatterns = [
     url(r"^dis/(?P<dis>\d+)/franjahoraria/create/$", auth(FranjaHorariaCreateView.as_view()),
         name="franjahoraria_create"),
     url(r"^node/create/$", auth(NodeCreateView.as_view()), name="node_create"),
-
+    url(r"^node/productor/(?P<pk>\d+)/$", auth(nodeProductorView), name="node_productor"),
 
 
     # url(r"^contracte/update/(?P<pk>\d+)/$", auth(ContracteUpdateView.as_view()),
@@ -135,6 +142,9 @@ urlpatterns = [
 
 
 
+    url(r'^messages/', include('django_messages.urls')),
+
+    url(r'^forum/', include(machina_urls)),
 
 
 
@@ -167,8 +177,7 @@ urlpatterns = [
     url(r'^comanda/$', auth(ComandaFormView.as_view()), name="comanda"), #confirma la comanda
     url(r'^dies_entrega/(?P<pk>\d+)/(?P<pro>\d+)$', auth(diesEntregaView), name="diesEntrega"),
     url(r'^convidar/$', auth(ConvidarView), name="convidar"),
-    url(r'^messages/', include('django_messages.urls')),
-    url('^inbox/notifications/', include('notifications.urls', namespace="notifications")),
+    # url('^inbox/notifications/', include('notifications.urls', namespace="notifications")),
     url(r"edit_profile/$", auth(UserProfileEditView.as_view()), name="edit_profile"),
     url(r'^perfil/(?P<pk>\d+)$', auth(UserDetailView), name='perfil'),
     url(r'^$', auth(coopeView), name="coope"),

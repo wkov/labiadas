@@ -1,5 +1,5 @@
 import re
-from django.forms.extras.widgets import SelectDateWidget
+from django.forms.widgets import SelectDateWidget
 from django.forms.widgets import Widget, Select, MultiWidget
 from django.utils.safestring import mark_safe
 
@@ -64,7 +64,7 @@ class SelectTimeWidget(Widget):
         else:
             self.seconds = range(0,60)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         try: # try to get time values from a datetime.time object (value)
             hour_val, minute_val, second_val = value.hour, value.minute, value.second
             if self.twelve_hr:
@@ -119,7 +119,8 @@ class SelectTimeWidget(Widget):
         second_val = u"%.2d" % second_val
 
         hour_choices = [("%.2d"%i, "%.2d"%i) for i in self.hours]
-        local_attrs = self.build_attrs(id=self.hour_field % id_)
+        local_attrs = self.attrs
+        local_attrs['id'] = self.hour_field % id_
         select_html = Select(choices=hour_choices).render(self.hour_field % name, hour_val, local_attrs)
         output.append(select_html)
 

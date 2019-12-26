@@ -13,8 +13,14 @@
 {#    font-size: 3em"> {{ node.nom }} </div>#}
 
         {% include 'romani/nodes/menu_coops.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Crear Franja Horària &nbsp;</div>
+
+<br/><br/>
+    <a href="{% url 'vista_nodesdates' node.pk %}" id="pro_menu">Calendari</a>
+    <a href="{% url 'diaentrega_create' node.pk %}" id="pro_menu">Nou dia d'entrega</a>
+    <a href="{% url 'franjahoraria_create' node.pk %}" id="pro_menu_selected">Nova franja horària</a>
+
+<br/>
+
 <form method="post" action="">
   {% csrf_token %}
 {#    <div style="margin: 0 auto; text-align:center;">#}
@@ -34,7 +40,7 @@
 {#                                 </a>#}
 {#                        </div>#}
 {#    </div>#}
-    <br/><br/><br/>
+    <br/>
 {#    <a href="" id="pro_menu_selected">Editar Franja Horària</a>#}
   {{ form.as_p }}
   <input type="submit" value="Grabar">

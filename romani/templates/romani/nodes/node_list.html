@@ -7,9 +7,54 @@
     <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
     <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
     <script src="{% static 'js/menubar.js' %}"></script>
+        <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
+        <script type="text/javascript" src="{%  static 'js/fullcalendar-3.4.0/fullcalendar.min.js' %}"></script>
+    <script src='{%  static 'js/fullcalendar-3.4.0/locale/ca.js' %}'></script>
+
+    <script>
+$(document).ready(function() {
+
+
+    $('#calendar').fullCalendar({
+{#       aspectRatio: 3,#}
+       loading: function( isLoading, view ) {
+            if(isLoading) {// isLoading gives boolean value
+                document.getElementById( 'loading' ).style.display = 'block';
+                document.getElementById('page-content-wrapper').style.visibility = 'hidden';
+            } else {
+                document.getElementById( 'loading' ).style.display = 'none';
+                document.getElementById('page-content-wrapper').style.visibility = 'visible';
+            }
+        },
+       eventSources: [
+        {
+            url: '/disNode/Events/',
+            editable: false,
+            color: 'white',   // an option!
+            textColor: 'green' // an option!
+        }
+{#           ,#}
+{#        {#}
+{#            url: '/pro/' + {{ productor.pk }} + '/cal2Events/',#}
+{#            editable: false,#}
+{#            color: 'green',   // an option!#}
+{#            textColor: 'white' // an option!#}
+{#        }#}
+      ]
+    })
+
+});
+</script>
+
+
 {% endblock %}
-{% csrf_token %}
 {% block content %}
+
+
+{% include 'romani/nodes/menu_coops.html' %}
+
+<div id='calendar'></div>
+
 {#<div style="float: left; position: relative;     font-family: 'Satisfy', cursive;#}
 {#    font-size: 3em"> {{ node.nom }} </div>#}
     <br/>
@@ -18,9 +63,6 @@
 {#    </div>#}
         {% if nodes %}
 
-{% include 'romani/nodes/menu_coops.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Coops &nbsp;</div>
 {#        {% for link in object_list %}#}
 
 {#            <form method="post" action="" class="vote_form">#}

@@ -1,62 +1,57 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
-{% csrf_token %}
 {% block content %}
 
             {% include 'romani/productors/menu_pro.html' %}
 
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Comandes rebudes &nbsp;</div>
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em">Comandes rebudes &nbsp;</div>-->
 
     <br/><br/>
 
 
-    <a href="{% url 'comanda_create' productor.pk %}" id="pro_menu">Crear nova comanda</a>
 
-    {% if object_list %}<br/>
-{#    Comandes: <br/>#}
-     <table border="1" id="myTable" class="tablesorter " style="width: 100%;">
-     <thead>
-     <tr>
-     <th>Producte</th>
-     <th>Lloc d'entrega</th>
-     <th>Cant</th>
-     <th>Format</th>
-     <th>Data d'entrega</th>
-     <th>Franja horària</th>
-     <th>Preu</th>
-     <th>Usuari</th>
-     <th>Data de comanda</th>
-     </tr>
-     </thead>
-     <tbody>
-        {% for link in object_list %}
+    <a href="{% url 'vista_comandes' productor.pk %}" id="pro_menu_selected">Comandes</a>
+    <a href="{% url 'vista_dates' productor.pk %}" id="pro_menu">Calendari</a>
+    <a href="{% url 'vista_historial' productor.pk %}" id="pro_menu">Historial</a>
+    <a href="{% url 'comanda_create' productor.pk %}" id="pro_menu">Nova comanda</a>
 
-               <tr>
-                        <td>{{ link.comanda.format.producte.nom }}</td>
-                        <td>{{ link.dia_entrega.node }}</td>
-                        <td>{{ link.comanda.cantitat }}</td>
-                        <td>{{ link.comanda.format.nom }}</td>
-                        <td>{{ link.dia_entrega.date|date:"d/m/Y" }}</td>
-                        <td>{{ link.franja_horaria }}</td>
-                        <td>{{ link.comanda.preu }}€</td>
-                        <td><a  href="{% url 'perfil' link.comanda.client.pk %}">
-                                    {{ link.comanda.client.username }} </a></td>
-{#                        <td>{{ link.comanda.frequencia.nom }}</td>#}
-                        <td>{{ link.data_comanda.date|date:"d/m/Y" }}</td>
-               </tr>
+<br/><br/>
 
-        {% endfor %}
+{% if comandes %}
 
 
-     </tbody>
-       </table>
-    {% endif %}
+        <div style="overflow-x:auto;">
+                {% for c in comandes %}
+            <a href="{% url 'data_comandes' productor.pk c.dia_pk %}">
+            <b>{{c.node}} / {{ c.dia }}</b></a> <br/>
+            <ul style="list-style-type:disc">
+            {% for v in c.entregas %}
+<li>
+             {{v.cantitat}} &nbsp;{{v.format}}&nbsp;  {{ v.producte }}  &nbsp; &nbsp;
+    <a  href="{% url 'perfil' v.user.pk %}">
+    {{v.user}}
+    </a> &nbsp;
+    {{v.preu}}
+    <a type="button" class="glyphicon glyphicon-info-sign" href="{% url 'diesEntregaPro' v.pk %}" title="llegir més"></a>
+&nbsp;
+    <!--<a class="glyphicon glyphicon-remove" type="button" href="{% url 'entregaDelete' v.entrega_pk  %}"-->
+                           <!--title="Borrar comanda"-->
+                           <!--onclick="return confirm('Segur que vols borrar la comanda?')">-->
+                                <!--</a>-->
+</li>
+              {% endfor %}
+              <br/>Total:  {{c.total}}
+</ul>
+              {%  endfor %}
+        </div>
+
+        {% endif %}
+        {% if not comandes %}
+                No hi ha comandes encara
+        {% endif %}
+
 
 {% endblock %}

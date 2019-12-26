@@ -1,22 +1,19 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{#{% csrf_token %}#}
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
 {% block content %}
         {% include 'romani/productors/menu_pro.html' %}
 
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em"> Productes i Formats &nbsp;</div>
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em"> Productes i Formats &nbsp;</div>-->
 
     <br/><br/>
 
-    <a href="{% url 'producte_create' productor.pk %}" id="pro_menu">Crear Nou Producte</a> <br/>
-    <a href="{% url 'format_create' productor.pk %}" id="pro_menu">Crear Nou Format</a> <br/><br/>
+    <a href="{% url 'vista_productes' productor.pk %}" id="pro_menu_selected">Productes</a>
+    <!--<a href="{% url 'productor_update' productor.pk %}" id="pro_menu">Productora</a>-->
+    <a href="{% url 'producte_create' productor.pk %}" id="pro_menu">Nou Producte</a>
+    <a href="{% url 'format_create' productor.pk %}" id="pro_menu">Nou Format</a> <br/><br/>
     Llistat de productes amb els seus respectius formats:
     <div>
         {% for link in object_list %}
@@ -39,7 +36,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for f in link.formats.all %}
+                {% for f in link.formats_actius %}
             <tr>
                     <td>
             <a href="
@@ -54,6 +51,12 @@
                   " style="color: white;">
                 {{ f.preu }} &nbsp;</a>
             </td>
+            <td>     &nbsp;
+                            <a class="glyphicon glyphicon-trash" type="button" href="{% url 'formatDelete' f.pk  %}"
+                           title="Borrar format"
+                           onclick="return confirm('Segur que vols borrar el format?')">
+                               </a>
+                 </td>
             </tr>
                 {% endfor %}
                 </tbody>

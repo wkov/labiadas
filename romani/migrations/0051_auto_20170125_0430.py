@@ -16,13 +16,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='key',
             name='nou_usuari',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, default=1, related_name='key_nou_usuari'),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1, related_name='key_nou_usuari'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='key',
             name='usuari',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, default=1),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1),
             preserve_default=False,
         ),
     ]

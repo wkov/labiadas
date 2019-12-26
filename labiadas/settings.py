@@ -33,6 +33,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "romani/static/")
 # Application definition
 
 INSTALLED_APPS = (
+    'romani',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,19 +43,65 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'geoposition',
     'captcha',
-    'notifications',
+    # 'notifications',
     'django_messages',
-    'romani',
+    # 'forum',
     'xlwt',
     'PIL',
     'rest_framework',
     'rest_framework_jwt',
     'corsheaders',
+    # 'django_countries',
+    # 'embed_video',
+    # 'micawber.contrib.mcdjango',
+    # 'tagulous',
+    # 'forum',
+    # 'autocomplete_light',
     # 'django_rest_framework_jwt',
-    # 'registration',
+    'django_registration',
+    # Machina dependencies:
+    'mptt',
+    'haystack',
+    'widget_tweaks',
+    # Machina apps:
+    'machina',
+    'machina.apps.forum',
+    'machina.apps.forum_conversation',
+    'machina.apps.forum_conversation.forum_attachments',
+    'machina.apps.forum_conversation.forum_polls',
+    'machina.apps.forum_feeds',
+    'machina.apps.forum_moderation',
+    'machina.apps.forum_search',
+    'machina.apps.forum_tracking',
+    'machina.apps.forum_member',
+    'machina.apps.forum_permission',
 )
 
+
+
+
+# SERIALIZATION_MODULES = {
+#     'xml':    'tagulous.serializers.xml_serializer',
+#     'json':   'tagulous.serializers.json',
+#     'python': 'tagulous.serializers.python',
+#     'yaml':   'tagulous.serializers.pyyaml',
+# }
+
+
+
+
+
+
 SITE_ID = 1
+
+MIDDLEWARE = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    # Machina
+    'machina.apps.forum_permission.middleware.ForumPermissionMiddleware',
+
+)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -71,11 +118,16 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'labiadas.urls'
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+
+from machina import MACHINA_MAIN_TEMPLATE_DIR
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'romani/templates')],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'romani/templates'), MACHINA_MAIN_TEMPLATE_DIR,],
+
+        # 'APP_DIRS': True,
         'OPTIONS': {
             'debug': True,
             'context_processors': [
@@ -84,11 +136,17 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
-                'django_messages.context_processors.inbox',
+                # 'django_messages.context_processors.inbox',
                 # 'labiadas.context_processors.notifications_user',
                 'labiadas.context_processors.node_user',
                 # 'labiadas.context_processors.foto_user',
+                # Machina
+                'machina.core.context_processors.metadata',
             ],
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ]
         },
     },
 ]
@@ -106,7 +164,7 @@ DATABASES = {
     }
 }
 
-LOCALE_PATHS = ( "locale/",)
+LOCALE_PATHS = ("locale/",)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -120,7 +178,6 @@ def gettext_noop(s):
 # gettext = lambda s: s
 LANGUAGES = (
     ('ca', gettext_noop('Catalan')),
-    # ('es-es', gettext('Spanish')),
 )
 
 
@@ -142,6 +199,22 @@ CORS_ORIGIN_ALLOW_ALL = True
 STATIC_URL = '/static/'
 # STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, 'static').replace('\\','/'),]
 
+
+
+
+
+from machina import MACHINA_MAIN_STATIC_DIR
+
+STATICFILES_DIRS = (
+    # ...
+    MACHINA_MAIN_STATIC_DIR,
+)
+
+
+
+
+
+
 SEND_EMAIL = True
 ACCOUNT_ACTIVATION_DAYS = 30
 EMAIL_USE_TLS = True
@@ -154,10 +227,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-from django.core.urlresolvers import reverse_lazy
-LOGIN_URL=reverse_lazy("login")
-LOGIN_REDIRECT_URL=reverse_lazy("coope")
-# LOGOUT_URL=reverse_lazy("coope")
+from django.urls import reverse_lazy
+LOGIN_URL = reverse_lazy('login')
+LOGIN_REDIRECT_URL = reverse_lazy('coope')
+LOGOUT_URL=reverse_lazy('login')
 # REGISTRATION_OPEN = False
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ' AIzaSyA6f7rjDkdoQZFH3uy9UTOF7r8xxyOTAcE '
@@ -196,3 +269,41 @@ JWT_AUTH = {
     # 'JWT_PAYLOAD_GET_USER_ID_HANDLER':
     # 'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
 }
+#
+#
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+    'machina_attachments': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp',
+    },
+}
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}
+#
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+#         'PATH': os.path.join(PROJECT_PATH, 'whoosh_index'),
+#     },
+# }
+
+MACHINA_FORUM_NAME = "La Massa Forum"
+
+MACHINA_DEFAULT_AUTHENTICATED_USER_FORUM_PERMISSIONS = [
+    'can_see_forum',
+    'can_read_forum',
+    'can_start_new_topics',
+    'can_reply_to_topics',
+    'can_edit_own_posts',
+    'can_post_without_approval',
+    'can_create_polls',
+    'can_vote_in_polls',
+    'can_download_file',
+]

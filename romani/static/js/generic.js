@@ -54,8 +54,6 @@ function hasScrolled() {
 
 $( document ).ready(function() {
 
-
-
                          // delete message
             $('.del-msg').click(function(){
                 $('.del-msg').parent().attr('style', 'display:none;');
@@ -94,6 +92,9 @@ $( document ).ready(function() {
 
 
     })
+
+    document.getElementById( 'loading' ).style.display = 'none';
+    document.getElementById('page-content-wrapper').style.visibility = 'visible';
  });
 
 /*Script per Notificacións */

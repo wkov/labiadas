@@ -1,6 +1,6 @@
 __author__ = 'sergi'
 
-from romani.models import Node, DiaEntrega, FranjaHoraria, Comanda, Entrega
+from romani.models import Node, DiaEntrega, FranjaHoraria, Comanda, Entrega, Productor, UserProfile, Producte, Adjunt
 from romani.forms import NodeForm, NodeProductorsForm, FranjaHorariaForm, DiaEntregaForm
 
 from django.contrib.auth.models import Group, User
@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
 from django.views.generic import ListView
+
+from django.shortcuts import render, get_object_or_404
 
 import xlwt
 # from itertools import chain
@@ -42,7 +44,7 @@ def export_comandes_xls(request, pk):
     font_style = xlwt.XFStyle()
     old_row = ""
     total = ""
-    rows = Entrega.objects.filter(dia_entrega__pk=pk).order_by('comanda__client').values_list('comanda__client__first_name', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
+    rows = Entrega.objects.filter(dia_entrega__pk=pk).order_by('comanda__client').values_list('comanda__client__username', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
     rows = list(rows)
     rows.sort(key=lambda tup: tup[0])
     for row in rows:
@@ -97,6 +99,7 @@ class NodesListView(ListView):
         if not u in g.user_set.all():
                 g.user_set.add(u)
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        context["up"] = u.user_profile
         return context
 
 
@@ -112,6 +115,8 @@ class NodesDatesListView(ListView):
         node = Node.objects.get(pk=self.kwargs['dis'])
         context["node"] = node
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
 
 
@@ -131,11 +136,14 @@ class NodeComandesListView(ListView):
         context["diaentrega"] = diaentrega
         context['formats'] = diaentrega.formats.all()
             # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
-        preu_total = 0
+        pre_preu_total = 0
         for c in self.get_queryset():
-            preu_total += c.comanda.preu
+            pre_preu_total += c.comanda.preu
+        preu_total = round(pre_preu_total, 2)
         context["preu_total"] = preu_total
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
 
 
@@ -156,6 +164,8 @@ class FranjaHorariaCreateView(CreateView):
         node = Node.objects.get(pk=self.kwargs['dis'])
         context["node"] = node
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
 
     def get_success_url(self):
@@ -181,6 +191,8 @@ class DiaEntregaCreateView(CreateView):
         node = Node.objects.get(pk=self.kwargs['dis'])
         context["node"] = node
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
 
     def get_success_url(self):
@@ -207,6 +219,8 @@ class DiaEntregaUpdateView(UpdateView):
         d = DiaEntrega.objects.get(pk=self.kwargs['pk'])
         context["node"] = d.node
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
 
     def get_success_url(self):
@@ -230,6 +244,8 @@ class NodeCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(NodeCreateView, self).get_context_data(**kwargs)
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
 
 
@@ -263,6 +279,8 @@ class NodeUpdateView(UpdateView):
         node = Node.objects.get(pk=self.kwargs['pk'])
         context["node"] = node
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
 
     def get_success_url(self):
@@ -298,7 +316,37 @@ class NodeProductorsUpdateView(UpdateView):
         node = Node.objects.get(pk=self.kwargs['pk'])
         context["node"] = node
         context["nodes"] = Node.objects.filter(responsable=self.request.user)
+        context["productors"] = Productor.objects.all()
+        context["productors_selected"] = Productor.objects.filter(nodes=node)
+        u = self.request.user
+        context["up"] = u.user_profile
         return context
+
+    # def form_valid(self, form):
+    #     node = Node.objects.get(pk=self.kwargs['pk'])
+    #     node.productors.clear()
+    #     for f in form.data["productor"]:
+    #         pro = Productor.objects.get(pk=form.data["productor"])
+    #         if pro:
+    #             node.productors.add(pro)
+    #     node.save()
+    #     return super(NodeProductorsUpdateView, self).form_valid(form)
+
+# def nodeProductorsFormView(request, pk):
+#     node = Node.objects.get(pk=self.kwargs['pk'])
+
+
+
+def nodeProductorView(request, pk):
+    productor = Productor.objects.filter(pk=pk).first()
+    user_p = UserProfile.objects.filter(user=request.user).first()
+    p = Producte.objects.filter(productor=productor)
+    adjunts = Adjunt.objects.filter(productor=productor)
+    productes = sorted(p, key=lambda a: a.karma(node=user_p.lloc_entrega), reverse=True)
+
+    return render(request, "romani/nodes/node_productor_detail.html",
+                  {'productor': productor, 'productes': productes, 'adjunts': adjunts, 'up': user_p})
+
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -319,3 +367,20 @@ def diaNodeEvents(request, dis):
             events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
     # something similar for owned events, maybe with a different className if you like
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
+
+
+def diaNodeDisEvents(request):
+    # productor = Productor.objects.filter(responsable=request.user)
+    # eventList = DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), node__productors__id__exact=productor)
+    p = Node.objects.filter(responsable=request.user)
+    eventList = DiaEntrega.objects.filter(node__in=p)
+    events = []
+    for event in eventList:
+            franja = event.franja_inici()
+            day_str = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.inici)[:5]
+            dayend = str(event.date.year) + "-" + str(event.date.month).zfill(2) + "-" + str(event.date.day).zfill(2) + " " + str(franja.final)[:5]
+            url = "/dis/" + str(event.node.pk) + "/node_comandes/" + str(event.pk)
+            events.append({'title': event.node.nom, 'start': day_str, 'end': dayend, 'url': url })
+    # something similar for owned events, maybe with a different className if you like
+    return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
+

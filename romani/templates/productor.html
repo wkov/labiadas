@@ -15,17 +15,9 @@
 
     <div id="recurs_wraper" style="display: inline-block; margin:0px; width: 100%" >
 
-        <div id="div_recurs"  style=" ">
-            <div  class="thumbnail">
             <h2>{{ productor.nom }} </h2>
 
-            <a href="{% url 'messages_compose_to' productor.responsable.first %}" title="Enviar missatge al productor">
-                 Enviar missatge al productor <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828"></span>
-                </a>
-            <br /> <br/>
-            {{ productor.text|linebreaks }}<br />
             {% if adjunts %}
-                <br />
 
 
                 <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -47,7 +39,7 @@
                                 <div class="item">
                             {% endif %}
                             <img src="{{ p.arxiu.url }}"  style="margin-left:auto;
-                                margin-right:auto; max-width: 460px; max-height: 345px;">
+                                margin-right:auto;width: 100%;">
                                 </div>
                     {% endfor %}
                 </div>
@@ -62,8 +54,8 @@
                 </a>
                 </div>
             {% endif %}
-        </div>
-        </div>
+
+            {{ productor.text|linebreaks }}
     </div>
 
 
@@ -73,35 +65,18 @@
       {% for producte in productes %}
       <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <div class="thumbnail" >
-            {% if not up.lloc_entrega.nomes_seguent  %}
-            <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
-                <div style="background-color: #f6a828; float: right " title="Próxima entrega">
-                <span class="glyphicon glyphicon-time" ></span> {% next_day producte up.lloc_entrega %}</div>
-                <!--<div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">-->
-                <!--<span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>-->
-                <!--<div style="background-color: #8ae090; color: white; float: right" title="Vots positius">-->
-                <!--<span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>-->
-            </div>
-            {% endif %}
+
             <div class="caption">
                   {% if producte.foto %}
-                    <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
+                    <a href="{% url 'producte'  producte.pk  %}" style="color: #000000; font-size: 1.5em;" title="Visualitzar en detall el producte">
                         <div class="g-item" style="background-image:url('{{ producte.foto.url }}'); "></div>
 {#                        <img src="{{ producte.adjunt.url }}" style="float: right; width: auto; height:auto; max-width: 200px; max-height: 300px"  >#}
                     </a>
                   {% endif %}
-          <div class="prodxx" style="    font-family: 'Satisfy';font-size: 1.1em;
-                    color: #baae30; background-color:#FFFFFF; display: inline-block;" >
-                <h3><a href="{% url 'producte'  producte.pk  %}" title="Visualitzar en detall el producte"> {{ producte.nom }}
-{#                <span class="glyphicon glyphicon-info-sign" style="float: bottom"></span>#}
-                </a></h3></div><br/><br/><br/>
-          <div class="xxent" style="background-color:#FFFFFF; display: block;">
-                <p id="entradilla" name="entradilla">{{ producte.text_curt }}</p>
-            </div>
-          <form style="width:100%; display: inline-block; position: relative">
-<button class="glyphicon glyphicon-duplicate" id="id_carro"  style="visibility: hidden" title="Copiar comanda"></button>
-{#<button class="glyphicon glyphicon-duplicate" id="id_carro" style=" " title="Copiar comanda"></button>#}
-        </form>
+          <div style=" text-align:center;   font-family: 'Satisfy';" >
+                <a href="{% url 'producte'  producte.pk  %}" style="color: #000000; font-size: 1.5em;" title="Visualitzar en detall el producte"> {{ producte.nom }}
+                </a></div>
+
           </div>
         </div>
       </div>

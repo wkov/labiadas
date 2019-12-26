@@ -22,25 +22,21 @@
         <div id="div_menu1">
               <a  href="{% url 'coope' %}"> <h1>
                     {{ node_user }}</h1></a>
-{#                    <div id="loading" class="loader" style="margin-left:0 auto; margin-right:0 auto;"></div>#}
+                    <div id="loading" class="loader" style="margin-left:0 auto; margin-right:0 auto;"></div>
 
 {#            Més proper, Massa Xarxa, lamassa.net , Més a prop#}
         </div>
         <div id="div_user">
             {%  include "usermenu.html" %}
         </div>
-{#        <script>#}
 
-
-
-{#        </script>#}
     </div>
     </header>
     <div id="sidebar-wrapper">
 			{% include "leftmenurusc.html" %}
 	</div>
 
-    <div id="page-content-wrapper">
+    <div id="page-content-wrapper" style="visibility: hidden">
         <div class="container-fluid">
            <div class="row">
                 <div class="col-lg-12">

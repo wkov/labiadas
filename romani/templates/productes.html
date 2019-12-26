@@ -3,19 +3,15 @@
 {#{% load next_day %}#}
 {% load i18n %}
 {% load staticfiles %}
-{% csrf_token %}
+<!--{% csrf_token %}-->
 {% block headers %}
-{#    <script src="{% static 'js/comanda.js' %}"></script>#}
 {% endblock %}
 {% block modals %}
     {% include "comanda_modal.html" %}
 {% endblock %}
 {%  block content %}
 
-
-
     <div style="margin: 0 auto; text-align:center;">
-
                     {% for etq in etiquetes %}
                         <div style=" position: relative; display: inline-block; ">
                                 <a href="{% url 'etiqueta' etq.pk %} " class="btn btn-default btn-group-xs"
@@ -39,78 +35,112 @@
             </div>
     </div>
     <br/>
+
     {% for producte in productes %}
-      <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12" >
+      <div class="col-lg-4 col-md-6 col-xs-12 col-sm-6" >
         <div class="thumbnail" >
-            {% if not up.lloc_entrega.nomes_seguent  %}
-            <div style="float: right; position: absolute; z-index: 1; top: 0px; right: 0px; font-family: 'Barrio'">
-                <div style="background-color: #f6a828; float: right " title="Próxima entrega">
-                <span class="glyphicon glyphicon-time" ></span> {%  next_day producte up.lloc_entrega %}</div>
-                <!--<div style="background-color: #ff947a; color: black; float: right" title="Vots negatius">-->
-                <!--<span class="glyphicon glyphicon-thumbs-down" ></span> {{ producte.negative_votes }} &nbsp;</div>-->
-                <!--<div style="background-color: #8ae090; color: white; float: right" title="Vots positius">-->
-                <!--<span class="glyphicon glyphicon-thumbs-up" ></span> {{ producte.positive_votes }} &nbsp;</div>-->
-            </div>
-            {% endif %}
-            <div class="caption">
+
+
+
+                 <div class="prodxx" style="font-family: 'Satisfy';font-size: 1.7em;
+                     display: inline-block" >
+                 <p><a href="{% url 'producte'  producte.pk  %}" style="color: #333;" title="Visualitzar en detall el producte" > {{ producte.nom }}
+                 </a></p></div>
+
+                 <div class="prodxx" style="display: inline-block; float:right;">
+                    <p>
+                    <a href="{% url 'productor'  producte.productor.pk  %}" title="Visualitzar productor" style="color: #333; font-family:  'Satisfy'; font-size: larger;">
+                            {{ producte.productor.nom }}</a>
+                    </p>
+                 </div>
+
+
                  {% if producte.foto %}
-                    <a href="{{ MEDIA_URL }}{{ producte.foto.url }}" >
+                    <a href="{% url 'producte'  producte.pk  %}" >
                     <div class="g-item" style="background-image:url('{{ producte.thumb.url }}');" >
                         </div>
                     </a>
                  {% endif %}
-                 <div class="prodxx" style="font-family: 'Satisfy';font-size: 1.8em;
-                    color: #baae30; background-color:#FFFFFF; display: inline-block; opacity: 0.7" >
-                 <p><a href="{% url 'producte'  producte.pk  %}" title="Visualitzar en detall el producte" > {{ producte.nom }}
-                 </a></p></div></br></br>
 
-                 <div class="prodxx" style="background-color:#FFFFFF; display: inline-block; ">
-                    <p>
-                    <a href="{% url 'productor'  producte.productor.pk  %}" title="Visualitzar productor" style="font-family:  'Satisfy'; font-size: larger; color: #508a4c">
-                            {{ producte.productor.nom }}</a>
-                    <a href="{% url 'messages_compose_to' producte.productor.responsable.first %}" title="Enviar missatge al productor">
-                    <span class="glyphicon glyphicon-comment" style="float: bottom; color: #f6a828">  </span></a></p>
-                 </div><br/></br>
+                 <!--<div class="xxent" style="background-color:#FFFFFF; display: block">-->
+                    <!--<p id="entradilla" name="entradilla" >{{ producte.text_curt }}</p>-->
+                 <!--</div><br />-->
 
-                 <div class="xxent" style="background-color:#FFFFFF; display: block">
-                    <p id="entradilla" name="entradilla" >{{ producte.text_curt }}</p>
-                 </div><br />
-                 <form method="post"  class="comanda_form">{% csrf_token %}
+                {% if not up.lloc_entrega.nomes_seguent  %}
+                     <form method="post"  class="comanda_form">{% csrf_token %}
+                             <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ producte.pk }}" />
+                             <div  style="width:100%; display: inline-block; position: relative">
+                                Cantitat:
+                                <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 50px"/>
+                                de <br/>
+                                <select id="id_format" name="format" class="hidden_id form-control" style="width: 100% float:right" >
+                                    {% for tipusproducte in producte.formats.all %}
+                                        {% if tipusproducte in formats %}
+                                            <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <div style="padding-top: 10px">
+                                    <div style="float: left; font-family: 'Barrio'">
+                                        <div style="background-color: #f6a828; float: right " title="Próxima entrega">
+                                        <span class="glyphicon glyphicon-time" ></span>Entrega en {%  next_day producte up.lloc_entrega %}</div>
+                                    </div>
+                                    <div style="float: right;">
+                                     <button class="glyphicon glyphicon-shopping-cart" id="id_carro" title="Fer comanda">
+                                     </button>
+                                    </div>
+                                </div>
+                             </div>
+                     </form>
 
-                         <input type="hidden" id="id_producte" name="producte" class="hidden_id" value="{{ producte.pk }}" />
-                         <input type="hidden" id="id_producte_nom" name="producte_nom" class="hidden_id" value="{{ producte.nom }}" />
-                         <input type="hidden" id="id_client" name="client" class="hidden_id" value="{{ user.pk }}" />
-                         <input type="hidden" id="id_lloc_entrega" name="lloc_entrega" class="hidden_id" value="{{ up.lloc_entrega.pk }}" />
-                         <input type="hidden" id="franja_horaria" name="franja_horaria" class="hidden_id"/>
-                         <input type="hidden" id="id_preu" name="preu" class="hidden_id"/>
-                         <div  style="width:100%; display: inline-block; position: relative">
-                            Cant:
-                            <input type="number" id="id_cantitat" name="cantitat" class="hidden_id"  value="1" style="width: 50px"/>
-                            de <br/>
-                            <select id="id_format" name="format" class="hidden_id form-control" style="width: 100% float:right" >
-                                {% for tipusproducte in producte.formats.all %}
-                                    {% if tipusproducte in formats %}
-                                        <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
+                {% else %}
+
+                       <form method="post" class="comanda2_form">{% csrf_token %}
+                           <input type="hidden" id="producte_pk" name="producte_pk" class="form-control"  value="{{ producte.pk }}"/>
+                           <br/><br/>
+
+                           <input type="hidden" id="dataentrega" name="dataentrega" value="{{ up.lloc_entrega.prox_dia.pk }}">
+                           <input type="hidden" id="franjes" name="franjes" value="{{ up.lloc_entrega.prox_dia.franja_inici.pk }}">
+                           <label for="lloc_entrega" class="lloc_entrega_lbl" style="display: none" >Lloc d'entrega:</label>
+                           <select id="lloc_entrega" name="lloc_entrega" class="lloc_entrega form-control" style="display: none" >
+                                 {% for lloc in nodes %}
+                                {%  if lloc.pk == up.lloc_entrega.pk %}
+                                        <option value="{{ lloc.pk }}" selected>{{ lloc.nom }} / {{ lloc.poblacio }} </option>
+                                    {% else %}
+                                        <option value="{{ lloc.pk }}">{{ lloc.nom }} / {{ lloc.poblacio }} </option>
                                     {% endif %}
-                                {% endfor %}
-                            </select>
-                            <div style="float: right; padding-top: 10px">
-{#                            {% if not user.is_authenticated %}#}
-{#                                 <button class="glyphicon glyphicon-shopping-cart" id="id_carro" title="Fer comanda">#}
-{#                                </button>#}
-{#                             {% else %}#}
-                                 <button class="glyphicon glyphicon-shopping-cart" id="id_carro" title="Fer comanda">
-                                 </button>
-{#                             {% endif %}#}
+                               {% endfor %}
+                           </select>
+                           <div  style="width:100%; display: inline-block; position: relative">
+                                Cantitat:
+                                <input type="number" id="cantitat_t" name="cantitat_t" class="hidden_id"  value="1" style="width: 50px"/>
+                                de <br/>
+                                <select id="format_pk" name="format_pk" class="hidden_id form-control" style="width: 100% float:right" >
+                                    {% for tipusproducte in producte.formats.all %}
+                                        {% if tipusproducte in formats %}
+                                            <option value= {{ tipusproducte.pk }} > {{ tipusproducte.preu }}€ &nbsp; {{ tipusproducte.nom }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <div style="float: right; padding-top: 10px">
+                                    <button id="aceptar" type="submit"title="Fer comanda">
+                                        <span class="glyphicon glyphicon-shopping-cart">
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
-                         </div>
-                 </form>
-          </div>
+
+                           <label id="frequencia_label" for="frequencia" style="display: none">Freqüència:</label>
+                           <select id="frequencia" name="frequencia" class="form-control" style="display: none">
+                               <option selected></option>
+                           </select>
+                       </form>
+
+                    {% endif %}
+
         </div>
       </div>
     {% endfor %}
-
-
 
 {% endblock %}
 
@@ -133,7 +163,6 @@
                 <a href="?page={{ productes.next_page_number }}">següent</a>
             {% endif %}
         </span>
-{#    </div>#}
     </div>
 
 {% endblock %}

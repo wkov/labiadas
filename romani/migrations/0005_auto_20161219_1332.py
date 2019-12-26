@@ -25,13 +25,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='comanda',
             name='lloc_entrega',
-            field=models.ForeignKey(to='romani.Node', default=1),
+            field=models.ForeignKey(to='romani.Node',on_delete=models.CASCADE, default=1),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='userprofile',
             name='lloc_entrega',
-            field=models.ForeignKey(to='romani.Node', default=1),
+            field=models.ForeignKey(to='romani.Node', on_delete=models.CASCADE, default=1),
             preserve_default=False,
         ),
     ]

@@ -12,30 +12,50 @@
 {% block content %}
 
     {% include 'romani/nodes/menu_coops.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Seleccionar Productores &nbsp;</div>
 
     <br/><br/>
 
 <form method="post">
 {% csrf_token %}
                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" >
-                <div class="thumbnail" >
                   <div class="caption">
-{% for field in form %}
 
-        {% if field.name == "productors" %}
 
-                {{ field.errors }}
-                {{ field.label_tag }} {{ field }}
+                      <!--{% for field in form.field.productors %}-->
+<!--<input type="checkbox" id="{{ field.id_for_label }}"-->
+       <!--name="{{ field.html_name }}"-->
+       <!--{% if field.value %}checked{% endif %}>-->
+<!--<label for="{{ field.id_for_label }}">{{ field.value }}</label>-->
+<!--{% endfor %}-->
 
+{% for f in productors %}
+        {% if f in productors_selected %}
+              <input type="checkbox" name="productors" value="{{ f.pk }}" checked>
+                  <a href="{% url 'node_productor' f.pk %}">{{ f.nom }}</a>
+                      </input>
+        {% else %}
+              <input type="checkbox" name="productors" value="{{ f.pk }}">
+                  <a href="{% url 'node_productor' f.pk %}">{{ f.nom }}</a>
+                      </input>
         {% endif %}
+                      </br>
+
 
 {% endfor %}
+
+<!--{% for field in form %}-->
+
+        <!--{% if field.name == "productors" %}-->
+
+                <!--{{ field.errors }}-->
+                <!--{{ field.label_tag }} {{ field }}-->
+
+        <!--{% endif %}-->
+
+<!--{% endfor %}-->
 <p><input type="submit" value="Confirmar" /></p>
                                         </div>
                 </div>
-            </div>
 </form>
 
 {% endblock %}

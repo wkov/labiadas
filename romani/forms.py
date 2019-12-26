@@ -43,20 +43,19 @@ class ComandaForm(forms.ModelForm):
 class ComandaProForm(forms.ModelForm):
     class Meta:
         model = Comanda
-        exclude = ("data_entrega_txt", "externa", "producte")
+        exclude = ("data_entrega_txt", "externa", "producte", "frequencia")
 
     def __init__(self, productor, *args, **kwargs):
 
         super(ComandaProForm, self).__init__(*args, **kwargs)
-        self.fields["format"].queryset = TipusProducte.objects.filter(productor=productor)
+        self.fields["format"].queryset = TipusProducte.objects.filter(productor=productor, status=True)
         self.fields["format"].label = "Producte"
         self.fields["client"].queryset = User.objects.filter(user_profile__lloc_entrega__in=productor.nodes.all())
-
 
 class InfoForm(forms.ModelForm):
    class Meta:
         model = Comanda
-        exclude = ("data_comanda", "client","preu", "format", "externa", "node", "frequencia")
+        exclude = ("data_comanda", "client","preu", "format", "externa", "node", "frequencia", "franja_horaria")
 
 
 class UserProfileForm(forms.ModelForm):
@@ -120,7 +119,7 @@ class ProductorForm(forms.ModelForm):
         self.fields["responsable"].widget = CheckboxSelectMultiple()
         g = Group.objects.get(name='Productors')
         self.fields["responsable"].queryset = g.user_set.all()
-        self.fields["hores_limit"].label = 'Temps límit per a fer comandes en Hores'
+        self.fields["hores_limit"].label = 'Hores de diferència per defecte entre entrega i el tancament de les comandes'
         # self.fields["responsable"].initial = user
 
 class AdjuntForm(forms.ModelForm):
@@ -218,6 +217,8 @@ class StockForm(forms.ModelForm):
 
 class FranjaHorariaForm(forms.ModelForm):
 
+
+
     class Meta:
         model = FranjaHoraria
         fields = ("inici", "final", "node")
@@ -226,8 +227,8 @@ class FranjaHorariaForm(forms.ModelForm):
         super(FranjaHorariaForm, self).__init__(*args, **kwargs)
         self.fields["node"].queryset = Node.objects.filter(pk=node.pk)
         self.fields["node"].initial = node
-        self.fields["inici"].widget=SelectTimeWidget()
-        self.fields["final"].widget=SelectTimeWidget()
+        self.fields["inici"].widget = SelectTimeWidget()
+        self.fields["final"].widget = SelectTimeWidget()
 
 class NodeForm(forms.ModelForm):
 
@@ -263,11 +264,13 @@ class NodeProductorsForm(forms.ModelForm):
     class Meta:
         model = Node
         fields = ("productors", )
-
+    #
     def __init__(self, *args, **kwargs):
         super(NodeProductorsForm, self).__init__(*args, **kwargs)
         self.fields["productors"].widget = CheckboxSelectMultiple()
         self.fields["productors"].queryset = Productor.objects.all()
+
+
 
 class VoteForm(forms.ModelForm):
     class Meta:

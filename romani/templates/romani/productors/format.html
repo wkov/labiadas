@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
 {% block content %}
 {#<div style="float: left; position:relative;     font-family: 'Satisfy', cursive;#}
@@ -13,8 +9,8 @@
   {% csrf_token %}
     {% include 'romani/productors/menu_pro.html' %}
 
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em"> Editar Format &nbsp;</div>
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em"> Editar Format &nbsp;</div>-->
 {#    <div style="margin: 0 auto; text-align:center;">#}
 {#                        <div style=" position: relative; display: inline-block; ">#}
 {#                                <a href="{% url 'vista_comandes' productor.pk %}" id="etq" class="btn btn-default btn-group-xs" style="width: auto; "  id="etq" name="etq" title="Comandes rebudes" >#}
@@ -42,9 +38,11 @@
 {#                                 </a>#}
 {#                        </div>#}
 {#    </div>#}
-{#    <br/><br/>#}
-{#    <a href="{% url 'producte_create' productor.pk %}" id="pro_menu">Crear Nou Producte</a> <br/>#}
-{#    <a href=""  id="pro_menu_selected">Editar Format</a> <br/><br/>#}
+<br/><br/>
+    <a href="{% url 'vista_productes' productor.pk %}" id="pro_menu">Productes</a>
+    <!--<a href="{% url 'productor_update' productor.pk %}" id="pro_menu">Productora</a>-->
+    <a href="{% url 'producte_create' productor.pk %}" id="pro_menu">Nou Producte</a>
+    <a href="{% url 'format_create' productor.pk %}" id="pro_menu_selected">Nou Format</a>
     <br/><br/><br/>
   {{ form.as_p }}
   <input type="submit" value="Grabar">

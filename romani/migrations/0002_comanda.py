@@ -19,8 +19,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
                 ('data_comanda', models.DateTimeField(auto_now_add=True)),
                 ('data_entrega', models.DateTimeField(auto_now_add=True)),
-                ('client', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('producte', models.ForeignKey(to='romani.Producte')),
+                ('client', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
+                ('producte', models.ForeignKey(to='romani.Producte', on_delete=models.CASCADE)),
             ],
         ),
     ]

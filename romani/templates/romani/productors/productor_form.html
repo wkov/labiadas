@@ -1,34 +1,118 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block headers %}
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
-    <script src="{% static 'js/bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 {#<div style="float: left; position: relative;     font-family: 'Satisfy', cursive;#}
 {#    font-size: 3em"> {{ productor.nom }} </div>#}
+
+
+
+    {% if productor %}
             {% include 'romani/productors/menu_pro.html' %}
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em"> Editar Productora &nbsp;</div>
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em"> Editar Productora &nbsp;</div>-->
 <form method="post" action="">
 
 
 
   {% csrf_token %}
-    {% if productor %}
 
     <br/>
+        <!--<a href="{% url 'vista_productes' productor.pk %}" id="pro_menu">Productes</a>-->
+    <a href="{% url 'productor_update' productor.pk %}" id="pro_menu_selected">Productora</a>
+    <!--<a href="{% url 'producte_create' productor.pk %}" id="pro_menu">Nou Producte</a>-->
+    <!--<a href="{% url 'format_create' productor.pk %}" id="pro_menu">Nou Format</a>-->
     <!--<a href="{% url 'adjunt_create' productor.pk %}" id="pro_menu">Carregar nova foto</a> &nbsp;-->
-    <a href="{% url 'adjuntsProductor' productor.pk %}" id="pro_menu">Editar Fotos Productora</a>
-{##}
-{#{% else %}#}
-{#    <br/>#}
-{#    <a href=""  id="pro_menu_selected">Editar Productor</a> <br/>#}
-{% endif %}
+    <a href="{% url 'adjuntsProductor' productor.pk %}" id="pro_menu">Fotos</a>
+    <a  href="{% url 'adjunt_create' productor.pk %}" id="pro_menu">Nova foto</a>
+
+
+
+
+       <br/>           {% if adjunts %}
+
+{#                    <div id="dialog" title="Edita la teva info">#}
+{#                        <p>#}
+{#                            Pots carregar tantes fotos com vulguis. Seran les que veuran els usuaris quan mirin el teu perfil.#}
+{#                            El text també pot ser tant llarg com necessitis. Quanta més informació millor#}
+{#                        </p>#}
+{#                        <p>#}
+{#                            En el llistat de possibles responsables pots marcar més d'una persona. Si algú que no hi és vol aparèixer a la llista haurà de seguir l'Ajuda de la web.#}
+{#                            Els que veus són els usuaris de La Massa amb rol de responsable com tu.#}
+{#                        </p>#}
+{#                        </div>#}
+
+
+                <br />
+
+
+                <!--<div id="myCarousel" class="carousel slide" data-ride="carousel">-->
+                <!--&lt;!&ndash; Indicators &ndash;&gt;-->
+                <!--<ol class="carousel-indicators">-->
+                    <!--<li data-target="#myCarousel" data-slide-to="0" class="active"></li>-->
+                    <!--<li data-target="#myCarousel" data-slide-to="1"></li>-->
+                    <!--<li data-target="#myCarousel" data-slide-to="2"></li>-->
+                    <!--<li data-target="#myCarousel" data-slide-to="3"></li>-->
+                    <!--<li data-target="#myCarousel" data-slide-to="4"></li>-->
+                    <!--<li data-target="#myCarousel" data-slide-to="5"></li>-->
+                <!--</ol>-->
+                <!--&lt;!&ndash; Wrapper for slides &ndash;&gt;-->
+                <!--<div class="carousel-inner" role="listbox">-->
+                    <!--{% for p in adjunts %}-->
+                            <!--{% if forloop.counter == 1 %}-->
+                                <!--<div class="item active">-->
+                            <!--{% else %}-->
+                                <!--<div class="item">-->
+                            <!--{% endif %}-->
+                            <!--<img src="{{ p.arxiu.url }}"  style="margin-left:auto;-->
+                                <!--margin-right:auto; max-width: 460px; max-height: 345px;">-->
+                                <!--</div>-->
+                    <!--{% endfor %}-->
+                <!--</div>-->
+<!--&lt;!&ndash; Left and right controls &ndash;&gt;-->
+                <!--<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">-->
+                    <!--<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>-->
+                    <!--<span class="sr-only">Previous</span>-->
+                <!--</a>-->
+                <!--<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">-->
+                    <!--<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>-->
+                    <!--<span class="sr-only">Next</span>-->
+                <!--</a>-->
+                <!--</div>-->
+
+            {% else %}
+                    <div id="dialog" title="Edita la teva info">
+                        <p>
+                            La informació que introdueixis serà el que veurà la gent quan visiti el teu perfil
+                        </p>
+                        <p>
+                            En el llistat de possibles responsables pots marcar més d'una persona. Si algú que no hi és vol aparèixer a la llista haurà de seguir l'Ajuda de la web.
+                            Els que veus són els usuaris de La Massa amb rol de responsable com tu.
+                        </p>
+                        </div>
+            {% endif %}
+    <br/>
+  {{ form.as_p }}
+
+
+  <input type="submit" value="Grabar">
+</form>
+ {% else %}
+
+
+{% include 'romani/productors/menu_dis.html' %}
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em"> Editar Productora &nbsp;</div>-->
+<form method="post" action="">
+
+
+
+  {% csrf_token %}
+
+
+
 
 
 
@@ -101,4 +185,6 @@
   <input type="submit" value="Grabar">
 </form>
 
+
+{% endif %}
 {% endblock %}

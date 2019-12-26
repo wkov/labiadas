@@ -9,6 +9,30 @@
     <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
 {% block content %}
+<script>
+
+    function openCity(evt, cityName) {
+          // Declare all variables
+          var i, tabcontent, tablinks;
+
+          // Get all elements with class="tabcontent" and hide them
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+
+          // Get all elements with class="tablinks" and remove the class "active"
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+
+          // Show the current tab, and add an "active" class to the button that opened the tab
+          document.getElementById(cityName).style.display = "block";
+          evt.currentTarget.className += " active";
+        }
+</script>
+
     {% include 'romani/nodes/menu_coops.html' %}
 
 
@@ -17,6 +41,21 @@
     {% for d in diaentrega.franjes_horaries.all %}
         de {{ d.inici }} a {{ d.final }},
     {% endfor %}</h3>
+
+
+
+    <!-- Tab links -->
+    <div class="tab">
+      <button class="tablinks" onclick="openCity(event, 'Oferta')">Oferta</button>
+      <button class="tablinks" onclick="openCity(event, 'Demanda')">Demanda</button>
+    </div>
+
+
+
+
+<!-- Tab content -->
+<div id="Demanda" class="tabcontent">
+
     <a href="{% url 'export_comandes_xls' diaentrega.pk %}">Exportar comandes</a>
 
     <br/>
@@ -86,8 +125,9 @@
                 <br/><br/><a href="{% url 'diaentrega_update' diaentrega.pk  %}">Modificar dia d'entrega</a>
             {% endif %}
     {% endif %}
+</div>
 
-        <br/><br/>
+<div id="Oferta" class="tabcontent">
      <p>Els següents productes i formats estan disponibles el dia d'entrega seleccionat:</p>
         <table border="1">
         <th>Producte</th>
@@ -98,6 +138,6 @@
         <tr><td>{{ p.format.producte.nom }}</td><td>{{ p.format.nom }}</td><td>{{ p.format.productor }}</td><td>{{ p.format.producte.etiqueta }}</td></tr>
     {% endfor %}
         </table>
-    <br/>
+    </div>
 
 {% endblock %}

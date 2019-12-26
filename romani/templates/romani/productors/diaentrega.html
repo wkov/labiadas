@@ -2,11 +2,6 @@
 {% load i18n %}
 {% load staticfiles %}
 {% block headers %}
-
-    <link rel="stylesheet" href="{% static 'css/menubar.css' %}">
-    <script src="{% static 'js/jquery-2.1.4.js' %}"></script>
-    <script src="{% static 'js/jquery-ui-1.11.4/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/menubar.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -27,18 +22,125 @@
         }
  });
         })
-    </script>
+function openCity(evt, cityName) {
+          // Declare all variables
+          var i, tabcontent, tablinks;
+
+          // Get all elements with class="tabcontent" and hide them
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+
+          // Get all elements with class="tablinks" and remove the class "active"
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+
+          // Show the current tab, and add an "active" class to the button that opened the tab
+          document.getElementById(cityName).style.display = "block";
+          evt.currentTarget.className += " active";
+        }
+</script>
 
 
 
 
         {% include 'romani/productors/menu_pro.html' %}
 
-    <div style="float: left; position:relative;font-family: 'Satisfy', cursive;
-    font-size: 2em">Dia d'entrega &nbsp;</div>
+    <!--<div style="float: left; position:relative;font-family: 'Satisfy', cursive;-->
+    <!--font-size: 2em">Dia d'entrega &nbsp;</div>-->
+<br/><br/>
+    <a href="{% url 'vista_comandes' productor.pk %}" id="pro_menu">Comandes</a>
+    <a href="{% url 'vista_dates' productor.pk %}" id="pro_menu">Calendari</a>
+    <a href="{% url 'vista_historial' productor.pk %}" id="pro_menu">Historial</a>
+    <a href="{% url 'comanda_create' productor.pk %}" id="pro_menu">Nova comanda</a>
 
-    {% if comandes%}    <br/><br/>
-        <p><b>Comandes</b> rebudes per al <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
+
+
+<br/><br/>
+        <p><b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <a href="{% url 'node_pro_detail' dia.node.pk %}"><b>{{ dia.node }}</b></a>:</p>
+
+
+
+
+
+
+
+
+
+<!-- Tab links -->
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Oferta')">Oferta</button>
+  <button class="tablinks" onclick="openCity(event, 'Demanda')">Demanda</button>
+</div>
+
+<!-- Tab content -->
+<div id="Oferta" class="tabcontent">
+<form method="post" action="">
+  {% csrf_token %}
+<br/>
+
+{{ formatstockform.management_form }}
+
+<table border="1">
+
+
+    <tr>
+        <td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot
+        </td>
+        <td>
+                Tipus Stock:
+            <select name="speed" id="speed">
+              <option value="0">Límit per stock </option>
+              <option value="1">Límit relatiu </option>
+              <option value="2" selected="selected">Sense Límit</option>
+            </select>
+        </td>
+        <td>
+            Hores limit:
+        </td>
+    </tr>
+
+
+    {% for f in formatstockform %}
+    <tr>
+    {#    {{ f.initial.format }}#}
+
+    {#    {{ f.initial.format.nom }}#}
+
+
+        {% if f.instance.format %}
+                <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}" checked/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>
+        {% else %}
+            {% if f.initial.format %}
+                <td><input type="checkbox" name="formats" value="{{f.initial.format.pk}}"/><b> {{f.initial.format.nom}} {{f.initial.format.producte.nom}} </b>
+            {% else %}
+                <td>{{ f.format }}
+            {% endif %}
+
+        {% endif %}
+
+        {{ f.id }}
+
+        {{ f.dia.as_hidden }}
+        {{ f.format.as_hidden }}
+        </td>
+        <td>{{ f.tipus_stock }}</td>
+        <td>{{ f.hores_limit }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+  <input type="submit" name="create" value="Grabar">
+  <input type="submit" name="createagain" value="Grabar i editar següent dia d'entrega">
+</form>
+
+</div>
+
+<div id="Demanda" class="tabcontent">
+    {% if comandes%}
 
         <a href="{% url 'pro_export_comandes_xls' productor.pk dia.pk %}">Exportar comandes</a>
 
@@ -101,78 +203,7 @@
 
 
     {% endif %}
-
-
-
-    <br/>
-<form method="post" action="">
-  {% csrf_token %}
-<br/>
-<p><b>Productes</b> que ofereixes el <b>{{ dia.date }}</b> a partir de les <b>{{ dia.franja_inici.inici }}</b> a <b>{{ dia.node }}</b>:</p>
-
-
-{{ formatstockform.management_form }}
-
-<table border="1">
-
-
-    <tr>
-        <td><input type='checkbox' id='checkAll' title="Tots"> Seleccionar tot
-        </td>
-        <td>
-                Tipus Stock:
-            <select name="speed" id="speed">
-              <option value="0">Límit per stock </option>
-              <option value="1">Límit relatiu </option>
-              <option value="2" selected="selected">Sense Límit</option>
-            </select>
-        </td>
-        <td>
-            Hores limit:
-        </td>
-    </tr>
-
-
-    {% for f in formatstockform %}
-    <tr>
-    {#    {{ f.initial.format }}#}
-
-    {#    {{ f.initial.format.nom }}#}
-
-
-        {% if f.instance.format %}
-{#             <td><label>{{ f.instance.format.producte.nom }}</label></td>#}
-{#            {% if f.instance %}#}
-                <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}" checked/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>
-{#             {% else %}#}
-{#             <td><input type="checkbox" name="formats" value="{{f.instance.format.pk}}"/><b> {{f.instance.format.nom}} &nbsp; &nbsp; {{f.instance.format.producte.nom}} </b>#}
-{#            {% endif %}#}
-{#                 {{ f.format }}#}
-        {% else %}
-{#             <td><label>{{ f.initial.format.producte.nom }}</label></td>#}
-            {% if f.initial.format %}
-                <td><input type="checkbox" name="formats" value="{{f.initial.format.pk}}"/><b> {{f.initial.format.nom}} {{f.initial.format.producte.nom}} </b>
-            {% else %}
-                <td>{{ f.format }}
-            {% endif %}
-
-        {% endif %}
-
-        {{ f.id }}
-
-        {{ f.dia.as_hidden }}
-        {{ f.format.as_hidden }}
-        </td>
-        <td>{{ f.tipus_stock }}</td>
-        <td>{{ f.hores_limit }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
-  <input type="submit" name="create" value="Grabar">
-  <input type="submit" name="createagain" value="Grabar i editar següent dia d'entrega">
-</form>
-
+</div>
 
 
 

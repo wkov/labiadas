@@ -106,7 +106,7 @@ def get_productes(request, user_p):
     formats_disponibles = set()
 
     for d in dies_node_entrega:
-        for t in TipusProducte.objects.filter(dies_entrega__dia=d):
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d, status=True):
             diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
             date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()

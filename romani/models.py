@@ -1,7 +1,7 @@
 from distutils.command.config import config
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 from geoposition.fields import GeopositionField
 import datetime
@@ -47,7 +47,7 @@ class Adjunt(models.Model):
 
 
     arxiu = models.FileField(upload_to='documents/%Y/%m/%d', null=True, validators=[validate_file])
-    productor = models.ForeignKey(Productor)
+    productor = models.ForeignKey(Productor, on_delete=models.CASCADE)
 
 
     def __str__(self):
@@ -87,8 +87,8 @@ class Node(models.Model):
     pis = models.CharField(max_length=15, blank=True, null=True)
     poblacio = models.CharField(max_length=40, blank=False, null=False)
     codi_postal = models.CharField(max_length=5, blank=True, null=True)
-    frequencia = models.ForeignKey(Frequencia, blank=True, null=True)
-    responsable = models.ManyToManyField(User, blank=False)
+    frequencia = models.ForeignKey(Frequencia, on_delete=models.SET_NULL, blank=True, null=True)
+    responsable = models.ManyToManyField(User,  blank=False)
     a_domicili = models.NullBooleanField()
     text = models.TextField(max_length=1000)
     productors = models.ManyToManyField(Productor, blank=True, related_name='nodes')
@@ -97,6 +97,11 @@ class Node(models.Model):
 
     def __str__(self):
         return "%s, %s" % (self.nom, self.poblacio)
+
+    def prox_dia(self):
+        s = self.dies_entrega.filter(date__gte=datetime.datetime.now())[0:1]
+        if s:
+            return s[0]
 
     def prox_dias(self):
         return self.dies_entrega.filter(date__gte=datetime.datetime.now()).order_by('date')[0:6]
@@ -111,7 +116,7 @@ class FranjaHoraria(models.Model):
     inici = models.TimeField()
     final = models.TimeField()
 
-    node = models.ForeignKey(Node)
+    node = models.ForeignKey(Node, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s-%s" % (self.inici, self.final)
@@ -121,7 +126,7 @@ class DiaEntrega(models.Model):
 
     franjes_horaries = models.ManyToManyField(FranjaHoraria,  related_name="dia")
     date = models.DateField()
-    node = models.ForeignKey(Node, related_name="dies_entrega")
+    node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name="dies_entrega")
 
     def __str__(self):
         a = datetime.datetime.strptime(str(self.date), '%Y-%m-%d').strftime('%d/%m/%Y')
@@ -207,9 +212,10 @@ class DiaEntrega(models.Model):
         list = []
         for p in self.formats.filter(format__producte__status=True):
             if user in p.format.productor.responsable.all():
-                total, cant =  self.total_format(p.format.pk)
-                s = [p.format.producte.nom, p.format.nom, cant, total]
-                list.append(s)
+                total, cant = self.total_format(p.format.pk)
+                if total > 0:
+                    s = [p.format.producte.nom, p.format.nom, cant, total]
+                    list.append(s)
         return list
 
     def totals_productesxproductor(self, pro_pk):
@@ -217,8 +223,9 @@ class DiaEntrega(models.Model):
         productor = Productor.objects.get(pk=pro_pk)
         for p in self.formats.filter(format__productor=productor, format__producte__status=True):
                 total, cant = self.total_format(p.format.pk)
-                s = [p.format.producte.nom, p.format.nom, cant, total]
-                list.append(s)
+                if total > 0:
+                    s = [p.format.producte.nom, p.format.nom, cant, total]
+                    list.append(s)
         return list
 
     def total(self):
@@ -259,15 +266,15 @@ class Producte(models.Model):
             raise ValidationError("La foto ha de ser en format d'imatge")
 
     nom = models.CharField(max_length=20)
-    etiqueta = models.ForeignKey(Etiqueta)
+    etiqueta = models.ForeignKey(Etiqueta, on_delete=models.SET_NULL, null=True)
     text_curt = models.TextField(blank=False, max_length=75)
     descripcio = models.TextField(blank=True, default="")
     datahora = models.DateTimeField(auto_now_add=True)
     foto = models.FileField(upload_to='productes/%Y/%m/%d', null=True, validators=[validate_file])
     thumb = models.FileField(blank=True, null=True)
-    productor = models.ForeignKey(Productor, related_name='productes')
+    productor = models.ForeignKey(Productor, on_delete=models.CASCADE, related_name='productes')
     keywords = models.TextField(blank=True, verbose_name='Paraules Clau')
-    frequencies = models.ForeignKey(Frequencia, blank=True, null=True)
+    frequencies = models.ForeignKey(Frequencia, on_delete=models.SET_NULL, blank=True, null=True)
     status = models.BooleanField(default=True)
     # karma_date = models.DateTimeField(blank=True, null=True)
     # karma_value = models.IntegerField(blank=True, null=True)
@@ -336,6 +343,9 @@ class Producte(models.Model):
         # image.save(self.thumb.path,quality=20,optimize=True)
 
 
+    def formats_actius(self):
+
+        return self.formats.filter(status=True)
 
 # class TipusProducteManager(models.Manager):
 #     def get_by_natural_key(self, nom, preu):
@@ -348,9 +358,9 @@ class TipusProducte(models.Model):
 
     nom = models.CharField(max_length=20)
     preu = models.FloatField(default=0.0)
-    productor = models.ForeignKey(Productor)
-    producte = models.ForeignKey(Producte, related_name='formats', blank=True, null=True)
-
+    productor = models.ForeignKey(Productor, on_delete=models.CASCADE)
+    producte = models.ForeignKey(Producte, on_delete=models.CASCADE, related_name='formats', blank=True, null=True)
+    status = models.BooleanField(default=True)
     # def natural_key(self):
     #     return (self.nom, self.preu)
     #
@@ -553,9 +563,9 @@ class DiaFormatStock(models.Model):
     )
 
 
-    dia = models.ForeignKey(DiaEntrega, related_name='formats')
+    dia = models.ForeignKey(DiaEntrega, on_delete=models.CASCADE, related_name='formats')
     tipus_stock = models.CharField(max_length=10, choices=TIPUS_STOCK, default='2')
-    format = models.ForeignKey(TipusProducte, related_name='dies_entrega')
+    format = models.ForeignKey(TipusProducte, on_delete=models.CASCADE, related_name='dies_entrega')
     hores_limit = models.IntegerField()
 
 
@@ -563,8 +573,8 @@ class DiaFormatStock(models.Model):
 class DiaProduccio(models.Model):
     date = models.DateField()
     caducitat = models.DateField()
-    productor = models.ForeignKey(Productor)
-    node = models.ForeignKey(Node, blank=True, null=True)
+    productor = models.ForeignKey(Productor, on_delete=models.CASCADE)
+    node = models.ForeignKey(Node, on_delete=models.SET_NULL, blank=True, null=True)
     total_uts = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
@@ -584,8 +594,8 @@ class DiaProduccio(models.Model):
 
 class Stock(models.Model):
 
-    dia_prod = models.ForeignKey(DiaProduccio, related_name='stocks')
-    format = models.ForeignKey(TipusProducte, related_name='stocks')
+    dia_prod = models.ForeignKey(DiaProduccio, on_delete=models.CASCADE, related_name='stocks')
+    format = models.ForeignKey(TipusProducte, on_delete=models.CASCADE, related_name='stocks')
     stock_ini = models.IntegerField()
 
     def __str__(self):
@@ -605,14 +615,14 @@ class Stock(models.Model):
 
 class Comanda(models.Model):
 
-    format = models.ForeignKey(TipusProducte)
+    format = models.ForeignKey(TipusProducte, on_delete=models.SET_NULL, null=True)
     cantitat = models.PositiveIntegerField(blank=False)
     data_comanda = models.DateTimeField(auto_now_add=True)
-    client = models.ForeignKey(User)
-    node = models.ForeignKey(Node)
+    client = models.ForeignKey(User, on_delete=models.CASCADE)
+    node = models.ForeignKey(Node, on_delete=models.CASCADE)
     externa = models.NullBooleanField(blank=True)
     preu = models.FloatField(default=0.0)
-    frequencia = models.ForeignKey(Frequencia, blank=True, null=True)
+    frequencia = models.ForeignKey(Frequencia, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return str(self.format.producte.nom)+str(self.client.username)
@@ -628,12 +638,12 @@ class Comanda(models.Model):
 
 class Entrega(models.Model):
 
-    dia_entrega = models.ForeignKey(DiaEntrega, related_name='entregas') #inclou el node
-    comanda = models.ForeignKey(Comanda, related_name='entregas')
+    dia_entrega = models.ForeignKey(DiaEntrega, on_delete=models.CASCADE, related_name='entregas') #inclou el node
+    comanda = models.ForeignKey(Comanda, on_delete=models.CASCADE, related_name='entregas')
     data_comanda = models.DateTimeField(auto_now_add=True)
 
-    dia_produccio = models.ForeignKey(DiaProduccio, related_name='entregas', blank=True, null=True) #Per el cas en que el estoc depèn d'un dia de producció concret
-    franja_horaria = models.ForeignKey(FranjaHoraria, blank=True, null=True) #Per el cas en que és "a domicili!" obligat
+    dia_produccio = models.ForeignKey(DiaProduccio, on_delete=models.SET_NULL, related_name='entregas', blank=True, null=True) #Per el cas en que el estoc depèn d'un dia de producció concret
+    franja_horaria = models.ForeignKey(FranjaHoraria, on_delete=models.SET_NULL, blank=True, null=True) #Per el cas en que és "a domicili!" obligat
 
     def __str__(self):
         return "%s %s" % (self.dia_entrega.date, self.franja_horaria)
@@ -654,8 +664,8 @@ class EmailModelBackend(ModelBackend):
 
 class Key(models.Model):
     key = models.CharField(max_length=6)
-    usuari = models.ForeignKey(User)
-    nou_usuari = models.ForeignKey(User, related_name='key_nou_usuari', null=True, blank=True)
+    usuari = models.ForeignKey(User, on_delete=models.CASCADE)
+    nou_usuari = models.ForeignKey(User, on_delete=models.CASCADE, related_name='key_nou_usuari', null=True, blank=True)
     data = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -670,9 +680,9 @@ class UserProfile(models.Model):
         if filesize > megabyte_limit*1024*1024:
             raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
 
-    user = models.OneToOneField(User, unique=True, related_name='user_profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True, related_name='user_profile')
     bio = models.TextField(null=True, blank=True)
-    lloc_entrega = models.ForeignKey(Node, blank=True, null=True, related_name='user_profiles')
+    lloc_entrega = models.ForeignKey(Node, on_delete=models.SET_NULL, blank=True, null=True, related_name='user_profiles')
     invitacions = models.IntegerField(default=4, blank=True, null=True)
     avatar = models.FileField(upload_to='profiles/%Y/%m/%d', validators=[validate_image], blank=True, null=True)
 
@@ -691,6 +701,12 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.first_name
 
+    def n_productors(self):
+        return Productor.objects.filter(responsable=self.user).count()
+
+    def n_nodes(self):
+        return Node.objects.filter(responsable=self.user).count()
+
     def comandes_cistella(self):  #per informar a l'usuari des del left_menu del num de comandes vigents que té a la cistella
         now = datetime.datetime.now()
         return Comanda.objects.filter(client=self.user).filter(entregas__dia_entrega__date__gte=now)
@@ -702,8 +718,8 @@ class UserProfile(models.Model):
 
 
 class Vote(models.Model):
-    voter = models.ForeignKey(User)
-    entrega = models.ForeignKey(Entrega, related_name='vote')
+    voter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='voter')
+    entrega = models.ForeignKey(Entrega, on_delete=models.CASCADE, related_name='vote')
     positiu = models.BooleanField()
     text = models.TextField(blank=True)
 

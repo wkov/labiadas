@@ -2,21 +2,21 @@ from django.shortcuts import render, get_object_or_404
 from romani.models import Producte, TipusProducte, Node, DiaEntrega, Frequencia, DiaProduccio
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from romani.models import UserProfile, Key
 from romani.forms import UserProfileForm, InfoForm
 # from romani.public_views import stock_calc
 from django.http import HttpResponse
 
 from django.utils import timezone
-from notifications import notify
+# from notifications import notify
 from django.contrib.auth.models import  User
 import json
 from django.contrib import messages
-from registration.backends.simple.views import RegistrationView
+from django_registration.views import RegistrationView
 
 from django import forms
-from registration.forms import RegistrationForm
+from django_registration.forms import RegistrationForm
 import datetime
 from datetime import timedelta
 
@@ -195,7 +195,7 @@ def user_created(sender, user, request, **kwargs):
     user.save()
 
 
-from registration.signals import user_registered
+from django_registration.signals import user_registered
 user_registered.connect(user_created)
 
 
@@ -629,11 +629,12 @@ class InfoFormBaseView(FormView):
         user_profile = UserProfile.objects.get(user = user)
         cantitat = form.data["cantitat"]
         preu_aux = format.preu
-        preu = preu_aux * float(cantitat)
+        preu = preu_aux * int(cantitat)
+        preu_output = round(preu, 2)
         ret = {"success": 1}
         ret["format"] = format.nom
         ret["format_pk"]= format.pk
-        ret["preu"] = preu
+        ret["preu"] = preu_output
         ret["producte"] = producte.nom
         ret["producte_pk"] = producte.pk
         ret["cantitat"] = cantitat
@@ -735,8 +736,8 @@ class UserProfileEditView(UpdateView):
 
 
     def get_success_url(self):
-        notify.send(self.object, recipient= self.object.user, verb="Has modificat les teves dades ", action_object=self.object,
-        description="" , timestamp=timezone.now())
+        # notify.send(self.object, recipient= self.object.user, verb="Has modificat les teves dades ", action_object=self.object,
+        # description="" , timestamp=timezone.now())
 
         messages.success(self.request, (u"S'han desat les modificacions realitzades"))
         return reverse("coope")

@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='producte',
             name='etiqueta',
-            field=models.ForeignKey(default=1, to='romani.Etiqueta'),
+            field=models.ForeignKey(default=1, on_delete=models.CASCADE, to='romani.Etiqueta'),
             preserve_default=False,
         ),
     ]

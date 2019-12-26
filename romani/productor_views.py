@@ -1,6 +1,7 @@
 __author__ = 'sergi'
 
-from romani.models import Comanda, Productor, Producte, DiaEntrega, TipusProducte, DiaProduccio, Stock, DiaFormatStock, Node, Entrega
+from romani.models import Comanda, Productor, Producte, DiaEntrega, TipusProducte, DiaProduccio, Stock, DiaFormatStock, \
+    Node, Entrega, UserProfile, FranjaHoraria
 from romani.forms import Adjunt, AdjuntForm, ProductorForm, ProducteForm, TipusProducteForm, \
     DiaProduccioForm, StockForm, DiaFormatStockForm, ComandaProForm, DiaProduccioPaForm
 
@@ -18,11 +19,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 
 from django.utils import timezone
-from notifications import notify
+# from notifications import notify
+
+from django.db.models import Q
 
 import xlwt
 import datetime
-
+from datetime import timedelta
 
 def dis_export_comandes_xls(request, pk):
     response = HttpResponse(content_type='application/ms-excel')
@@ -56,7 +59,7 @@ def dis_export_comandes_xls(request, pk):
     font_style = xlwt.XFStyle()
     old_row = ""
     total = ""
-    rows = Entrega.objects.filter(dia_entrega__pk=pk, comanda__format__producte__in=productes).order_by('comanda__client').values_list('comanda__client__first_name', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
+    rows = Entrega.objects.filter(dia_entrega__pk=pk, comanda__format__producte__in=productes).order_by('comanda__client').values_list('comanda__client__username', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
     rows = list(rows)
     rows.sort(key=lambda tup: tup[0])
     for row in rows:
@@ -120,7 +123,7 @@ def pro_export_comandes_xls(request, pro, pk):
     font_style = xlwt.XFStyle()
     old_row = ""
     total = ""
-    rows = Entrega.objects.filter(dia_entrega__pk=pk, comanda__format__producte__in=productes).order_by('comanda__client').values_list('comanda__client__first_name', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
+    rows = Entrega.objects.filter(dia_entrega__pk=pk, comanda__format__producte__in=productes).order_by('comanda__client').values_list('comanda__client__username', 'comanda__format__producte__nom', 'comanda__cantitat', 'comanda__format__nom', 'comanda__preu')
     rows = list(rows)
     rows.sort(key=lambda tup: tup[0])
     for row in rows:
@@ -142,15 +145,104 @@ def pro_export_comandes_xls(request, pro, pk):
     wb.save(response)
     return response
 
+def comandesPro(request, productor):
+    orders = []
+    days = []
+    date = ""
+    node = ""
+    total = 0
+
+    productes = Producte.objects.filter(productor=productor)
+
+    entregas = Entrega.objects.filter(comanda__format__producte__in=productes,
+                                      dia_entrega__date__gte=datetime.datetime.today()).order_by('dia_entrega__date',
+                                                                                                 'comanda__node')
+    if entregas:
+        for e in entregas:
+            if date:
+                if e.dia_entrega != date:
+                    total_rounded = round(total, 2)
+                    day = {'entregas': orders, 'dia': date.date, 'total': total_rounded, 'node': node,
+                           'dia_pk': date.pk}
+                    days.append(day)
+                    total = 0
+                    orders = []
+            date = e.dia_entrega
+            node = e.comanda.node
+            e_dict = {'pk': e.comanda.pk,
+                      'entrega_pk': e.pk,
+                      'producte': e.comanda.format.producte.nom,
+                      'productor': e.comanda.format.productor.nom,
+                      'cantitat': e.comanda.cantitat,
+                      'format': e.comanda.format.nom,
+                      'preu': e.comanda.preu,
+                      'lloc': e.dia_entrega.node.nom,
+                      'hora': e.franja_horaria,
+                      'dia': e.dia_entrega.date,
+                      'user': e.comanda.client,
+                      'node': e.comanda.node
+                      }
+            total += e.comanda.preu
+            orders.append(e_dict)
+        total_rounded = round(total, 2)
+        day = {'entregas': orders, 'dia': date.date, 'total': str(total_rounded), 'node': node, 'dia_pk': date.pk}
+        days.append(day)
+    return days
+
+def comandesProView(request, pro):
+    # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
+    productor = Productor.objects.get(pk=pro)
+    # context["productor"] = productor
+    productors = Productor.objects.filter(responsable=request.user)
+    # context["productors"] = productors
+
+    up = UserProfile.objects.get(user=request.user)
+
+    days = comandesPro(request, productor)
+
+
+    # context['comandes'] = days
+
+    return render(request, "romani/productors/comanda_list.html", {'comandes': days, 'productor': productor, 'productors': productors, 'up': up})
+
 
 class ComandesListView(ListView):
     # model = Comanda
     template_name = "romani/productors/comanda_list.html"
 
-    def get_queryset(self):
-        productor = Productor.objects.get(pk=self.kwargs['pro'])
-        productes = Producte.objects.filter(productor=productor)
-        return Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today()).order_by('-data_comanda')
+    # def get_queryset(self):
+    #     orders = []
+    #     days = []
+    #     date = ""
+    #     total = 0
+    #     productor = Productor.objects.get(pk=self.kwargs['pro'])
+    #     productes = Producte.objects.filter(productor=productor)
+    #     entregas = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today()).order_by('-data_comanda')
+    #     if entregas:
+    #         for e in entregas:
+    #             if date:
+    #                 if e.dia_entrega != date:
+    #                     day = {'entregas': orders, 'dia': date.date, 'total': total}
+    #                     days.append(day)
+    #                     total = 0
+    #                     orders = []
+    #             date = e.dia_entrega
+    #             e_dict = {'pk': e.comanda.pk,
+    #                       'entrega_pk': e.pk,
+    #                       'producte': e.comanda.format.producte.nom,
+    #                       'productor': e.comanda.format.productor.nom,
+    #                       'cantitat': e.comanda.cantitat,
+    #                       'format': e.comanda.format.nom,
+    #                       'preu': e.comanda.preu,
+    #                       'lloc': e.dia_entrega.node.nom,
+    #                       'hora': e.franja_horaria,
+    #                       'dia': e.dia_entrega.date
+    #                       }
+    #             total += e.comanda.preu
+    #             orders.append(e_dict)
+    #         day = {'entregas': orders, 'dia': date.date, 'total': str(total)}
+    #         days.append(day)
+    #     return days
 
     def get_context_data(self, **kwargs):
         context = super(ComandesListView, self).get_context_data(**kwargs)
@@ -161,7 +253,106 @@ class ComandesListView(ListView):
         context["productor"] = productor
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+
+
+
+        orders = []
+        days = []
+        date = ""
+        total = 0
+        entregas = Entrega.objects.filter(comanda__format__producte__in=productes,
+                                          dia_entrega__date__gte=datetime.datetime.today()).order_by('-data_comanda')
+        if entregas:
+            for e in entregas:
+                if date:
+                    if e.dia_entrega != date:
+                        day = {'entregas': orders, 'dia': date.date, 'total': total}
+                        days.append(day)
+                        total = 0
+                        orders = []
+                date = e.dia_entrega
+                e_dict = {'pk': e.comanda.pk,
+                          'entrega_pk': e.pk,
+                          'producte': e.comanda.format.producte.nom,
+                          'productor': e.comanda.format.productor.nom,
+                          'cantitat': e.comanda.cantitat,
+                          'format': e.comanda.format.nom,
+                          'preu': e.comanda.preu,
+                          'lloc': e.dia_entrega.node.nom,
+                          'hora': e.franja_horaria,
+                          'dia': e.dia_entrega.date
+                          }
+                total += e.comanda.preu
+                orders.append(e_dict)
+            day = {'entregas': orders, 'dia': date.date, 'total': str(total)}
+            days.append(day)
+        context['comandes'] = days
+
+
+
         return context
+
+def historialPro(request, productor):
+    orders = []
+    days = []
+    date = ""
+    node = ""
+    total = 0
+
+    productes = Producte.objects.filter(productor=productor)
+
+    entregas = Entrega.objects.filter(comanda__format__producte__in=productes,
+                                      dia_entrega__date__lte=datetime.datetime.today()).order_by('-dia_entrega__date',
+                                                                                                 'comanda__node')
+    if entregas:
+        for e in entregas:
+            if date:
+                if e.dia_entrega != date:
+                    day = {'entregas': orders, 'dia': date.date, 'total': total_rounded, 'node': node,
+                           'dia_pk': date.pk}
+                    days.append(day)
+                    total = 0
+                    orders = []
+            date = e.dia_entrega
+            node = e.comanda.node
+            e_dict = {'pk': e.comanda.pk,
+                      'entrega_pk': e.pk,
+                      'producte': e.comanda.format.producte.nom,
+                      'productor': e.comanda.format.productor.nom,
+                      'cantitat': e.comanda.cantitat,
+                      'format': e.comanda.format.nom,
+                      'preu': e.comanda.preu,
+                      'lloc': e.dia_entrega.node.nom,
+                      'hora': e.franja_horaria,
+                      'dia': e.dia_entrega.date,
+                      'user': e.comanda.client,
+                      'node': e.comanda.node
+                      }
+            total += e.comanda.preu
+            total_rounded = round(total, 2)
+            orders.append(e_dict)
+        day = {'entregas': orders, 'dia': date.date, 'total': str(total_rounded), 'node': node, 'dia_pk': date.pk}
+        days.append(day)
+    return days
+
+
+def historialProView(request, pro):
+    # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
+    productor = Productor.objects.get(pk=pro)
+    # context["productor"] = productor
+    productors = Productor.objects.filter(responsable=request.user)
+    n_pro = productors.count()
+    # context["productors"] = productors
+    up = UserProfile.objects.get(user=request.user)
+
+    days = historialPro(request, productor)
+
+
+
+    return render(request, "romani/productors/historial_list.html", {'comandes': days, 'productor': productor, 'productors': productors, 'up': up})
+
+
+
 
 class HistorialListView(ListView):
     # model = Comanda
@@ -188,15 +379,18 @@ class ProductesListView(ListView):
 
     def get_queryset(self):
         productor = Productor.objects.get(pk=self.kwargs['pro'])
-        return Producte.objects.filter(productor=productor, status=True)
+        return Producte.objects.filter(productor=productor, status=True)\
+            .order_by('nom')
 
     def get_context_data(self, **kwargs):
         context = super(ProductesListView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         context["productor"] = productor
-        context["formats"] = TipusProducte.objects.filter(productor=productor)
+        context["formats"] = TipusProducte.objects.filter(productor=productor, status=True)
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
 
@@ -211,6 +405,8 @@ class CoopsListView(ListView):
         context = super(CoopsListView, self).get_context_data(**kwargs)
         nodes = Node.objects.exclude(pk=1)
         context["nodes"] = nodes
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
 class TipusProducteCreateView(CreateView):
@@ -230,6 +426,8 @@ class TipusProducteCreateView(CreateView):
         context["productor"] = productor
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
     def form_invalid(self, form):
@@ -245,7 +443,7 @@ class TipusProducteCreateView(CreateView):
 class TipusProducteUpdateView(UpdateView):
     model = TipusProducte
     form_class = TipusProducteForm
-    template_name = "romani/productors/format.html"
+    template_name = "romani/productors/format_update.html"
 
     def get_form_kwargs(self):
         kwargs = super(TipusProducteUpdateView, self).get_form_kwargs()
@@ -259,6 +457,8 @@ class TipusProducteUpdateView(UpdateView):
         context["productor"] = tipusproducte.productor
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
     def form_invalid(self, form):
@@ -291,6 +491,8 @@ class AdjuntCreateView(CreateView):
         context["productor"] = productor
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
     def form_invalid(self, form):
@@ -298,25 +500,25 @@ class AdjuntCreateView(CreateView):
         return super(AdjuntCreateView, self).form_invalid(form)
 
     def get_success_url(self):
-        # messages.success(self.request, (u"S'ha carregat la nova foto a l'àlbum del productor"))
         productor = Productor.objects.get(pk=self.kwargs['pro'])
         messages.success(self.request, (u"Fotografia afegida a l'àlbum del productor"))
-        return "/pro/" + str(productor.pk) + "/adjunts"
+        return "/pro/" + str(productor.pk) + "/adjunts/"
 
 
 def adjuntsProductor(request, pro):
 
     productors = Productor.objects.filter(responsable=request.user)
     productor = Productor.objects.get(pk=pro)
+    up = UserProfile.objects.get(user=request.user)
     if productor in productors:
         adjunts = Adjunt.objects.filter(productor__pk=pro)
         return render(request, "romani/productors/fotos_productor.html",
-                      {'adjunts': adjunts, 'productor': productor, 'productors': productors})
+                      {'adjunts': adjunts, 'productor': productor, 'productors': productors, 'up': up})
     else:
         messages.error(request, (u"Hi ha hagut un error. No tens permissos "
                                       u"per gestionar fotos d'aquest productor"))
         return render(request, "romani/productors/fotos_productor.html",
-                      {'productor': productor, 'productors': productors})
+                      {'productor': productor, 'productors': productors, 'up': up})
 
 
 
@@ -328,17 +530,19 @@ def adjuntDelete(request, pk):
 
     productors = Productor.objects.filter(responsable=request.user)
 
+    up = UserProfile.objects.get(user = request.user)
+
     fotoDelete = Adjunt.objects.get(pk=pk)
     if fotoDelete.productor in productors:
         adjunts = Adjunt.objects.filter(productor=fotoDelete.productor)
         fotoDelete.delete()
         return render(request, "romani/productors/fotos_productor.html",
-                      {'adjunts': adjunts, 'productor': fotoDelete.productor, 'productors': productors})
+                      {'adjunts': adjunts, 'productor': fotoDelete.productor, 'productors': productors, 'up': up})
     else:
         messages.error(request, (u"Hi ha hagut un error. No tens permissos "
                                       u"per gestionar fotos d'aquest productor"))
         return render(request, "romani/productors/fotos_productor.html",
-                      {'productor': fotoDelete.productor, 'productors': productors})
+                      {'productor': fotoDelete.productor, 'productors': productors, 'up': up})
 
 
 
@@ -363,6 +567,8 @@ class ComandaCreateView(CreateView):
         context["productor"] = productor
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
     def form_invalid(self, form):
@@ -370,9 +576,13 @@ class ComandaCreateView(CreateView):
         return super(ComandaCreateView, self).form_invalid(form)
 
     def form_valid(self, form):
+        # up = UserProfile.objects.get(user=self.request.user)
+        # form.data["node"] = up.lloc_entrega.pk
         form_valid = super(ComandaCreateView, self).form_valid(form)
         obj = form.save(commit=False)
+        # up = UserProfile.objects.get(user=obj.client)
         obj.externa = True
+        # obj.node = up.lloc_entrega
         # obj.lloc_entrega = form_valid.instance.dia_entrega.node
         # obj.producte = form_valid.instance.format.producte
         obj.save()
@@ -385,27 +595,77 @@ class ComandaCreateView(CreateView):
         # else:
         #     productor = Productor.objects.get(pk=self.kwargs['pro'])
         #     return "/pro/" + str(productor.pk) + "/vista_comandes/"
+def comandesDisView(request):
+    # productor = Productor.objects.get(pk=pro)
+    # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
+    # productor = Productor.objects.get(pk=pro)
+    # context["productor"] = productor
+    productors = Productor.objects.filter(responsable=request.user)
+    productes = Producte.objects.filter(productor__in=productors)
+
+    up = UserProfile.objects.get(user=request.user)
+    # context["productors"] = productors
+
+    orders = []
+    days = []
+    date = ""
+    node = ""
+    total = 0
+    entregas = Entrega.objects.filter(comanda__format__producte__in=productes,
+                                      dia_entrega__date__gte=datetime.datetime.today()).order_by('dia_entrega__date', 'comanda__node')
+    if entregas:
+        for e in entregas:
+            if date:
+                if e.dia_entrega != date:
+                    day = {'entregas': orders, 'dia': date.date, 'total': total_rounded, 'node': node, 'dia_pk': date.pk}
+                    days.append(day)
+                    total = 0
+                    orders = []
+            date = e.dia_entrega
+            node = e.comanda.node
+            e_dict = {'pk': e.comanda.pk,
+                      'entrega_pk': e.pk,
+                      'producte': e.comanda.format.producte.nom,
+                      'productor': e.comanda.format.productor.nom,
+                      'cantitat': e.comanda.cantitat,
+                      'format': e.comanda.format.nom,
+                      'preu': e.comanda.preu,
+                      'lloc': e.dia_entrega.node.nom,
+                      'hora': e.franja_horaria,
+                      'dia': e.dia_entrega.date,
+                      'user': e.comanda.client,
+                      'node': e.comanda.node
+                      }
+            total += e.comanda.preu
+            total_rounded = round(total, 2)
+            orders.append(e_dict)
+        day = {'entregas': orders, 'dia': date.date, 'total': str(total_rounded), 'node': node, 'dia_pk': date.pk}
+        days.append(day)
+    # context['comandes'] = days
+
+    return render(request, "romani/productors/productor_list.html", {'comandes': days, 'object_list': productors, 'up': up})
 
 
 
-class ProductorsListView(ListView):
-    model = Productor
-    template_name = "romani/productors/productor_list.html"
-
-    def get_queryset(self):
-        g = Group.objects.get(name='Productors')
-        u = self.request.user
-        if not u in g.user_set.all():
-            g.user_set.add(u)
-        return Productor.objects.filter(responsable=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super(ProductorsListView, self).get_context_data(**kwargs)
-        productors = Productor.objects.filter(responsable=self.request.user)
-        productes = Producte.objects.filter(productor__in=productors)
-        # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
-        context["comandes"] = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today()).order_by('-data_comanda')
-        return context
+#
+# class ProductorsListView(ListView):
+#     model = Productor
+#     template_name = "romani/productors/productor_list.html"
+#
+#     def get_queryset(self):
+#         g = Group.objects.get(name='Productors')
+#         u = self.request.user
+#         if not u in g.user_set.all():
+#             g.user_set.add(u)
+#         return Productor.objects.filter(responsable=self.request.user)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(ProductorsListView, self).get_context_data(**kwargs)
+#         productors = Productor.objects.filter(responsable=self.request.user)
+#         productes = Producte.objects.filter(productor__in=productors)
+#         # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
+#         context["comandes"] = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=datetime.datetime.today()).order_by('-data_comanda')
+#         return context
 
 
 class ProductorsCalListView(ListView):
@@ -419,14 +679,232 @@ class ProductorsCalListView(ListView):
             g.user_set.add(u)
         return Productor.objects.filter(responsable=self.request.user)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(ProductorsCalListView, self).get_context_data(**kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(ProductorsCalListView, self).get_context_data(**kwargs)
     #     # productors = Productor.objects.filter(responsable=self.request.user)
     #     # productes = Producte.objects.filter(productor__in=productors)
     #     # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
     #     # context["comandes"] = Comanda.objects.filter(producte__in=productes, dia_entrega__date__gte=datetime.datetime.today())
     #     # context["user"] = self.request.user
-    #     return context
+
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
+        return context
+
+
+def diesEntregaProView(request, pk):
+    now = datetime.datetime.now()
+    comanda = Comanda.objects.get(pk=pk)
+    user_p = UserProfile.objects.filter(user=request.user).first()
+    date = datetime.datetime.now() + timedelta(hours=int(comanda.format.productor.hores_limit))
+
+    # Llistat de dies futurs en que es posible demanar noves entregues de la comanda
+    pk_lst = set()
+    for d in DiaEntrega.objects.filter(date__gte=datetime.datetime.now(), formats__format__id__exact=comanda.format.id,
+                                       node=comanda.node).order_by('date'):
+        try:
+            diaformatstock = DiaFormatStock.objects.get(dia=d, format=comanda.format)
+            date = datetime.datetime.now() + timedelta(hours=int(diaformatstock.hores_limit))
+            aux = d.franja_inici()
+            daytime = datetime.datetime(d.date.year, d.date.month, d.date.day, aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                stock_result = comanda.format.stock_calc(d, comanda.cantitat)
+                if stock_result['result'] == True:
+                    pk_lst.add(d.pk)
+        except:
+            pass
+    # Llistat de dies futurs en que ja ha demanat rebre producte
+    pk2_lst = set()
+    for d in Entrega.objects.filter(comanda=comanda, dia_entrega__node=comanda.node,
+                                    dia_entrega__date__gte=date).order_by('dia_entrega__date'):
+        try:
+            diaformatstock = DiaFormatStock.objects.get(dia=d.dia_entrega, format=comanda.format)
+            date = datetime.datetime.now() + timedelta(hours=int(diaformatstock.hores_limit))
+            aux = d.dia_entrega.franja_inici()
+            daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day,
+                                        aux.inici.hour, aux.inici.minute)
+            if daytime > date:
+                pk2_lst.add(d.dia_entrega.pk)
+        except:
+            pass
+    dies_entrega_possibles = DiaEntrega.objects.filter((Q(pk__in=pk_lst) | Q(pk__in=pk2_lst))).order_by('date')
+
+    dies_entrega_ini = DiaEntrega.objects.filter(pk__in=pk2_lst)
+
+    # Llistat de dies passats en que té entregues de la mateixa comanda
+    pk3_lst = set()
+    for d in Entrega.objects.filter(comanda=comanda, dia_entrega__node=comanda.node,
+                                    dia_entrega__date__lte=date).order_by('dia_entrega__date'):
+        try:
+            diaformatstock = DiaFormatStock.objects.get(dia=d.dia_entrega, format=comanda.format)
+            date = datetime.datetime.now() + timedelta(hours=int(diaformatstock.hores_limit))
+            aux = d.dia_entrega.franja_inici()
+            daytime = datetime.datetime(d.dia_entrega.date.year, d.dia_entrega.date.month, d.dia_entrega.date.day,
+                                        aux.inici.hour, aux.inici.minute)
+            if daytime < date:
+                pk3_lst.add(d.pk)
+        except:
+            pass
+
+    entregas_pas = Entrega.objects.filter(pk__in=pk3_lst).exclude(dia_entrega__pk__in=pk_lst)
+
+    if request.POST:
+        try:
+            dies_pk = request.POST.getlist('dies')
+            for d in dies_pk:
+                dia = DiaEntrega.objects.get(pk=d)
+                if dia in dies_entrega_ini:
+                    franja_pk = request.POST.get(str(dia.pk))
+                    franja = FranjaHoraria.objects.get(pk=franja_pk)
+                    entrega = Entrega.objects.get(comanda=comanda, dia_entrega=d)
+                    if entrega.franja_horaria == franja:
+                        pass
+                    else:
+                        # Aquí processem les entregues quan ja existien i simplement l'usuari modifica l'hora d'entrega dins el mateix dia en que ja havia demanat
+                        entrega.delete()  # 1r borrem l'anterior entrega pq al canviar la hora ja no és vàlida
+                        stock_result = comanda.format.stock_calc(dia, comanda.cantitat)
+                        if stock_result['dia_prod'] == '':
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
+                        else:
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja,
+                                                       dia_produccio=stock_result['dia_prod'])
+                        # notify.send(e.comanda.format, recipient=user_p.user, verb="Has modificat l'hora d'entrega de ",
+                        #             action_object=e.comanda,
+                        #             description=e.dia_entrega.date, timestamp=timezone.now())
+                else:
+                    # Aquí processem les entregues que encara no existien i que es creen noves
+                    stock_result = comanda.format.stock_calc(dia, comanda.cantitat)
+                    if stock_result['result'] == True:
+                        franja_pk = request.POST.get(str(dia.pk))
+                        franja = FranjaHoraria.objects.get(pk=franja_pk)
+                        if stock_result['dia_prod'] == '':
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
+                        else:
+                            e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja,
+                                                       dia_produccio=stock_result['dia_prod'])
+                        # notify.send(e.comanda.format, recipient=user_p.user, verb="Has afegit a la cistella",
+                        #             action_object=e.comanda,
+                        #             description=e.dia_entrega.date, timestamp=timezone.now())
+            for d in dies_entrega_ini:
+                if str(d.pk) not in dies_pk:
+                    # Borrem les entregues que han deixat d'estar seleccionades
+                    entrega = Entrega.objects.get(comanda=comanda, dia_entrega=d)
+
+                    dia_entregatime = entrega.comanda.format.dies_entrega.get(dia=entrega.dia_entrega)
+                    # time = dies_entrega.get(dia=entregaDel.dia_entrega)
+                    dia = datetime.datetime.now() + timedelta(hours=dia_entregatime.hores_limit)
+                    # prox_entrega = comandaDel.prox_entrega()
+                    dia_prox_entrega = entrega.dia_entrega
+                    aux = dia_prox_entrega.franja_inici()
+                    daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month,
+                                                dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
+
+                    if daytime > dia:
+
+                        entrega.delete()
+                        # notify.send(entrega.comanda.format, recipient=user_p.user, verb="Has tret de la cistella",
+                        #             action_object=entrega.comanda,
+                        #             description=entrega.dia_entrega.date, timestamp=timezone.now())
+                    else:
+                        messages.error(request, (
+                            u"El productor ja t'està preparant alguna de les comandes que vols anul·lar"
+                            u", NO podem treure el producte de la cistella"))
+
+
+
+            productes = Producte.objects.filter(productor=comanda.format.productor)
+            object_list = comandesPro(request, comanda.format.productor)
+            productors = Productor.objects.filter(responsable=request.user)
+
+            messages.success(request, (u"Comanda desada correctament"))
+
+            return render(request, "romani/productors/comanda_list.html",
+                          {'comandes': object_list, 'productor': comanda.format.productor,
+                           'productors': productors})
+
+        except:
+            messages.warning(request, (u"Hem trobat errors en el formulari"))
+            pass
+
+    return render(request, "romani/productors/dies_entrega.html",
+                  {'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles,
+                   'dies_entrega_ini': dies_entrega_ini, 'entregas_pas': entregas_pas })
+
+
+
+
+
+
+
+def NodeProDetailView(request, pk):
+
+    # productor = Productor.objects.get(pk=pro)
+    #
+    # if request.user in productor.responsable.all():
+
+        node = Node.objects.get(pk=pk)
+
+        return render(request, "romani/productors/node_detail.html", {'node': node})
+
+    # else:
+    #
+    #     return render(request, "romani/productors/access_error.html")
+
+
+def historialDisView(request):
+    # productor = Productor.objects.get(pk=pro)
+    # context["contractes"] = Contracte.objects.filter(producte__in=productes, data_fi__isnull=True)
+    # productor = Productor.objects.get(pk=pro)
+    # context["productor"] = productor
+    productors = Productor.objects.filter(responsable=request.user)
+    productes = Producte.objects.filter(productor__in=productors)
+
+    up = UserProfile.objects.get(user=request.user)
+    # context["productors"] = productors
+
+    orders = []
+    days = []
+    date = ""
+    node = ""
+    total = 0
+    entregas = Entrega.objects.filter(comanda__format__producte__in=productes,
+                                      dia_entrega__date__lte=datetime.datetime.today()).order_by('-dia_entrega__date', 'comanda__node')
+    if entregas:
+        for e in entregas:
+            if date:
+                if e.dia_entrega != date:
+                    day = {'entregas': orders, 'dia': date.date, 'total': total_rounded, 'node': node, 'dia_pk': e.dia_entrega.pk}
+                    days.append(day)
+                    total = 0
+                    orders = []
+            date = e.dia_entrega
+            node = e.comanda.node
+            e_dict = {'pk': e.comanda.pk,
+                      'entrega_pk': e.pk,
+                      'producte': e.comanda.format.producte.nom,
+                      'productor': e.comanda.format.productor.nom,
+                      'cantitat': e.comanda.cantitat,
+                      'format': e.comanda.format.nom,
+                      'preu': e.comanda.preu,
+                      'lloc': e.dia_entrega.node.nom,
+                      'hora': e.franja_horaria,
+                      'dia': e.dia_entrega.date,
+                      'user': e.comanda.client,
+                      'node': e.comanda.node
+                      }
+            total += e.comanda.preu
+            total_rounded = round(total, 2)
+            orders.append(e_dict)
+        day = {'entregas': orders, 'dia': date.date, 'total': str(total_rounded), 'node': node, 'dia_pk': e.dia_entrega.pk}
+        days.append(day)
+    # context['comandes'] = days
+
+    return render(request, "romani/productors/productor_list_hist.html", {'comandes': days, 'object_list': productors, 'up': up})
+
+
+
+
+
 class ProductorsHistListView(ListView):
     model = Productor
     template_name = "romani/productors/productor_list_hist.html"
@@ -468,6 +946,8 @@ class DatesListView(ListView):
         context["productor"] = productor
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
 def DiaEntregaDistribuidorView(request, dataentrega):
@@ -479,19 +959,23 @@ def DiaEntregaDistribuidorView(request, dataentrega):
     # Calculem els productors controlats per l'usuari distribuidor que són acceptats en el dia d'entrega per a no mostrarli els que estan exclosos en el node del dia d'entrega seleccionat
     productors = Productor.objects.filter(responsable=request.user, nodes=diaentrega.node)
     # Seleccionem tots els possibles formats que podrien ser seleccionats pel productor per portarlos en el dia d'entrega seleccionat
-    formats = TipusProducte.objects.filter(producte__productor__in=productors, producte__status=True)
+    formats = TipusProducte.objects.filter(producte__productor__in=productors, producte__status=True, status=True)
     # Filtrem les comandes lligades al dia d'entrega
     comandes = Entrega.objects.filter(comanda__format__productor__in=productors, dia_entrega=diaentrega)
     #Calculem el total del dia per a cada un dels productors de la distribuidora
     totals_productors = diaentrega.totals_productors_propis(request.user)
     # Calculem el total del dia per a cada un dels productes de la distribuidora
     totals_productes = diaentrega.totals_productes_propis(request.user)
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
+
     # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
-    preu_total = 0
+    pre_preu_total = 0
     cant_total = 0
     for c in comandes:
-        preu_total += c.comanda.preu
+        pre_preu_total += c.comanda.preu
         cant_total += c.comanda.cantitat
+    preu_total = round(pre_preu_total, 2)
     # Seleccionem tots els productes que ja estan confirmats pel productor o distribuidor com disponibles en el dia d'entrega
     diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor__in=productors, format__producte__status=True)
     if diaformatstock:
@@ -564,7 +1048,8 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                                    messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
                                    return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'object_list': productors_menu, 'formatstockform': formatstockform,
                                                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
-                                                                                                        'totals_productors': totals_productors, 'totals_productes': totals_productes})
+                                                                                                        'totals_productors': totals_productors, 'totals_productes': totals_productes,
+                                                                                                       'up': up})
                        except:
                            pass
 
@@ -580,7 +1065,7 @@ def DiaEntregaDistribuidorView(request, dataentrega):
 
                 if 'create' in request.POST:
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
-                    return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
+                    return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu, 'up': up})
                 else:
 
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
@@ -597,11 +1082,12 @@ def DiaEntregaDistribuidorView(request, dataentrega):
                         elif aux==True:
                             return redirect('distri_data_comandes', dataentrega=n.pk)
 
-                    return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu})
+                    return render(request, "romani/productors/productor_list_cal.html", {'object_list': productors_menu, 'up': up})
 
     return render(request, "romani/productors/distri_diaentrega.html", {'dia': diaentrega, 'object_list': productors_menu, 'formatstockform': formatstockform,
                                                                         'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
-                                                                        'totals_productors': totals_productors, 'totals_productes': totals_productes})
+                                                                        'totals_productors': totals_productors, 'totals_productes': totals_productes,
+                                                                        'up': up})
 
 
 
@@ -614,17 +1100,20 @@ def DiaEntregaProductorView(request, pk, dataentrega):
     # Calculem el productorgestionat per l'usuari
     productor = Productor.objects.get(pk=pk)
     # Seleccionem tots els possibles formats que podrien ser seleccionats pel productor per portarlos en el dia d'entrega seleccionat
-    formats = TipusProducte.objects.filter(producte__productor=productor, producte__status=True)
+    formats = TipusProducte.objects.filter(producte__productor=productor, producte__status=True, status=True)
     # Filtrem les comandes lligades al dia d'entrega
     comandes = Entrega.objects.filter(comanda__format__productor=productor, dia_entrega=diaentrega)
     # Calculem el total del dia per a cada un dels productes de la productora
     totals_productes = diaentrega.totals_productesxproductor(pk)
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
     # Calculem els totals (cantitat total i preu total) de les comandes lligades a aquest dia d'entrega
-    preu_total = 0
+    pre_preu_total = 0
     cant_total = 0
     for c in comandes:
-        preu_total += c.comanda.preu
+        pre_preu_total += c.comanda.preu
         cant_total += c.comanda.cantitat
+    preu_total = round(pre_preu_total, 2)
     # Seleccionem tots els productes que ja estan confirmats pel productor o distribuidor com disponibles en el dia d'entrega
     diaformatstock = DiaFormatStock.objects.filter(dia=diaentrega, format__productor=productor, format__producte__status=True)
     if diaformatstock:
@@ -697,7 +1186,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                                    messages.error(request, (u"Ja t'han fet comandes per aquest dia, no pots cancel·lar l'entrega"))
                                    return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform, 'productors': productors,
                                                                                                        'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
-                                                                        'totals_productes': totals_productes})
+                                                                        'totals_productes': totals_productes, 'up': up})
                        except:
                            pass
 
@@ -712,7 +1201,7 @@ def DiaEntregaProductorView(request, pk, dataentrega):
 
                 if 'create' in request.POST:
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
-                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors, 'up': up})
                 else:
 
                     messages.success(request, (u"Dia d'entrega guardat correctament"))
@@ -729,11 +1218,11 @@ def DiaEntregaProductorView(request, pk, dataentrega):
                         elif aux==True:
                             return redirect('data_comandes', pk=productor.pk, dataentrega=n.pk)
 
-                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors, 'up': up})
 
     return render(request, "romani/productors/diaentrega.html", {'dia': diaentrega, 'productor': productor, 'formatstockform': formatstockform, 'productors':productors,
                                                                         'comandes': comandes, 'preu_total': preu_total, 'cant_total': cant_total,
-                                                                        'totals_productes': totals_productes})
+                                                                        'totals_productes': totals_productes, 'up': up})
 
 
 
@@ -744,9 +1233,11 @@ def DiaProduccioCreateView(request, pro):
     productor = Productor.objects.get(pk=pro)
     productes = Producte.objects.filter(productor=productor, status=True)
     StockFormset = formset_factory(StockForm, extra=0)
-    formats = TipusProducte.objects.filter(producte__in=productes)
+    formats = TipusProducte.objects.filter(producte__in=productes, status=True)
     stockform = StockFormset(initial=[{'format': x} for x in formats])
     productors = Productor.objects.filter(responsable=request.user)
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
 
     if request.POST:
 
@@ -779,7 +1270,8 @@ def DiaProduccioCreateView(request, pro):
                                 dp = DiaProduccio.objects.create(date=a, productor=productor)
                except:
                    messages.warning(request, (u"Hem trobat errors en el formulari"))
-                   return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
+                   return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes,
+                                                                                  'productors': productors, 'up': up})
 
 
        # if formset.is_valid():
@@ -792,7 +1284,7 @@ def DiaProduccioCreateView(request, pro):
 
                if 'create' in request.POST:
                    messages.success(request, (u"S'ha creat el dia de producció"))
-                   return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
+                   return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors, 'up': up})
                else:
 
                     messages.success(request, (u"S'ha creat el dia de producció"))
@@ -813,7 +1305,7 @@ def DiaProduccioCreateView(request, pro):
            else:
 
                messages.warning(request, (u"Hem trobat errors en el formulari"))
-               return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
+               return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors, 'up': up})
 
 
     form = DiaProduccioForm()
@@ -823,7 +1315,7 @@ def DiaProduccioCreateView(request, pro):
     # form.fields['node'].initial = ''
 
 
-    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes, 'productors': productors})
+    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes, 'productors': productors, 'up': up})
 
 
 
@@ -832,17 +1324,20 @@ def DiaProduccioUpdateView(request, pro, pk):
     productor = Productor.objects.get(pk=pro)
     productors = Productor.objects.filter(responsable=request.user)
     productes = Producte.objects.filter(productor=productor, status=True)
-    formats = TipusProducte.objects.filter(producte__in=productes)
+    formats = TipusProducte.objects.filter(producte__in=productes, status=True)
     dp_obj = DiaProduccio.objects.get(pk=pk)
     stocks = Stock.objects.filter(dia_prod=dp_obj)
     StockFormset = modelformset_factory(Stock, extra=0, form=StockForm)
     stockform = StockFormset(queryset=stocks)
     entregas = Entrega.objects.filter(dia_produccio=dp_obj)
-    preu_total = 0
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
+    pre_preu_total = 0
     cant_total = 0
     for c in entregas:
         preu_total += c.comanda.preu
         cant_total += c.comanda.cantitat
+    preu_total = round(pre_preu_total, 2)
 
     if request.POST:
            form = DiaProduccioForm(request.POST)
@@ -867,7 +1362,8 @@ def DiaProduccioUpdateView(request, pro, pk):
                except:
                    messages.warning(request, (u"Hem trobat errors en el formulari"))
                    return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes,
-                                                                                  'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total, 'productors': productors})
+                                                                                  'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                                  'productors': productors, 'up': up})
 
                for f in formset:
                    cd = f.cleaned_data
@@ -881,7 +1377,7 @@ def DiaProduccioUpdateView(request, pro, pk):
                    s.save()
                if 'create' in request.POST:
                     messages.success(request, (u"S'ha desat el dia de producció"))
-                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors':productors})
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors':productors, 'up': up})
                else:
                     messages.success(request, (u"S'ha desat el dia de producció"))
                     # next_d = DiaProduccio.objects.filter(date__gte = dp_obj.date, node__productors=productor).distinct()
@@ -902,7 +1398,8 @@ def DiaProduccioUpdateView(request, pro, pk):
            else:
                messages.warning(request, (u"Hem trobat errors en el formulari"))
                return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': formset, 'productor': productor, 'productors':productors,
-                                                                              'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                              'productes': productes, 'comandes': entregas, 'preu_total': preu_total,
+                                                                              'cant_total': cant_total, 'up': up})
 
 
     form = DiaProduccioForm()
@@ -911,16 +1408,19 @@ def DiaProduccioUpdateView(request, pro, pk):
     form.fields['caducitat'].initial = dp_obj.caducitat
 
     return render(request, "romani/productors/diaproduccio.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productors':productors,
-                                                                   'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                   'productes': productes, 'comandes': entregas, 'preu_total': preu_total,
+                                                                   'cant_total': cant_total, 'up': up})
 
 def DiaProduccioPaCreateView(request, pro):
 
     productor = Productor.objects.get(pk=pro)
     productes = Producte.objects.filter(productor=productor, status=True)
     StockFormset = formset_factory(StockForm, extra=0)
-    formats = TipusProducte.objects.filter(producte__in=productes)
+    formats = TipusProducte.objects.filter(producte__in=productes, status=True)
     stockform = StockFormset(initial=[{'format': x} for x in formats])
     productors = Productor.objects.filter(responsable=request.user)
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
 
     if request.POST:
 
@@ -954,7 +1454,8 @@ def DiaProduccioPaCreateView(request, pro):
                                 dp = DiaProduccio.objects.create(date=a, productor=productor, total_uts=total_uts)
                except:
                    messages.warning(request, (u"Hem trobat errors en el formulari"))
-                   return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
+                   return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor,
+                                                                                    'productes': productes, 'productors': productors, 'up': up})
 
 
        # if formset.is_valid():
@@ -967,7 +1468,7 @@ def DiaProduccioPaCreateView(request, pro):
 
                if 'create' in request.POST:
                    messages.success(request, (u"S'ha creat el dia de producció"))
-                   return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors})
+                   return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors': productors, 'up': up})
                else:
 
                     messages.success(request, (u"S'ha creat el dia de producció"))
@@ -988,7 +1489,8 @@ def DiaProduccioPaCreateView(request, pro):
            else:
 
                messages.warning(request, (u"Hem trobat errors en el formulari"))
-               return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes, 'productors': productors})
+               return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes,
+                                                                                'productors': productors, 'up': up})
 
 
     form = DiaProduccioPaForm()
@@ -998,7 +1500,8 @@ def DiaProduccioPaCreateView(request, pro):
     # form.fields['node'].initial = ''
 
 
-    return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes, 'productors': productors})
+    return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productes': productes,
+                                                                     'productors': productors, 'up': up })
 
 
 
@@ -1007,17 +1510,20 @@ def DiaProduccioPaUpdateView(request, pro, pk):
     productor = Productor.objects.get(pk=pro)
     productors = Productor.objects.filter(responsable=request.user)
     productes = Producte.objects.filter(productor=productor, status=True)
-    formats = TipusProducte.objects.filter(producte__in=productes)
+    formats = TipusProducte.objects.filter(producte__in=productes, status=True)
     dp_obj = DiaProduccio.objects.get(pk=pk)
     stocks = Stock.objects.filter(dia_prod=dp_obj)
     StockFormset = modelformset_factory(Stock, extra=0, form=StockForm)
     stockform = StockFormset(queryset=stocks)
     entregas = Entrega.objects.filter(dia_produccio=dp_obj)
-    preu_total = 0
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
+    pre_preu_total = 0
     cant_total = 0
     for c in entregas:
         preu_total += c.comanda.preu
         cant_total += c.comanda.cantitat
+    preu_total = round(pre_preu_total, 2)
 
     if request.POST:
            form = DiaProduccioPaForm(request.POST)
@@ -1044,7 +1550,8 @@ def DiaProduccioPaUpdateView(request, pro, pk):
                except:
                    messages.warning(request, (u"Hem trobat errors en el formulari"))
                    return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productes': productes,
-                                                                                  'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total, 'productors': productors})
+                                                                                  'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                                    'productors': productors, 'up': up})
 
                for f in formset:
                    cd = f.cleaned_data
@@ -1058,7 +1565,7 @@ def DiaProduccioPaUpdateView(request, pro, pk):
                    s.save()
                if 'create' in request.POST:
                     messages.success(request, (u"S'ha desat el dia de producció"))
-                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors':productors})
+                    return render(request, "romani/productors/dates_list.html", {'productor': productor, 'productors':productors, 'up': up})
                else:
                     messages.success(request, (u"S'ha desat el dia de producció"))
                     # next_d = DiaProduccio.objects.filter(date__gte = dp_obj.date, node__productors=productor).distinct()
@@ -1079,7 +1586,8 @@ def DiaProduccioPaUpdateView(request, pro, pk):
            else:
                messages.warning(request, (u"Hem trobat errors en el formulari"))
                return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': formset, 'productor': productor, 'productors':productors,
-                                                                              'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                              'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                                'up': up})
 
 
     form = DiaProduccioPaForm()
@@ -1089,7 +1597,8 @@ def DiaProduccioPaUpdateView(request, pro, pk):
     form.fields['total_uts'].initial = dp_obj.total_uts
 
     return render(request, "romani/productors/diaproducciopa.html", {'form': form, 'stockform': stockform, 'productor': productor, 'productors':productors,
-                                                                   'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total})
+                                                                   'productes': productes, 'comandes': entregas, 'preu_total': preu_total, 'cant_total': cant_total,
+                                                                     'up': up})
 
 
 
@@ -1097,7 +1606,7 @@ class ProducteUpdateView(UpdateView):
     model = Producte
     form_class = ProducteForm
     # success_url="/vista_productes/"
-    template_name = "romani/productors/producte_form.html"
+    template_name = "romani/productors/producte_edit_form.html"
     # user = request.user
 
     def get_form_kwargs(self):
@@ -1112,6 +1621,9 @@ class ProducteUpdateView(UpdateView):
         context["productor"] = producte.productor
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
     def form_invalid(self, form):
@@ -1141,6 +1653,10 @@ class ProductorCreateView(CreateView):
         context = super(ProductorCreateView, self).get_context_data(**kwargs)
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
+        context["object_list"] = Productor.objects.filter(responsable=self.request.user)
         return context
 
     def form_invalid(self, form):
@@ -1150,6 +1666,7 @@ class ProductorCreateView(CreateView):
     def form_valid(self, form):
         messages.success(self.request, (u"S'ha desat el productor"))
         return super(ProductorCreateView, self).form_valid(form)
+
 
 
 class ProducteCreateView(CreateView):
@@ -1168,6 +1685,9 @@ class ProducteCreateView(CreateView):
         context["productor"] = Productor.objects.get(pk=self.kwargs['pro'])
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
     def form_invalid(self, form):
@@ -1192,6 +1712,9 @@ class ProductorUpdateView(UpdateView):
         kwargs["user"] = user
         return kwargs
 
+    def get_queryset(self):
+        return Productor.objects.filter(responsable=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super(ProductorUpdateView, self).get_context_data(**kwargs)
         productor = Productor.objects.get(pk=self.kwargs['pk'])
@@ -1200,6 +1723,9 @@ class ProductorUpdateView(UpdateView):
         context["adjunts"] = adjunts
         productors = Productor.objects.filter(responsable=self.request.user)
         context["productors"] = productors
+        # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+        up = UserProfile.objects.get(user=self.request.user)
+        context["up"] = up
         return context
 
     def form_invalid(self, form):
@@ -1326,6 +1852,38 @@ def distriCalendarSelected(request):
     return HttpResponse(json.dumps(events, cls=DjangoJSONEncoder), content_type='application/json')
 
 
+def formatDelete(request, pk):
+
+    formatDel = TipusProducte.objects.get(pk=pk)
+
+
+    dia = datetime.datetime.now()
+
+    if request.user in formatDel.productor.responsable.all():
+        if not Comanda.objects.filter(format=formatDel, entregas__dia_entrega__date__gte=datetime.datetime.today()):
+            # notify.send(formatDel, recipient = request.user,  verb="Has borrat ", action_object=formatDel,
+            #     description="de lamassa.org" , timestamp=timezone.now())
+            # url=comandaDel.format.producte.foto.url,
+            dfstocks = DiaFormatStock.objects.filter(dia__date__gte=datetime.datetime.today(), format=formatDel)
+            dfstocks.delete()
+            formatDel.status=False
+            formatDel.save()
+
+            messages.info(request, (u"Has borrat el format"))
+        else:
+            messages.error(request, (u"Tens comandes d'aquest format per entregar en el futur"))
+    else:
+        messages.error(request, (u"No ets responsable d'aquest productor"))
+    productes = Producte.objects.filter(productor=formatDel.productor, status=True).order_by('nom')
+    productors = Productor.objects.filter(responsable=request.user)
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
+
+    return render(request, "romani/productors/producte_list.html", {'object_list': productes,'productor': formatDel.productor,
+                                                                    'productors': productors, 'up': up})
+
+
+
 # Funció per borrar comandes per part de l'usuari. Comprovem que el productor no hagi començat a elaborar el producte solicitat
 def producteDelete(request, pk):
 
@@ -1336,8 +1894,10 @@ def producteDelete(request, pk):
 
     if request.user in producteDel.productor.responsable.all():
         if not Comanda.objects.filter(format__producte=producteDel, entregas__dia_entrega__date__gte=datetime.datetime.today()):
-            notify.send(producteDel, recipient = request.user,  verb="Has borrat ", action_object=producteDel,
-                description="de lamassa.org" , timestamp=timezone.now())
+            # notify.send(producteDel, recipient = request.user,  verb="Has borrat ", action_object=producteDel,
+            #     description="de lamassa.org" , timestamp=timezone.now())
+            dfstocks = DiaFormatStock.objects.filter(dia__date__gte=datetime.datetime.today(), format__in=producteDel.formats.all())
+            dfstocks.delete()
             # url=comandaDel.format.producte.foto.url,
             producteDel.status = False
             producteDel.save()
@@ -1346,10 +1906,13 @@ def producteDelete(request, pk):
             messages.error(request, (u"Tens comandes d'aquest producte per entregar en el futur"))
     else:
         messages.error(request, (u"No ets responsable d'aquest productor"))
-    productes = Producte.objects.filter(productor=producteDel.productor, status=True)
+    productes = Producte.objects.filter(productor=producteDel.productor, status=True).order_by('nom')
     productors = Productor.objects.filter(responsable=request.user)
+    # UserProfile per saber els productors del user al dibuixar el menu_pro i menu_dis
+    up = UserProfile.objects.get(user=request.user)
 
-    return render(request, "romani/productors/producte_list.html", {'object_list': productes,'productor': producteDel.productor, 'productors': productors})
+    return render(request, "romani/productors/producte_list.html", {'object_list': productes,'productor': producteDel.productor,
+                                                                    'productors': productors, 'up': up})
 
 from django.http import HttpResponse
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas

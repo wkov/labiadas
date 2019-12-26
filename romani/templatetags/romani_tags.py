@@ -11,7 +11,7 @@ from datetime import timedelta
 
 
 # usuari_comandes s'utilitza al left_menu.html per a informar de les comandes pendents d'efectuar per part del productor
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def usuari_comandes(context):
     user = user_context(context)
     if not user:
@@ -21,7 +21,7 @@ def usuari_comandes(context):
     return num_comandes
 
 # productor_comandes s'utilitza al left_menu.html per a informar de les comandes pendents d'efectuar per part del productor
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def productor_comandes(context):
     user = user_context(context)
     if not user:
@@ -37,14 +37,14 @@ def user_context(context):
 
     request = context['request']
     user = request.user
-    if user.is_anonymous():
+    if user.is_anonymous:
         return None
     return user
 
 # has_group s'utilitza a left_menu.html per a saber els rols de l'usuari a l'hora de mostrarli opcions de node o de productor
 @register.filter(name='has_group')
 def has_group(user, group_name):
-    group =  Group.objects.get(name=group_name)
+    group = Group.objects.get(name=group_name)
     return group in user.groups.all()
 
 # @register.filter(name='has_stock')

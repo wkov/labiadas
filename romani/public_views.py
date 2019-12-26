@@ -7,12 +7,13 @@ from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
 from romani.models import UserProfile, Etiqueta, Adjunt, DiaFormatStock
 from romani.forms import ComandaForm, VoteForm
+from romani.productor_views import comandesPro
 from romani.serializers import EntregaSerializer
 
 from django.http import HttpResponse
 
 from django.utils import timezone
-from notifications import notify
+# from notifications import notify
 import json
 from django.contrib import messages
 
@@ -30,7 +31,7 @@ def buskadorProducte(request):
     #ToDo Afegir Cela al Buscador, Django no permet Ands i Ors, Construir query manualment
     user_p = UserProfile.objects.filter(user=request.user).first()
     if user_p.lloc_entrega.nomes_seguent:
-        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=datetime.date.today()).all()[:1]
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=datetime.date.today()).order_by('date').all()[:1]
     else:
         dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=datetime.date.today())
     etiquetes = set()
@@ -41,7 +42,7 @@ def buskadorProducte(request):
         formats_aux = set()
 
         for d in dies_node_entrega:
-            for t in TipusProducte.objects.filter(dies_entrega__dia=d).exclude(producte__pk__in=prod_aux):
+            for t in TipusProducte.objects.filter(dies_entrega__dia=d, status=True).exclude(producte__pk__in=prod_aux):
                 diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
                 date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
                 aux = d.franja_inici()
@@ -57,10 +58,12 @@ def buskadorProducte(request):
 
         productes = sorted(p, key=lambda a: a.karma(user_p.lloc_entrega), reverse=True)
 
+        nodes = Node.objects.all()
+
         return render(request, "buscador.html", {
             'posts': productes,
             'formats': formats_aux,
-            'etiquetes': etiquetes, 'up': user_p})
+            'etiquetes': etiquetes, 'nodes': nodes, 'up': user_p})
     else:
         return render(request, "buscador.html", {
             'etiquetes': etiquetes, 'up': user_p})
@@ -73,8 +76,9 @@ def coopeView(request):
 
     today = datetime.date.today()
 
+
     if user_p.lloc_entrega.nomes_seguent:
-        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte = today).all()[:1]
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte = today).order_by('date').all()[:1]
     else:
         dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=today)
 
@@ -97,7 +101,7 @@ def coopeView(request):
     formats_aux = set()
 
     for d in dies_node_entrega:
-        for t in TipusProducte.objects.filter(dies_entrega__dia=d).exclude(producte__pk__in=prod_aux):
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d, status=True).exclude(producte__pk__in=prod_aux):
             diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
             date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()
@@ -140,7 +144,7 @@ def producteView(request,pk):
     formats_aux = set()
 
     for d in dies_node_entrega:
-        for t in TipusProducte.objects.filter(dies_entrega__dia=d, producte=producte):
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d, producte=producte, status=True):
             diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
             date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()
@@ -162,7 +166,7 @@ def etiquetaView(request,pk):
 
 
     if user_p.lloc_entrega.nomes_seguent:
-        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte = datetime.date.today()).all()[:1]
+        dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte = datetime.date.today()).order_by('date').all()[:1]
     else:
         dies_node_entrega = user_p.lloc_entrega.dies_entrega.filter(date__gte=datetime.date.today())
 
@@ -184,7 +188,7 @@ def etiquetaView(request,pk):
     formats_aux = set()
 
     for d in dies_node_entrega:
-        for t in TipusProducte.objects.filter(dies_entrega__dia=d).exclude(producte__pk__in=prod_tot):
+        for t in TipusProducte.objects.filter(dies_entrega__dia=d, status=True).exclude(producte__pk__in=prod_tot):
             diaformatstock = DiaFormatStock.objects.get(dia=d, format=t)
             date = datetime.datetime.now() + timedelta(hours=diaformatstock.hores_limit)
             aux = d.franja_inici()
@@ -251,7 +255,7 @@ def cistella(user):
         for e in entregas:
             if date:
                 if e.dia_entrega != date:
-                    day = {'entregas': orders, 'dia': date.date, 'total':total}
+                    day = {'entregas': orders, 'dia': date.date, 'total':total_rounded}
                     days.append(day)
                     total = 0
                     orders = []
@@ -268,8 +272,9 @@ def cistella(user):
                       'dia': e.dia_entrega.date
                       }
             total += e.comanda.preu
+            total_rounded = round(total, 2)
             orders.append(e_dict)
-        day = {'entregas': orders, 'dia': date.date, 'total': str(total)}
+        day = {'entregas': orders, 'dia': date.date, 'total': str(total_rounded)}
         days.append(day)
     return days
 
@@ -392,8 +397,8 @@ def entregaDelete(request, pk):
     daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
 
     if daytime > dia:
-        notify.send(entregaDel.comanda.format, recipient = request.user,  verb="Has tret ", action_object=entregaDel,
-            description="de la cistella" , timestamp=timezone.now())
+        # notify.send(entregaDel.comanda.format, recipient = request.user,  verb="Has tret ", action_object=entregaDel,
+        #     description="de la cistella" , timestamp=timezone.now())
         # url=comandaDel.format.producte.foto.url,
         entregaDel.delete()
         messages.info(request, (u"Has anulat la entrega i hem tret el producte de la cistella"))
@@ -425,8 +430,8 @@ def comandaDelete(request, pk):
     daytime = datetime.datetime(dia_prox_entrega.date.year, dia_prox_entrega.date.month, dia_prox_entrega.date.day, aux.inici.hour, aux.inici.minute)
 
     if daytime > dia:
-        notify.send(comandaDel.format, recipient = request.user,  verb="Has tret ", action_object=comandaDel,
-            description="de la cistella" , timestamp=timezone.now())
+        # notify.send(comandaDel.format, recipient = request.user,  verb="Has tret ", action_object=comandaDel,
+        #     description="de la cistella" , timestamp=timezone.now())
         # url=comandaDel.format.producte.foto.url,
         comandaDel.delete()
         messages.info(request, (u"Has anulat la comanda i hem tret el producte de la cistella"))
@@ -529,7 +534,8 @@ class ComandaFormBaseView(FormView):
         user_profile = UserProfile.objects.filter(user = user).first()
         cantitat = form.data["cantitat_t"]
         preu_aux = format.preu
-        preu = preu_aux * float(cantitat)
+        preu = preu_aux * int(cantitat)
+        preu_output = round(preu, 2)
         data = form.data["dataentrega"]
         # frequencia = form.data["frequencia"]
         # freq = Frequencia.objects.filter(num=frequencia).first()
@@ -553,7 +559,7 @@ class ComandaFormBaseView(FormView):
         # if frequencia == '6':   #freqüència: una sola vegada
         stock_result = format.stock_calc(data_entrega, cantitat)
         if stock_result['result'] == True:
-            v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu)
+            v = Comanda.objects.create(client=user, cantitat=cantitat, format=format, node=lloc_obj, preu=preu_output)
             if stock_result['dia_prod'] == '':
                 e = Entrega.objects.create(dia_entrega=data_entrega, comanda=v, franja_horaria=franja)
             else:
@@ -680,8 +686,8 @@ def diesEntregaView(request, pk, pro):
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
                         else:
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
-                        notify.send(e.comanda.format, recipient= user_p.user, verb="Has modificat l'hora d'entrega de ", action_object=e.comanda,
-                        description=e.dia_entrega.date , timestamp=timezone.now())
+                        # notify.send(e.comanda.format, recipient= user_p.user, verb="Has modificat l'hora d'entrega de ", action_object=e.comanda,
+                        # description=e.dia_entrega.date , timestamp=timezone.now())
                 else:
                     # Aquí processem les entregues que encara no existien i que es creen noves
                     stock_result = comanda.format.stock_calc(dia, comanda.cantitat)
@@ -692,8 +698,8 @@ def diesEntregaView(request, pk, pro):
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja)
                         else:
                             e = Entrega.objects.create(dia_entrega=dia, comanda=comanda, franja_horaria=franja, dia_produccio=stock_result['dia_prod'] )
-                        notify.send(e.comanda.format, recipient= user_p.user, verb="Has afegit a la cistella", action_object=e.comanda,
-                        description=e.dia_entrega.date , timestamp=timezone.now())
+                        # notify.send(e.comanda.format, recipient= user_p.user, verb="Has afegit a la cistella", action_object=e.comanda,
+                        # description=e.dia_entrega.date , timestamp=timezone.now())
             for d in dies_entrega_ini:
                 if str(d.pk) not in dies_pk:
                     # Borrem les entregues que han deixat d'estar seleccionades
@@ -715,8 +721,8 @@ def diesEntregaView(request, pk, pro):
 
 
                         entrega.delete()
-                        notify.send(entrega.comanda.format, recipient= user_p.user, verb="Has tret de la cistella", action_object=entrega.comanda,
-                        description=entrega.dia_entrega.date , timestamp=timezone.now())
+                        # notify.send(entrega.comanda.format, recipient= user_p.user, verb="Has tret de la cistella", action_object=entrega.comanda,
+                        # description=entrega.dia_entrega.date , timestamp=timezone.now())
                     else:
                         messages.error(request, (
                             u"El productor ja t'està preparant alguna de les comandes que vols anul·lar"
@@ -735,12 +741,12 @@ def diesEntregaView(request, pk, pro):
             elif pro == '1':  #si el usuari es productor i esta introduint comandes que li han arribat de fora la web
 
                 productes = Producte.objects.filter(productor=comanda.format.productor)
-                object_list = Entrega.objects.filter(comanda__format__producte__in=productes, dia_entrega__date__gte=now)
+                object_list = comandesPro(request, comanda.format.productor)
                 productors = Productor.objects.filter(responsable=request.user)
                 
                 messages.success(request, (u"Comanda desada correctament"))
                 
-                return render(request, "romani/productors/comanda_list.html", {'object_list': object_list, 'productor': comanda.format.productor, 'productors': productors})
+                return render(request, "romani/productors/comanda_list.html", {'comandes': object_list, 'productor': comanda.format.productor, 'productors': productors})
 
         except:
             messages.warning(request, (u"Hem trobat errors en el formulari"))
@@ -748,7 +754,7 @@ def diesEntregaView(request, pk, pro):
 
     return render(request, "dies_comanda.html",
                   {'comanda': comanda, 'up': user_p, 'dies_entrega_pos': dies_entrega_possibles,
-                   'dies_entrega_ini': dies_entrega_ini, 'entregas_pas': entregas_pas })
+                   'dies_entrega_ini': dies_entrega_ini, 'entregas_pas': entregas_pas, 'pro': pro })
 
 
 

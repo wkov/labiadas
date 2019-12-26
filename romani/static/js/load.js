@@ -29,8 +29,7 @@ function loadScript(src, callback) {
   t.parentNode.insertBefore(s, t);
 }
 
-addEvent(window, 'load', function(){ loadScript(
-        '/static/js/jquery-2.1.4.js',
+addEvent(window, 'load', function(){ loadScript('/static/js/jquery-2.1.4.js',
         function () { loadScript('/static/js/jquery-ui-1.11.4/jquery-ui.js',
         function () { loadScript('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js',
         function () { loadScript('/static/js/fullcalendar-3.4.0/fullcalendar.min.js',
