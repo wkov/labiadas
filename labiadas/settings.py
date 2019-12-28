@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '+*w1wm^xq*3u8pybmcd*+w!vnk+wt%_y^m64os@i3a(i74#yp#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['0.0.0.0','*',
                  '79.137.39.201']
@@ -281,18 +281,18 @@ CACHES = {
     },
 }
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    },
-}
-#
 # HAYSTACK_CONNECTIONS = {
 #     'default': {
-#         'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-#         'PATH': os.path.join(PROJECT_PATH, 'whoosh_index'),
+#         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
 #     },
 # }
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(PROJECT_ROOT, 'whoosh_index'),
+    },
+}
 
 MACHINA_FORUM_NAME = "La Massa Forum"
 

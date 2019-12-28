@@ -89,9 +89,9 @@ urlpatterns = [
     url(r"^pro/(?P<pro>\d+)/comanda/create/$", auth(ComandaCreateView.as_view()), name="comanda_create"),
     url(r'^producteDelete/(?P<pk>\d+)$', auth(producteDelete), name="producteDelete"),
     url(r'^formatDelete/(?P<pk>\d+)$', auth(formatDelete), name="formatDelete"),
-    url(r'^pro/(?P<pro>\d+)/graph.png', productorGraphView, name="graph"),
-    url(r'^pro/(?P<pro>\d+)/stats', graphProductorView, name="stats"),
-    url(r'^pro/node_detail/(?P<pk>\d+)$', NodeProDetailView, name='node_pro_detail'),
+    url(r'^pro/(?P<pro>\d+)/graph.png', auth(productorGraphView), name="graph"),
+    url(r'^pro/(?P<pro>\d+)/stats', auth(graphProductorView), name="stats"),
+    url(r'^pro/node_detail/(?P<pk>\d+)$', auth(NodeProDetailView), name='node_pro_detail'),
     url(r'^pro/dies_entrega/(?P<pk>\d+)$', auth(diesEntregaProView), name="diesEntregaPro"),
 
 
@@ -122,12 +122,12 @@ urlpatterns = [
     #     name="contracte_detail"),
 
 
-    url(r'api/list', api.get_product_list, name='get_product_list'),
-    url(r'api/example', api.example_view, name='example_view'),
+    url(r'api/list', auth(api.get_product_list), name='get_product_list'),
+    url(r'api/example', auth(api.example_view), name='example_view'),
     # url(r'api/user', api.get_user, name='get_user'),
-    url(r'^api/$', get_schema_view()),
+    url(r'^api/$', auth(get_schema_view())),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'api/auth/list', api.get_product_list, name='get_product_list'),
+    url(r'api/auth/list', auth(api.get_product_list), name='get_product_list'),
     url(r'api/auth/example', api.example_view, name='example_view'),
     # url(r'^api/auth/token/obtain/$', TokenObtainPairView.as_view()),
     # url(r'^api/auth/token/refresh/$', TokenRefreshView.as_view()),
@@ -155,7 +155,7 @@ urlpatterns = [
     url(r'^productor/(?P<pk>\d+)$', auth(productorView), name='productor'),
     url(r'^(?P<pk>\d+)$', auth(producteView), name='producte'),
     # url(r'^coope/', auth(views.coopeView), name="coope"), #MAIN VIEW
-    url(r'^comandes/', auth(cistellaView), name="comandes"),
+    url(r'^comandes', auth(cistellaView), name="comandes"),
     url(r'^entregas/', auth(historialView), name="entregas"),
     url(r'^comandaDelete/(?P<pk>\d+)$', auth(entregaDelete), name="entregaDelete"),
     # url(r'^contracteDelete/(?P<pk>\d+)$', auth(contracteDelete), name="contracteDelete"),
