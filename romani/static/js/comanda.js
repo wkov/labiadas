@@ -219,15 +219,10 @@ $(".vote_debat_form").submit(function(e)
 
 					$.post("/nodecalc/", $(".comanda2_form").serializeArray(), function (data) {
 						var dataentrega = document.getElementById("dataentrega");
-						var franjes = document.getElementById("franjes");
-						var franjes_label = document.getElementById("franjes_label")
 
 						var i = 0;
 
 						dataentrega.options.length = 0;
-						franjes.options.length = 0;
-						franjes.style.display = 'block';
-						franjes_label.style.display = 'block'
 
 						var t;
 
@@ -243,15 +238,17 @@ $(".vote_debat_form").submit(function(e)
                         var franjes_label = document.getElementById("franjes_label")
 
 
-                        var i = 1;
+                        var i = 0;
 
                         franjes.options.length=0
+
+                        var s;
 
                         if (data.constructor == Array){
                             data.forEach( function (arrayItem)
                             {
-                                var s = arrayItem.inici + "-" + arrayItem.final;
-                                franjes.options[i] = new Option(s, arrayItem.pk, false, true)
+                                s = arrayItem.inici + "-" + arrayItem.final;
+                                franjes.options[i] = new Option(s, arrayItem.pk)
                                 i++;
                             });
                             franjes.style.display = 'block'

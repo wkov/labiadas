@@ -331,8 +331,8 @@ def ConvidarView(request):
                 # up.invitacions = up.invitacions - 1
                 # up.save()
                 key = Key.objects.get(key=k)
-                notify.send(key, recipient=up.user, verb="",
-                                description=", has generat una nova invitació " , timestamp=timezone.now())
+                # notify.send(key, recipient=up.user, verb="",
+                #                 description=", has generat una nova invitació " , timestamp=timezone.now())
 
                 s = "http://lamassa.org/register/" + str(k)
                 message = s
