@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.db.models.query_utils import Q
 
 class ResetPasswordRequestView(FormView):
-    template_name = "registration/test_template.html"    #code for template is given below the view's code
+    template_name = "django_registration/test_template.html"    #code for template is given below the view's code
     success_url = '/login'
     form_class = PasswordResetRequestForm
 
@@ -70,9 +70,9 @@ class ResetPasswordRequestView(FormView):
                             'token': default_token_generator.make_token(user),
                             'protocol': 'https',
                             }
-                        subject_template_name ='registration/password_reset_subj.txt'
+                        subject_template_name ='django_registration/password_reset_subj.txt'
                         # copied from django/contrib/admin/templates/registration/password_reset_subject.txt to templates directory
-                        email_template_name ='registration/password_reset_mail.html'
+                        email_template_name ='django_registration/password_reset_mail.html'
                         # copied from django/contrib/admin/templates/registration/password_reset_email.html to templates directory
                         subject = loader.render_to_string(subject_template_name, c)
                         # Email subject *must not* contain newlines
@@ -99,8 +99,8 @@ class ResetPasswordRequestView(FormView):
                         'token': default_token_generator.make_token(user),
                         'protocol': 'https',
                         }
-                    subject_template_name='registration/password_reset_subj.txt'
-                    email_template_name='registration/password_reset_mail.html'
+                    subject_template_name='django_registration/password_reset_subj.txt'
+                    email_template_name='django_registration/password_reset_mail.html'
                     subject = loader.render_to_string(subject_template_name, c)
                     # Email subject *must not* contain newlines
                     subject = ''.join(subject.splitlines())
@@ -119,7 +119,7 @@ from django.contrib.auth import (REDIRECT_FIELD_NAME, login as auth_login,
     logout as auth_logout, get_user_model, update_session_auth_hash)
 
 class PasswordResetConfirmView(FormView):
-    template_name = "registration/test_template.html"
+    template_name = "django_registration/test_template.html"
     success_url = '/login/'
     form_class = SetPasswordForm
 
