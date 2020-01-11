@@ -37,7 +37,7 @@ from django.db.models.query_utils import Q
 
 class ResetPasswordRequestView(FormView):
     template_name = "django_registration/test_template.html"    #code for template is given below the view's code
-    success_url = '/login'
+    success_url = '/login/'
     form_class = PasswordResetRequestForm
 
     @staticmethod

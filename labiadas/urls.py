@@ -45,8 +45,8 @@ urlpatterns = [
     url(r"^login/$", LoginView.as_view(), {"template_name": "login.html"}, name="login"),
     url(r"^logout/$", LogoutView.as_view(), name="logout"),
     # url(r"^accounts/", include("django_registration.backends.simple.urls")),
-    url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'registration.backends.default.DefaultBackend'}, name='registration_register'),
-    url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),name='registration_disallowed'),
+    url(r'^register/(?P<pk>\d+)$', MyRegistrationView.as_view(), {'backend': 'django_registration.backends.default.DefaultBackend'}, name='django_registration_register'),
+    url(r'^register/closed/$', TemplateView.as_view(template_name='django_registration/registration_closed.html'),name='django_registration_disallowed'),
     url(r'^account/reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
     url(r'^account/reset_password', ResetPasswordRequestView.as_view(), name="reset_password"),
 
